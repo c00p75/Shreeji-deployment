@@ -1,0 +1,77 @@
+.discounted-product-container {
+  // background-image: url("https://www.transparenttextures.com/patterns/diagmonds-light.png");
+
+  * {
+    scroll-behavior: smooth !important;
+
+    .product-container {
+      overflow: visible;
+      position: relative;
+      img {
+        z-index: 5;
+        transition: all 0.3s ease-in-out;
+      }
+    }
+  }
+
+  .product-container::before {
+    z-index: 0;
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: var(--primary);
+    width: 8rem;
+    height: 8rem;
+    border-radius: 50%;
+    transition: all 0.3s ease-in-out;
+    background-image: url("https://www.transparenttextures.com/patterns/vichy.png");
+  }
+
+  .product-container:hover::before {
+    width: 6rem;
+    height: 6rem;
+    top: 5%;
+    left: -5%;
+  }
+
+  .product-container:hover {
+    img {
+      transform: scale(1.25);
+    }
+  }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.home-products-category-container {
+  .tab-select {
+    button {
+      border-bottom: 2px solid var(--primary);
+      background: white;
+      border-radius: 10px;
+      width: fit-content;
+      cursor: pointer;
+      padding-inline: 1rem;
+      font-size: 0.875rem;
+    }
+
+    .active {
+      background: var(--primary);
+      border-radius: 10px;
+      border-color: black;
+      color: white;
+    }
+  }
+
+  .product-container {
+    box-shadow: 0 5px 10px 3px #1f293733;
+  }
+}

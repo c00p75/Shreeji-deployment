@@ -1,0 +1,80 @@
+// .logos-slide {
+//   animation: 20s scroll infinite linear;
+//   transition: all ease-in-out 0.2s;
+// }
+
+// @keyframes scroll {
+//   from {
+//     transform: translateX(0);
+//   }
+//   to {
+//     transform: translateX(-100%);
+//   }
+// }
+
+/* .logos:hover .logos-slide {
+  animation-play-state: paused;
+} */
+
+.scrollContainer {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 8rem;
+  display: flex;
+  align-items: center;
+  // background-color: var(--secondary);
+  // background-image: url("https://www.transparenttextures.com/patterns/brushed-alum-dark.png");
+}
+
+.scrollContent {
+  display: flex;
+  // animation: scroll 15s linear infinite;
+}
+
+.partnerItem {
+  flex-shrink: 0;
+}
+
+.partner-logo {
+  height: 100%;
+  width: 10rem; /* Match the width of the container */
+  object-fit: contain;
+}
+
+// @keyframes scroll {
+//   0% {
+//     transform: translateX(0);
+//   }
+//   100% {
+//     transform: translateX(-100%);
+//   }
+// }
+
+.fadeLeft,
+.fadeRight {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100px; /* Adjust fade width */
+  z-index: 1;
+  pointer-events: none;
+}
+
+.fadeLeft {
+  left: 0;
+  background: linear-gradient(
+    to right,
+    var(--secondary),
+    rgba(255, 255, 255, 0)
+  );
+}
+
+.fadeRight {
+  right: 0;
+  background: linear-gradient(
+    to left,
+    var(--secondary),
+    rgba(255, 255, 255, 0)
+  );
+}

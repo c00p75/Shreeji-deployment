@@ -1,0 +1,11 @@
+.testimonials-section {
+  background: radial-gradient(#a78d55, #87703f, #87703f, #68542c);
+  .card {
+    border: 3px solid #47391b;
+    padding: 1rem;
+    border-radius: 40px;
+    background: rgba(255, 255, 255, 0.322);
+    backdrop-filter: blur(10px);
+    color: black;
+  }
+}

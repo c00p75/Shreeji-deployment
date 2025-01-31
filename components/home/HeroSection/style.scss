@@ -1,0 +1,114 @@
+.hero-text h2 {
+  font-family: "Archivo Black", "Times New Roman";
+}
+
+/* From Uiverse.io by kennyotsu */
+.hero-text-card {
+  /* color used to softly clip top and bottom of the .words container */
+  --bg-color: #87703f;
+  padding: 1rem 2rem;
+  border-radius: 1.25rem;
+  font-size: 8rem;
+  height: 100vh;
+}
+
+.hero-text-container {
+  color: black;
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  -webkit-box-sizing: content-box;
+  box-sizing: content-box;
+  height: 25rem;
+  padding: 10px 10px;
+  border-radius: 8px;
+}
+
+.words {
+  overflow: hidden;
+  position: relative;
+  text-transform: uppercase;
+  font-family: "Archivo Black", "Times New Roman";
+}
+
+.words::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+}
+
+.word {
+  display: block;
+  height: 100%;
+  padding-left: 6px;
+  color: white;
+  animation: spin_4991 7s infinite ease-in-out;
+}
+
+@keyframes spin_4991 {
+  10% {
+    -webkit-transform: translateY(-102%);
+    transform: translateY(-102%);
+  }
+
+  25% {
+    -webkit-transform: translateY(-100%);
+    transform: translateY(-100%);
+  }
+
+  35% {
+    -webkit-transform: translateY(-202%);
+    transform: translateY(-202%);
+  }
+
+  50% {
+    -webkit-transform: translateY(-200%);
+    transform: translateY(-200%);
+  }
+
+  60% {
+    -webkit-transform: translateY(-302%);
+    transform: translateY(-302%);
+  }
+
+  75% {
+    -webkit-transform: translateY(-300%);
+    transform: translateY(-300%);
+  }
+
+  85% {
+    -webkit-transform: translateY(-402%);
+    transform: translateY(-402%);
+  }
+
+  100% {
+    -webkit-transform: translateY(-400%);
+    transform: translateY(-400%);
+  }
+}
+
+.hero-bg {
+  background-color: #87703f;
+  background-image: url("https://www.transparenttextures.com/patterns/concrete-wall.png");
+}
+
+.hero-overlay {
+  background: radial-gradient(rgba(0, 0, 0, 0.5), black);
+}
+
+.active-slide {
+  background: #87703f;
+  // box-shadow: 0 5px 15px 5px hsla(44, 45%, 87%, 0.2);
+}
+
+.slide-btn-container > button {
+  // width: 15%;
+  width: 10rem;
+  height: 10rem;
+  overflow: hidden;
+  // max-width: 15%;
+  border-radius: 50%;
+  // border-radius: 1px 1px 0 0;
+  font-size: 0.9rem;
+  border: 2px solid #87703f70;
+}
