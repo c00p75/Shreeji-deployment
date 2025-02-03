@@ -47,7 +47,7 @@ const Navbar = () => {
     <>
       <button
         onClick={scrollToTop}
-        className={`fixed bottom-5 right-1 md:right-5 z-20 transition-all ${
+        className={`fixed bottom-5 left-1 md:left-5 z-20 transition-all ${
           isScrolled ? "opacity-1" : "opacity-0"
         }`}
       >
@@ -61,7 +61,7 @@ const Navbar = () => {
       <Link
         target="_"
         href="https://wa.me/+260974594654"
-        className={`fixed bottom-24 right-2 md:right-6 z-20 transition-all ${
+        className={`fixed bottom-24 left-2 md:right-6 z-20 transition-all ${
           isScrolled ? "opacity-1" : "opacity-0"
         }`}
       >
@@ -116,14 +116,15 @@ const Navbar = () => {
       </Link>
 
       <nav
-        className={`fixed md:px-20 z-50 w-full transition-all duration-300
+        className={`fixed z-50 w-full transition-all duration-300
         ${
           isScrolled
             ? "scrolled-nav bg-white bg-opacity-100 text-[var(--primary)]"
-            : "bg-[#0d1520]/0"
+            : "bg-white/0"
         }      
       `}
       >
+        <div className="w-full h-10 bg-white py-5 hidden"></div>
         <div className="container mx-auto flex items-center justify-between p-2">
           <Link href="/" className="text-lg font-bold">
             <Image

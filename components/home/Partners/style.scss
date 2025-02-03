@@ -25,6 +25,11 @@
   align-items: center;
   // background-color: var(--secondary);
   // background-image: url("https://www.transparenttextures.com/patterns/brushed-alum-dark.png");
+  background: white;
+  border-color: white;
+  // height: 100vh;
+  height: fit-content;
+  padding-block: 4rem;
 }
 
 .scrollContent {
@@ -63,18 +68,10 @@
 
 .fadeLeft {
   left: 0;
-  background: linear-gradient(
-    to right,
-    var(--secondary),
-    rgba(255, 255, 255, 0)
-  );
+  background: linear-gradient(to right, white, rgba(255, 255, 255, 0));
 }
 
 .fadeRight {
   right: 0;
-  background: linear-gradient(
-    to left,
-    var(--secondary),
-    rgba(255, 255, 255, 0)
-  );
+  background: linear-gradient(to left, white, rgba(255, 255, 255, 0));
 }

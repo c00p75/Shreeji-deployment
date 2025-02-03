@@ -1,11 +1,22 @@
+nav {
+  color: white;
+
+  .container {
+    transition: 0.35s ease;
+    padding-inline: 2.5rem;
+  }
+}
 .nav-logo {
-  height: 5rem;
+  height: 4rem;
   transition: 0.35s ease;
+  opacity: 0;
 }
 
 .scrolled-nav {
+  box-shadow: 0 2px 4px 1px rgba(0, 0, 0, 0.1);
   .nav-logo {
     height: 3rem;
+    opacity: 1 !important;
   }
 
   .active-link {
@@ -16,10 +27,10 @@
     padding: 0;
     background: none;
   }
-}
 
-nav {
-  color: white;
+  .container {
+    padding-inline: 5rem !important;
+  }
 }
 
 .active-link {

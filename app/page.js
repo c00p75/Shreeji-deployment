@@ -12,8 +12,8 @@ export default function Home() {
       <HeroSection />
       <Partners />
       <OurSolutions />
-      <DiscountedProducts />
       <SkyliftSolutions />
+      <DiscountedProducts />
       <ProductCategory />
       <Testimonials />
     </>

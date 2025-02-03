@@ -15,7 +15,7 @@ const ActiveButton = ({ title, desc, index, current, onClick, progress }) => {
       </div>
       <div className="p-5">
         <h2 className="font-bold">{title}</h2>
-        {/* <p>{desc}</p> */}
+        <p className="text-gray-500">{desc}</p>
       </div>
     </button>
   );
