@@ -3,15 +3,12 @@
   z-index: 20;
   bottom: 3rem;
   right: 2rem;
+  color: white;
+  transition: opacity 0.3s ease-in-out;
+  border-radius: 0.5rem;
+  box-shadow: 0 5px 6px 0 #424040;
+
   .card_container {
-    --X: 0deg;
-    --Y: 0deg;
-    --Z: 0deg;
-    --angleX: 15deg;
-    --angleY: 20deg;
-
-    cursor: pointer;
-
     position: relative;
   }
 
@@ -20,93 +17,23 @@
     z-index: 10;
     top: 0;
     left: 0;
-
     display: flex;
     flex-wrap: wrap;
-
     width: 100%;
     height: 100%;
-  }
-
-  .card_hover .part {
-    width: 20%;
-    height: calc(100% / 3);
-    background-color: transparent;
-  }
-
-  .card_container:has(.part-1:hover) {
-    --X: var(--angleX);
-    --Y: calc(var(--angleY) * -1);
-  }
-  .card_container:has(.part-2:hover) {
-    --X: var(--angleX);
-    --Y: calc((var(--angleY) / 2) * -1);
-  }
-  .card_container:has(.part-3:hover) {
-    --X: var(--angleX);
-  }
-  .card_container:has(.part-4:hover) {
-    --X: var(--angleX);
-    --Y: calc(var(--angleY) / 2);
-  }
-  .card_container:has(.part-5:hover) {
-    --X: var(--angleX);
-    --Y: var(--angleY);
-  }
-  .card_container:has(.part-6:hover) {
-    --Y: calc(var(--angleY) * -1);
-  }
-  .card_container:has(.part-7:hover) {
-    --Y: calc((var(--angleY) / 2) * -1);
-  }
-  .card_container:has(.part-9:hover) {
-    --Y: calc(var(--angleY) / 2);
-  }
-  .card_container:has(.part-10:hover) {
-    --Y: var(--angleY);
-  }
-  .card_container:has(.part-11:hover) {
-    --X: calc(var(--angleX) * -1);
-    --Y: calc(var(--angleY) * -1);
-  }
-  .card_container:has(.part-12:hover) {
-    --X: calc(var(--angleX) * -1);
-    --Y: calc((var(--angleY) / 2) * -1);
-  }
-  .card_container:has(.part-13:hover) {
-    --X: calc(var(--angleX) * -1);
-  }
-  .card_container:has(.part-14:hover) {
-    --X: calc(var(--angleX) * -1);
-    --Y: calc(var(--angleY) / 2);
-  }
-  .card_container:has(.part-15:hover) {
-    --X: calc(var(--angleX) * -1);
-    --Y: var(--angleY);
   }
 
   .card {
     --light: #d9d9d9;
     --dark: #1f1f1f;
-
     position: relative;
-
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
-
+    gap: 0.25rem;
     padding: 1.5rem;
     width: 15rem;
-    background-color: rgb(172, 250, 233);
-    background-image: linear-gradient(
-      135deg,
-      rgba(172, 250, 233, 1) 0%,
-      rgba(213, 143, 235, 1) 50%,
-      rgba(242, 126, 241, 1) 100%
-    );
-
+    background: radial-gradient(#a78d55, #87703f, #87703f);
     border-radius: 0.5rem;
-
     transform-origin: center;
     transform: rotateX(var(--X)) rotateY(var(--Y)) rotateZ(var(--Z));
     transition: transform 0.3s ease-in-out;
@@ -142,22 +69,16 @@
     }
   }
 
-  .title {
-    overflow: clip;
-
+  .card-title {
     width: 100%;
-
     font-size: 1rem;
     font-weight: 600;
-    color: var(--dark);
     text-transform: capitalize;
-    text-wrap: nowrap;
-    text-overflow: ellipsis;
+    background: transparent;
   }
 
   .paragraph {
     font-size: 0.5rem;
     font-weight: 600;
-    color: var(--dark);
   }
 }

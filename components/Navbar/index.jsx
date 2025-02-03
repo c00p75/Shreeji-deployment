@@ -61,7 +61,7 @@ const Navbar = () => {
       <Link
         target="_"
         href="https://wa.me/+260974594654"
-        className={`fixed bottom-24 left-2 md:right-6 z-20 transition-all ${
+        className={`fixed bottom-24 left-2 md:right-6 z-20 transition-all w-fit ${
           isScrolled ? "opacity-1" : "opacity-0"
         }`}
       >
