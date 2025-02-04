@@ -9,17 +9,19 @@ import { Printer } from "lucide-react";
 const OurSolutions = () => {
   return (
     <section className="our-solutions-section flex-center text-[#171717] pt-10 pb-52 px-16">
-      <p className="text-4xl pb-12">Solutions That Deliver</p>
+      <p className="text-4xl pb-12">Solutions That We Deliver</p>
       <div className="flex w-full gap-10">
         <div className="flex flex-col justify-between flex-1 gap-16">
-          <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-3 service-hover">
             <div className="flex gap-5 items-center">
-              <Image
-                src={laptop}
-                alt="Shreeji"
-                quality={100}
-                className="w-10 h-10 object-contain grayscale"
-              />
+              <div className="bg-[#f5f5f5] px-1 py-2 rounded-[10px]">
+                <Image
+                  src={laptop}
+                  alt="Shreeji"
+                  quality={100}
+                  className="w-10 h-10 object-contain grayscale"
+                />
+              </div>
 
               <h3 className="font-bold text-2xl">Computer Connections</h3>
             </div>
@@ -33,9 +35,11 @@ const OurSolutions = () => {
             </div>
           </div>
 
-          <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-3 service-hover">
             <div className="flex gap-5 items-center">
-              <Printer strokeWidth={1.1} className="w-10 h-10" />
+              <div className="bg-[#f5f5f5] px-1 py-2 rounded-[10px] text-black">
+                <Printer strokeWidth={1.1} className="w-10 h-10" />
+              </div>
               <h3 className="font-bold text-2xl">Print Advertising</h3>
             </div>
 
@@ -65,18 +69,19 @@ const OurSolutions = () => {
         </div>
 
         <div className="flex flex-col justify-between flex-1 text-right gap-16">
-          <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-3 service-hover service-hover-3">
             <div className="flex gap-5 items-center justify-end">
               <h3 className="font-bold text-2xl">
                 Business Process Outsourcing
               </h3>
-
-              <Image
-                src={liveChat}
-                alt="SHreeji"
-                quality={100}
-                className="w-10 h-10 object-contain"
-              />
+              <div className="bg-[#f5f5f5] px-1 py-2 rounded-[10px]">
+                <Image
+                  src={liveChat}
+                  alt="SHreeji"
+                  quality={100}
+                  className="w-10 h-10 object-contain"
+                />
+              </div>
             </div>
 
             <div>
@@ -88,15 +93,17 @@ const OurSolutions = () => {
             </div>
           </div>
 
-          <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-3 service-hover service-hover-4">
             <div className="flex gap-5 items-center justify-end">
               <h3 className="font-bold text-2xl">Skylift Services</h3>
-              <Image
-                src={factory}
-                alt="SHreeji"
-                quality={100}
-                className="w-10 h-10 object-contain"
-              />
+              <div className="bg-[#f5f5f5] px-1 py-2 rounded-[10px]">
+                <Image
+                  src={factory}
+                  alt="SHreeji"
+                  quality={100}
+                  className="w-10 h-10 object-contain"
+                />
+              </div>
             </div>
 
             <div>

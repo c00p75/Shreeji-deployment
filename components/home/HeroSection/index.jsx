@@ -138,61 +138,6 @@ const HeroSection = () => {
         )}
       </div>
 
-      <div className="hidden absolute bottom-0 h-[13rem] mb-4 w-full z-[2] flex justify-around text-white slide-btn-container">
-        <ActiveButton
-          title="IT Solutions"
-          desc="IT Solutions"
-          index={1}
-          current={active}
-          onClick={() => handleActiveVid(1)}
-          progress={40}
-        />
-
-        <ActiveButton
-          title="BPO Services"
-          desc="BPO Services"
-          index={2}
-          current={active}
-          onClick={() => handleActiveVid(2)}
-          progress={100}
-        />
-
-        <ActiveButton
-          title="Print Advertisement"
-          desc="Print Advertisement"
-          index={3}
-          current={active}
-          onClick={() => handleActiveVid(3)}
-          progress={100}
-        />
-
-        <ActiveButton
-          title="Skylift Services"
-          desc="Skylift Services"
-          index={4}
-          current={active}
-          onClick={() => handleActiveVid(4)}
-          progress={100}
-        />
-      </div>
-      {/* <div className="z-[2] hero-bg absolute top-[-150%] left-[52%] rotate-[24.5deg] w-[200%] h-[400%] overflow-hidden" /> */}
-      {/* <div className="z-[3] hero-text-card absolute top-[70%] left-[40%] transform -translate-x-1/2 -translate-y-1/2">
-        <div className="hero-text-container flex-center text-center">
-          <p className="opacity-0">Empowering</p>
-          <div className="words">
-            <span className="word">Tried</span>
-            <span className="word">Tested</span>
-            <span className="word">Trusted</span>
-            <span className="word">Tried</span>
-          </div>
-        </div>
-      </div> */}
-      {/* <Image
-        src={laptops}
-        alt="Logo"
-        quality={100}
-        className="z-[3] h-full w-auto absolute top-1/2 left-[42%] transform -translate-x-1/2 -translate-y-1/2"
-      /> */}
       <div className="z-[1] h-full text-white flex hero-text">
         <video
           className="absolute left-0 top-0 w-full h-full object-cover rounded-lg z-0"
@@ -202,7 +147,7 @@ const HeroSection = () => {
           playsInline
           src="/videos/black-bg.mp4"
         />
-        <div className="w-full text-xl px-10 z-[1] flex-center justify-center bg-[rgba(0,0,0,0.85)]">
+        <div className="w-full text-xl px-10 pt-8 z-[1] flex-center justify-center bg-[rgba(0,0,0,0.85)]">
           <Image
             src={logo2}
             alt="Logo"

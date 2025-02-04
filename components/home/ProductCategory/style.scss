@@ -1,6 +1,7 @@
-.discounted-product-container {
+.home-products-category-container {
   // background-image: url("https://www.transparenttextures.com/patterns/diagmonds-light.png");
 
+  // background-image: url("https://www.transparenttextures.com/patterns/concrete-wall.png");
   * {
     scroll-behavior: smooth !important;
 
@@ -12,27 +13,6 @@
         transition: all 0.3s ease-in-out;
       }
     }
-  }
-
-  .product-container::before {
-    z-index: 0;
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    background-color: var(--primary);
-    width: 8rem;
-    height: 8rem;
-    border-radius: 50%;
-    transition: all 0.3s ease-in-out;
-    background-image: url("https://www.transparenttextures.com/patterns/vichy.png");
-  }
-
-  .product-container:hover::before {
-    width: 6rem;
-    height: 6rem;
-    top: 5%;
-    left: -5%;
   }
 
   .product-container:hover {
@@ -54,7 +34,8 @@
 .home-products-category-container {
   .tab-select {
     button {
-      border-bottom: 2px solid var(--primary);
+      border: 1px solid var(--primary);
+      border-bottom: 4px solid var(--primary);
       background: white;
       border-radius: 10px;
       width: fit-content;

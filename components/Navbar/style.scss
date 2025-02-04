@@ -4,6 +4,12 @@ nav {
   .container {
     transition: 0.35s ease;
     padding-inline: 2.5rem;
+    justify-content: center;
+    transition: all 0.35s ease-in-out;
+
+    ul {
+      margin-right: 4rem;
+    }
   }
 }
 .nav-logo {
@@ -26,10 +32,12 @@ nav {
   ul {
     padding: 0;
     background: none;
+    margin-right: 0;
   }
 
   .container {
     padding-inline: 5rem !important;
+    justify-content: space-between;
   }
 }
 

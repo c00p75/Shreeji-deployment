@@ -54,10 +54,10 @@
 
 :root {
   --bg: #000000;
-  --clr-1: white;
-  --clr-2: white;
-  --clr-3: #87703f;
-  --clr-4: #87703f;
+  --clr-1: transparent;
+  --clr-2: transparent;
+  --clr-3: transparent;
+  --clr-4: transparent;
 
   --blur: 1rem;
   --fs: clamp(3rem, 8vw, 7rem);
@@ -69,7 +69,8 @@
   display: grid;
   place-items: center;
   background-color: var(--bg);
-  color: #fff;
+  // color: #fff;
+  color: var(--primary);
   text-align: center;
 }
 

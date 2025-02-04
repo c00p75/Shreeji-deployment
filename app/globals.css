@@ -23,7 +23,7 @@ html {
 
 body {
   color: var(--foreground);
-  background: var(--background);
+  background: whitesmoke;
   font-family: "Poppins", Helvetica, sans-serif;
   scroll-behavior: smooth;
   max-width: 100vw;

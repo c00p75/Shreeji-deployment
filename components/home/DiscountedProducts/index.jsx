@@ -15,73 +15,73 @@ import Image from "next/image";
 const discountedProducts = [
   {
     id: 1,
-    name: "Product 1",
+    name: `HP Pavilion Laptop 16t-af000, 16"`,
     price: "K5000",
     discount: "K3000",
     image: product1,
   },
   {
     id: 2,
-    name: "Product 2",
+    name: `HP Pavilion Laptop 16t-af000, 16"`,
     price: "K8000",
     discount: "K6000",
-    image: product2,
+    image: product1,
   },
   {
     id: 3,
-    name: "Product 3",
+    name: `HP Pavilion Laptop 16t-af000, 16"`,
     price: "K10000",
     discount: "K7500",
-    image: product3,
+    image: product1,
   },
   {
     id: 4,
-    name: "Product 4",
+    name: `HP Pavilion Laptop 16t-af000, 16"`,
     price: "K12000",
     discount: "K9000",
-    image: product4,
+    image: product1,
   },
   {
     id: 5,
-    name: "Product 5",
+    name: `HP Pavilion Laptop 16t-af000, 16"`,
     price: "K15000",
     discount: "K11000",
-    image: product5,
+    image: product1,
   },
   {
     id: 1,
-    name: "Product 1",
+    name: `HP Pavilion Laptop 16t-af000, 16"`,
     price: "K5000",
     discount: "K3000",
     image: product1,
   },
   {
     id: 2,
-    name: "Product 2",
+    name: `HP Pavilion Laptop 16t-af000, 16"`,
     price: "K8000",
     discount: "K6000",
-    image: product2,
+    image: product1,
   },
   {
     id: 3,
-    name: "Product 3",
+    name: `HP Pavilion Laptop 16t-af000, 16"`,
     price: "K10000",
     discount: "K7500",
-    image: product3,
+    image: product1,
   },
   {
     id: 4,
-    name: "Product 4",
+    name: `HP Pavilion Laptop 16t-af000, 16"`,
     price: "K12000",
     discount: "K9000",
-    image: product4,
+    image: product1,
   },
   {
     id: 5,
-    name: "Product 5",
+    name: `HP Pavilion Laptop 16t-af000, 16"`,
     price: "K15000",
     discount: "K11000",
-    image: product5,
+    image: product1,
   },
 ];
 
@@ -98,27 +98,43 @@ const DiscountedProducts = () => {
   };
 
   return (
-    <div className="discounted-product-container relative w-screen bg-[var(--secondary)] scroll-smooth pb-28">
+    <div className="discounted-product-container relative w-screen bg-[#f5f5f5] scroll-smooth pb-28">
       <h2 className="text-[var(--primary)] font-extrabold text-4xl p-10 underline underline-offset-8 text-center">
         <span className="text-black">Discounted</span> Products
       </h2>
       <div
         ref={scrollRef}
-        className="flex overflow-x-auto gap-4 no-scrollbar scroll-smooth overflow-visible p-10"
+        className="flex overflow-x-auto gap-10 no-scrollbar scroll-smooth overflow-visible p-10"
       >
         {discountedProducts.map((product) => (
           <div
             key={product.id}
-            className="product-container cursor-pointer min-w-[200px] p-4 flex flex-col items-center transition-transform duration-200"
+            className="product-container min-w-[40rem] flex items-center transition-transform duration-200 rounded-2xl"
           >
             <Image
               src={product.image}
               alt={product.name}
-              className="w-32 h-32 object-cover mb-2 overflow-visible"
+              className="absolute w-[12rem] h-[12rem] top-[25%] left-[15%] object-cover mb-2 overflow-visible scale-x-[-1]"
             />
-            <h3 className="text-lg font-semibold">{product.name}</h3>
-            <p className="text-red-500 font-bold">{product.discount}</p>
-            <p className="text-gray-500 line-through">{product.price}</p>
+            <div className="flex-[3] bg-[var(--primary)] h-full relative" />
+            <div className="flex-[4] h-full p-4 pl-[10rem] discounted-card-bg-2 text-[var(--primary)]">
+              <h3 className="font-semibold text-3xl">{product.name}</h3>
+              <p className="">
+                {`Windows 11 HomeIntel® Core™ i5-1334U (up to 4.6 GHz, 12 MB L3
+                cache, 10 cores, 12 threads) + Intel® Iris® Xe Graphics + 8
+                GB(Onboard)512 GB PCIe® NVMe™ M.2 SSD`}
+              </p>
+
+              <div className="flex gap-5 my-2">
+                <p className="text-red-800 line-through text-2xl">
+                  {product.price}
+                </p>
+
+                <p className="text-[var(--primary) font-bold text-2xl">
+                  {product.discount}
+                </p>
+              </div>
+            </div>
           </div>
         ))}
       </div>

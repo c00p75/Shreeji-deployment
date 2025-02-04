@@ -125,7 +125,7 @@ const Navbar = () => {
       `}
       >
         <div className="w-full h-10 bg-white py-5 hidden"></div>
-        <div className="container mx-auto flex items-center justify-between p-2">
+        <div className="container mx-auto flex items-center p-2">
           <Link href="/" className="text-lg font-bold">
             <Image
               src={isScrolled ? logo : logo2}

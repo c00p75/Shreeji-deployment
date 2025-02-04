@@ -99,7 +99,7 @@ const ProductCategory = () => {
   const [activeCat, setActiveCat] = useState("All");
 
   return (
-    <div className="home-products-category-container relative w-screen bg-[var(--secondary)] scroll-smooth pb-28 flex-center">
+    <div className="home-products-category-container relative w-screen bg-white scroll-smooth pb-28 flex-center">
       <p className="text-center pt-20 text-xl font-bold">
         Solutions That Deliver
       </p>
@@ -112,7 +112,7 @@ const ProductCategory = () => {
         {categorySelect.map((cat, index) => (
           <button
             onClick={() => setActiveCat(cat)}
-            className={`${activeCat == cat ? "active" : ""}`}
+            className={`py-2 ${activeCat == cat ? "active" : ""}`}
             key={index}
           >
             {cat}
@@ -125,7 +125,7 @@ const ProductCategory = () => {
           discountedProducts.map((product) => (
             <div
               key={product.id}
-              className="product-container w-[20%] rounded-xl bg-white cursor-pointer p-4 pb-0 flex flex-col items-center transition-transform duration-200"
+              className="product-container w-[20%] rounded-xl bg-[#f5f5f5] cursor-pointer p-4 pb-0 flex flex-col items-center transition-transform duration-200"
             >
               <Image
                 src={product.image}
