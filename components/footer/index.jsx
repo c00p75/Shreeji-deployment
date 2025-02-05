@@ -6,23 +6,14 @@ import Image from "next/image";
 const Footer = () => {
   return (
     <section className="footer-section relative">
-      <video
-        className="absolute left-0 top-0 w-full h-full object-cover rounded-lg z-0"
-        muted
-        loop
-        autoPlay
-        playsInline
-        src="/videos/black-bg.mp4"
-      />
-
       <div className="footer-overlay" />
       <div className="footer-content z-[2] flex text-white gap-5 relative">
-        <div className="flex-1 flex flex-col gap-5">
+        <div className="w-[30%] flex flex-col gap-5 mr-10">
           <Image
             src={footerLogo}
             alt="Shreeji"
             quality={100}
-            className="h-10 md:h-16 w-auto nav-logo"
+            className="w-full h-auto md:h-16"
           />
 
           <p>
@@ -31,20 +22,22 @@ const Footer = () => {
             client satisfaction.
           </p>
         </div>
-        <div className="flex-1 flex flex-col">
+        <div className="w-[22%] flex-1 flex flex-col">
           <h2>Information</h2>
           <p>About Us</p>
           <p>Privacy & Policy</p>
           <p>Terms & Conditions</p>
         </div>
-        <div className="flex-1 flex flex-col">
+
+        <div className="w-[22%] flex-1 flex flex-col">
           <h2>Our Social</h2>
           <p>Facebook</p>
           <p>Twitter</p>
           <p>RSS</p>
           <p>YouTube</p>
         </div>
-        <div className="flex-1 flex flex-col">
+
+        <div className="w-[22%] flex-1 flex flex-col">
           <h2>Openning Time</h2>
           <p>Mon - Fri: 08:00am - 05:00pm</p>
           <p>Shreeji House, Plot No. 1209, Addis Ababa Drive</p>
