@@ -24,7 +24,7 @@ const Partners = () => {
   ];
 
   return (
-    <div className="scrollContainer border-t-8 border-b-8 border-[var(--secondary)]">
+    <div className="scrollContainer pt-2">
       <div className="logos flex items-center gap-2 md:gap-4">
         <div className="px-10">
           <h2 className="text-6xl font-bold">Our High Level Partners</h2>
@@ -40,7 +40,7 @@ const Partners = () => {
             return (
               <div
                 key={`index-${index + 1}`}
-                className="flex-center px-10 py-5 bg-[whitesmoke] h-32 rounded-lg grayscale-0 hover:grayscale-0 transition duration-300"
+                className="partner-logo-container flex-center px-10 py-5 h-32 rounded-lg grayscale-0 hover:grayscale-0 transition duration-300"
               >
                 <Image src={logo} alt="aeiforia" className="partner-logo" />
               </div>

@@ -8,13 +8,13 @@ import { Printer } from "lucide-react";
 
 const OurSolutions = () => {
   return (
-    <section className="our-solutions-section flex-center text-[#171717] pt-10 pb-52 px-16">
-      <p className="text-4xl pb-12">Solutions That We Deliver</p>
+    <section className="our-solutions-section flex-center pt-10 pb-52 px-16">
+      <h2 className="text-4xl pb-12">Solutions That We Deliver</h2>
       <div className="flex w-full gap-10">
         <div className="flex flex-col justify-between flex-1 gap-16">
           <div className="flex flex-col gap-3 service-hover">
             <div className="flex gap-5 items-center">
-              <div className="bg-[#f5f5f5] px-1 py-2 rounded-[10px]">
+              <div className="solution-card-img-container px-1 py-2 rounded-[10px]">
                 <Image
                   src={laptop}
                   alt="Shreeji"
@@ -37,7 +37,7 @@ const OurSolutions = () => {
 
           <div className="flex flex-col gap-3 service-hover">
             <div className="flex gap-5 items-center">
-              <div className="bg-[#f5f5f5] px-1 py-2 rounded-[10px] text-black">
+              <div className="solution-card-img-container px-1 py-2 rounded-[10px] text-black">
                 <Printer strokeWidth={1.1} className="w-10 h-10" />
               </div>
               <h3 className="font-bold text-2xl">Print Advertising</h3>
@@ -53,11 +53,11 @@ const OurSolutions = () => {
           </div>
         </div>
 
-        <div className="flex-center w-[50%] relative flex-1">
-          <h2 className="font-bold text-6xl text-center mb-10">
+        <div className="middle-text-container flex-center w-[50%] relative flex-1">
+          <h4 className="font-bold text-6xl text-center mb-10">
             Over <span className="text-[var(--primary)]">20 Years</span> of
             Expertise!
-          </h2>
+          </h4>
           <Image
             src={bpo}
             alt="SHreeji"
@@ -74,7 +74,7 @@ const OurSolutions = () => {
               <h3 className="font-bold text-2xl">
                 Business Process Outsourcing
               </h3>
-              <div className="bg-[#f5f5f5] px-1 py-2 rounded-[10px]">
+              <div className="solution-card-img-container px-1 py-2 rounded-[10px]">
                 <Image
                   src={liveChat}
                   alt="SHreeji"
@@ -96,7 +96,7 @@ const OurSolutions = () => {
           <div className="flex flex-col gap-3 service-hover service-hover-4">
             <div className="flex gap-5 items-center justify-end">
               <h3 className="font-bold text-2xl">Skylift Services</h3>
-              <div className="bg-[#f5f5f5] px-1 py-2 rounded-[10px]">
+              <div className="solution-card-img-container px-1 py-2 rounded-[10px]">
                 <Image
                   src={factory}
                   alt="SHreeji"

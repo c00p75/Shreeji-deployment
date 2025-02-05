@@ -99,13 +99,12 @@ const ProductCategory = () => {
   const [activeCat, setActiveCat] = useState("All");
 
   return (
-    <div className="home-products-category-container relative w-screen bg-white scroll-smooth pb-28 flex-center">
+    <div className="home-products-category-container relative w-screen scroll-smooth pb-28 flex-center">
       <p className="text-center pt-20 text-xl font-bold">
         Solutions That Deliver
       </p>
       <h2 className="uppercase text-[var(--primary)] font-extrabold text-4xl p-10 text-center">
-        <span className="text-black">Smart</span> & Great{" "}
-        <span className="text-black">Solutions</span>
+        <span>Smart</span> & Great <span>Solutions</span>
       </h2>
 
       <div className="flex gap-20 tab-select mb-20">

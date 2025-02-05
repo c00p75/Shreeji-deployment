@@ -7,6 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import "./style.scss";
+import ThemeBtn from "./ThemeBtn";
 
 const Navbar = () => {
   const pathname = usePathname();
@@ -213,6 +214,7 @@ const Navbar = () => {
             </li>
           </ul>
 
+          <ThemeBtn />
           <button
             className="block md:hidden focus:outline-none"
             onClick={toggleMenu}

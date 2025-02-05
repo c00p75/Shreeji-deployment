@@ -98,9 +98,9 @@ const DiscountedProducts = () => {
   };
 
   return (
-    <div className="discounted-product-container relative w-screen bg-[#f5f5f5] scroll-smooth pb-28">
-      <h2 className="text-[var(--primary)] font-extrabold text-4xl p-10 underline underline-offset-8 text-center">
-        <span className="text-black">Discounted</span> Products
+    <div className="discounted-product-container relative w-screen scroll-smooth pb-28">
+      <h2 className=" font-extrabold text-4xl p-10 underline underline-offset-8 text-center">
+        <span>Discounted</span> Products
       </h2>
       <div
         ref={scrollRef}
@@ -139,7 +139,7 @@ const DiscountedProducts = () => {
         ))}
       </div>
 
-      <div className="flex gap-10 absolute left-10 bottom-10">
+      <div className="flex gap-10 absolute left-10 bottom-10 text-black">
         <button
           onClick={() => scroll("left")}
           className=" z-10 bg-white shadow-lg rounded-full p-4"
