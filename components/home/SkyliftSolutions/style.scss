@@ -1,14 +1,52 @@
 .skylift-solutions-section {
   // background-color: linear-gradient(17deg, #756036, #87703f, #87703f);
-  background-color: white;
-  background-color: var(--secondary);
+  background: radial-gradient(whitesmoke, white);
   min-height: 100vh;
   min-width: 100vw;
   position: relative;
-  background-image: url("https://www.transparenttextures.com/patterns/concrete-wall.png");
+  // background-color: var(--secondary);
+  // background-image: url("https://www.transparenttextures.com/patterns/concrete-wall.png");
+  z-index: 1;
 }
 
 .box {
   // border-radius: 50%;
   background-image: url("https://www.transparenttextures.com/patterns/concrete-wall.png");
+}
+
+.curved-lines {
+  position: absolute;
+  height: 40vw;
+  width: 40vw;
+  left: -25%;
+  bottom: -50%;
+  border-radius: 50%;
+  border: 1px solid var(--shreeji-primary);
+  z-index: 0;
+}
+
+.curved-lines > div::before {
+  content: "";
+  position: absolute;
+  height: 80%;
+  width: 80%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1px solid var(--shreeji-primary);
+  z-index: 0;
+}
+
+.curved-lines > div::after {
+  content: "";
+  position: absolute;
+  height: 60%;
+  width: 60%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1px solid var(--shreeji-primary);
+  z-index: 0;
 }

@@ -152,7 +152,7 @@ const HeroSection = () => {
             src={logo2}
             alt="Logo"
             quality={100}
-            className="h-auto w-[50%]"
+            className="h-auto w-[50%] hero-logo"
           />
           {/* <h1 className="font-bold text-3xl">Empowering Your Business</h1> */}
           <div className="content">

@@ -214,7 +214,7 @@ const Navbar = () => {
             </li>
           </ul>
 
-          <ThemeBtn />
+          <ThemeBtn isScrolled={isScrolled} />
           <button
             className="block md:hidden focus:outline-none"
             onClick={toggleMenu}

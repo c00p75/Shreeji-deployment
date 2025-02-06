@@ -62,27 +62,6 @@ const discountedProducts = [
     discount: "K6000",
     image: product2,
   },
-  {
-    id: 3,
-    name: "Product 3",
-    price: "K10000",
-    discount: "K7500",
-    image: product3,
-  },
-  {
-    id: 4,
-    name: "Product 4",
-    price: "K12000",
-    discount: "K9000",
-    image: product4,
-  },
-  {
-    id: 5,
-    name: "Product 5",
-    price: "K15000",
-    discount: "K11000",
-    image: product5,
-  },
 ];
 
 const activePannel = 1;
@@ -107,7 +86,7 @@ const ProductCategory = () => {
         <span>Smart</span> & Great <span>Solutions</span>
       </h2>
 
-      <div className="flex gap-20 tab-select mb-20">
+      <div className="flex gap-20 tab-select mb-14">
         {categorySelect.map((cat, index) => (
           <button
             onClick={() => setActiveCat(cat)}
@@ -119,21 +98,37 @@ const ProductCategory = () => {
         ))}
       </div>
 
-      <div className="min-h-screen flex flex-wrap px-32 gap-10">
+      <div className="min-h-screen flex flex-wrap px-32 gap-16">
         {activeCat == "All" &&
           discountedProducts.map((product) => (
-            <div
-              key={product.id}
-              className="product-container w-[20%] rounded-xl bg-[#f5f5f5] cursor-pointer p-4 pb-0 flex flex-col items-center transition-transform duration-200"
-            >
+            // <div
+            //   key={product.id}
+            //   className="product-container w-[20%] rounded-xl bg-[#f5f5f5] cursor-pointer p-4 pb-0 flex flex-col items-center transition-transform duration-200"
+            // >
+            //   <Image
+            //     src={product.image}
+            //     alt={product.name}
+            //     className="w-32 h-32 object-cover mb-2 overflow-visible"
+            //   />
+            //   <h3 className="text-lg font-semibold">{product.name}</h3>
+            //   <p className="text-red-500 font-bold">{product.discount}</p>
+            //   <p className="text-gray-500 line-through">{product.price}</p>
+            // </div>
+
+            <div className="product">
+              <span className="product__price">{product.price}</span>
               <Image
                 src={product.image}
                 alt={product.name}
-                className="w-32 h-32 object-cover mb-2 overflow-visible"
+                className="product__image object-cover mb-2 overflow-visible"
               />
-              <h3 className="text-lg font-semibold">{product.name}</h3>
-              <p className="text-red-500 font-bold">{product.discount}</p>
-              <p className="text-gray-500 line-through">{product.price}</p>
+
+              <h1 className="product__title">{product.name}</h1>
+              <hr />
+              <p>Product discription.</p>
+              <a href="#" className="product__btn btn">
+                Buy Now
+              </a>
             </div>
           ))}
       </div>

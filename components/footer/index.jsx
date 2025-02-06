@@ -2,13 +2,14 @@ import "./style.scss";
 import footerLogo from "@/public/logos/Shreeji Logos w1.png";
 import footerBg from "@/public/backgrounds/footer-bg.jpeg";
 import Image from "next/image";
+import { Facebook, Linkedin } from "lucide-react";
 
 const Footer = () => {
   return (
     <section className="footer-section relative">
       <div className="footer-overlay" />
       <div className="footer-content z-[2] flex text-white gap-5 relative">
-        <div className="w-[30%] flex flex-col gap-5 mr-10">
+        <div className="w-[30%] flex flex-col gap-10 mr-10">
           <Image
             src={footerLogo}
             alt="Shreeji"
@@ -22,22 +23,26 @@ const Footer = () => {
             client satisfaction.
           </p>
         </div>
-        <div className="w-[22%] flex-1 flex flex-col">
+        <div className="w-[22%] flex-1 flex flex-col gap-5">
           <h2>Information</h2>
           <p>About Us</p>
           <p>Privacy & Policy</p>
           <p>Terms & Conditions</p>
         </div>
 
-        <div className="w-[22%] flex-1 flex flex-col">
+        <div className="w-[22%] flex-1 flex flex-col gap-5">
           <h2>Our Social</h2>
-          <p>Facebook</p>
-          <p>Twitter</p>
-          <p>RSS</p>
-          <p>YouTube</p>
+          <p className="flex items-center gap-2">
+            <Linkedin strokeWidth={1} color="#807045" />
+            <span className="pt-1">LinkedIn</span>
+          </p>
+          <p className="flex items-center gap-2">
+            <Facebook color="#807045" strokeWidth={1} />
+            <span className="py-1">Facebook</span>
+          </p>
         </div>
 
-        <div className="w-[22%] flex-1 flex flex-col">
+        <div className="w-[22%] flex-1 flex flex-col gap-5">
           <h2>Openning Time</h2>
           <p>Mon - Fri: 08:00am - 05:00pm</p>
           <p>Shreeji House, Plot No. 1209, Addis Ababa Drive</p>

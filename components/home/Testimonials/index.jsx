@@ -13,7 +13,7 @@ const Testimonials = () => {
       <h2 className="font-bold text-4xl text-center px-32 mt-5 mb-10">
         What Our Clients Say
       </h2>
-      <div className="flex w-full gap-10">
+      <div className="flex w-full gap-10 justify-center">
         <figure className="snip1533">
           <figcaption>
             <blockquote>

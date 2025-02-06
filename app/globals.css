@@ -70,6 +70,11 @@ section {
     }
   }
 
+  .skylift-solutions-section {
+    border-top: 4px solid white;
+    border-bottom: 4px solid white;
+  }
+
   .discounted-product-container {
     background: var(--light-secondary);
     h2 {
@@ -81,7 +86,8 @@ section {
   }
 
   .home-products-category-container {
-    background: var(--light-primary);
+    /* background: var(--light-primary); */
+    background: #f0f0f0;
     h2 span {
       color: var(--dark-primary);
     }
@@ -102,7 +108,13 @@ section {
   }
 
   .our-solutions-section {
-    background: var(--dark-primary);
+    background: radial-gradient(
+      #1d1d1d,
+      #1b1b1b,
+      var(--dark-primary),
+      var(--dark-primary),
+      var(--dark-primary)
+    );
     color: var(--light-primary);
     .service-hover:hover {
       box-shadow: -10px 10px 15px 5px var(--dark-primary);
@@ -114,6 +126,11 @@ section {
     }
   }
 
+  .skylift-solutions-section {
+    background-color: var(--secondary) !important;
+    background-image: url("https://www.transparenttextures.com/patterns/concrete-wall.png") !important;
+  }
+
   .discounted-product-container {
     background: var(--dark-primary);
     h2 {
@@ -122,10 +139,15 @@ section {
         color: var(--light-primary);
       }
     }
+
+    .discounted-card-bg-2 {
+      background: black;
+      color: var(--shreeji-secondary) !important;
+    }
   }
 
   .home-products-category-container {
-    background: var(--shreeji-primary);
+    background: #625532 !important;
 
     h2 {
       color: var(--dark-primary);
@@ -140,6 +162,30 @@ section {
 
     .product-container {
       color: var(--shreeji-primary);
+    }
+
+    .tab-select {
+      .active {
+        background: black !important;
+        color: white !important;
+      }
+    }
+
+    .product {
+      background: #171717 !important;
+    }
+
+    .product__title {
+      color: white !important;
+    }
+
+    .product__price {
+      background: black;
+    }
+
+    .product__btn {
+      background: black;
+      border-color: #171717;
     }
   }
 
@@ -160,6 +206,12 @@ section {
     h4 {
       color: var(--dark-primary);
       opacity: 1 !important;
+    }
+  }
+
+  .footer-section {
+    .footer-overlay {
+      background: black !important;
     }
   }
 }

@@ -35,6 +35,10 @@
   p {
     color: whitesmoke;
   }
+
+  .hero-logo {
+    filter: drop-shadow(0px 0px 1px white);
+  }
 }
 
 .slide-btn-container > button {
