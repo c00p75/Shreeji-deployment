@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Shreeji",
+  title: "Shreeji Investment Ltd",
   description: "Shreeji Investment Ltd",
 };
 
