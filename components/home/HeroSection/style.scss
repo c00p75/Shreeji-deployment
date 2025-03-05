@@ -279,6 +279,10 @@
   color: white;
   background: rgba(135, 112, 63, 0.5);
   text-transform: capitalize;
+
+  @media (width <= 768px) {
+    font-size: 4rem;
+  }
 }
 
 /* title styles */

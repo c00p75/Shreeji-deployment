@@ -42,7 +42,7 @@ const HeroSection = () => {
 
   return (
     <section className="home-hero-section h-screen relative overflow-hidden bg-[var(--primary)]">
-      <div className="video-container absolute right-0 top-0 w-1/2 h-full">
+      <div className="video-container absolute right-0 top-0 w-full md:w-1/2 h-full">
         <Image
           src={it}
           alt="Shreeji"
@@ -93,7 +93,7 @@ const HeroSection = () => {
       </div>
 
       <div className="z-[1] absolute left-0 top-0 h-full w-full hero-overlay" />
-      <div className="absolute right-0 top-0 h-full w-1/2 z-[1] flex-center">
+      <div className="absolute right-0 top-0 h-full w-full md:w-1/2 z-[1] flex-center">
         {/* <h1 className="slider-text">
           {active == 1 && "IT Solutions"}
           {active == 2 && "BPO Services"}
@@ -138,7 +138,7 @@ const HeroSection = () => {
         )}
       </div>
 
-      <div className="z-[1] h-full text-white flex hero-text">
+      <div className="hidden md:flex z-[1] h-full text-white hero-text">
         <video
           className="absolute left-0 top-0 w-full h-full object-cover rounded-lg z-0"
           muted

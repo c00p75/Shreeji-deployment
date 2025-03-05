@@ -4,14 +4,14 @@ import liveChat from "@/public/elements/live-chat.png";
 import laptop from "@/public/elements/laptop.png";
 import factory from "@/public/elements/factory.png";
 import "./style.scss";
-import { Printer } from "lucide-react";
+import { Printer, Triangle } from "lucide-react";
 
 const OurSolutions = () => {
   return (
     <section className="our-solutions-section flex-center pt-10 pb-52 px-16">
-      <h2 className="text-4xl pb-12">Solutions That We Deliver</h2>
+      <h2 className="text-4xl pb-16 relative z-[2]">Solutions That We Deliver</h2>
       <div className="flex w-full gap-10">
-        <div className="flex flex-col justify-between flex-1 gap-16">
+        <div className="flex flex-col justify-between flex-1 gap-16 relative z-[2]">
           <div className="flex flex-col gap-3 service-hover">
             <div className="flex gap-5 items-center">
               <div className="solution-card-img-container px-1 py-2 rounded-[10px]">
@@ -54,21 +54,23 @@ const OurSolutions = () => {
         </div>
 
         <div className="middle-text-container flex-center w-[50%] relative flex-1">
-          <h4 className="font-bold text-6xl text-center mb-10">
-            Over <span className="text-[var(--primary)]">20 Years</span> of
+          <h4 className="font-bold text-6xl text-center mb-10 relative z-[2]">
+            Over <span className="text-[var(--primary)]">25 Years</span> of
             Expertise!
           </h4>
           <Image
             src={bpo}
             alt="SHreeji"
             quality={100}
-            className="hidden z-[1] rounded-2xl w-[20rem] h-[27rem] object-cover object-[70%] grayscale"
+            className="hidden z-[2] rounded-2xl w-[20rem] h-[27rem] object-cover object-[70%] grayscale"
           />
 
-          <div className="hidden absolute z-[0] rounded-2xl w-[20rem] h-[30rem] border-4 border-[var(--primary)] -ml-[50%]" />
+          <div className="middle-text-overlay absolute z-[1]" />
+          <Triangle color="#807045" fill="#807045" strokeWidth={3} className="absolute z-[0] rounded-3xl w-[40%] h-[40%] rotate-[140deg] left-[-2%] top-[-5%]" />
+          <Triangle color="#807045" fill="#807045" strokeWidth={3} className="absolute z-[0] rounded-3xl w-[40%] h-[40%] rotate-[230deg] right-[-2%] bottom-[-5%]" />
         </div>
 
-        <div className="flex flex-col justify-between flex-1 text-right gap-16">
+        <div className="flex flex-col justify-between flex-1 text-right gap-16 relative z-[2]">
           <div className="flex flex-col gap-3 service-hover service-hover-3">
             <div className="flex gap-5 items-center justify-end">
               <h3 className="font-bold text-2xl">

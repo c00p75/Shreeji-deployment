@@ -7,7 +7,7 @@ import Partner5 from "@/public/logos/ESET.png";
 import Partner6 from "@/public/logos/IBM.png";
 import Image from "next/image";
 
-const Partners = () => {
+const Partners   = () => {
   const partners = [
     Partner1,
     Partner2,
@@ -65,4 +65,4 @@ const Partners = () => {
   );
 };
 
-export default Partners;
+export default Partners ;

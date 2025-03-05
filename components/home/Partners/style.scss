@@ -73,3 +73,25 @@
   right: 0;
   background: linear-gradient(to left, white, rgba(255, 255, 255, 0));
 }
+
+.light-theme {
+  .scrollContainer {
+    background: var(--light-primary);
+    color: var(--shreeji-primary);
+
+    .partner-logo-container {
+      background: var(--light-secondary);
+    }
+  } 
+}
+
+.dark-theme {
+  .scrollContainer {
+    background: var(--shreeji-primary);
+    color: var(--light-primary);
+
+    .partner-logo-container {
+      background: var(--light-primary);
+    }
+  }    
+}

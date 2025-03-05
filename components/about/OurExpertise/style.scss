@@ -1,0 +1,14 @@
+.our-expertise {
+  .expertise-card-container {
+    display: flex;
+    flex-wrap: wrap;
+
+    .expertise-card {
+      background: #121212;
+      border-radius: 10px;
+      padding: 1rem;
+      width: 20rem;
+      color: white;
+    }
+  }  
+}

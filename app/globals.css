@@ -12,7 +12,7 @@
   --light-secondary: #f5f5f5;
   --dark-primary: #171717;
   --shreeji-primary: #807045;
-  --shreeji-secondary: #ede5cf;
+  --shreeji-secondary: #dfdbcf;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -20,6 +20,10 @@
     --background: #0a0a0a;
     --foreground: #ededed;
   }
+}
+
+* {
+  scrollbar-color: auto !important;
 }
 
 html {
@@ -50,30 +54,7 @@ section {
 }
 
 .light-theme {
-  background: var(--light-primary);
-  .scrollContainer {
-    background: var(--light-primary);
-    color: var(--shreeji-primary);
-
-    .partner-logo-container {
-      background: var(--light-secondary);
-    }
-  }
-
-  .our-solutions-section {
-    background: var(--light-secondary);
-    color: var(--dark-primary);
-
-    h2 {
-      font-weight: 700;
-      color: var(--shreeji-primary);
-    }
-  }
-
-  .skylift-solutions-section {
-    border-top: 4px solid white;
-    border-bottom: 4px solid white;
-  }
+  background: var(--light-primary); 
 
   .discounted-product-container {
     background: var(--light-secondary);
@@ -98,38 +79,7 @@ section {
   background: var(--primary);
   color: white;
 
-  .scrollContainer {
-    background: var(--shreeji-primary);
-    color: var(--light-primary);
-
-    .partner-logo-container {
-      background: var(--light-primary);
-    }
-  }
-
-  .our-solutions-section {
-    background: radial-gradient(
-      #1d1d1d,
-      #1b1b1b,
-      var(--dark-primary),
-      var(--dark-primary),
-      var(--dark-primary)
-    );
-    color: var(--light-primary);
-    .service-hover:hover {
-      box-shadow: -10px 10px 15px 5px var(--dark-primary);
-    }
-
-    .service-hover-3:hover,
-    .service-hover-4:hover {
-      box-shadow: 10px 10px 15px 5px var(--dark-primary);
-    }
-  }
-
-  .skylift-solutions-section {
-    background-color: var(--secondary) !important;
-    background-image: url("https://www.transparenttextures.com/patterns/concrete-wall.png") !important;
-  }
+  
 
   .discounted-product-container {
     background: var(--dark-primary);

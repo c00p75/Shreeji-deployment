@@ -98,7 +98,7 @@ const DiscountedProducts = () => {
   };
 
   return (
-    <div className="discounted-product-container relative w-screen scroll-smooth pb-28">
+    <div className="discounted-product-container relative w-screen scroll-smooth pb-28 pt-32">
       <h2 className=" font-extrabold text-4xl p-10 underline underline-offset-8 text-center">
         <span>Discounted</span> Products
       </h2>

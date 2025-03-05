@@ -1,0 +1,86 @@
+.mission-vision-section {
+  min-height: fit-content;
+  padding-top: 10rem;
+  padding-bottom: 3.5rem;
+  min-width: 100vw;
+  position: relative;
+  // background-color: var(--secondary);
+  // background-image: url("https://www.transparenttextures.com/patterns/concrete-wall.png");
+  z-index: 1;
+}
+
+.box {
+  // border-radius: 50%;
+  background-image: url("https://www.transparenttextures.com/patterns/concrete-wall.png");
+}
+
+.curved-lines {
+  position: absolute;
+  height: 40vw;
+  width: 40vw;
+  left: -25%;
+  bottom: -50%;
+  border-radius: 50%;
+  border: 1px solid var(--shreeji-primary);
+  z-index: 0;
+}
+
+.curved-lines > div::before {
+  content: "";
+  position: absolute;
+  height: 80%;
+  width: 80%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1px solid var(--shreeji-primary);
+  z-index: 0;
+}
+
+.curved-lines > div::after {
+  content: "";
+  position: absolute;
+  height: 60%;
+  width: 60%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1px solid var(--shreeji-primary);
+  z-index: 0;
+}
+
+.skylift-bg-circle {
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+}
+
+.light-theme {  
+  .skylift-solutions-section {
+    background: radial-gradient(whitesmoke, white);
+    border-top: 4px solid white;
+    border-bottom: 4px solid white;
+  }
+
+  .buildings-bg-img {
+    opacity: 0.2;
+    filter: grayscale(0.6);
+  }
+}
+
+.dark-theme {
+  .skylift-solutions-section {
+    background-color: var(--shreeji-secondary) !important;
+    // background-image: url("https://www.transparenttextures.com/patterns/concrete-wall.png") !important;
+  }
+
+  .buildings-bg-img {
+    opacity: 0.5;
+    filter: grayscale(0.6);
+  }
+}

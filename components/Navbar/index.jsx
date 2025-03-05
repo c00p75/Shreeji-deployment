@@ -120,19 +120,26 @@ const Navbar = () => {
         className={`fixed z-50 w-full transition-all duration-300
         ${
           isScrolled
-            ? "scrolled-nav bg-white bg-opacity-100 text-[var(--primary)]"
+            ? "scrolled-nav bg-opacity-100 text-[var(--primary)]"
             : "bg-white/0"
-        }      
+        } ${pathname == '/products' ? 'scrolled-nav bg-opacity-100 text-[var(--primary)]' : ''}
       `}
       >
         <div className="w-full h-10 bg-white py-5 hidden"></div>
         <div className="container mx-auto flex items-center p-2">
           <Link href="/" className="text-lg font-bold">
             <Image
-              src={isScrolled ? logo : logo2}
+              src={logo}
               alt="Logo"
               quality={100}
-              className="h-10 md:h-16 w-auto nav-logo"
+              className="logo-light h-10 md:h-16 w-auto nav-logo"
+            />
+
+            <Image
+              src={logo2}
+              alt="Logo"
+              quality={100}
+              className="logo-dark absolute top-[0.5rem] h-10 md:h-16 w-auto nav-logo"
             />
           </Link>
 
@@ -176,9 +183,9 @@ const Navbar = () => {
 
             <li>
               <Link
-                href="/impact-and-sustainability"
+                href="/products"
                 className={` ${
-                  pathname == "/impact-and-sustainability"
+                  pathname == "/products"
                     ? "active-link"
                     : "hover:text-gray-300"
                 }`}

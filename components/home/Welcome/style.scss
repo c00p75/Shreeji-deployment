@@ -1,0 +1,27 @@
+.welcome {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  // background-color: var(--secondary);
+  // background-image: url("https://www.transparenttextures.com/patterns/brushed-alum-dark.png");
+  // height: 100vh;
+  height: fit-content;
+  color: var(--primary);
+  
+
+  .welcome-text {
+    padding-block: 4rem;  
+  }
+}
+
+.dark-theme {
+  .welcome {
+    background: #695c38;
+    color: white;
+  }
+
+
+}

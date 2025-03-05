@@ -80,7 +80,7 @@ const ProductCategory = () => {
   return (
     <div className="home-products-category-container relative w-screen scroll-smooth pb-28 flex-center">
       <p className="text-center pt-20 text-xl font-bold">
-        Solutions That Deliver
+        Solutions That We Deliver
       </p>
       <h2 className="uppercase text-[var(--primary)] font-extrabold text-4xl p-10 text-center">
         <span>Smart</span> & Great <span>Solutions</span>

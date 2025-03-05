@@ -1,0 +1,40 @@
+// .logos-slide {
+//   animation: 20s scroll infinite linear;
+//   transition: all ease-in-out 0.2s;
+// }
+
+// @keyframes scroll {
+//   from {
+//     transform: translateX(0);
+//   }
+//   to {
+//     transform: translateX(-100%);
+//   }
+// }
+
+/* .logos:hover .logos-slide {
+  animation-play-state: paused;
+} */
+
+.our-story {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  height: fit-content;
+  padding-block: 4rem;
+
+  .stat-container {
+    p {
+      padding-block: 2rem;
+      border-bottom: 1px solid #17171787;
+    }
+
+    p span:first-child {
+      font-weight: bold;
+      font-size: 2rem;
+      padding-right: 0.5rem;
+      color: white;
+    }
+  }
+}

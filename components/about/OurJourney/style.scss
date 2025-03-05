@@ -1,0 +1,26 @@
+:root {
+  --desktop-padding: calc(5rem + 10px);
+}
+
+.our-journey {
+  .milestone {
+    min-width: 26rem;
+    flex-direction: column;
+    
+    img {
+      width: 25rem;
+      height: 15rem;
+    }
+  }
+
+  .milestone:first-child {
+    margin-left: 7rem;
+  }
+    .milestone-title {
+      width: 100%;
+    }
+  // } 
+
+      
+}
+
