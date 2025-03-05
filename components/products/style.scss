@@ -1,27 +1,39 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 
 .products-hero-section {
-  background-color: white;
+  background-color: #ffffff;
   padding-top: 5.5rem;
+  display: flex;
+  align-items: flex-start;
+  overflow: visible;
+  width: 100vw;
 
   .side-grid,
   .side-grid > div,
-  .main-grid > div {
+  .main-grid > div,
+  .featured-section {
     border-radius: 20px;
   }
 
+  .main-grid {
+    min-height: 200vh;
+  }
+
   .side-grid {
-    max-height: 85vh;
     position: sticky;
-    overflow: auto;
+    top: 5.5rem;
+    align-self: flex-start;
+    overflow-y: auto;
+    height: 87vh;
   }
 
   .scroll-container::-webkit-scrollbar {
     background-color: transparent;
-    width: 8px;
+    width: 6px;
     height: 10px;
     opacity: 1 !important;
     border-radius: 10px;
+    transition: all 0.5s ease-in-out;
   }
 
   .scroll-container::-webkit-scrollbar-thumb:hover  {
@@ -29,7 +41,7 @@
   }
 
   .scroll-container::-webkit-scrollbar-thumb {
-    background-color: #605432c3;
+    background-color: #6054325e;
     width: 7px;
     border-radius: 10px;
     margin: 2px;
