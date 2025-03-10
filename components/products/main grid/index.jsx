@@ -16,7 +16,7 @@ const MainGrid = () => {
   let heroProductImage = heroProduct();
   let product = getProductByName('HP Proliant ML110 Desktop Server')
   return (
-    <section className="main-grid flex-[3] relative flex flex-col gap-5">
+    <section className="main-grid relative flex flex-col gap-5">
         <PrimaryPromotionalBanner promoProduct={product} />
 
         <LatestProductsByCategory category="Computers" count={5} heading="Latest Computers" />

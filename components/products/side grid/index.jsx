@@ -4,7 +4,7 @@ import HotDeals from './hot deals'
 
 const SideGrid = () => {
   return (
-    <section className="flex-[1] side-grid scroll-container flex flex-col gap-5">
+    <section className="flex-[2] side-grid scroll-container flex flex-col gap-5">
         <Categories />        
         {/* <HotDeals products={allProducts} heading={'Hot Deals'} /> */}
       </section>

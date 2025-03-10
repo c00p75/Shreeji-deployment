@@ -18,16 +18,18 @@
 
   .main-grid {
     min-height: 200vh;
+    flex: 7;
   }
 
   .side-grid {
     position: sticky;
+    height: 100%;
     top: 5.5rem;
     align-self: flex-start;
     overflow-y: auto;
     height: 85vh;
   }
-
+  
   .scroll-container::-webkit-scrollbar {
     background-color: transparent;
     width: 6px;

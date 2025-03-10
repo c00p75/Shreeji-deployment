@@ -4,11 +4,12 @@ import Image from 'next/image';
 import React, { useEffect, useRef, useState } from 'react'
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight, Triangle } from "lucide-react";
-import { getRecentProductsBySubCategory } from '@/app/data/productsData';
+import { getRecentProductsByCategory } from '@/app/data/productsData';
 
-const LatestProductsBySubCategory = ({subcategory, count, heading}) => {  
-  let latestProducts = getRecentProductsBySubCategory(subcategory, count)
-
+const productCategory = ({category, count, heading}) => {
+  
+  let latestProducts = getRecentProductsByCategory(category, count)
+  
 
   const scrollRef = useRef(null);
   const scroll = (direction) => {
@@ -29,6 +30,7 @@ const LatestProductsBySubCategory = ({subcategory, count, heading}) => {
             onClick={() => scroll("left")}
             className="z-10 bg-white shadow-lg rounded-full p-3 h-10 w-10 flex-center"
           >
+            
             <ChevronLeft strokeWidth={3} className="w-6 h-6" />
           </button>
 
@@ -50,10 +52,8 @@ const LatestProductsBySubCategory = ({subcategory, count, heading}) => {
                 : `/products/${encodeURIComponent(product.category)}/${encodeURIComponent(product.name)}`
             }
           >
-            <div className="mr-2 px-5 flex flex-col gap-2 items-center py-4 cursor-pointer min-w-[20rem]">
-              <div className='h-auto w-[15rem] py-14 px-5 bg-white/80 rounded-2xl'>
-                <Image src={product["image"]} alt={product["name"]} className="h-auto w-full object-cover" />
-              </div>
+            <div className="mr-2 px-5 flex flex-col gap-2 items-center py-4 cursor-pointer min-w-[30rem]">
+              <Image src={product["image"]} alt={product["name"]} className="h-auto w-[20rem] object-cover" />
               <p className="text-center mt-2 text-white">{product.name}</p>
               <div className='flex gap-3'>
                 <p className='line-through'>{product["price"]}</p>
@@ -61,10 +61,13 @@ const LatestProductsBySubCategory = ({subcategory, count, heading}) => {
               </div>
             </div>
           </Link>
+          // <div key={index} className="mr-2 px-5 flex gap-5 items-center py-4 cursor-pointer min-w-[30rem]">
+          //   <Image src={product["image"]} alt={product["name"]} className="h-auto w-[20rem] object-cover" />
+          // </div>
         ))}
       </div>
     </div> 
   )
 }
 
-export default LatestProductsBySubCategory
+export default productCategory

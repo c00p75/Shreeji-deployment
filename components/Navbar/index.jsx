@@ -124,7 +124,7 @@ const Navbar = () => {
             isScrolled
               ? "scrolled-nav bg-opacity-100 text-[var(--primary)]"
               : "bg-white/0"
-          } ${pathname == '/products' ? 'scrolled-nav bg-opacity-100 text-[var(--primary)]' : ''}
+          } ${pathname.includes("/products") ? 'scrolled-nav bg-opacity-100 text-[var(--primary)]' : ''}
         `}
         >
           <div className="w-full h-10 bg-white py-5 hidden"></div>

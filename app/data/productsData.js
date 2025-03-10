@@ -3871,17 +3871,23 @@ export const heroProduct = () => {
 }
 
 export const getRecentProductsByCategory = (category, count) => {
-  return allProducts
+  let products = allProducts
     .filter(product => product.category === category)
     .sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded))
-    .slice(0, count);
+    
+  if(count){ return products.slice(0, count); } 
+
+  return products  
 };
 
 export const getRecentProductsBySubCategory = (subcategory, count) => {
-  return allProducts
+  let products = allProducts
     .filter(product => product.subcategory === subcategory)
     .sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded))
-    .slice(0, count);
+
+  if(count){ return products.slice(0, count); } 
+
+  return products; 
 };
 
 export const getProductByName = (name) => {

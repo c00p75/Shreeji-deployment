@@ -29,7 +29,7 @@ const Categories = () => {
   }, []);
 
   return (
-    <div className="bg-[var(--shreeji-primary)] flex flex-col px-5 py-7 h-auto">
+    <div className={`bg-[var(--shreeji-primary)] flex flex-col px-5 py-7 ${openCategory ? 'h-auto' : 'h-[85vh]'}`}>
       <ul>
         {categories.map(({ category, subcategories }, index) => (
           <li
