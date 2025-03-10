@@ -2,35 +2,14 @@
 
 import Image from 'next/image';
 import React, { useEffect, useRef, useState } from 'react'
+import Link from 'next/link';
 import { ChevronLeft, ChevronRight, Triangle } from "lucide-react";
+import { getRecentProductsByCategory } from '@/app/data/productsData';
 
-const LatestProducts1 = ({products, heading}) => {
-  let allProducts = products;
-  console.log(allProducts)
-  const [latestProducts, setLatestProducts] = useState([])
-
-  useEffect(() => {
-    const getRecentProducts = (products) => {
-      let productsArr = [];
-      
-      for (const category in products) {
-          for (const productName in products[category]) {
-              const product = products[category][productName];
-              productsArr.push({
-                  name: productName,
-                  image: product.image,
-                  price: product.price,
-                  dateAdded: new Date(product['date-added'])
-              });
-          }
-      }    
-      productsArr.sort((a, b) => b.dateAdded - a.dateAdded);
-      
-      return productsArr.slice(0, 6);
-    }
+const LatestProductsByCategory = ({category, count, heading}) => {
   
-    setLatestProducts(getRecentProducts(allProducts));
-  }, [allProducts])
+  let latestProducts = getRecentProductsByCategory(category, count)
+  // console.log(latestProducts)
 
   const scrollRef = useRef(null);
   const scroll = (direction) => {
@@ -65,13 +44,30 @@ const LatestProducts1 = ({products, heading}) => {
       </div>
       <div ref={scrollRef} className='flex overflow-x-auto overflow-visible scroll-container mt-10'>
         {latestProducts.map((product, index) => (
-          <div key={index} className="mr-2 px-5 flex gap-5 items-center py-4 cursor-pointer min-w-[30rem]">
-            <Image src={product.image} alt={product.name} className="h-auto w-[20rem] object-cover" />
-          </div>
+          <Link 
+            key={index}
+            href={
+              product["subcategory"]
+                ? `/products/${encodeURIComponent(product.category)}/${encodeURIComponent(product["subcategory"])}/${encodeURIComponent(product.name)}`
+                : `/products/${encodeURIComponent(product.category)}/${encodeURIComponent(product.name)}`
+            }
+          >
+            <div className="mr-2 px-5 flex flex-col gap-2 items-center py-4 cursor-pointer min-w-[30rem]">
+              <Image src={product["image"]} alt={product["name"]} className="h-auto w-[20rem] object-cover" />
+              <p className="text-center mt-2 text-white">{product.name}</p>
+              <div className='flex gap-3'>
+                <p className='line-through'>{product["price"]}</p>
+                <p>{product["discounted price"]}</p>
+              </div>
+            </div>
+          </Link>
+          // <div key={index} className="mr-2 px-5 flex gap-5 items-center py-4 cursor-pointer min-w-[30rem]">
+          //   <Image src={product["image"]} alt={product["name"]} className="h-auto w-[20rem] object-cover" />
+          // </div>
         ))}
       </div>
     </div> 
   )
 }
 
-export default LatestProducts1
+export default LatestProductsByCategory

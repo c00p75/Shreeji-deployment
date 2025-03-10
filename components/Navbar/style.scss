@@ -10,6 +10,8 @@ nav {
       margin-right: 4rem;
     }
   }
+
+  .active-link:hover {cursor: default !important;}
 }
 .nav-logo {
   height: 4rem;
@@ -23,12 +25,10 @@ nav {
     height: 3rem;
   }
 
-  .active-link {
-    cursor: default;
+  .active-link {   
     border-bottom: 2px solid #87703f;
   }
   
-
   ul {
     padding: 0;
     background: none;
@@ -174,13 +174,15 @@ nav {
     } 
   }
 
-  a:hover {
-    color: #4d4024;
-  }
+  header {
+    a:hover {
+      color: #4d4024;
+    }
 
-  .active-link:hover {
-    color: white;
-  } 
+    .active-link:hover {
+      color: white;
+    } 
+  }
 }
 
 .dark-theme {

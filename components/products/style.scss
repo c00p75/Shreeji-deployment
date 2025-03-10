@@ -1,7 +1,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 
-.products-hero-section {
-  background-color: #ffffff;
+.products-main-section {
+  // background-color: #d1c29b;
+  background: beige;
   padding-top: 5.5rem;
   display: flex;
   align-items: flex-start;
@@ -24,7 +25,7 @@
     top: 5.5rem;
     align-self: flex-start;
     overflow-y: auto;
-    height: 87vh;
+    height: 85vh;
   }
 
   .scroll-container::-webkit-scrollbar {

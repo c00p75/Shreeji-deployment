@@ -122,8 +122,8 @@ const HeroSection = () => {
         {active == 3 && (
           <div className="text-container">
             <h1 className="home-title">
-              <span>Print</span>
-              <span>Advertisement</span>
+              <span>Print Production </span>
+              <span>and Services</span>
             </h1>
           </div>
         )}
@@ -132,7 +132,7 @@ const HeroSection = () => {
           <div className="text-container">
             <h1 className="home-title">
               <span>Skylift</span>
-              <span>Services</span>
+              <span>Rentals</span>
             </h1>
           </div>
         )}

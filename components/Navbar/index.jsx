@@ -116,240 +116,243 @@ const Navbar = () => {
         </svg>
       </Link>
 
-      <nav
-        className={`fixed z-50 w-full transition-all duration-300
-        ${
-          isScrolled
-            ? "scrolled-nav bg-opacity-100 text-[var(--primary)]"
-            : "bg-white/0"
-        } ${pathname == '/products' ? 'scrolled-nav bg-opacity-100 text-[var(--primary)]' : ''}
-      `}
-      >
-        <div className="w-full h-10 bg-white py-5 hidden"></div>
-        <div className="container mx-auto flex items-center p-2">
-          <Link href="/" className="text-lg font-bold">
-            <Image
-              src={logo}
-              alt="Logo"
-              quality={100}
-              className="logo-light h-10 md:h-16 w-auto nav-logo"
-            />
-
-            <Image
-              src={logo2}
-              alt="Logo"
-              quality={100}
-              className="logo-dark absolute top-[0.5rem] h-10 md:h-16 w-auto nav-logo"
-            />
-          </Link>
-
-          <ul className="hidden md:flex space-x-6 pl-1 py-5 rounded-lg">
-            <li>
-              <Link
-                href="/"
-                className={` ${
-                  pathname == "/" ? "active-link" : "hover:text-gray-300"
-                }`}
-              >
-                Home
-              </Link>
-            </li>
-
-            <li>
-              <Link
-                href="/about-us"
-                className={` ${
-                  pathname == "/about-us"
-                    ? "active-link"
-                    : "hover:text-gray-300"
-                }`}
-              >
-                About Us
-              </Link>
-            </li>
-
-            <li>
-              <Link
-                href="/services"
-                className={` ${
-                  pathname == "/services"
-                    ? "active-link"
-                    : "hover:text-gray-300"
-                }`}
-              >
-                Services
-              </Link>
-            </li>
-
-            <li>
-              <Link
-                href="/products"
-                className={` ${
-                  pathname == "/products"
-                    ? "active-link"
-                    : "hover:text-gray-300"
-                }`}
-              >
-                Products
-              </Link>
-            </li>
-
-            <li>
-              <Link
-                href="/collaborate-with-us"
-                className={` ${
-                  pathname == "/collaborate-with-us"
-                    ? "active-link"
-                    : "hover:text-gray-300"
-                }`}
-              >
-                Collaborate
-              </Link>
-            </li>
-
-            <li>
-              <Link
-                href="/contact-us"
-                className={` ${
-                  pathname == "/contact-us"
-                    ? "active-link"
-                    : "hover:text-gray-300"
-                }`}
-              >
-                Contact Us
-              </Link>
-            </li>
-          </ul>
-
-          <ThemeBtn isScrolled={isScrolled} />
-          <button
-            className="block md:hidden focus:outline-none"
-            onClick={toggleMenu}
-          >
-            <svg
-              className="w-9 h-9"
-              fill="none"
-              stroke="white"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d={
-                  isMenuOpen
-                    ? "M6 18L18 6M6 6l12 12"
-                    : "M4 6h16M4 12h16M4 18h16"
-                }
-              ></path>
-            </svg>
-          </button>
-        </div>
-
-        {isMenuOpen && (
-          <div
-            className="fixed inset-0 bg-black bg-opacity-50 z-40"
-            onClick={closeMenu}
-          ></div>
-        )}
-
-        <div
-          className={`fixed top-0 right-0 h-full w-64 bg-gray-800 z-50 transform transition-transform duration-300 ${
-            isMenuOpen ? "translate-x-0" : "translate-x-full"
-          }`}
+      <header id="website-navigation">      
+        <nav
+          
+          className={`fixed z-50 w-full transition-all duration-300
+          ${
+            isScrolled
+              ? "scrolled-nav bg-opacity-100 text-[var(--primary)]"
+              : "bg-white/0"
+          } ${pathname == '/products' ? 'scrolled-nav bg-opacity-100 text-[var(--primary)]' : ''}
+        `}
         >
-          <div className="w-full flex justify-end">
+          <div className="w-full h-10 bg-white py-5 hidden"></div>
+          <div className="container mx-auto flex items-center p-2">
+            <Link href="/" className="text-lg font-bold">
+              <Image
+                src={logo}
+                alt="Logo"
+                quality={100}
+                className="logo-light h-10 md:h-16 w-auto nav-logo"
+              />
+
+              <Image
+                src={logo2}
+                alt="Logo"
+                quality={100}
+                className="logo-dark absolute top-[0.5rem] h-10 md:h-16 w-auto nav-logo"
+              />
+            </Link>
+
+            <ul className="hidden md:flex space-x-6 pl-1 py-5 rounded-lg">
+              <li>
+                <Link
+                  href="/"
+                  className={` ${
+                    pathname == "/" ? "active-link" : "hover:text-gray-300"
+                  }`}
+                >
+                  Home
+                </Link>
+              </li>
+
+              <li>
+                <Link
+                  href="/about-us"
+                  className={` ${
+                    pathname == "/about-us"
+                      ? "active-link"
+                      : "hover:text-gray-300"
+                  }`}
+                >
+                  About Us
+                </Link>
+              </li>
+
+              <li>
+                <Link
+                  href="/services"
+                  className={` ${
+                    pathname == "/services"
+                      ? "active-link"
+                      : "hover:text-gray-300"
+                  }`}
+                >
+                  Services
+                </Link>
+              </li>
+
+              <li>
+                <Link
+                  href="/products"
+                  className={` ${
+                    pathname == "/products"
+                      ? "active-link"
+                      : "hover:text-gray-300"
+                  }`}
+                >
+                  Products
+                </Link>
+              </li>
+
+              <li>
+                <Link
+                  href="/collaborate-with-us"
+                  className={` ${
+                    pathname == "/collaborate-with-us"
+                      ? "active-link"
+                      : "hover:text-gray-300"
+                  }`}
+                >
+                  Collaborate
+                </Link>
+              </li>
+
+              <li>
+                <Link
+                  href="/contact-us"
+                  className={` ${
+                    pathname == "/contact-us"
+                      ? "active-link"
+                      : "hover:text-gray-300"
+                  }`}
+                >
+                  Contact Us
+                </Link>
+              </li>
+            </ul>
+
+            <ThemeBtn isScrolled={isScrolled} />
             <button
-              className="text-white m-4 focus:outline-none"
-              onClick={closeMenu}
+              className="block md:hidden focus:outline-none"
+              onClick={toggleMenu}
             >
               <svg
-                viewBox="0 0 1024 1024"
+                className="w-9 h-9"
+                fill="none"
+                stroke="white"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
                 xmlns="http://www.w3.org/2000/svg"
-                fill="#ffffff"
-                stroke="#ffffff"
-                height={30}
-                width={30}
               >
-                <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
-                <g
-                  id="SVGRepo_tracerCarrier"
+                <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                ></g>
-                <g id="SVGRepo_iconCarrier">
-                  <path
-                    fill="#ffffff"
-                    d="M195.2 195.2a64 64 0 0 1 90.496 0L512 421.504 738.304 195.2a64 64 0 0 1 90.496 90.496L602.496 512 828.8 738.304a64 64 0 0 1-90.496 90.496L512 602.496 285.696 828.8a64 64 0 0 1-90.496-90.496L421.504 512 195.2 285.696a64 64 0 0 1 0-90.496z"
-                  ></path>
-                </g>
+                  d={
+                    isMenuOpen
+                      ? "M6 18L18 6M6 6l12 12"
+                      : "M4 6h16M4 12h16M4 18h16"
+                  }
+                ></path>
               </svg>
             </button>
           </div>
-          <ul className="space-y-8 p-4">
-            <li>
-              <Link
-                href="/"
-                className="block text-white hover:text-gray-300"
-                onClick={closeMenu}
-              >
-                Home
-              </Link>
-            </li>
 
-            <li>
-              <Link
-                href="/about-us"
-                className="block text-white hover:text-gray-300"
-                onClick={closeMenu}
-              >
-                About Us
-              </Link>
-            </li>
+          {isMenuOpen && (
+            <div
+              className="fixed inset-0 bg-black bg-opacity-50 z-40"
+              onClick={closeMenu}
+            ></div>
+          )}
 
-            <li>
-              <Link
-                href="/services"
-                className="block text-white hover:text-gray-300"
+          <div
+            className={`fixed top-0 right-0 h-full w-64 bg-gray-800 z-50 transform transition-transform duration-300 ${
+              isMenuOpen ? "translate-x-0" : "translate-x-full"
+            }`}
+          >
+            <div className="w-full flex justify-end">
+              <button
+                className="text-white m-4 focus:outline-none"
                 onClick={closeMenu}
               >
-                Services
-              </Link>
-            </li>
+                <svg
+                  viewBox="0 0 1024 1024"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="#ffffff"
+                  stroke="#ffffff"
+                  height={30}
+                  width={30}
+                >
+                  <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+                  <g
+                    id="SVGRepo_tracerCarrier"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  ></g>
+                  <g id="SVGRepo_iconCarrier">
+                    <path
+                      fill="#ffffff"
+                      d="M195.2 195.2a64 64 0 0 1 90.496 0L512 421.504 738.304 195.2a64 64 0 0 1 90.496 90.496L602.496 512 828.8 738.304a64 64 0 0 1-90.496 90.496L512 602.496 285.696 828.8a64 64 0 0 1-90.496-90.496L421.504 512 195.2 285.696a64 64 0 0 1 0-90.496z"
+                    ></path>
+                  </g>
+                </svg>
+              </button>
+            </div>
+            <ul className="space-y-8 p-4">
+              <li>
+                <Link
+                  href="/"
+                  className="block text-white hover:text-gray-300"
+                  onClick={closeMenu}
+                >
+                  Home
+                </Link>
+              </li>
 
-            <li>
-              <Link
-                href="/impact-and-sustainability"
-                className="block text-white hover:text-gray-300"
-                onClick={closeMenu}
-              >
-                Products
-              </Link>
-            </li>
+              <li>
+                <Link
+                  href="/about-us"
+                  className="block text-white hover:text-gray-300"
+                  onClick={closeMenu}
+                >
+                  About Us
+                </Link>
+              </li>
 
-            <li>
-              <Link
-                href="/collaborate-with-us"
-                className="block text-white hover:text-gray-300"
-                onClick={closeMenu}
-              >
-                Collaborate
-              </Link>
-            </li>
+              <li>
+                <Link
+                  href="/services"
+                  className="block text-white hover:text-gray-300"
+                  onClick={closeMenu}
+                >
+                  Services
+                </Link>
+              </li>
 
-            <li>
-              <Link
-                href="/contact-us"
-                className="block text-white hover:text-gray-300"
-                onClick={closeMenu}
-              >
-                Contact Us
-              </Link>
-            </li>
-          </ul>
-        </div>
-      </nav>
+              <li>
+                <Link
+                  href="/impact-and-sustainability"
+                  className="block text-white hover:text-gray-300"
+                  onClick={closeMenu}
+                >
+                  Products
+                </Link>
+              </li>
+
+              <li>
+                <Link
+                  href="/collaborate-with-us"
+                  className="block text-white hover:text-gray-300"
+                  onClick={closeMenu}
+                >
+                  Collaborate
+                </Link>
+              </li>
+
+              <li>
+                <Link
+                  href="/contact-us"
+                  className="block text-white hover:text-gray-300"
+                  onClick={closeMenu}
+                >
+                  Contact Us
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </header>
     </>
   );
 };
