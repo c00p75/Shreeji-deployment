@@ -10,8 +10,6 @@ import ProductPreview from '../../ProductPreview';
 const LatestProductsByCategory = ({category, count, heading}) => {
   
   let latestProducts = filterProducts('category', category, count)
-  // console.log(latestProducts)
-
   const scrollRef = useRef(null);
   const scroll = (direction) => {
     if (scrollRef.current) {

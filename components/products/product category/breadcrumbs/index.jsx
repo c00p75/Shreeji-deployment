@@ -2,7 +2,6 @@ import Link from "next/link";
 import React from "react";
 
 const Breadcrumbs = ({ breadcrumbs }) => {
-  console.log(breadcrumbs)
   return (
     <div className="bg-[var(--shreeji-primary)] text-xl font-medium mt-1 p-5 [text-shadow:2px_2px_4px_rgba(0,0,0,0.3)] px-10">
       <Link

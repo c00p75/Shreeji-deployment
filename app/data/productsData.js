@@ -302,7 +302,7 @@ export const allProducts = [
     "subcategory": "Desktops",
     "image": productImages.HPEnvyMOVE,
     "brand": "Dell",
-    "brand logo": "",
+    "brand logo": brandLogo.Dell,
     "specs": {
       "processor": "Intel Core i5-4590",
       "RAM": "8GB DDR3",
@@ -656,7 +656,7 @@ export const allProducts = [
     "subcategory": "Laptops",
     "image": productImages.HPEnvyMOVE,
     "brand": "Dell",
-    "brand logo": "",
+    "brand logo": brandLogo.Dell,
     "specs": {
       "processor": "Intel Core i3/i5/i7 (5th Gen)",
       "RAM": "Up to 16GB DDR3L",
@@ -677,7 +677,7 @@ export const allProducts = [
     "subcategory": "Laptops",
     "image": productImages.HPEnvyMOVE,
     "brand": "Dell",
-    "brand logo": "",
+    "brand logo": brandLogo.Dell,
     "specs": {
       "processor": "Intel Core i5/i7 (4th Gen)",
       "RAM": "Up to 16GB DDR3L",
@@ -698,7 +698,7 @@ export const allProducts = [
     "subcategory": "Laptops",
     "image": productImages.HPEnvyMOVE,
     "brand": "Dell",
-    "brand logo": "",
+    "brand logo": brandLogo.Dell,
     "specs": {
       "processor": "Intel Core i5/i7 (5th Gen)",
       "RAM": "Up to 16GB DDR3L",
@@ -719,7 +719,7 @@ export const allProducts = [
     "subcategory": "Laptops",
     "image": productImages.HPEnvyMOVE,
     "brand": "Dell",
-    "brand logo": "",
+    "brand logo": brandLogo.Dell,
     "specs": {
       "processor": "Intel Core i5/i7 (5th Gen)",
       "RAM": "Up to 16GB DDR3L",
@@ -740,7 +740,7 @@ export const allProducts = [
     "subcategory": "Laptops",
     "image": productImages.HPEnvyMOVE,
     "brand": "Dell",
-    "brand logo": "",
+    "brand logo": brandLogo.Dell,
     "specs": {
       "processor": "Intel Core i5/i7 (5th Gen)",
       "RAM": "Up to 16GB DDR3L",
@@ -761,7 +761,7 @@ export const allProducts = [
     "subcategory": "Laptops",
     "image": productImages.HPEnvyMOVE,
     "brand": "Dell",
-    "brand logo": "",
+    "brand logo": brandLogo.Dell,
     "specs": {
       "processor": "Intel Core i5/i7 (5th Gen)",
       "RAM": "Up to 16GB DDR3L",
@@ -782,7 +782,7 @@ export const allProducts = [
     "subcategory": "Laptops",
     "image": productImages.HPEnvyMOVE,
     "brand": "Dell",
-    "brand logo": "",
+    "brand logo": brandLogo.Dell,
     "specs": {
       "processor": "Intel Core Ultra i5-1255U",
       "RAM": "16GB LPDDR5x",
@@ -803,7 +803,7 @@ export const allProducts = [
     "subcategory": "Laptops",
     "image": productImages.HPEnvyMOVE,
     "brand": "Dell",
-    "brand logo": "",
+    "brand logo": brandLogo.Dell,
     "specs": {
       "processor": "Intel Core i7-1365U",
       "RAM": "16GB LPDDR5",
@@ -824,7 +824,7 @@ export const allProducts = [
     "subcategory": "Laptops",
     "image": productImages.HPEnvyMOVE,
     "brand": "Dell",
-    "brand logo": "",
+    "brand logo": brandLogo.Dell,
     "specs": {
       "processor": "Intel Core i7-1365U",
       "RAM": "16GB LPDDR5",
@@ -845,7 +845,7 @@ export const allProducts = [
     "subcategory": "Laptops",
     "image": productImages.HPEnvyMOVE,
     "brand": "Dell",
-    "brand logo": "",
+    "brand logo": brandLogo.Dell,
     "specs": {
       "processor": "Intel Core i7-13700H",
       "RAM": "32GB DDR5",
@@ -866,7 +866,7 @@ export const allProducts = [
     "subcategory": "Laptops",
     "image": productImages.HPEnvyMOVE,
     "brand": "Dell",
-    "brand logo": "",
+    "brand logo": brandLogo.Dell,
     "specs": {
       "processor": "Intel Core Ultra 7 155H vPro® Essentials (24 MB cache, 16 cores, 22 threads, up to 4.8 GHz, 45W)",
       "RAM": "Up to 32GB DDR5, 5600 MT/s, non-ECC",
@@ -887,7 +887,7 @@ export const allProducts = [
     "subcategory": "Laptops",
     "image": productImages.HPEnvyMOVE,
     "brand": "Dell",
-    "brand logo": "",
+    "brand logo": brandLogo.Dell,
     "specs": {
       "processor": "Intel Core Ultra 7 165H vPro® Enterprise (24MB cache, 16 cores, 22 threads, up to 5.0 GHz Turbo, 45W)",
       "RAM": "Up to 32GB DDR5, 5600 MT/s, non-ECC",
@@ -908,7 +908,7 @@ export const allProducts = [
     "subcategory": "Laptops",
     "image": productImages.HPEnvyMOVE,
     "brand": "Dell",
-    "brand logo": "",
+    "brand logo": brandLogo.Dell,
     "specs": {
       "processor": "Intel Core i5-1135G7 (4 cores, 8 threads, 2.4 GHz to 4.2 GHz)",
       "RAM": "8 GB DDR4",
@@ -929,7 +929,7 @@ export const allProducts = [
     "subcategory": "Laptops",
     "image": productImages.HPEnvyMOVE,
     "brand": "Dell",
-    "brand logo": "",
+    "brand logo": brandLogo.Dell,
     "specs": {
       "processor": "Intel Core i3-1115G4 (2 cores, 4 threads, 3.0 GHz to 4.1 GHz)",
       "RAM": "4 GB DDR4",
@@ -950,7 +950,7 @@ export const allProducts = [
     "subcategory": "Laptops",
     "image": productImages.HPEnvyMOVE,
     "brand": "Dell",
-    "brand logo": "",
+    "brand logo": brandLogo.Dell,
     "specs": {
       "processor": "Intel Core i5-1235U (10 cores, 12 threads, 1.3 GHz to 4.4 GHz)",
       "RAM": "8 GB DDR4",
@@ -971,7 +971,7 @@ export const allProducts = [
     "subcategory": "Laptops",
     "image": productImages.HPEnvyMOVE,
     "brand": "Dell",
-    "brand logo": "",
+    "brand logo": brandLogo.Dell,
     "specs": {
       "processor": "Intel Core i7-1165G7 (4 cores, 8 threads, 2.8 GHz to 4.7 GHz)",
       "RAM": "16 GB DDR4",
@@ -992,7 +992,7 @@ export const allProducts = [
     "subcategory": "Laptops",
     "image": productImages.HPEnvyMOVE,
     "brand": "Dell",
-    "brand logo": "",
+    "brand logo": brandLogo.Dell,
     "specs": {
       "processor": "Intel Core i7-12700U (12 cores, 16 threads, 1.2 GHz to 4.8 GHz)",
       "RAM": "16 GB DDR4",
@@ -1013,7 +1013,7 @@ export const allProducts = [
     "subcategory": "Laptops",
     "image": productImages.HPEnvyMOVE,
     "brand": "Dell",
-    "brand logo": "",
+    "brand logo": brandLogo.Dell,
     "specs": {
       "processor": "Qualcomm Snapdragon X Elite X1E-80-100 (12 cores, up to 3.4 GHz dual-core boost)",
       "RAM": "16GB LPDDR5, 8448MT/s",
@@ -1034,7 +1034,7 @@ export const allProducts = [
     "subcategory": "Laptops",
     "image": productImages.HPEnvyMOVE,
     "brand": "Dell",
-    "brand logo": "",
+    "brand logo": brandLogo.Dell,
     "specs": {
       "processor": "Intel Core Ultra 7 155H (24 MB cache, 16 cores, up to 4.8 GHz)",
       "RAM": "Up to 32GB LPDDR5X",
@@ -1055,7 +1055,7 @@ export const allProducts = [
     "subcategory": "Laptops",
     "image": productImages.HPEnvyMOVE,
     "brand": "Dell",
-    "brand logo": "",
+    "brand logo": brandLogo.Dell,
     "specs": {
       "processor": "Intel Core Ultra 7 256V (Lunar Lake)",
       "RAM": "16GB LPDDR5X",
@@ -1076,7 +1076,7 @@ export const allProducts = [
     "subcategory": "Laptops",
     "image": productImages.HPEnvyMOVE,
     "brand": "Dell",
-    "brand logo": "",
+    "brand logo": brandLogo.Dell,
     "specs": {
       "processor": "Intel Core Ultra 7 155H (24 MB cache, 16 cores, up to 4.8 GHz)",
       "RAM": "Up to 32GB LPDDR5X",
@@ -1097,7 +1097,7 @@ export const allProducts = [
     "subcategory": "Laptops",
     "image": productImages.HPEnvyMOVE,
     "brand": "Dell",
-    "brand logo": "",
+    "brand logo": brandLogo.Dell,
     "specs": {
       "processor": "Intel Core Ultra 7 155H (24 MB cache, 16 cores, up to 4.8 GHz)",
       "RAM": "Up to 32GB LPDDR5X",
@@ -1429,7 +1429,7 @@ export const allProducts = [
     "category": "Monitors",
     "image": productImages.HPEnvyMOVE,
     "brand": "Dell",
-    "brand logo": "",
+    "brand logo": brandLogo.Dell,
     "specs": {
       "size": "24 inches",
       "resolution": "Full HD (1920x1080)",
@@ -1452,7 +1452,7 @@ export const allProducts = [
     "category": "Monitors",
     "image": productImages.HPEnvyMOVE,
     "brand": "Dell",
-    "brand logo": "",
+    "brand logo": brandLogo.Dell,
     "specs": {
       "size": "27 inches",
       "resolution": "Full HD (1920x1080)",
@@ -1475,7 +1475,7 @@ export const allProducts = [
     "category": "Monitors",
     "image": productImages.HPEnvyMOVE,
     "brand": "Dell",
-    "brand logo": "",
+    "brand logo": brandLogo.Dell,
     "specs": {
       "size": "27 inches",
       "resolution": "Full HD (1920x1080)",
@@ -1498,7 +1498,7 @@ export const allProducts = [
     "category": "Monitors",
     "image": productImages.HPEnvyMOVE,
     "brand": "Dell",
-    "brand logo": "",
+    "brand logo": brandLogo.Dell,
     "specs": {
       "size": "34 inches",
       "resolution": "WQHD (3440x1440)",
@@ -1521,7 +1521,7 @@ export const allProducts = [
     "category": "Monitors",
     "image": productImages.HPEnvyMOVE,
     "brand": "Dell",
-    "brand logo": "",
+    "brand logo": brandLogo.Dell,
     "specs": {
       "size": "27 inches",
       "resolution": "4K UHD (3840x2160)",
@@ -1544,7 +1544,7 @@ export const allProducts = [
     "category": "Monitors",
     "image": productImages.HPEnvyMOVE,
     "brand": "Dell",
-    "brand logo": "",
+    "brand logo": brandLogo.Dell,
     "specs": {
       "size": "32 inches",
       "resolution": "4K UHD (3840x2160)",
@@ -1567,7 +1567,7 @@ export const allProducts = [
     "category": "Monitors",
     "image": productImages.HPEnvyMOVE,
     "brand": "Dell",
-    "brand logo": "",
+    "brand logo": brandLogo.Dell,
     "specs": {
       "size": "43 inches",
       "resolution": "4K UHD (3840x2160)",
@@ -1969,7 +1969,7 @@ export const allProducts = [
     },
     "date-added": "2025-03-06",
     "tagline": "Sleek design with customizable RGB lighting and efficient airflow.",
-    "description": "The ADATA XPG INVADER Mid-Tower Gaming Case combines a brushed-aluminum front panel with a tempered glass side panel, offering a stylish and functional enclosure for your gaming rig. Its tool-less design and high-airflow layout ensure easy assembly and optimal cooling performance. The front RGB downlight adds a personalized touch, with multiple lighting modes to choose from.",
+    "description": "ADATA XPG INVADER case offers stylish design, easy assembly, and customizable RGB lighting.",
     "price": "K1,500",
     "discounted-price": "K1,400"
   },
@@ -2674,7 +2674,7 @@ export const allProducts = [
     "subcategory": "Server Hard Drives",
     "image": productImages.HPEnvyMOVE,
     "brand": "Dell",
-    "brand logo": "",
+    "brand logo": brandLogo.Dell,
     "specs": {
       "capacity": "1.2TB",
       "interface": "SAS 12Gbps",
@@ -2695,7 +2695,7 @@ export const allProducts = [
     "subcategory": "Server Hard Drives",
     "image": productImages.HPEnvyMOVE,
     "brand": "Dell",
-    "brand logo": "",
+    "brand logo": brandLogo.Dell,
     "specs": {
       "capacity": "1.92TB",
       "interface": "SATA 6Gbps",
@@ -2717,7 +2717,7 @@ export const allProducts = [
     "subcategory": "Server Hard Drives",
     "image": productImages.HPEnvyMOVE,
     "brand": "Dell",
-    "brand logo": "",
+    "brand logo": brandLogo.Dell,
     "specs": {
       "capacity": "8TB",
       "interface": "NLSAS 12Gbps",
@@ -2738,7 +2738,7 @@ export const allProducts = [
     "subcategory": "Server Hard Drives",
     "image": productImages.HPEnvyMOVE,
     "brand": "Dell",
-    "brand logo": "",
+    "brand logo": brandLogo.Dell,
     "specs": {
       "capacity": "12TB",
       "interface": "SATA 6Gbps",
@@ -2759,7 +2759,7 @@ export const allProducts = [
     "subcategory": "Server Hard Drives",
     "image": productImages.HPEnvyMOVE,
     "brand": "Dell",
-    "brand logo": "",
+    "brand logo": brandLogo.Dell,
     "specs": {
       "capacity": "480GB",
       "interface": "SATA 6Gbps",
@@ -2780,7 +2780,7 @@ export const allProducts = [
     "subcategory": "Server Hard Drives",
     "image": productImages.HPEnvyMOVE,
     "brand": "Dell",
-    "brand logo": "",
+    "brand logo": brandLogo.Dell,
     "specs": {
       "capacity": "600GB",
       "interface": "SAS 12Gbps",
@@ -2847,7 +2847,7 @@ export const allProducts = [
     "subcategory": "Consumer Storage",
     "image": productImages.HPEnvyMOVE,
     "brand": "DELL",
-    "brand logo": "",
+    "brand logo": brandLogo.Dell,
     "specs": {
       "capacity": "240GB",
       "interface": "SATA 6Gb/s",
@@ -3051,7 +3051,7 @@ export const allProducts = [
     },
     "date_added": "2025-03-06",
     "tagline": "High-performance managed networking for businesses.",
-    "description": "D-Link's 24-port smart managed switch provides reliable gigabit speeds, advanced network control, and efficient traffic management for businesses.",
+    "description": "D-Link's 24-port smart switch offers gigabit speeds, advanced control, and efficient traffic management.",
     "price": "K12,000",
     "discounted price": "K11,500"
   },
@@ -3196,7 +3196,7 @@ export const allProducts = [
     "subcategory": "Switches",
     "image": productImages.HPEnvyMOVE,
     "brand": "TP-Link",
-    "brand logo": "",
+    "brand logo": brandLogo.TPLink,
     "specs": {
       "ports": "10 x Gigabit Ethernet",
       "management": "Layer 2 Managed",
@@ -3215,7 +3215,7 @@ export const allProducts = [
     "subcategory": "Switches",
     "image": productImages.HPEnvyMOVE,
     "brand": "TP-Link",
-    "brand logo": "",
+    "brand logo": brandLogo.TPLink,
     "specs": {
       "ports": "10 x Gigabit Ethernet",
       "PoE": "Yes",
@@ -3235,7 +3235,7 @@ export const allProducts = [
     "subcategory": "Switches",
     "image": productImages.HPEnvyMOVE,
     "brand": "TP-Link",
-    "brand logo": "",
+    "brand logo": brandLogo.TPLink,
     "specs": {
       "ports": "16 x PoE Ports",
       "PoE": "Yes",
@@ -3255,7 +3255,7 @@ export const allProducts = [
     "subcategory": "Switches",
     "image": productImages.HPEnvyMOVE,
     "brand": "TP-Link",
-    "brand logo": "",
+    "brand logo": brandLogo.TPLink,
     "specs": {
       "ports": "18 x Gigabit Ethernet",
       "PoE": "Yes",
@@ -3275,7 +3275,7 @@ export const allProducts = [
     "subcategory": "Switches",
     "image": productImages.HPEnvyMOVE,
     "brand": "TP-Link",
-    "brand logo": "",
+    "brand logo": brandLogo.TPLink,
     "specs": {
       "ports": "24 x Gigabit Ethernet",
       "PoE": "No",
@@ -3531,7 +3531,7 @@ export const allProducts = [
     "subcategory": "Routers",
     "image": productImages.HPEnvyMOVE,
     "brand": "TP-LINK",
-    "brand logo": "",
+    "brand logo": brandLogo.TPLink,
     "specs": {
       "WiFi Standard": "WiFi 5 (802.11ac)",
       "Bands": "Dual Band (2.4GHz + 5GHz)",
@@ -3551,7 +3551,7 @@ export const allProducts = [
     "subcategory": "Routers",
     "image": productImages.HPEnvyMOVE,
     "brand": "TP-LINK",
-    "brand logo": "",
+    "brand logo": brandLogo.TPLink,
     "specs": {
       "WiFi Standard": "WiFi 5 (802.11ac)",
       "Bands": "Dual Band (2.4GHz + 5GHz)",
@@ -3571,7 +3571,7 @@ export const allProducts = [
     "subcategory": "Routers",
     "image": productImages.HPEnvyMOVE,
     "brand": "TP-LINK",
-    "brand logo": "",
+    "brand logo": brandLogo.TPLink,
     "specs": {
       "WiFi Standard": "WiFi 5 (802.11ac)",
       "Bands": "Dual Band (2.4GHz + 5GHz)",
@@ -3591,7 +3591,7 @@ export const allProducts = [
     "subcategory": "Routers",
     "image": productImages.HPEnvyMOVE,
     "brand": "TP-LINK",
-    "brand logo": "",
+    "brand logo": brandLogo.TPLink,
     "specs": {
       "WiFi Standard": "WiFi 6 (802.11ax)",
       "Bands": "Dual Band (2.4GHz + 5GHz)",
@@ -3611,7 +3611,7 @@ export const allProducts = [
     "subcategory": "Routers",
     "image": productImages.HPEnvyMOVE,
     "brand": "TP-LINK",
-    "brand logo": "",
+    "brand logo": brandLogo.TPLink,
     "specs": {
       "WiFi Standard": "WiFi 6 (802.11ax)",
       "Bands": "Dual Band (2.4GHz + 5GHz)",
@@ -3631,7 +3631,7 @@ export const allProducts = [
     "subcategory": "Routers",
     "image": productImages.HPEnvyMOVE,
     "brand": "TP-LINK",
-    "brand logo": "",
+    "brand logo": brandLogo.TPLink,
     "specs": {
       "WiFi Standard": "WiFi 5 (802.11ac)",
       "Bands": "Dual Band (2.4GHz + 5GHz)",
@@ -3651,7 +3651,7 @@ export const allProducts = [
     "subcategory": "Routers",
     "image": productImages.HPEnvyMOVE,
     "brand": "TP-LINK",
-    "brand logo": "",
+    "brand logo": brandLogo.TPLink,
     "specs": {
       "WiFi Standard": "WiFi 6 (802.11ax)",
       "Bands": "Dual Band (2.4GHz + 5GHz)",
@@ -3671,7 +3671,7 @@ export const allProducts = [
     "subcategory": "Routers",
     "image": productImages.HPEnvyMOVE,
     "brand": "TP-LINK",
-    "brand logo": "",
+    "brand logo": brandLogo.TPLink,
     "specs": {
       "WiFi Standard": "WiFi 6 (802.11ax)",
       "Bands": "Dual Band (2.4GHz + 5GHz)",
@@ -3928,7 +3928,7 @@ export const allProducts = [
     "category": "Accessories",
     "subcategory": "Access Points",
     "brand": "TP-Link",
-    "brand logo": "",
+    "brand logo": brandLogo.TPLink,
     "specs": {
       "speed": "Up to 1200Mbps",
       "frequency": "Dual-band 2.4GHz & 5GHz",
@@ -3948,7 +3948,7 @@ export const allProducts = [
     "category": "Accessories",
     "subcategory": "Access Points",
     "brand": "TP-Link",
-    "brand logo": "",
+    "brand logo": brandLogo.TPLink,
     "specs": {
       "speed": "Up to 1200Mbps",
       "frequency": "Dual-band 2.4GHz & 5GHz",
@@ -3967,7 +3967,7 @@ export const allProducts = [
     "category": "Accessories",
     "subcategory": "Access Points",
     "brand": "TP-Link",
-    "brand logo": "",
+    "brand logo": brandLogo.TPLink,
     "specs": {
       "speed": "Up to 1350Mbps",
       "frequency": "Dual-band 2.4GHz & 5GHz",
@@ -3987,7 +3987,7 @@ export const allProducts = [
     "category": "Accessories",
     "subcategory": "Access Points",
     "brand": "TP-Link",
-    "brand logo": "",
+    "brand logo": brandLogo.TPLink,
     "specs": {
       "WiFi Standard": "Wi-Fi 6 (802.11ax)",
       "Bands": "Dual-band 2.4GHz & 5GHz",
@@ -4006,7 +4006,7 @@ export const allProducts = [
     "category": "Accessories",
     "subcategory": "Access Points",
     "brand": "TP-Link",
-    "brand logo": "",
+    "brand logo": brandLogo.TPLink,
     "specs": {
       "WiFi Standard": "Wi-Fi 6 (802.11ax)",
       "Bands": "Dual-band 2.4GHz & 5GHz",
@@ -4025,7 +4025,7 @@ export const allProducts = [
     "category": "Accessories",
     "subcategory": "Access Points",
     "brand": "TP-Link",
-    "brand logo": "",
+    "brand logo": brandLogo.TPLink,
     "specs": {
       "WiFi Standard": "Wi-Fi 5 (802.11ac)",
       "Bands": "Dual-band 2.4GHz & 5GHz",
@@ -4044,7 +4044,7 @@ export const allProducts = [
     "category": "Accessories",
     "subcategory": "Access Points",
     "brand": "TP-Link",
-    "brand logo": "",
+    "brand logo": brandLogo.TPLink,
     "specs": {
       "WiFi Standard": "Wi-Fi 6 (802.11ax)",
       "Bands": "Dual-band 2.4GHz & 5GHz",
@@ -4063,7 +4063,7 @@ export const allProducts = [
     "category": "Accessories",
     "subcategory": "Access Points",
     "brand": "TP-Link",
-    "brand logo": "",
+    "brand logo": brandLogo.TPLink,
     "specs": {
       "WiFi Standard": "Wi-Fi 6 (802.11ax)",
       "Bands": "Dual-band 2.4GHz & 5GHz",
@@ -4084,6 +4084,7 @@ export const heroProduct = () => {
 }
 
 export const getProductByName = (name) => {
+  console.log('Product name search',name)
   return allProducts.find(product => product.name.toLowerCase() === name.toLowerCase()) || null;
 };
 

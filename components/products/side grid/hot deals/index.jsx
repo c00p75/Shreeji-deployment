@@ -6,7 +6,6 @@ import React, { useEffect, useRef, useState } from 'react'
 
 const HotDeals = ({products, heading}) => {
   let allProducts = products;
-  console.log('Hot deals', allProducts)
   const [latestProducts, setLatestProducts] = useState([])
 
   useEffect(() => {

@@ -47,4 +47,13 @@
     box-shadow: 0 0 12px 2px rgba(0, 0, 0, 0.8) ;
     z-index: 1;
   }
+
+  .product-details .scroll-container {
+    max-height: 60vh; 
+    overflow: auto;
+  }
+
+  .product-details .scroll-container:hover::-webkit-scrollbar-thumb  {
+    background-color: #4b4124;
+  }
 }

@@ -3,7 +3,6 @@ import Link from 'next/link'
 import React from 'react'
 
 const PrimaryPromotionalBanner = ({promoProduct}) => {
-  console.log(promoProduct)
   return (
     <div className="bg-[var(--shreeji-primary)] h-fit relative">
       <div className="flex flex-col w-[60%] justify-center items-center gap-10 py-24 px-10 text-center z-[1] relative">

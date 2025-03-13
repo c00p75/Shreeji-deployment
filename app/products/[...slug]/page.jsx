@@ -8,12 +8,11 @@ import LatestProductsBySubCategory from "@/components/products/main grid/latest 
 import PromotionBanner from "@/components/products/main grid/promotion banner";
 import CategoryPromotionalBanner from "@/components/products/product category/category promotional banner";
 import Breadcrumbs from "@/components/products/product category/breadcrumbs";
+import ProductList from "@/components/products/product category/product list";
 
 const ProductPage = async({ params }) => {
   const { slug } = await params;
   let [category, subcategory, product] =  slug;
-
-  console.log(category, subcategory, product)
   // return <h1>page</h1>
   // let product
 
@@ -31,7 +30,7 @@ const ProductPage = async({ params }) => {
   
 
   if (product) { 
-    productName = decodeURIComponent(product).replace(/-/g, " "); 
+    productName = decodeURIComponent(product); 
     categoryName = decodeURIComponent(category).replace(/-/g, " "); 
     subcategoryName = decodeURIComponent(subcategory).replace(/-/g, " "); 
     productDetails = getProductByName(productName);
@@ -55,14 +54,14 @@ const ProductPage = async({ params }) => {
           subcategory ? (
             <>
               <Breadcrumbs breadcrumbs={[categoryName, subcategoryName]} />
-              {/* <CategoryPromotionalBanner subcategory={subcategoryName} /> */}
-              <LatestProductsBySubCategory subcategory={subcategoryName} heading={`${categoryName} > ${subcategoryName}`} />
+              <CategoryPromotionalBanner subcategory={subcategoryName} />
+              <ProductList filterBy='subcategory' filter={subcategoryName} />
             </>
           ) : (
             <>
               <Breadcrumbs breadcrumbs={[categoryName]} />
               <CategoryPromotionalBanner category={categoryName} />
-              <LatestProductsByCategory category={categoryName} heading={categoryName} />
+              <ProductList filterBy='category' filter={categoryName} />
             </>
           )
         )}

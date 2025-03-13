@@ -43,7 +43,7 @@ const Categories = () => {
               <CircleDot color="#ffffff" strokeWidth={3} size={20} />
               
               <Link href={`/products/${encodeURIComponent(category)}`} className="font-medium text-white cursor-pointer">{category}</Link>
-              {console.log(subcategories[0])}
+              
               {subcategories[0] && (<ChevronDown onClick={() => setOpenCategory(openCategory === category ? null : category)} className="cursor-pointer" />)}
             </div>
 
