@@ -121,26 +121,39 @@
     width: 20%;
     padding: 1rem;
     border-radius: 4px;
-    background-color: $white;
-    transition: box-shadow $time $easing;
-    @include shadow;
+    // background: radial-gradient(rgba(255, 255, 255, 0.7), transparent, transparent);
+    background: rgba(255, 255, 255, 0.6);
+    // transition: box-shadow $time $easing;
+    // @include shadow;
     margin-top: 3rem;
+    box-shadow: none;
+    cursor: pointer;
+  }
+
+  .product:hover img {
+    // background: white;
+    transform: scale(1.3);
   }
 
   .product__image {
+    position: relative;
+    z-index: 1;
     width: auto;
     height: 10rem;
     margin: auto;
     margin-top: -5px;
     margin-bottom: 30px;
     max-width: none;
+    transition: all 0.15s ease-in-out !important;
   }
 
   .product__title {
-    font-size: 30px;
+    font-size: 20px;
     color: $black;
     margin: 0 0 0.5em 0;
     line-height: 1.1;
+    text-align: center;
+    font-weight: 500;
   }
 
   .product__price {
@@ -148,8 +161,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    top: -30px;
-    left: -30px;
+    z-index: 0;
+    top: -50px;
+    left: -24px;
     width: 100px;
     height: 100px;
     background-color: #807045f2;

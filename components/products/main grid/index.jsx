@@ -1,10 +1,6 @@
 import React from 'react'
 import {getProductByName, heroProduct} from '@/app/data/productsData'
-import LatestProducts1 from './latest products subcategory'
-import LatestProducts2 from './latest products 2'
-import Image from 'next/image'
 import Featured from './featured'
-import products from "@/app/data/products.json";
 import LatestProductsByCategory from './latest products category'
 import PromotionBanner from './promotion banner'
 import PrimaryPromotionalBanner from './primary promotional banner'

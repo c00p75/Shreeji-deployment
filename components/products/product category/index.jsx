@@ -4,11 +4,11 @@ import Image from 'next/image';
 import React, { useEffect, useRef, useState } from 'react'
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight, Triangle } from "lucide-react";
-import { getRecentProductsByCategory } from '@/app/data/productsData';
+import { filterProducts } from '@/app/data/productsData';
 
 const productCategory = ({category, count, heading}) => {
   
-  let latestProducts = getRecentProductsByCategory(category, count)
+  let latestProducts = filterProducts('category', category, count)
   
 
   const scrollRef = useRef(null);
@@ -61,9 +61,6 @@ const productCategory = ({category, count, heading}) => {
               </div>
             </div>
           </Link>
-          // <div key={index} className="mr-2 px-5 flex gap-5 items-center py-4 cursor-pointer min-w-[30rem]">
-          //   <Image src={product["image"]} alt={product["name"]} className="h-auto w-[20rem] object-cover" />
-          // </div>
         ))}
       </div>
     </div> 

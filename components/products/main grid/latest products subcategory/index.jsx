@@ -1,13 +1,12 @@
 'use client'
 
-import Image from 'next/image';
 import React, { useEffect, useRef, useState } from 'react'
-import Link from 'next/link';
 import { ChevronLeft, ChevronRight, Triangle } from "lucide-react";
-import { getRecentProductsBySubCategory } from '@/app/data/productsData';
+import { filterProducts } from '@/app/data/productsData';
+import ProductPreview from '../../ProductPreview';
 
 const LatestProductsBySubCategory = ({subcategory, count, heading}) => {  
-  let latestProducts = getRecentProductsBySubCategory(subcategory, count)
+  let latestProducts = filterProducts('subcategory', subcategory, count)
 
 
   const scrollRef = useRef(null);
@@ -40,27 +39,9 @@ const LatestProductsBySubCategory = ({subcategory, count, heading}) => {
           </button>
         </div>
       </div>
-      <div ref={scrollRef} className='flex overflow-x-auto overflow-visible scroll-container mt-10'>
+      <div ref={scrollRef} className='flex overflow-x-auto overflow-visible scroll-container mt-10 gap-14'>
         {latestProducts.map((product, index) => (
-          <Link 
-            key={index}
-            href={
-              product["subcategory"]
-                ? `/products/${encodeURIComponent(product.category)}/${encodeURIComponent(product["subcategory"])}/${encodeURIComponent(product.name)}`
-                : `/products/${encodeURIComponent(product.category)}/${encodeURIComponent(product.name)}`
-            }
-          >
-            <div className="mr-2 px-5 flex flex-col gap-2 items-center py-4 cursor-pointer min-w-[20rem]">
-              <div className='h-auto w-[15rem] py-14 px-5 bg-white/80 rounded-2xl'>
-                <Image src={product["image"]} alt={product["name"]} className="h-auto w-full object-cover" />
-              </div>
-              <p className="text-center mt-2 text-white">{product.name}</p>
-              <div className='flex gap-3'>
-                <p className='line-through'>{product["price"]}</p>
-                <p>{product["discounted price"]}</p>
-              </div>
-            </div>
-          </Link>
+          <ProductPreview product={product} index={index} additionalClass={'min-w-[20rem] first:ml-20'} />  
         ))}
       </div>
     </div> 

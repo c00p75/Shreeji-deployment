@@ -4,11 +4,12 @@ import Image from 'next/image';
 import React, { useEffect, useRef, useState } from 'react'
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight, Triangle } from "lucide-react";
-import { getRecentProductsByCategory } from '@/app/data/productsData';
+import { filterProducts } from '@/app/data/productsData';
+import ProductPreview from '../../ProductPreview';
 
 const LatestProductsByCategory = ({category, count, heading}) => {
   
-  let latestProducts = getRecentProductsByCategory(category, count)
+  let latestProducts = filterProducts('category', category, count)
   // console.log(latestProducts)
 
   const scrollRef = useRef(null);
@@ -29,8 +30,7 @@ const LatestProductsByCategory = ({category, count, heading}) => {
           <button
             onClick={() => scroll("left")}
             className="z-10 bg-white shadow-lg rounded-full p-3 h-10 w-10 flex-center"
-          >
-            
+          >            
             <ChevronLeft strokeWidth={3} className="w-6 h-6" />
           </button>
 
@@ -42,28 +42,9 @@ const LatestProductsByCategory = ({category, count, heading}) => {
           </button>
         </div>
       </div>
-      <div ref={scrollRef} className='flex overflow-x-auto overflow-visible scroll-container mt-10'>
+      <div ref={scrollRef} className='flex overflow-x-auto overflow-visible scroll-container mt-10 gap-14'>
         {latestProducts.map((product, index) => (
-          <Link 
-            key={index}
-            href={
-              product["subcategory"]
-                ? `/products/${encodeURIComponent(product.category)}/${encodeURIComponent(product["subcategory"])}/${encodeURIComponent(product.name)}`
-                : `/products/${encodeURIComponent(product.category)}/${encodeURIComponent(product.name)}`
-            }
-          >
-            <div className="mr-2 px-5 flex flex-col gap-2 items-center py-4 cursor-pointer min-w-[30rem]">
-              <Image src={product["image"]} alt={product["name"]} className="h-auto w-[20rem] object-cover" />
-              <p className="text-center mt-2 text-white">{product.name}</p>
-              <div className='flex gap-3'>
-                <p className='line-through'>{product["price"]}</p>
-                <p>{product["discounted price"]}</p>
-              </div>
-            </div>
-          </Link>
-          // <div key={index} className="mr-2 px-5 flex gap-5 items-center py-4 cursor-pointer min-w-[30rem]">
-          //   <Image src={product["image"]} alt={product["name"]} className="h-auto w-[20rem] object-cover" />
-          // </div>
+          <ProductPreview product={product} index={index} additionalClass={'min-w-[20rem] first:ml-20'} />            
         ))}
       </div>
     </div> 

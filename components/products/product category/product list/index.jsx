@@ -3,13 +3,13 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import './style.scss';
-import { filterProducts } from '@/app/data/productsData';
+import { getRecentProductsByCategory } from '@/app/data/productsData';
 import ProductPreview from '../../ProductPreview';
 
 const Featured = ({category, count}) => {
   const [slides, setSlides] = useState([]);
   const scrollRef = useRef(null);
-  const featuredProducts = filterProducts('category', category, count)
+  const featuredProducts = getRecentProductsByCategory(category, count)
   
   useEffect(() => {
     // Split products into groups of 6 (2 rows x 3 columns)

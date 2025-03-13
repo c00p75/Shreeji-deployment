@@ -15,49 +15,49 @@ import { useState } from "react";
 const discountedProducts = [
   {
     id: 1,
-    name: "Product 1",
+    name: "Lenovo YOGA AIO",
     price: "K5000",
     discount: "K3000",
     image: product1,
   },
   {
     id: 2,
-    name: "Product 2",
+    name: "Lenovo YOGA AIO",
     price: "K8000",
     discount: "K6000",
     image: product2,
   },
   {
     id: 3,
-    name: "Product 3",
+    name: "Lenovo YOGA AIO",
     price: "K10000",
     discount: "K7500",
     image: product3,
   },
   {
     id: 4,
-    name: "Product 4",
+    name: "Lenovo YOGA AIO",
     price: "K12000",
     discount: "K9000",
     image: product4,
   },
   {
     id: 5,
-    name: "Product 5",
+    name: "Lenovo YOGA AIO",
     price: "K15000",
     discount: "K11000",
     image: product5,
   },
   {
     id: 1,
-    name: "Product 1",
+    name: "Lenovo YOGA AIO",
     price: "K5000",
     discount: "K3000",
     image: product1,
   },
   {
     id: 2,
-    name: "Product 2",
+    name: "Lenovo YOGA AIO",
     price: "K8000",
     discount: "K6000",
     image: product2,
@@ -122,13 +122,11 @@ const ProductCategory = () => {
                 alt={product.name}
                 className="product__image object-cover mb-2 overflow-visible"
               />
-
+              {/* <hr />   */}
               <h1 className="product__title">{product.name}</h1>
-              <hr />
-              <p>Product discription.</p>
-              <a href="#" className="product__btn btn">
-                Buy Now
-              </a>
+              
+              
+              {/* <a href="#" className="product__btn btn">Buy Now</a> */}
             </div>
           ))}
       </div>
