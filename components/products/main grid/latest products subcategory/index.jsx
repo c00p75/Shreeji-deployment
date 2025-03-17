@@ -14,7 +14,7 @@ const LatestProductsBySubCategory = ({subcategory, count, heading}) => {
     if (scrollRef.current) {
       scrollRef.current.scrollBy({
         left: direction === "left" ? -300 : 300,
-        behavior: "smooth",
+        behavior: "smooth", 
       });
     }
   };
@@ -39,7 +39,7 @@ const LatestProductsBySubCategory = ({subcategory, count, heading}) => {
           </button>
         </div>
       </div>
-      <div ref={scrollRef} className='flex overflow-x-auto overflow-visible scroll-container mt-10 gap-14'>
+      <div ref={scrollRef} className='flex overflow-x-auto overflow-visible scroll-container pt-10 gap-14'>
         {latestProducts.map((product, index) => (
           <ProductPreview product={product} index={index} additionalClass={'min-w-[20rem] first:ml-20'} />  
         ))}

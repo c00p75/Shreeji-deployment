@@ -18,49 +18,49 @@ const discountedProducts = [
     name: "Lenovo YOGA AIO",
     price: "K5000",
     discount: "K3000",
-    image: product1,
+    images: [product1],
   },
   {
     id: 2,
     name: "Lenovo YOGA AIO",
     price: "K8000",
     discount: "K6000",
-    image: product2,
+    images: [product2],
   },
   {
     id: 3,
     name: "Lenovo YOGA AIO",
     price: "K10000",
     discount: "K7500",
-    image: product3,
+    images: [product3],
   },
   {
     id: 4,
     name: "Lenovo YOGA AIO",
     price: "K12000",
     discount: "K9000",
-    image: product4,
+    images: [product4],
   },
   {
     id: 5,
     name: "Lenovo YOGA AIO",
     price: "K15000",
     discount: "K11000",
-    image: product5,
+    images: [product5],
   },
   {
     id: 1,
     name: "Lenovo YOGA AIO",
     price: "K5000",
     discount: "K3000",
-    image: product1,
+    images: [product1],
   },
   {
     id: 2,
     name: "Lenovo YOGA AIO",
     price: "K8000",
     discount: "K6000",
-    image: product2,
+    images: [product2],
   },
 ];
 
@@ -118,7 +118,7 @@ const ProductCategory = () => {
             <div className="product">
               <span className="product__price">{product.price}</span>
               <Image
-                src={product.image}
+                src={product.images[0]}
                 alt={product.name}
                 className="product__image object-cover mb-2 overflow-visible"
               />

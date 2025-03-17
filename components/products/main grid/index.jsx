@@ -1,5 +1,5 @@
 import React from 'react'
-import {getProductByName, heroProduct} from '@/app/data/productsData'
+import {getProductByName, randomProduct} from '@/app/data/productsData'
 import Featured from './featured'
 import LatestProductsByCategory from './latest products category'
 import PromotionBanner from './promotion banner'
@@ -9,15 +9,16 @@ import LatestProductsBySubCategory from './latest products subcategory'
 
 
 const MainGrid = () => {
-  let heroProductImage = heroProduct();
+  let heroProductImage1 = randomProduct();
+  let heroProductImage2 = randomProduct();
   let product = getProductByName('HP Proliant ML110 Desktop Server')
   return (
     <section className="main-grid relative flex flex-col gap-5">
-        <PrimaryPromotionalBanner promoProduct={product} />
+        <PrimaryPromotionalBanner promoProduct={heroProductImage1} />
 
         <LatestProductsByCategory category="Computers" count={5} heading="Latest Computers" />
 
-        <PromotionBanner promoProduct={heroProductImage} />
+        <PromotionBanner promoProduct={heroProductImage2} />
 
         <LatestProductsBySubCategory subcategory="Routers" count={5} heading="Latest Routers" />
 

@@ -5,11 +5,16 @@ export const allProducts = [
     "name": "HP Envy MOVE",
     "category": "Computers",
     "subcategory": "All in One",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.hpEnvyMoveAllInOne24,
+      productImages.hpEnvyMoveAllInOne24_2,
+      productImages.hpEnvyMoveAllInOne24_3,
+      
+    ],
     "brand": "HP",
     "brand logo": brandLogo.HP,
     "specs": {
-      "processor": "Intel Core i5/i7",
+      "processor": "Intel Core i5/i7/i9",
       "display": "23.8-inch FHD Touchscreen",
       "RAM": "8GB/16GB DDR4",
       "storage": "256GB/512GB SSD",
@@ -22,6 +27,7 @@ export const allProducts = [
     "discounted price": "K25,000",
     "special feature": {
       "stat": '8',
+      'stat text size': 8,
       "symbol": "+",
       "feature": "Hours Battery Charge"
     }
@@ -30,7 +36,11 @@ export const allProducts = [
     "name": "HP EliteOne",
     "category": "Computers",
     "subcategory": "All in One",
-    "image": productImages.HPEnvyMOVE,
+    "images": [      
+      productImages.HPEliteOne870G9AllInOne_2,
+      productImages.HPEliteOne870G9AllInOne,
+      productImages.HPEliteOne870G9AllInOne_3
+    ],
     "brand": "HP",
     "brand logo": brandLogo.HP,
     "specs": {
@@ -47,6 +57,7 @@ export const allProducts = [
     "special feature": {
       "stat": '8',
       "symbol": "+",
+      'stat text size': 8,
       "feature": "Hours Battery Charge"
     }
   },
@@ -54,14 +65,20 @@ export const allProducts = [
     "name": "Lenovo YOGA AIO",
     "category": "Computers",
     "subcategory": "All in One",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.YogaAIO9i,
+      productImages.YogaAIO9i_2,
+      productImages.YogaAIO9i_3,
+    ],
     "brand": "Lenovo",
     "brand logo": brandLogo.Lenovo,
     "specs": {
       "processor": "AMD Ryzen 7/Intel Core i7",
       "display": "27-inch 4K UHD Touchscreen",
       "RAM": "16GB/32GB DDR4",
-      "storage": "512GB/1TB SSD"
+      "storage": "512GB/1TB SSD",
+      "Graphics":'Integrated Intel® Iris® Xe Graphics, NVIDIA® GeForce RTX™ 4050 6GB GDDR6'
+      
     },
     "date-added": "2025-3-6",
     "tagline": "Flexibility meets performance.",
@@ -71,6 +88,7 @@ export const allProducts = [
     "special feature": {
       "stat": '8',
       "symbol": "+",
+      'stat text size': 8,
       "feature": "Hours Battery Charge"
     }
   },
@@ -78,7 +96,11 @@ export const allProducts = [
     "name": "HP ProTower 290",
     "category": "Computers",
     "subcategory": "Desktops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPProTower290,
+      productImages.HPProTower290_2,
+      productImages.HPProTower290_3
+    ],
     "brand": "HP",
     "brand logo": brandLogo.HP,
     "specs": {
@@ -90,57 +112,89 @@ export const allProducts = [
     "tagline": "Affordable performance for everyday business.",
     "description": "A reliable desktop solution for offices and home users.",
     "price": "K20,000",
-    "discounted price": "K18,000"
+    "discounted price": "K18,000",
+    "special feature": {
+      "stat": 'i7',
+      'stat text size': 8,
+      // "symbol": "",
+      "feature": "intel core"
+    }
   },
   {
     "name": "HP Proliant ML110 Desktop Server",
     "category": "Computers",
     "subcategory": "Desktops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPProliantML110DesktopServer1,
+      productImages.HPProliantML110DesktopServer2,
+      productImages.HPProliantML110DesktopServer3,
+    ],
     "brand": "HP",
     "brand logo": brandLogo.HP,
     "specs": {
-      "processor": "Intel Xeon E-2224",
+      "processor": "Intel Xeon E-2224 2 GHz",
       "RAM": "16GB/32GB DDR4",
-      "storage": "1TB HDD (Expandable)"
+      "storage": "1TB HDD (Expandable)",
+      "Height": '18.2"',
+      "Width": '7.7"',
+      "More Features": ["VGA/Display Port", "Energy Star", "USB 3.2 Gen1 Compliant", "USB 2.0 Compliant" ],
     },
     "date-added": "2025-3-6",
     "tagline": "A powerful entry-level server.",
-    "description": "Designed for small businesses needing reliable computing power.",
+    "description": "Provide enhanced single processor and storage flexibility in a 4.5U 1P tower optimized server with optional rackable chassis, outstanding compute performance, security, reliability, and expandability at an affordable price.",
     "price": "K50,000",
-    "discounted price": "K45,000"
+    "discounted price": "K45,000",
+    "special feature": {
+      "stat": '10',
+      "stat text size": 8,
+      "symbol": "Gen",
+      // "feature": "Gen",
+    }
   },
   {
-    "name": "Lenovo Legion Tower",
+    "name": "Lenovo Legion Tower 5",
     "category": "Computers",
     "subcategory": "Desktops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.LenovoLegionTower1,
+      productImages.LenovoLegionTower2,
+      productImages.LenovoLegionTower3,
+    ],
     "brand": "Lenovo",
     "brand logo": brandLogo.Lenovo,
     "specs": {
       "processor": "Intel Core i7/i9 or AMD Ryzen 7/9",
       "RAM": "16GB/32GB DDR5",
+      "Desktop Class": 'Gaming',
       "storage": "512GB SSD + 2TB HDD",
-      "graphics": "NVIDIA RTX 4060/4070"
+      "graphics": "NVIDIA RTX 4060/4070",
+      "More Features": ["RGB lighting & glass side panel", "Extreme air cooling & added vents for long sessions"]
     },
     "date-added": "2025-3-6",
     "tagline": "Unleash your gaming potential.",
-    "description": "A powerful gaming desktop with top-tier performance.",
+    "description": "Gaming desktop that powers through 4K games in style, rocking an easily upgradable case with slick, customizable RGB lighting.",
     "price": "K60,000",
-    "discounted price": "K55,000"
+    "discounted price": "K55,000",    
   },
   {
     "name": "Lenovo V15",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.LenovoV15_1,
+      productImages.LenovoV15_2,
+      productImages.LenovoV15_3,
+    ],
     "brand": "Lenovo",
     "brand logo": brandLogo.Lenovo,
     "specs": {
       "display": "15.6-inch HD/FHD",
       "processor": "Intel Core i3/i5",
       "RAM": "8GB DDR4",
-      "storage": "256GB/512GB SSD"
+      "storage": "256GB/512GB SSD",
+      "Display": '15.6" FHD (1920x1080) IPS 300nits Anti-glare',
+      "Graphic Card": "Integrated Intel Iris Xe Graphics",
+      "Battery": 'Integrated 38Wh'
     },
     "date-added": "2025-3-6",
     "tagline": "Business-ready performance at an affordable price.",
@@ -157,19 +211,24 @@ export const allProducts = [
     "name": "HP Envy x360",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyx360_1,
+      productImages.HPEnvyx360_2,
+      productImages.HPEnvyx360_3,
+    ],
     "brand": "HP",
     "brand logo": brandLogo.HP,
     "specs": {
       "display": "13.3-inch/15.6-inch FHD Touchscreen",
-      "processor": "Intel Core i5/i7 or AMD Ryzen 5/7",
+      "processor": "Intel Core i5/i7 or AMD Ryzen 5/7 (up to 5.1 GHz max boost clock, 16 MB L3 cache, 8 cores, 16 threads)",
       "RAM": "8GB/16GB DDR4",
       "storage": "512GB SSD",
-      "battery": "Up to 10 hours"
+      "battery": "Up to 10 hours",
+      "Memory Note": "Transfer rates up to 6400 MT/s"
     },
     "date-added": "2025-3-6",
     "tagline": "Convertible. Powerful. Stylish.",
-    "description": "A sleek, 2-in-1 laptop perfect for work and play.",
+    "description": "A sleek, 2-in-1 laptop perfect for work and play. Designed to elevate your productivity and far faster.",
     "price": "K35,000",
     "discounted price": "K32,000",
     "special feature": {
@@ -182,45 +241,40 @@ export const allProducts = [
     "name": "APC UPS (500Va-40KVa)",
     "category": "Power Solutions",
     "subcategory": "UPS",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.APCUPS_1,
+      productImages.APCUPS_2
+    ],
     "brand": "APC",
-    "brand logo": "",
+    "brand logo": brandLogo.APC,
     "specs": {
       "capacity": "500VA - 40KVA",
       "type": "Line Interactive / Online Double Conversion",
-      "features": "Battery Backup, Surge Protection, AVR"
+      "features": "Battery Backup, Surge Protection, AVR",
+      "Battery Characteristics": "Spill-proof, Maintenance-free",
+      "Typical Battery Recharge Time": "10 Hour",
+      "Form Factor": 'Tower'
     },
     "date-added": "2025-3-6",
     "tagline": "Reliable power backup for every need.",
     "description": "A wide range of UPS solutions to protect your critical equipment from power outages.",
     "price": "Contact for pricing",
-    "discounted price": "Varies by model"
-  },
-  {
-    "name": "HP Pro Tower 290 G9",
-    "category": "Computers",
-    "subcategory": "Desktops",
-    "image": productImages.HPEnvyMOVE,
-    "brand": "HP",
-    "brand logo": brandLogo.HP,
-    "specs": {
-      "processor": "Intel Core i3-12100",
-      "RAM": "16GB DDR4",
-      "storage": "256GB SSD + 1TB HDD",
-      "ports": "USB 3.1, USB-C, HDMI, VGA",
-      "operating-system": "Windows 11 Pro"
-    },
-    "date-added": "2025-3-6",
-    "tagline": "Efficient Performance for Your Business Needs.",
-    "description": "Designed to handle daily business tasks with ease, featuring powerful processing and ample storage options.",
-    "price": "K15,000",
-    "discounted price": "K12,500"
+    "discounted price": "Varies by model",
+    "special feature": {
+      "stat": '2',
+      "symbol": "Yr",
+      "feature": "Warranty"
+    }
   },
   {
     "name": "HP ProDesk 600 G2 Micro Tower",
     "category": "Computers",
     "subcategory": "Desktops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPProDesk600G2MicroTower_1,
+      productImages.HPProDesk600G2MicroTower_2,
+      productImages.HPProDesk600G2MicroTower_3,
+    ],
     "brand": "HP",
     "brand logo": brandLogo.HP,
     "specs": {
@@ -240,11 +294,15 @@ export const allProducts = [
     "name": "HP EliteDesk 800 G4 Mini PC",
     "category": "Computers",
     "subcategory": "Desktops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEliteDesk800G4MiniPC_1,
+      productImages.HPEliteDesk800G4MiniPC_2,
+      productImages.HPEliteDesk800G4MiniPC_3,
+    ],
     "brand": "HP",
     "brand logo": brandLogo.HP,
     "specs": {
-      "processor": "Intel Core i5-8500T",
+      "processor": "intel Core i7-8700 (3.2 GHz Base Frequency, Max Turbo Boost 4.6 GHz, 12 MB Cache, 6 Cores)",
       "RAM": "16GB DDR4",
       "storage": "512GB SSD",
       "ports": "USB 3.1, DisplayPort, VGA",
@@ -252,75 +310,50 @@ export const allProducts = [
     },
     "date-added": "2025-3-6",
     "tagline": "High Performance in a Miniature Form Factor.",
-    "description": "Perfect for environments where space is limited but high performance is essential.",
+    "description": "Focus on what matters with the whisper quiet and ultrasmall HP EliteDesk 800 G4 Mini PC. Perfect for environments where space is limited but high performance is essential.",
     "price": "K16,000",
     "discounted price": "K13,500"
   },
   {
-    "name": "HP ProLiant ML110 Desktop Server",
+    "name": "Dell OptiPlex 7020 Mini Desktop",
     "category": "Computers",
     "subcategory": "Desktops",
-    "image": productImages.HPEnvyMOVE,
-    "brand": "HP",
-    "brand logo": brandLogo.HP,
-    "specs": {
-      "processor": "Intel Xeon E-2224",
-      "RAM": "16GB ECC DDR4",
-      "storage": "1TB HDD",
-      "ports": "USB 3.0, VGA, Ethernet",
-      "operating-system": "Windows Server 2019"
-    },
-    "date-added": "2025-3-6",
-    "tagline": "Reliable Server Performance for Small Businesses.",
-    "description": "Provides essential server capabilities for growing businesses requiring dependable performance.",
-    "price": "K20,000",
-    "discounted price": "K17,500"
-  },
-  {
-    "name": "Lenovo Legion Tower 5",
-    "category": "Computers",
-    "subcategory": "Desktops",
-    "image": productImages.HPEnvyMOVE,
-    "brand": "Lenovo",
-    "brand logo": brandLogo.Lenovo,
-    "specs": {
-      "processor": "AMD Ryzen 7 5800",
-      "RAM": "16GB DDR4",
-      "storage": "512GB SSD + 1TB HDD",
-      "ports": "USB 3.2, HDMI, DisplayPort",
-      "operating-system": "Windows 11 Pro"
-    },
-    "date-added": "2025-3-6",
-    "tagline": "Powerful Gaming Performance for Enthusiasts.",
-    "description": "Engineered for gamers seeking high-end performance and expandability.",
-    "price": "K25,000",
-    "discounted price": "K22,500"
-  },
-  {
-    "name": "Dell OptiPlex 7020",
-    "category": "Computers",
-    "subcategory": "Desktops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.DellOptiPlex7020MiniDesktop_1,
+      productImages.DellOptiPlex7020MiniDesktop_2,
+      productImages.DellOptiPlex7020MiniDesktop_3,
+    ],
     "brand": "Dell",
     "brand logo": brandLogo.Dell,
     "specs": {
-      "processor": "Intel Core i5-4590",
+      "processor": "Intel Core i5-14500 2.60GHz (upto 5 GHz, 24MB Cache, 14-Core, 20 - Threads, 6)",
       "RAM": "8GB DDR3",
       "storage": "500GB HDD",
+      "Graphics": "Intel UHD 770",
       "ports": "USB 3.0, DisplayPort, VGA",
-      "operating-system": "Windows 10 Pro"
+      "operating-system": "Windows 10 Pro",
     },
     "date-added": "2025-3-6",
     "tagline": "Reliable Performance for Everyday Business Tasks.",
     "description": "A trusted solution for businesses requiring consistent and dependable desktop performance.",
     "price": "K12,000",
-    "discounted price": "K10,500"
+    "discounted price": "K10,500",
+    "special feature": {
+      "stat": 'i5',
+      "stat text size": 8,
+      // "symbol": "+",
+      "feature": "intel"
+    }
   },
   {
     "name": "Asus Mini PC PN41",
     "category": "Computers",
     "subcategory": "Desktops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.AsusMiniPCPN41_1,
+      productImages.AsusMiniPCPN41_2,
+      productImages.AsusMiniPCPN41_3,
+    ],
     "brand": "Asus",
     "brand logo": brandLogo.Asus,
     "specs": {
@@ -332,42 +365,26 @@ export const allProducts = [
     },
     "date-added": "2025-3-6",
     "tagline": "Ultra-Compact Design with Essential Features.",
-    "description": "Ideal for basic computing tasks in environments where space is at a premium.",
+    "description": "Ultracompact computer with 11th Gen Intel Celeron or Pentium mobile processor. Ideal for basic computing tasks in environments where space is at a premium.",
     "price": "K8,000",
     "discounted price": "K7,000"
-  },
-  {
-    "name": "Lenovo V15",
-    "category": "Computers",
-    "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
-    "brand": "Lenovo",
-    "brand logo": brandLogo.Lenovo,
-    "specs": {
-      "processor": "Intel Core i3-1115G4",
-      "RAM": "4GB DDR4",
-      "storage": "500GB HDD",
-      "display": "15.6-inch HD (1366x768)",
-      "ports": "USB 3.2, HDMI, Ethernet",
-      "operating-system": "Windows 10 Pro"
-    },
-    "date-added": "2025-3-6",
-    "tagline": "Affordable Performance for Everyday Tasks.",
-    "description": "Ideal for students and professionals seeking reliable performance at an affordable price.",
-    "price": "K7,000",
-    "discounted price": "K6,500"
   },
   {
     "name": "Lenovo IdeaPad 1",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.LenovoIdeaPad1_1,
+      productImages.LenovoIdeaPad1_2,
+      productImages.LenovoIdeaPad1_3,
+    ],
     "brand": "Lenovo",
     "brand logo": brandLogo.Lenovo,
     "specs": {
       "processor": "Intel Celeron N4020",
-      "RAM": "4GB DDR4",
-      "storage": "64GB eMMC",
+      "RAM": "4GB /8GB DDR4",
+      "storage": "256GB/500GB SSD",
+      "Graphics": "Integrated Intel UHD Graphics 600",
       "display": "14-inch HD (1366x768)",
       "ports": "USB 3.1, HDMI",
       "operating-system": "Windows 10 Home"
@@ -376,13 +393,23 @@ export const allProducts = [
     "tagline": "Compact and Lightweight for On-the-Go Computing.",
     "description": "Perfect for basic tasks like browsing and document editing.",
     "price": "K5,000",
-    "discounted price": "K4,500"
+    "discounted price": "K4,500",
+    "special feature": {
+      "stat": '8',
+      'stat text size': 8,
+      "symbol": "+",
+      "feature": "Hours Battery Charge"
+    }
   },
   {
-    "name": "Lenovo IdeaPad 3",
+    "name": "Lenovo IdeaPad Slim 3",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.LenovoIdeaPad3_1,
+      productImages.LenovoIdeaPad3_2,
+      productImages.LenovoIdeaPad3_3,
+    ],
     "brand": "Lenovo",
     "brand logo": brandLogo.Lenovo,
     "specs": {
@@ -395,7 +422,7 @@ export const allProducts = [
     },
     "date-added": "2025-3-6",
     "tagline": "Balanced Performance for Daily Computing.",
-    "description": "Suitable for multitasking and everyday applications.",
+    "description": "Make a statement wherever you go with the IdeaPad Slim 3 Gen 8 laptop, built for lightness and thinness, measuring up to 10% slimmer than the previous generation.",
     "price": "K6,500",
     "discounted price": "K6,000"
   },
@@ -403,7 +430,11 @@ export const allProducts = [
     "name": "Lenovo IdeaPad 5",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.LenovoIdeaPad5_1,
+      productImages.LenovoIdeaPad5_2,
+      productImages.LenovoIdeaPad5_3,
+    ],
     "brand": "Lenovo",
     "brand logo": brandLogo.Lenovo,
     "specs": {
@@ -424,7 +455,11 @@ export const allProducts = [
     "name": "Lenovo IdeaPad Duet",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.LenovoIdeaPadDuet_1,
+      productImages.LenovoIdeaPadDuet_2,
+      productImages.LenovoIdeaPadDuet_3,
+    ],
     "brand": "Lenovo",
     "brand logo": brandLogo.Lenovo,
     "specs": {
@@ -439,13 +474,21 @@ export const allProducts = [
     "tagline": "Versatile 2-in-1 Chromebook for Flexibility.",
     "description": "Combines the portability of a tablet with the functionality of a laptop.",
     "price": "K5,500",
-    "discounted price": "K5,000"
+    "discounted price": "K5,000",
+    "special feature": {
+      "stat": '10',
+      'stat text size': 8,
+      "symbol": "+",
+      "feature": "Hours Battery Charge"
+    }
   },
   {
     "name": "Lenovo ThinkPad",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Lenovo",
     "brand logo": brandLogo.Lenovo,
     "specs": {
@@ -461,11 +504,16 @@ export const allProducts = [
     "description": "Built to withstand rigorous use while delivering top-tier performance.",
     "price": "K18,000",
     "discounted price": "K17,500"
-  },{
+  },
+
+  // Jonah
+  {
     "name": "HP ProBook 430 G7",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "HP",
     "brand logo": brandLogo.HP,
     "specs": {
@@ -486,7 +534,9 @@ export const allProducts = [
     "name": "HP ProBook 450 G7",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "HP",
     "brand logo": brandLogo.HP,
     "specs": {
@@ -507,7 +557,9 @@ export const allProducts = [
     "name": "HP ProBook 460 G11",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "HP",
     "brand logo": brandLogo.HP,
     "specs": {
@@ -528,7 +580,9 @@ export const allProducts = [
     "name": "HP ProBook 465 G7",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "HP",
     "brand logo": brandLogo.HP,
     "specs": {
@@ -549,7 +603,9 @@ export const allProducts = [
     "name": "HP EliteBook 640 G11",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "HP",
     "brand logo": brandLogo.HP,
     "specs": {
@@ -570,7 +626,9 @@ export const allProducts = [
     "name": "HP EliteBook 650 G10",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "HP",
     "brand logo": brandLogo.HP,
     "specs": {
@@ -591,7 +649,9 @@ export const allProducts = [
     "name": "HP EliteBook 660 G11",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "HP",
     "brand logo": brandLogo.HP,
     "specs": {
@@ -612,7 +672,9 @@ export const allProducts = [
     "name": "HP Elite Dragonfly G3",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "HP",
     "brand logo": brandLogo.HP,
     "specs": {
@@ -633,7 +695,9 @@ export const allProducts = [
     "name": "HP Envy x360 14",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "HP",
     "brand logo": brandLogo.HP,
     "specs": {
@@ -654,7 +718,9 @@ export const allProducts = [
     "name": "Dell Latitude 3450",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Dell",
     "brand logo": brandLogo.Dell,
     "specs": {
@@ -675,7 +741,9 @@ export const allProducts = [
     "name": "Dell Latitude 3540",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Dell",
     "brand logo": brandLogo.Dell,
     "specs": {
@@ -696,7 +764,9 @@ export const allProducts = [
     "name": "Dell Latitude 3550",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Dell",
     "brand logo": brandLogo.Dell,
     "specs": {
@@ -717,7 +787,9 @@ export const allProducts = [
     "name": "Dell Latitude 5440",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Dell",
     "brand logo": brandLogo.Dell,
     "specs": {
@@ -738,7 +810,9 @@ export const allProducts = [
     "name": "Dell Latitude 5450",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Dell",
     "brand logo": brandLogo.Dell,
     "specs": {
@@ -759,7 +833,9 @@ export const allProducts = [
     "name": "Dell Latitude 5550",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Dell",
     "brand logo": brandLogo.Dell,
     "specs": {
@@ -780,7 +856,9 @@ export const allProducts = [
     "name": "Dell Latitude 7450",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Dell",
     "brand logo": brandLogo.Dell,
     "specs": {
@@ -801,7 +879,9 @@ export const allProducts = [
     "name": "Dell Inspiron 7450 Foldable",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Dell",
     "brand logo": brandLogo.Dell,
     "specs": {
@@ -822,7 +902,9 @@ export const allProducts = [
     "name": "Dell Inspiron 7640",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Dell",
     "brand logo": brandLogo.Dell,
     "specs": {
@@ -843,7 +925,9 @@ export const allProducts = [
     "name": "Dell Inspiron 5530 Gaming Laptop",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Dell",
     "brand logo": brandLogo.Dell,
     "specs": {
@@ -864,7 +948,9 @@ export const allProducts = [
     "name": "Dell Precision 3590",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Dell",
     "brand logo": brandLogo.Dell,
     "specs": {
@@ -885,7 +971,9 @@ export const allProducts = [
     "name": "Dell Precision 3591",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Dell",
     "brand logo": brandLogo.Dell,
     "specs": {
@@ -906,7 +994,9 @@ export const allProducts = [
     "name": "Dell Vostro 3440",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Dell",
     "brand logo": brandLogo.Dell,
     "specs": {
@@ -927,7 +1017,9 @@ export const allProducts = [
     "name": "Dell Vostro 3501",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Dell",
     "brand logo": brandLogo.Dell,
     "specs": {
@@ -948,7 +1040,9 @@ export const allProducts = [
     "name": "Dell Vostro 3520",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Dell",
     "brand logo": brandLogo.Dell,
     "specs": {
@@ -969,7 +1063,9 @@ export const allProducts = [
     "name": "Dell Vostro 5510",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Dell",
     "brand logo": brandLogo.Dell,
     "specs": {
@@ -990,7 +1086,9 @@ export const allProducts = [
     "name": "Dell Vostro 5640",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Dell",
     "brand logo": brandLogo.Dell,
     "specs": {
@@ -1011,7 +1109,9 @@ export const allProducts = [
     "name": "Dell XPS 9345 X-Elite",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Dell",
     "brand logo": brandLogo.Dell,
     "specs": {
@@ -1032,7 +1132,9 @@ export const allProducts = [
     "name": "Dell XPS 9340",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Dell",
     "brand logo": brandLogo.Dell,
     "specs": {
@@ -1053,7 +1155,9 @@ export const allProducts = [
     "name": "Dell XPS 9350",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Dell",
     "brand logo": brandLogo.Dell,
     "specs": {
@@ -1074,7 +1178,9 @@ export const allProducts = [
     "name": "Dell XPS 9440",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Dell",
     "brand logo": brandLogo.Dell,
     "specs": {
@@ -1095,7 +1201,9 @@ export const allProducts = [
     "name": "Dell XPS 9640",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Dell",
     "brand logo": brandLogo.Dell,
     "specs": {
@@ -1116,7 +1224,9 @@ export const allProducts = [
     "name": "Asus ExpertBook B3 (B3405)",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Asus",
     "brand logo": brandLogo.Asus,
     "specs": {
@@ -1137,7 +1247,9 @@ export const allProducts = [
     "name": "Asus TUF Gaming F15",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Asus",
     "brand logo": brandLogo.Asus,
     "specs": {
@@ -1158,7 +1270,9 @@ export const allProducts = [
     "name": "Asus ROG Zephyrus G16 (2024)",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Asus",
     "brand logo": brandLogo.Asus,
     "specs": {
@@ -1179,7 +1293,9 @@ export const allProducts = [
     "name": "Asus X515",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Asus",
     "brand logo": brandLogo.Asus,
     "specs": {
@@ -1200,7 +1316,9 @@ export const allProducts = [
     "name": "Asus Zenbook 14 (UX3402)",
     "category": "Computers",
     "subcategory": "Laptops",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Asus",
     "brand logo": brandLogo.Asus,
     "specs": {
@@ -1220,7 +1338,9 @@ export const allProducts = [
   {
     "name": "LG 27UL500-W",
     "category": "Monitors",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "LG",
     "brand logo": "",
     "specs": {
@@ -1243,7 +1363,9 @@ export const allProducts = [
   {
     "name": "LG 27QN880-B",
     "category": "Monitors",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "LG",
     "brand logo": "",
     "specs": {
@@ -1266,7 +1388,9 @@ export const allProducts = [
   {
     "name": "LG 29WQ500-B",
     "category": "Monitors",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "LG",
     "brand logo": "",
     "specs": {
@@ -1289,7 +1413,9 @@ export const allProducts = [
   {
     "name": "LG 32GP850-B",
     "category": "Monitors",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "LG",
     "brand logo": "",
     "specs": {
@@ -1312,7 +1438,9 @@ export const allProducts = [
   {
     "name": "LG 55UL3J-M",
     "category": "Monitors",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "LG",
     "brand logo": "",
     "specs": {
@@ -1335,7 +1463,9 @@ export const allProducts = [
   {
     "name": "LG 65EP5G-B",
     "category": "Monitors",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "LG",
     "brand logo": "",
     "specs": {
@@ -1358,7 +1488,9 @@ export const allProducts = [
   {
     "name": "Asus ZenScreen MB16AC",
     "category": "Monitors",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Asus",
     "brand logo": brandLogo.Asus,
     "specs": {
@@ -1381,7 +1513,9 @@ export const allProducts = [
   {
     "name": "Asus ZenScreen MB166C",
     "category": "Monitors",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Asus",
     "brand logo": brandLogo.Asus,
     "specs": {
@@ -1404,7 +1538,9 @@ export const allProducts = [
   {
     "name": "Asus ZenScreen MB16QHG",
     "category": "Monitors",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Asus",
     "brand logo": brandLogo.Asus,
     "specs": {
@@ -1427,7 +1563,9 @@ export const allProducts = [
   {
     "name": "Dell SE2422H",
     "category": "Monitors",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Dell",
     "brand logo": brandLogo.Dell,
     "specs": {
@@ -1450,7 +1588,9 @@ export const allProducts = [
   {
     "name": "Dell SE2722H",
     "category": "Monitors",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Dell",
     "brand logo": brandLogo.Dell,
     "specs": {
@@ -1473,7 +1613,9 @@ export const allProducts = [
   {
     "name": "Dell P2722H",
     "category": "Monitors",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Dell",
     "brand logo": brandLogo.Dell,
     "specs": {
@@ -1496,7 +1638,9 @@ export const allProducts = [
   {
     "name": "Dell S3422DW",
     "category": "Monitors",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Dell",
     "brand logo": brandLogo.Dell,
     "specs": {
@@ -1519,7 +1663,9 @@ export const allProducts = [
   {
     "name": "Dell U2723QE",
     "category": "Monitors",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Dell",
     "brand logo": brandLogo.Dell,
     "specs": {
@@ -1542,7 +1688,9 @@ export const allProducts = [
   {
     "name": "Dell U3223QE",
     "category": "Monitors",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Dell",
     "brand logo": brandLogo.Dell,
     "specs": {
@@ -1565,7 +1713,9 @@ export const allProducts = [
   {
     "name": "Dell U4323QE",
     "category": "Monitors",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Dell",
     "brand logo": brandLogo.Dell,
     "specs": {
@@ -1588,7 +1738,9 @@ export const allProducts = [
   {
     "name": "Hikvision DS-D5019QE-B",
     "category": "Monitors",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Hikvision",
     "brand logo": brandLogo.Hikvision,
     "specs": {
@@ -1611,7 +1763,9 @@ export const allProducts = [
   {
     "name": "Hikvision DS-D5032FC-A",
     "category": "Monitors",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Hikvision",
     "brand logo": brandLogo.Hikvision,
     "specs": {
@@ -1634,7 +1788,9 @@ export const allProducts = [
   {
     "name": "Hisense 32A4F",
     "category": "Smart TVs",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Hisense",
     "brand logo": "",
     "specs": {
@@ -1653,7 +1809,9 @@ export const allProducts = [
   {
     "name": "Hisense 40A6G",
     "category": "Smart TVs",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Hisense",
     "brand logo": "",
     "specs": {
@@ -1672,7 +1830,9 @@ export const allProducts = [
   {
     "name": "Hisense 43A6G",
     "category": "Smart TVs",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Hisense",
     "brand logo": "",
     "specs": {
@@ -1691,7 +1851,9 @@ export const allProducts = [
   {
     "name": "Hisense 50U8G",
     "category": "Smart TVs",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Hisense",
     "brand logo": "",
     "specs": {
@@ -1710,7 +1872,9 @@ export const allProducts = [
   {
     "name": "Hisense 55U8H",
     "category": "Smart TVs",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Hisense",
     "brand logo": "",
     "specs": {
@@ -1729,7 +1893,9 @@ export const allProducts = [
   {
     "name": "Hisense 58U8H",
     "category": "Smart TVs",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Hisense",
     "brand logo": "",
     "specs": {
@@ -1748,7 +1914,9 @@ export const allProducts = [
   {
     "name": "Hisense 65U8H",
     "category": "Smart TVs",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Hisense",
     "brand logo": "",
     "specs": {
@@ -1767,7 +1935,9 @@ export const allProducts = [
   {
     "name": "Hisense 75U8H",
     "category": "Smart TVs",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Hisense",
     "brand logo": "",
     "specs": {
@@ -1786,7 +1956,9 @@ export const allProducts = [
   {
     "name": "Hisense 85U8H",
     "category": "Smart TVs",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Hisense",
     "brand logo": "",
     "specs": {
@@ -1805,7 +1977,9 @@ export const allProducts = [
   {
     "name": "Hisense 4K Trichroma Laser Cinema Projector",
     "category": "Projectors",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Hisense",
     "brand logo": "",
     "specs": {
@@ -1828,7 +2002,9 @@ export const allProducts = [
   {
     "name": "Hisense C1 Laser Smart Projector",
     "category": "Projectors",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Hisense",
     "brand logo": "",
     "specs": {
@@ -1851,7 +2027,9 @@ export const allProducts = [
   {
     "name": "Hisense PL1 Laser TV 4K",
     "category": "Projectors",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Hisense",
     "brand logo": "",
     "specs": {
@@ -1873,7 +2051,9 @@ export const allProducts = [
   {
     "name": "Huawei IdeaHub S2 65\" Interactive Display",
     "category": "Interactive Displays",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Huawei",
     "brand logo": "",
     "specs": {
@@ -1894,7 +2074,9 @@ export const allProducts = [
   {
     "name": "Huawei IdeaHub S2 75\" Interactive Display",
     "category": "Interactive Displays",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Huawei",
     "brand logo": "",
     "specs": {
@@ -1915,7 +2097,9 @@ export const allProducts = [
   {
     "name": "Huawei IdeaHub S2 86\" Interactive Display",
     "category": "Interactive Displays",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Huawei",
     "brand logo": "",
     "specs": {
@@ -1933,11 +2117,15 @@ export const allProducts = [
     "price": "K22,000",
     "discounted-price": "K21,500"
   },
+
+  // George
   {
     "name": "ADATA XPG INVADER Mid-Tower Gaming Case",
     "category": "Components",
     "subcategory": "Cases",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "ADATA",
     "brand logo": "",
     "specs": {
@@ -1977,7 +2165,9 @@ export const allProducts = [
     "name": "ASUS A21 Micro-ATX Chassis",
     "category": "Components",
     "subcategory": "Cases",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "ASUS",
     "brand logo": brandLogo.Asus,
     "specs": {
@@ -2016,7 +2206,9 @@ export const allProducts = [
     "name": "ASUS AMD Ryzen Micro-ATX Motherboard",
     "category": "Components",
     "subcategory": "Motherboards",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "ASUS",
     "brand logo": brandLogo.Asus,
     "specs": {
@@ -2045,7 +2237,9 @@ export const allProducts = [
     "name": "ASUS Intel H610 LGA1700 Micro-ATX Motherboard",
     "category": "Components",
     "subcategory": "Motherboards",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "ASUS",
     "brand logo": brandLogo.Asus,
     "specs": {
@@ -2074,7 +2268,9 @@ export const allProducts = [
     "name": "ASUS PRIME A520M-K Micro-ATX Motherboard",
     "category": "Components",
     "subcategory": "Motherboards",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "ASUS",
     "brand logo": brandLogo.Asus,
     "specs": {
@@ -2103,7 +2299,9 @@ export const allProducts = [
     "name": "ASUS AMD B650 PLUS RYZEN AM5 ATX TUF GAMING Motherboard",
     "category": "Components",
     "subcategory": "Motherboards",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "ASUS",
     "brand logo": brandLogo.Asus,
     "specs": {
@@ -2132,7 +2330,9 @@ export const allProducts = [
     "name": "ASUS PRIME X670-P WiFi AMD AM5 ATX Motherboard",
     "category": "Components",
     "subcategory": "Motherboards",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "ASUS",
     "brand logo": brandLogo.Asus,
     "specs": {
@@ -2170,7 +2370,9 @@ export const allProducts = [
     "name": "ASUS Prime GeForce RTX™ 4070 SUPER OC Edition 12GB GDDR6X Graphics Card",
     "category": "Components",
     "subcategory": "Graphics Cards",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "ASUS",
     "brand logo": brandLogo.Asus,
     "specs": {
@@ -2197,7 +2399,9 @@ export const allProducts = [
     "name": "ASUS ROG Strix X870-A Gaming WiFi AMD AM5 ATX Motherboard",
     "category": "Components",
     "subcategory": "Motherboards",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "ASUS",
     "brand logo": brandLogo.Asus,
     "specs": {
@@ -2228,7 +2432,9 @@ export const allProducts = [
     "name": "ASUS ROG Strix GeForce RTX™ 4070 SUPER 12GB GDDR6X OC Edition",
     "category": "Components",
     "subcategory": "Graphics Cards",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "ASUS",
     "brand logo": brandLogo.Asus,
     "specs": {
@@ -2253,7 +2459,9 @@ export const allProducts = [
     "name": "ASUS TUF Gaming GeForce RTX™ 4070 Ti SUPER 16GB GDDR6X OC Edition",
     "category": "Components",
     "subcategory": "Graphics Cards",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "ASUS",
     "brand logo": brandLogo.Asus,
     "specs": {
@@ -2278,7 +2486,9 @@ export const allProducts = [
     "name": "ASUS TUF Gaming GeForce RTX™ 4080 SUPER 16GB GDDR6X OC Edition",
     "category": "Components",
     "subcategory": "Graphics Cards",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "ASUS",
     "brand logo": brandLogo.Asus,
     "specs": {
@@ -2303,7 +2513,9 @@ export const allProducts = [
     "name": "AMD Ryzen 3 1200",
     "category": "Components",
     "subcategory": "Processors",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "AMD",
     "brand logo": "",
     "specs": {
@@ -2325,7 +2537,9 @@ export const allProducts = [
     "name": "AMD Ryzen 5 3600",
     "category": "Components",
     "subcategory": "Processors",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "AMD",
     "brand logo": "",
     "specs": {
@@ -2347,7 +2561,9 @@ export const allProducts = [
     "name": "AMD Ryzen 7 5800X",
     "category": "Components",
     "subcategory": "Processors",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "AMD",
     "brand logo": "",
     "specs": {
@@ -2369,7 +2585,9 @@ export const allProducts = [
     "name": "Intel Core i3-10100",
     "category": "Components",
     "subcategory": "Processors",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Intel",
     "brand logo": "",
     "specs": {
@@ -2391,7 +2609,9 @@ export const allProducts = [
     "name": "Intel Core i5-10400",
     "category": "Components",
     "subcategory": "Processors",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Intel",
     "brand logo": "",
     "specs": {
@@ -2413,7 +2633,9 @@ export const allProducts = [
     "name": "Intel Core i7-10700K",
     "category": "Components",
     "subcategory": "Processors",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Intel",
     "brand logo": "",
     "specs": {
@@ -2435,7 +2657,9 @@ export const allProducts = [
     "name": "Intel Xeon Silver 4208",
     "category": "Components",
     "subcategory": "Processors",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Intel",
     "brand logo": "",
     "specs": {
@@ -2457,7 +2681,9 @@ export const allProducts = [
     "name": "Intel Xeon Silver 4310",
     "category": "Components",
     "subcategory": "Processors",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Intel",
     "brand logo": "",
     "specs": {
@@ -2479,7 +2705,9 @@ export const allProducts = [
     "name": "ASUS GeForce GT 710 2GB DDR3",
     "category": "Components",
     "subcategory": "Graphics Cards",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "ASUS",
     "brand logo": brandLogo.Asus,
     "specs": {
@@ -2506,7 +2734,9 @@ export const allProducts = [
     "name": "ASUS Dual GeForce GTX 1650 V2 OC Edition 4GB GDDR6",
     "category": "Components",
     "subcategory": "Graphics Cards",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "ASUS",
     "brand logo": brandLogo.Asus,
     "specs": {
@@ -2533,7 +2763,9 @@ export const allProducts = [
     "name": "ASUS Dual GeForce RTX 3050 OC Edition 8GB GDDR6",
     "category": "Components",
     "subcategory": "Graphics Cards",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "ASUS",
     "brand logo": brandLogo.Asus,
     "specs": {
@@ -2560,7 +2792,9 @@ export const allProducts = [
     "name": "ASUS Dual GeForce RTX 4060 OC Edition 8GB GDDR6",
     "category": "Components",
     "subcategory": "Graphics Cards",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "ASUS",
     "brand logo": brandLogo.Asus,
     "specs": {
@@ -2587,7 +2821,9 @@ export const allProducts = [
     "name": "ASUS Dual GeForce RTX 4060 EVO OC Edition 8GB GDDR6",
     "category": "Components",
     "subcategory": "Graphics Cards",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "ASUS",
     "brand logo": brandLogo.Asus,
     "specs": {
@@ -2615,7 +2851,9 @@ export const allProducts = [
     "name": "ASUS Dual Radeon RX 7700 XT OC Edition 12GB GDDR6",
     "category": "Components",
     "subcategory": "Graphics Cards",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "ASUS",
     "brand logo": brandLogo.Asus,
     "specs": {
@@ -2643,7 +2881,9 @@ export const allProducts = [
     "name": "Intel 1.92TB 6Gb/s 2.5\" SATA TLC Enterprise Server SSD",
     "category": "Components",
     "subcategory": "Server Hard Drives",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Intel",
     "brand logo": "",
     "specs": {
@@ -2672,7 +2912,9 @@ export const allProducts = [
     "name": "Dell 1.2TB 10K RPM SAS 12Gbps 2.5in Hot-plug Hard Drive",
     "category": "Components",
     "subcategory": "Server Hard Drives",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Dell",
     "brand logo": brandLogo.Dell,
     "specs": {
@@ -2693,7 +2935,9 @@ export const allProducts = [
     "name": "Dell 1.92TB SSD SATA Read Intensive 6Gbps 512e 2.5in Hot-Plug",
     "category": "Components",
     "subcategory": "Server Hard Drives",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Dell",
     "brand logo": brandLogo.Dell,
     "specs": {
@@ -2715,7 +2959,9 @@ export const allProducts = [
     "name": "Dell 8TB 7.2K RPM NLSAS 12Gbps 3.5in Hot-Plug Hard Drive",
     "category": "Components",
     "subcategory": "Server Hard Drives",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Dell",
     "brand logo": brandLogo.Dell,
     "specs": {
@@ -2736,7 +2982,9 @@ export const allProducts = [
     "name": "Dell 12TB 7.2K RPM SATA 6Gbps 3.5in Hot-Plug Hard Drive",
     "category": "Components",
     "subcategory": "Server Hard Drives",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Dell",
     "brand logo": brandLogo.Dell,
     "specs": {
@@ -2757,7 +3005,9 @@ export const allProducts = [
     "name": "Dell 480GB Mixed-Use SATA 6Gbps 2.5in Hot-Plug SSD",
     "category": "Components",
     "subcategory": "Server Hard Drives",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Dell",
     "brand logo": brandLogo.Dell,
     "specs": {
@@ -2778,7 +3028,9 @@ export const allProducts = [
     "name": "Dell 600GB 10K RPM SAS 12Gbps 2.5in Hot-Plug Hard Drive",
     "category": "Components",
     "subcategory": "Server Hard Drives",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Dell",
     "brand logo": brandLogo.Dell,
     "specs": {
@@ -2799,7 +3051,9 @@ export const allProducts = [
     "name": "ADATA Ultimate SU650 256GB SSD",
     "category": "Components",
     "subcategory": "Consumer Storage",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "ADATA",
     "brand logo": "",
     "specs": {
@@ -2822,7 +3076,9 @@ export const allProducts = [
     "name": "ADATA Ultimate SU650 480GB SSD",
     "category": "Components",
     "subcategory": "Consumer Storage",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "ADATA",
     "brand logo": "",
     "specs": {
@@ -2845,7 +3101,9 @@ export const allProducts = [
     "name": "DELL 240GB SSD",
     "category": "Components",
     "subcategory": "Consumer Storage",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "DELL",
     "brand logo": brandLogo.Dell,
     "specs": {
@@ -2868,7 +3126,9 @@ export const allProducts = [
     "name": "HIKSEMI HS-SSD-FUTURE 512GB SSD",
     "category": "Components",
     "subcategory": "Consumer Storage",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "HIKSEMI",
     "brand logo": "",
     "specs": {
@@ -2891,7 +3151,9 @@ export const allProducts = [
     "name": "HIKSEMI HS-SSD-FUTURE 1TB SSD",
     "category": "Components",
     "subcategory": "Consumer Storage",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "HIKSEMI",
     "brand logo": "",
     "specs": {
@@ -2914,7 +3176,9 @@ export const allProducts = [
     "name": "HIKSEMI HS-SSD-FUTURE 2TB SSD",
     "category": "Components",
     "subcategory": "Consumer Storage",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "HIKSEMI",
     "brand logo": "",
     "specs": {
@@ -2937,7 +3201,9 @@ export const allProducts = [
     "name": "HIKSEMI NAND SATA SSD",
     "category": "Components",
     "subcategory": "Consumer Storage",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "HIKSEMI",
     "brand logo": "",
     "specs": {
@@ -2959,7 +3225,9 @@ export const allProducts = [
     "name": "Seagate SATA HDD",
     "category": "Components",
     "subcategory": "Consumer Storage",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Seagate",
     "brand logo": "",
     "specs": {
@@ -2980,7 +3248,9 @@ export const allProducts = [
     "name": "Western Digital SATA HDD",
     "category": "Components",
     "subcategory": "Consumer Storage",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Western Digital",
     "brand logo": "",
     "specs": {
@@ -3001,7 +3271,9 @@ export const allProducts = [
     "name": "ADATA/HIKSEMI DDR4 & DDR5 RAM",
     "category": "Components",
     "subcategory": "RAM",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "ADATA / HIKSEMI",
     "brand logo": "",
     "specs": {
@@ -3021,7 +3293,9 @@ export const allProducts = [
     "name": "Kingston DDR4 & DDR5 RAM",
     "category": "Components",
     "subcategory": "RAM",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Kingston",
     "brand logo": "",
     "specs": {
@@ -3041,7 +3315,9 @@ export const allProducts = [
     "name": "D-Link 24-Port GB Smart Managed Switch",
     "category": "Networking",
     "subcategory": "Switches",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "D-Link",
     "brand logo": "",
     "specs": {
@@ -3059,7 +3335,9 @@ export const allProducts = [
     "name": "D-Link 52-Port Smart Managed PoE Switch",
     "category": "Networking",
     "subcategory": "Switches",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "D-Link",
     "brand logo": "",
     "specs": {
@@ -3078,7 +3356,9 @@ export const allProducts = [
     "name": "D-Link 5-Port Unmanaged Switch",
     "category": "Networking",
     "subcategory": "Switches",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "D-Link",
     "brand logo": "",
     "specs": {
@@ -3096,7 +3376,9 @@ export const allProducts = [
     "name": "D-Link 6-Port Unmanaged Switch",
     "category": "Networking",
     "subcategory": "Switches",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "D-Link",
     "brand logo": "",
     "specs": {
@@ -3114,7 +3396,9 @@ export const allProducts = [
     "name": "HUAWEI S110-16LP2SR EKIT Switch 16 Port",
     "category": "Networking",
     "subcategory": "Switches",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Huawei",
     "brand logo": "",
     "specs": {
@@ -3134,7 +3418,9 @@ export const allProducts = [
     "name": "HUAWEI S110-24LP2SR EKIT Switch 24 Port",
     "category": "Networking",
     "subcategory": "Switches",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Huawei",
     "brand logo": "",
     "specs": {
@@ -3154,7 +3440,9 @@ export const allProducts = [
     "name": "HUAWEI S220-48P4X EKIT Switch 48 Port 380W PoE",
     "category": "Networking",
     "subcategory": "Switches",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Huawei",
     "brand logo": "",
     "specs": {
@@ -3174,7 +3462,9 @@ export const allProducts = [
     "name": "HUAWEI S310-24P4X EKIT Switch 24 Port 400W PoE",
     "category": "Networking",
     "subcategory": "Switches",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "Huawei",
     "brand logo": "",
     "specs": {
@@ -3194,7 +3484,9 @@ export const allProducts = [
     "name": "TP-LINK 10 Port L2 Switch",
     "category": "Networking",
     "subcategory": "Switches",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "TP-Link",
     "brand logo": brandLogo.TPLink,
     "specs": {
@@ -3213,7 +3505,9 @@ export const allProducts = [
     "name": "TP-LINK 10 Port Smart PoE Switch",
     "category": "Networking",
     "subcategory": "Switches",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "TP-Link",
     "brand logo": brandLogo.TPLink,
     "specs": {
@@ -3233,7 +3527,9 @@ export const allProducts = [
     "name": "TP-LINK 16 Channel PoE",
     "category": "Networking",
     "subcategory": "Switches",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "TP-Link",
     "brand logo": brandLogo.TPLink,
     "specs": {
@@ -3253,7 +3549,9 @@ export const allProducts = [
     "name": "TP-LINK 18 Port Smart PoE Switch",
     "category": "Networking",
     "subcategory": "Switches",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "TP-Link",
     "brand logo": brandLogo.TPLink,
     "specs": {
@@ -3273,7 +3571,9 @@ export const allProducts = [
     "name": "TP-LINK 24-Port Gigabit Easy Smart Switch",
     "category": "Networking",
     "subcategory": "Switches",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "TP-Link",
     "brand logo": brandLogo.TPLink,
     "specs": {
@@ -3288,11 +3588,15 @@ export const allProducts = [
     "price": "K10,500",
     "discounted price": "K10,000"
   },
+
+  // George End
   {
     "name": "ASUS AX1800 Dual Band WiFi 6 Router",
     "category": "Networking",
     "subcategory": "Routers",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "ASUS",
     "brand logo": brandLogo.Asus,
     "specs": {
@@ -3312,7 +3616,9 @@ export const allProducts = [
     "name": "ASUS AX3000 Dual Band WiFi 6 Router",
     "category": "Networking",
     "subcategory": "Routers",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "ASUS",
     "brand logo": brandLogo.Asus,
     "specs": {
@@ -3332,7 +3638,9 @@ export const allProducts = [
     "name": "ASUS TUF Gaming AX3000 Dual Band WiFi 6 Gaming Router",
     "category": "Networking",
     "subcategory": "Routers",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "ASUS",
     "brand logo": brandLogo.Asus,
     "specs": {
@@ -3352,7 +3660,9 @@ export const allProducts = [
     "name": "ASUS TUF Gaming AX4200 Dual Band WiFi 6 Gaming Router",
     "category": "Networking",
     "subcategory": "Routers",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "ASUS",
     "brand logo": brandLogo.Asus,
     "specs": {
@@ -3372,7 +3682,9 @@ export const allProducts = [
     "name": "ASUS TUF Gaming AX6000 Dual Band WiFi 6 Gaming Router",
     "category": "Networking",
     "subcategory": "Routers",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "ASUS",
     "brand logo": brandLogo.Asus,
     "specs": {
@@ -3392,7 +3704,9 @@ export const allProducts = [
     "name": "ASUS ROG Rapture AX6000 Dual Band WiFi 6 Gaming Router",
     "category": "Networking",
     "subcategory": "Routers",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "ASUS",
     "brand logo": brandLogo.Asus,
     "specs": {
@@ -3412,7 +3726,9 @@ export const allProducts = [
     "name": "ASUS ROG Rapture AX11000 Tri-Band WiFi 6 Gaming Router",
     "category": "Networking",
     "subcategory": "Routers",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "ASUS",
     "brand logo": brandLogo.Asus,
     "specs": {
@@ -3432,7 +3748,9 @@ export const allProducts = [
     "name": "ASUS ROG Rapture GT-AXE16000 Quad-Band WiFi 6E Gaming Router",
     "category": "Networking",
     "subcategory": "Routers",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "ASUS",
     "brand logo": brandLogo.Asus,
     "specs": {
@@ -3452,7 +3770,9 @@ export const allProducts = [
     "name": "ASUS ZenWiFi Mesh Network Routers – BT10 / ET12 / XT12 / XD4 / XD5 / XT8",
     "category": "Networking",
     "subcategory": "Routers",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "ASUS",
     "brand logo": brandLogo.Asus,
     "specs": {
@@ -3472,7 +3792,9 @@ export const allProducts = [
     "name": "HUAWEI AR303 EKIT Router",
     "category": "Networking",
     "subcategory": "Routers",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "HUAWEI",
     "brand logo": "",
     "specs": {
@@ -3491,7 +3813,9 @@ export const allProducts = [
     "name": "HUAWEI AR720 EKIT Router",
     "category": "Networking",
     "subcategory": "Routers",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "HUAWEI",
     "brand logo": "",
     "specs": {
@@ -3510,7 +3834,9 @@ export const allProducts = [
     "name": "HUAWEI AR730 EKIT Router",
     "category": "Networking",
     "subcategory": "Routers",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "HUAWEI",
     "brand logo": "",
     "specs": {
@@ -3529,7 +3855,9 @@ export const allProducts = [
     "name": "TP-LINK AC1200 Dual-Band WiFi Router",
     "category": "Networking",
     "subcategory": "Routers",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "TP-LINK",
     "brand logo": brandLogo.TPLink,
     "specs": {
@@ -3549,7 +3877,9 @@ export const allProducts = [
     "name": "TP-LINK AC1200 Whole Home Mesh WiFi System",
     "category": "Networking",
     "subcategory": "Routers",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "TP-LINK",
     "brand logo": brandLogo.TPLink,
     "specs": {
@@ -3569,7 +3899,9 @@ export const allProducts = [
     "name": "TP-LINK AC1350 High Power Dual-Band Wi-Fi Router",
     "category": "Networking",
     "subcategory": "Routers",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "TP-LINK",
     "brand logo": brandLogo.TPLink,
     "specs": {
@@ -3589,7 +3921,9 @@ export const allProducts = [
     "name": "TP-LINK AX1500 Whole Home Mesh Wi-Fi 6 System",
     "category": "Networking",
     "subcategory": "Routers",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "TP-LINK",
     "brand logo": brandLogo.TPLink,
     "specs": {
@@ -3609,7 +3943,9 @@ export const allProducts = [
     "name": "TP-LINK AX1800 Whole Home Mesh Wi-Fi System",
     "category": "Networking",
     "subcategory": "Routers",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "TP-LINK",
     "brand logo": brandLogo.TPLink,
     "specs": {
@@ -3629,7 +3965,9 @@ export const allProducts = [
     "name": "TP-LINK AC1900 Whole Home Mesh Wi-Fi System",
     "category": "Networking",
     "subcategory": "Routers",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "TP-LINK",
     "brand logo": brandLogo.TPLink,
     "specs": {
@@ -3649,7 +3987,9 @@ export const allProducts = [
     "name": "TP-LINK AX3000 Whole Home Mesh Wi-Fi 6 System",
     "category": "Networking",
     "subcategory": "Routers",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.HPEnvyMOVE
+    ],
     "brand": "TP-LINK",
     "brand logo": brandLogo.TPLink,
     "specs": {
@@ -3669,7 +4009,11 @@ export const allProducts = [
     "name": "TP-LINK AX5400 Whole Home Mesh Wi-Fi 6 System",
     "category": "Networking",
     "subcategory": "Routers",
-    "image": productImages.HPEnvyMOVE,
+    "images": [
+      productImages.TP_LINK_AX5400_1,
+      productImages.TP_LINK_AX5400_2,
+      productImages.TP_LINK_AX5400_3,
+    ],
     "brand": "TP-LINK",
     "brand logo": brandLogo.TPLink,
     "specs": {
@@ -3685,6 +4029,8 @@ export const allProducts = [
     "price": "K12,000",
     "discounted price": "K11,500"
   },
+
+  // Access Point
   {
     "name": "D-LINK ACCESS POINT AC1200",
     "category": "Accessories",
@@ -4043,6 +4389,11 @@ export const allProducts = [
     "name": "TP-LINK AX3000 Ceiling Mount Dual-Band Wi-Fi 6 Access Point",
     "category": "Accessories",
     "subcategory": "Access Points",
+    "images": [
+      productImages.TP_LINK_AX3000_1,
+      productImages.TP_LINK_AX3000_2,
+      productImages.TP_LINK_AX3000_3,
+    ],
     "brand": "TP-Link",
     "brand logo": brandLogo.TPLink,
     "specs": {
@@ -4062,6 +4413,11 @@ export const allProducts = [
     "name": "TP-LINK AX5400 Whole Home Mesh Wi-Fi 6 System",
     "category": "Accessories",
     "subcategory": "Access Points",
+    "images": [
+      productImages.TP_LINK_AX5400_1,
+      productImages.TP_LINK_AX5400_2,
+      productImages.TP_LINK_AX5400_3,
+    ],
     "brand": "TP-Link",
     "brand logo": brandLogo.TPLink,
     "specs": {
@@ -4079,10 +4435,6 @@ export const allProducts = [
   }
 ]
 
-export const heroProduct = () => {
-  return allProducts[0]
-}
-
 export const getProductByName = (name) => {
   console.log('Product name search',name)
   return allProducts.find(product => product.name.toLowerCase() === name.toLowerCase()) || null;
@@ -4097,6 +4449,17 @@ export const filterProducts = (filterBy, filter, count) => {
 
   return products  
 };
+
+export const randomProduct = (filterBy, filter, count) => {
+  if(filterBy, filter) {
+    let filteredProductsArr = filterProducts(filterBy, filter, count)
+    let index = Math.floor(Math.random() * filteredProductsArr.length)
+    return filteredProductsArr[index]
+  }
+
+  let index = Math.floor(Math.random() * allProducts.length)
+  return allProducts[index]
+}
 
 // export const getRecentProductsByCategory = (category, count) => {
 //   let products = allProducts
@@ -4117,3 +4480,4 @@ export const filterProducts = (filterBy, filter, count) => {
 
 //   return products; 
 // };
+

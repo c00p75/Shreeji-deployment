@@ -3,7 +3,6 @@ import "./style.scss";
 import Image from "next/image";
 
 const ProductPreview = ({product, index, additionalClass}) => {
-
   return (    
     <Link 
       key={index}
@@ -19,20 +18,22 @@ const ProductPreview = ({product, index, additionalClass}) => {
         <span>{product['discounted price']}</span>  
       </div> */}
       <div className="">
-        <Image
-          src={product.image}
-          alt={product.name}
-          className="products-page-product__image object-cover overflow-visible"
-        />
+        {product.images && (
+          <Image
+            src={product.images[0]}
+            alt={product.name}
+            className="products-page-product__image object-cover overflow-visible"
+          />
+        )}
       </div>
       {/* <hr />   */}
-      <div className="flex-center gap-4 pb-10">
+      <div className="flex-center gap-4 pb-14">
         {product.name && (<h1 className="products-page-product__title text-2xl font-semibold">{product.name}</h1>)}
         {product.tagline && (<div className="text-center text-base">{product.tagline}</div>)}
-        <div className="text-center text-base font-semibold flex gap-3">
+        {/* <div className="text-center text-base font-semibold flex gap-3">
           {product.price && (<span className="line-through">{product.price}</span>  )}
           {product['discounted price'] && (<span>{product['discounted price']}</span> )}
-        </div>
+        </div> */}
       </div>
     </Link>
   );

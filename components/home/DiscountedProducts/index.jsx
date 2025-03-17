@@ -18,70 +18,70 @@ const discountedProducts = [
     name: `HP Pavilion Laptop 16t-af000, 16"`,
     price: "K5000",
     discount: "K3000",
-    image: product1,
+    images: [product1],
   },
   {
     id: 2,
     name: `HP Pavilion Laptop 16t-af000, 16"`,
     price: "K8000",
     discount: "K6000",
-    image: product1,
+    images: [product1],
   },
   {
     id: 3,
     name: `HP Pavilion Laptop 16t-af000, 16"`,
     price: "K10000",
     discount: "K7500",
-    image: product1,
+    images: [product1],
   },
   {
     id: 4,
     name: `HP Pavilion Laptop 16t-af000, 16"`,
     price: "K12000",
     discount: "K9000",
-    image: product1,
+    images: [product1],
   },
   {
     id: 5,
     name: `HP Pavilion Laptop 16t-af000, 16"`,
     price: "K15000",
     discount: "K11000",
-    image: product1,
+    images: [product1],
   },
   {
     id: 1,
     name: `HP Pavilion Laptop 16t-af000, 16"`,
     price: "K5000",
     discount: "K3000",
-    image: product1,
+    images: [product1],
   },
   {
     id: 2,
     name: `HP Pavilion Laptop 16t-af000, 16"`,
     price: "K8000",
     discount: "K6000",
-    image: product1,
+    images: [product1],
   },
   {
     id: 3,
     name: `HP Pavilion Laptop 16t-af000, 16"`,
     price: "K10000",
     discount: "K7500",
-    image: product1,
+    images: [product1],
   },
   {
     id: 4,
     name: `HP Pavilion Laptop 16t-af000, 16"`,
     price: "K12000",
     discount: "K9000",
-    image: product1,
+    images: [product1],
   },
   {
     id: 5,
     name: `HP Pavilion Laptop 16t-af000, 16"`,
     price: "K15000",
     discount: "K11000",
-    image: product1,
+    images: [product1],
   },
 ];
 
@@ -112,7 +112,7 @@ const DiscountedProducts = () => {
             className="product-container min-w-[40rem] flex items-center transition-transform duration-200 rounded-2xl"
           >
             <Image
-              src={product.image}
+              src={product.images[0]}
               alt={product.name}
               className="absolute w-[12rem] h-[12rem] top-[25%] left-[15%] object-cover mb-2 overflow-visible scale-x-[-1]"
             />

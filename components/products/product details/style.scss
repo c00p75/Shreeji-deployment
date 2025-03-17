@@ -1,5 +1,5 @@
 .product-details-page {
-  background: radial-gradient(white, rgb(255 255 255 / 50%),  rgb(0 0 0 / 10%), rgb(0 0 0 / 30%)) !important;
+  background: radial-gradient(whitesmoke, rgb(255 255 255 / 50%),  rgb(0 0 0 / 10%), rgb(0 0 0 / 30%)) !important;
 
   .main-grid {
     min-height: auto !important;
@@ -11,7 +11,7 @@
 
   .special-feature {
     position: absolute;
-    top: -30%;
+    top: -25%;
     left: -5%;
     color: white;
     background: radial-gradient(#8b723c, rgb(113, 86, 17));
@@ -20,11 +20,12 @@
     padding:0.75rem 0 0.75rem 0.75rem;
     height: 9.5rem;
     width: 9.5rem;
+    overflow: hidden;
   }
 
   .special-feature > div span:last-child {
     background: linear-gradient(to right, #8b723c, transparent);
-    margin-left: -0.5rem;
+    margin-left: -1rem;
     padding-left: 0.25rem;
     margin-top: -0.5rem;
     font-size: 0.89rem !important;
@@ -49,11 +50,22 @@
   }
 
   .product-details .scroll-container {
-    max-height: 60vh; 
+    max-height: 70vh; 
     overflow: auto;
   }
 
   .product-details .scroll-container:hover::-webkit-scrollbar-thumb  {
     background-color: #4b4124;
+  }
+
+  .active-image-select {
+    border: 3px solid rgba(128, 112, 69, 10);
+    padding: 0.2rem;
+    border-radius: 5px;
+    transform: scale(1.1);
+  }
+
+  .active-image {
+    opacity: 1;
   }
 }

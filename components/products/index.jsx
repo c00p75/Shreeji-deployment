@@ -4,8 +4,6 @@ import HPEnvyx36014fa0008na from "@/public/products/HP Envy x360 14-fa0008na.png
 import "./style.scss";
 import MainGrid from "./main grid";
 import SideGrid from "./side grid";
-
-import allProducts from "@/app/data/productsData";
 import SpecialOrders from "./special orders";
 
 const Products = () => {
@@ -16,9 +14,9 @@ const Products = () => {
       <MainGrid />
     </section> 
 
-    <section className="">
+    {/* <section className="">
       <SpecialOrders />   
-    </section>
+    </section> */}
     
     </div>
   );

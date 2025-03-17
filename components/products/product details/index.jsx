@@ -2,6 +2,8 @@ import Image from 'next/image'
 import './style.scss'
 import { ArrowRightCircle } from 'lucide-react'
 import Link from 'next/link';
+import ProductImage from './product image';
+import SpecialFeaturBudge from './special feature budge';
 
 const ProductDetails = ({product}) => {  
   console.log(product)
@@ -30,39 +32,20 @@ const ProductDetails = ({product}) => {
           <Image src={product['brand logo']} quality={100} alt={product['name']} className='w-auto h-16 z-[1] object-cover' />
         </div>
       )}
-      {product['name'] && <h1 className="text-6xl font-bold text-center bg-gradient-to-r from-[#807045] to-[#544829] bg-clip-text text-transparent">{product['name']}</h1>}
-      {product['description'] && <p className="text-2xl text-[#544829] mt-5 text-center">{product['description']}</p>}
+      {product['name'] && <h1 className="text-6xl font-bold text-center pb-5 bg-gradient-to-r from-[#807045] to-[#544829] bg-clip-text text-transparent">{product['name']}</h1>}
+      {product['description'] && <p className="text-2xl text-[#544829] text-center">{product['description']}</p>}
       
-      <div className='flex justify-center items-center flex-row mt-10'>
-        <div className='flex-1 relative'>
-          {product['image'] && <Image src={product.image} alt={product['name']} className='w-full h-auto z-[1] relative' />}
-          {product['special feature'] && (
-            <div className="special-feature text-2xl mt-5 font-bold flex items-center z-0">
-              {product['special feature']['stat'] && (
-                <div className='text-9xl special-feature-stat'>
-                  {product['special feature']['stat']}
-                  <span className='speacial-feature-shadow' />
-                </div>
-              )}
-
-              <div className='flex flex-col mb-5'>
-                {product['special feature']['symbol'] && (
-                  <span className='text-4xl font-semibold'>{product['special feature']['symbol']}</span>
-                )}
-
-                {product['special feature']['feature'] && (
-                  <span className='w-14 font-light'>
-                    {product['special feature']['feature']}                    
-                  </span>
-                )}
-              </div>
-            </div>
-          )}
+      <div className={`flex justify-center items-center flex-row ${ product['special feature'] ? 'mt-14' : ''}`}>
+        <div className='flex-1 relative mt-10'>
+          {product['images'] && (
+            <ProductImage images={product['images']} name={product.name} product={product} />
+          )}      
         </div>
 
-        <div className='product-specs flex-1 p-10 scroll-container'>      
+        <div className='product-specs flex-1 p-10 pr-0 scroll-container -mt-[15%]'>    
+          {product['tagline'] && <h1 className="text-3xl mb-10 font-bold bg-gradient-to-r from-[#807045] to-[#544829] bg-clip-text text-transparent">{product['tagline']}</h1>}            
           {product['specs'] && (
-            <ul className='-mt-10 text-xl flex flex-col gap-2'>
+            <ul className='text-xl flex flex-col gap-2'>
               {Object.entries(product.specs).map(([key, value]) => (
                 <li key={key}>
                   <strong className='text-[#544829] capitalize'>{key.replace(/-/g, ' ')}:</strong>{" "}
@@ -90,11 +73,11 @@ const ProductDetails = ({product}) => {
             </ul>
           )}
 
-          {product['tagline'] && <h1 className="text-2xl text-[#544829] mt-5 font-bold">{product['tagline']}</h1>}          
+          {/* {product['tagline'] && <h1 className="text-4xl text-[#544829] mt-5 font-bold">{product['tagline']}</h1>}           */}
         </div>
       </div>
 
-      <div className='bg-[var(--shreeji-primary)] px-10 py-3 mt-28 text-white text-2xl font-semibold flex justify-between items-center rounded-full border-t-[#e8d9c2] border-4'>
+      <div className='bg-[var(--shreeji-primary)] px-10 py-3 mt-16 text-white text-2xl font-semibold flex justify-between items-center rounded-full border-t-[#e8d9c2] border-4'>
         <p className='flex-1 text-base'>
           Shreeji House, Plot No. 1209,
           <br />
