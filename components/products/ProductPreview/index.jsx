@@ -28,7 +28,7 @@ const ProductPreview = ({product, index, additionalClass}) => {
       </div>
       {/* <hr />   */}
       <div className="flex-center gap-4 pb-14">
-        {product.name && (<h1 className="products-page-product__title text-2xl font-semibold">{product.name}</h1>)}
+        {product.name && (<h1 className="products-page-product__title text-2xl font-semibold line-clamp-2">{product.name}</h1>)}
         {product.tagline && (<div className="text-center text-base">{product.tagline}</div>)}
         {/* <div className="text-center text-base font-semibold flex gap-3">
           {product.price && (<span className="line-through">{product.price}</span>  )}

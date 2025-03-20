@@ -23,8 +23,8 @@ const PrimaryPromotionalBanner = ({promoProduct}) => {
 
         <div className='relative flex-1'>
           {promoProduct.images.length > 1 ? 
-            (<Image src={promoProduct.images[1]} className="scale-x-[-1] z-0 h-[80%] w-auto absolute top-[50%] left-[35%] -translate-x-1/2 -translate-y-1/2" />):
-            (<Image src={promoProduct.images[0]} className="z-0 h-[52%] w-auto absolute top-[45%] -right-[15%] -translate-x-1/2 -translate-y-1/2" />)      
+            (<Image src={promoProduct.images[1]} className="object-cover overflow-visible scale-x-[-1] z-0 h-[80%] w-auto absolute top-[50%] left-[35%] -translate-x-1/2 -translate-y-1/2" />):
+            (<Image src={promoProduct.images[0]} className="object-cover overflow-visible z-0 h-[52%] w-auto absolute top-[45%] -right-[15%] -translate-x-1/2 -translate-y-1/2" />)      
           }
         </div>   
       </div> 

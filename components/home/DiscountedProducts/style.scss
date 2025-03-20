@@ -23,13 +23,44 @@
     background: white;
     box-shadow: 0 0 15px 5px black;
   }
+
+  .products-page-product:before {
+    background: #807045 !important;
+  }
+
+  * ::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  button {
+    background: #807045 !important;
+    width: 4rem;
+    height: 4rem;
+    color: white !important;
+  }
+
+  button:last-child {
+    margin-right: 5rem;
+  }
 }
 
 .no-scrollbar::-webkit-scrollbar {
-  display: none;
+  display: none !important;
 }
 
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+.discounted-product-container > div {
+  border-radius: 20px;
+  background: none !important;
+
+  h2 {
+    // color: #655832 !important;
+    font-size: 3.5rem !important;
+    text-shadow: none !important;    
+  }
+}
+

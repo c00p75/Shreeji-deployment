@@ -32,16 +32,20 @@ const expertise = [
 const OurExpertise = () => {
 
   return (
-    <section className="z-[1] bg-white our-expertise relative w-screen scroll-smooth pb-28 pt-10">
-      <h2 className="font-bold text-6xl text-left px-32 mb-10 text-[var(--primary)]">
-        Our <span className="text-[#171717]">Expertise</span>
-      </h2>
-  
-      
-      <div className="flex pt-10 px-20">
-        <div className="flex flex-[3] gap-5 expertise-card-container">
+    <section className="our-expertise z-[3] bg-white our-expertise relative w-screen scroll-smooth pb-28 gap-10">      
+      <div className="flex mt-24 px-20 gap-10 items-center">
+        <div className="flex-[3] bg-[whitesmoke] p-2 rounded-sm m-10 mr-20 mt-5 rotate-6 expertise-img-container h-[85vh]">
+          <Image src={expertiseImg} className="scale-x-[-1] h-full object-cover rounded-sm -rotate-6 shadow-xl shadow-black/40" />
+        </div>
+
+        <div className="flex flex-[4] expertise-card-container">
+          <h2 className="w-full font-bold text-6xl mb-16 text-[var(--primary)] mt-10 flex flex-center relative gap-10 md:px-5">
+            <p className="w-fit relative bg-[#87703f] z-[1] text-white px-2">Our <span className="text-[#171717]">Expertise</span></p>
+            <span className="w-full h-[2px] bg-white absolute z-0 top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2"/>
+          </h2>
+
           {expertise.map((item, i) => (
-            <div className="flex gap-3 items-center expertise-card" key={`expertise-${i}`}>
+            <div className="flex m-3 items-center justify-center expertise-card" key={`expertise-${i}`}>
               {/* <span>
                 <Square className="w-4 h-4" fill="#171717" strokeWidth={3} />
               </span> */}
@@ -51,11 +55,7 @@ const OurExpertise = () => {
               </div>                
             </div>
           ))}
-        </div> 
-
-        <div className="flex-[2]">
-          <Image src={expertiseImg} className="h-full object-cover rounded-ss-[10%] rounded-ee-[10%]  " />
-        </div>    
+        </div>             
       </div>   
     </section>
   );

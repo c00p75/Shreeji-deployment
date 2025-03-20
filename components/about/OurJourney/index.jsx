@@ -47,9 +47,10 @@ const milestones = [
 const OurJourney = () => {
 
   return (
-    <section className="z-[1] our-journey relative w-screen scroll-smooth pb-28 pt-32">
-      <h2 className="font-bold text-6xl text-center px-32 mb-10 text-[var(--primary)]">
-        <span className="text-[#171717]">Our</span> Journey <span className="text-[#171717]"> & </span> Milestones
+    <section className="z-[1] our-journey relative w-screen scroll-smooth pb-28 pt-10">
+      <h2 className="w-full font-bold text-6xl mb-20 text-[var(--primary)] mt-20 flex flex-center relative gap-10 md:px-5">
+        <p className="w-fit relative px-5 bg-white z-[1]"><span className="text-[#171717]">Our</span> Journey <span className="text-[#171717]"> & </span> Milestones</p>
+        <span className="w-[90%] h-[2px] bg-[#87703fe6] absolute z-0 top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2"/>
       </h2>
    
       <p className="text-center pb-20">

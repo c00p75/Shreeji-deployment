@@ -16,7 +16,7 @@ export default function Home() {
       <OurSolutions />
       <SkyliftSolutions />
       <DiscountedProducts />
-      <ProductCategory />
+      {/* <ProductCategory /> */}
       <Testimonials />
     </>
   );

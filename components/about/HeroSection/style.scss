@@ -19,29 +19,29 @@
   
   .hero-overlay {
     // background: rgba(135, 112, 63, 0.8);
-    background: linear-gradient(120deg, #534423d3, #473306c2);
+    background: linear-gradient(120deg, #534423ff, #473306c2);
     border-radius: none;
   }
   
 
   // Anim
   .text-container {
-    font-weight: 600;
     color: whitesmoke;
     text-align: center;
     text-wrap: wrap;
     width: 90%;
-    font-size: 4rem;
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    padding-left: 10rem;
+    padding-left: 5rem;
+    margin-top: 2.5%;
     overflow: hidden;
     width: 100vw;
     height: 100vh;
     color: white;
     // background: rgba(135, 112, 63, 0.5);
     text-transform: capitalize;
+    text-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
   }
   
   /* title styles */

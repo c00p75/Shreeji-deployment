@@ -6,7 +6,7 @@ import ProductImage from './product image';
 import SpecialFeaturBudge from './special feature budge';
 
 const ProductDetails = ({product}) => {  
-  console.log(product)
+  console.log('Fetching product', product)
   if (!product) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] text-center">

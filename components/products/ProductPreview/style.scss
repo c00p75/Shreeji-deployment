@@ -83,7 +83,9 @@
   position: relative;
   z-index: 1;
   width: auto;
-  height: 10rem;
+  height: 15rem;
+  max-height: 15rem;
+  min-height: 15rem;
   margin: auto;
   margin-top: -5px;
   margin-bottom: 0px;

@@ -4,7 +4,8 @@ nav {
   .container {
     padding-inline: 2.5rem;
     justify-content: center;
-    transition: all 0.35s ease-in;
+    transition: all 0.25s ease-in;
+    transition: color 0.1s ease-in !important;
 
     ul {
       margin-right: 4rem;
@@ -56,7 +57,7 @@ nav {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0px 0px 0px 4px rgba(0, 0, 0, 0.253);
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
   cursor: pointer;
   transition-duration: 0.3s;
   overflow: hidden;
@@ -175,8 +176,11 @@ nav {
   }
 
   header {
-    a:hover {
-      color: #4d4024;
+    li a {
+      transition: all ease-in-out 0.12s;
+    }
+    li a:hover {
+      border-bottom: 2px solid currentColor;
     }
 
     .active-link:hover {

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import skylift from "@/public/elements/skylift.png";
-import buildings from "@/public/backgrounds/city_buildings.png";
+import bulb from "@/public/elements/light-bulb.jpg";
 import "./style.scss";
 import { Square } from "lucide-react";
 
@@ -28,7 +28,7 @@ const WhyUs = () => {
     },
   ];
   return (
-    <section className="why-us flex flex-row-reverse text-[#171717] pt-32 overflow-visible px-20">
+    <section className="why-us flex flex-row-reverse text-[#171717] pt-32 pb-20 overflow-visible px-20">
       {/* <Image src={buildings} alt="Shreeji" className="buildings-bg-img absolute bottom-0 right-[0%] w-[100vh] h-[80vh] grayscale opacity-30"/> */}
       <div className="flex flex-col gap-10 relative flex-[3]">
         <div className="flex flex-col gap-5 relative">
@@ -47,8 +47,8 @@ const WhyUs = () => {
           {team.map((item, i) => (
             <div className="flex gap-3 items-center" key={`value-${i}`}>
               <span>
-                <Square className="w-4 h-4" fill="#171717" strokeWidth={3} />
-              </span>
+                  <Square className="w-8 h-8" fill="#87703f" strokeWidth={0} />
+                </span>
               <p><span className="font-bold">{item.title}</span> - {item.description}</p>                
             </div>
           ))}                            
@@ -56,7 +56,9 @@ const WhyUs = () => {
       </div>
 
       <div className="flex-[2]">
-        <div className="w-[90%] h-[80%] bg-stone-700 mt-28 rounded-md" />
+        <div className="w-[90%] h-[80%] bg-[#87703f] mt-28 rounded-sm">
+          <Image src={bulb} className="scale-x-[-1] h-full object-cover rounded-sm -rotate-6 shadow-xl shadow-black/40" />
+        </div>
       </div>
     </section>
   );

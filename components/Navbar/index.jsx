@@ -150,7 +150,7 @@ const Navbar = () => {
                 <Link
                   href="/"
                   className={` ${
-                    pathname == "/" ? "active-link" : "hover:text-gray-300"
+                    pathname == "/" ? "active-link" : ""
                   }`}
                 >
                   Home
@@ -163,7 +163,7 @@ const Navbar = () => {
                   className={` ${
                     pathname == "/about-us"
                       ? "active-link"
-                      : "hover:text-gray-300"
+                      : ""
                   }`}
                 >
                   About Us
@@ -176,7 +176,7 @@ const Navbar = () => {
                   className={` ${
                     pathname == "/services"
                       ? "active-link"
-                      : "hover:text-gray-300"
+                      : ""
                   }`}
                 >
                   Services
@@ -189,7 +189,7 @@ const Navbar = () => {
                   className={` ${
                     pathname == "/products"
                       ? "active-link"
-                      : "hover:text-gray-300"
+                      : ""
                   }`}
                 >
                   Products
@@ -202,7 +202,7 @@ const Navbar = () => {
                   className={` ${
                     pathname == "/collaborate-with-us"
                       ? "active-link"
-                      : "hover:text-gray-300"
+                      : ""
                   }`}
                 >
                   Collaborate
@@ -215,7 +215,7 @@ const Navbar = () => {
                   className={` ${
                     pathname == "/contact-us"
                       ? "active-link"
-                      : "hover:text-gray-300"
+                      : ""
                   }`}
                 >
                   Contact Us
@@ -293,7 +293,7 @@ const Navbar = () => {
               <li>
                 <Link
                   href="/"
-                  className="block text-white hover:text-gray-300"
+                  className="block text-white "
                   onClick={closeMenu}
                 >
                   Home
@@ -303,7 +303,7 @@ const Navbar = () => {
               <li>
                 <Link
                   href="/about-us"
-                  className="block text-white hover:text-gray-300"
+                  className="block text-white "
                   onClick={closeMenu}
                 >
                   About Us
@@ -313,7 +313,7 @@ const Navbar = () => {
               <li>
                 <Link
                   href="/services"
-                  className="block text-white hover:text-gray-300"
+                  className="block text-white "
                   onClick={closeMenu}
                 >
                   Services
@@ -323,7 +323,7 @@ const Navbar = () => {
               <li>
                 <Link
                   href="/impact-and-sustainability"
-                  className="block text-white hover:text-gray-300"
+                  className="block text-white "
                   onClick={closeMenu}
                 >
                   Products
@@ -333,7 +333,7 @@ const Navbar = () => {
               <li>
                 <Link
                   href="/collaborate-with-us"
-                  className="block text-white hover:text-gray-300"
+                  className="block text-white "
                   onClick={closeMenu}
                 >
                   Collaborate
@@ -343,7 +343,7 @@ const Navbar = () => {
               <li>
                 <Link
                   href="/contact-us"
-                  className="block text-white hover:text-gray-300"
+                  className="block text-white "
                   onClick={closeMenu}
                 >
                   Contact Us

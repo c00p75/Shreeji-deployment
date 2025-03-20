@@ -11,6 +11,7 @@ import product4 from "@/public/products/product (4).png";
 import product5 from "@/public/products/product (5).png";
 import product6 from "@/public/products/product (1).png";
 import Image from "next/image";
+import LatestProductsByCategory from "@/components/products/main grid/latest products category";
 
 const discountedProducts = [
   {
@@ -98,8 +99,9 @@ const DiscountedProducts = () => {
   };
 
   return (
-    <div className="discounted-product-container relative w-screen scroll-smooth pb-28 pt-32">
-      <h2 className=" font-extrabold text-4xl p-10 underline underline-offset-8 text-center">
+    <div className="discounted-product-container relative w-screen scroll-smooth pb-28 pt-32 text-white">
+      <LatestProductsByCategory category="Computers" count={5} heading="Discounted Products" />
+      {/* <h2 className=" font-extrabold text-4xl p-10 underline underline-offset-8 text-center">
         <span>Discounted</span> Products
       </h2>
       <div
@@ -153,7 +155,7 @@ const DiscountedProducts = () => {
         >
           <ChevronRight className="w-8 h-8" />
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };
