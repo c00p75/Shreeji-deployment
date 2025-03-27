@@ -1,144 +1,87 @@
+'use client'
+
+import { useState } from "react";
+import { MotionConfig, motion } from "framer-motion";
+import { Server, Printer, Briefcase, Globe } from "lucide-react";
 import './style.scss'
-import celtel from "@/public/elements/celtel.png";
-import zicta from "@/public/elements/zicta.jpg";
-import mtn from "@/public/elements/mtn.jpg";
-import moe from "@/public/elements/moe.png";
-import lafarge from "@/public/elements/lafarge-holcim.png";
-import stc from "@/public/elements/save-the-children.jpg";
+import Link from "next/link";
 
-const Services = () => {
+const services = [
+  {
+    title: "Enterprise Printing & Scanning",
+    link: "/services/enterprise-printing-and-Scanning",
+    icon: <Printer size={40} />, 
+    description:
+      "Our high-speed smart scanners and enterprise printers ensure cost-effective, large-scale document management and printing solutions with OCR conversions.",
+  },
+  {
+    title: "Business Process Outsourcing (BPO)",
+    link: "/services/bpo",
+    icon: <Briefcase size={40} />, 
+    description:
+      "We partner with major telecom providers for services like SIM registration, mobile money operations, and quality assurance, ensuring seamless business processes.",
+  },
+  {
+    title: "Skylift Services",
+    link: "/services/skylift",
+    icon: <Globe size={40} />, 
+    description:
+      "Our Skylift solutions offer efficient lifting and material handling services, tailored for construction and logistics needs with high precision and reliability.",
+  },
+  {
+    title: "ICT Solutions",
+    link: "/services/it-solutions",
+    icon: <Server size={40} />, 
+    description:
+      "We provide comprehensive ICT solutions, including hardware supply, networking, enterprise software, and custom-built solutions like biometric scanners and internet kiosks.",
+  },
+];
+
+export default function ServicesPage() {  
   return (
-    
-    <div class="inline content-full z-0">
-      <section class="Hero inline gap-2">
-        <div class="Wrapper block content-3">
-          <div class="Visual block-center-center">
-            <picture class="FirstPic">
-              <source
-                srcset={celtel.src}
-                media="(width >= 1024px)"
-                type="image/avif"
-              />
-              <source
-                srcset="
-                  https://raw.githubusercontent.com/mobalti/open-props-interfaces/main/stories-with-scroll-driven/images/img-mobile-3.avif
-                "
-                type="image/avif"
-              />
-
-              <source
-                srcset="
-                  https://raw.githubusercontent.com/mobalti/open-props-interfaces/main/stories-with-scroll-driven/images/img-desktop-3.webp
-                "
-                media="(width >= 1024px)"
-                type="image/webp"
-              />
-              <img
-                src="https://raw.githubusercontent.com/mobalti/open-props-interfaces/main/stories-with-scroll-driven/images/img-mobile-3.webp"
-                alt="Stories Unveiled"
-              />
-            </picture>
-            <picture class="SecondPic">
-              <source
-                srcset={zicta.src}
-                media="(width >= 1024px)"
-                type="image/avif"
-              />
-              <source
-                srcset="
-                  https://raw.githubusercontent.com/mobalti/open-props-interfaces/main/stories-with-scroll-driven/images/img-mobile-2.avif
-                "
-                type="image/avif"
-              />
-
-              <source
-                srcset="
-                  https://raw.githubusercontent.com/mobalti/open-props-interfaces/main/stories-with-scroll-driven/images/img-desktop-2.webp
-                "
-                media="(width >= 1024px)"
-                type="image/webp"
-              />
-              <img
-                src="https://raw.githubusercontent.com/mobalti/open-props-interfaces/main/stories-with-scroll-driven/images/img-mobile-2.webp"
-                alt="Celebrating Life Together"
-              />
-            </picture>
-            <picture class="ThirdPic">
-              <source
-                srcset={mtn.src}
-                media="(width >= 1024px)"
-                type="image/avif"
-              />
-              <source
-                srcset="
-                  https://raw.githubusercontent.com/mobalti/open-props-interfaces/main/stories-with-scroll-driven/images/img-mobile-1.avif
-                "
-                type="image/avif"
-              />
-
-              <source
-                srcset="
-                  https://raw.githubusercontent.com/mobalti/open-props-interfaces/main/stories-with-scroll-driven/images/img-desktop-1.webp
-                "
-                media="(width >= 1024px)"
-                type="image/webp"
-              />
-              <img
-                src="https://raw.githubusercontent.com/mobalti/open-props-interfaces/main/stories-with-scroll-driven/images/img-mobile-1.webp"
-                alt="The Art of Giving"
-              />
-            </picture>
-          </div>
-        </div>
-
-        <div class="Content block">
-          <div id="StoriesUnveiled" class="FirstLockup block-center-start">
-            <div class="block gap-3">
-              <h3>Stories Unveiled</h3>
-              <div class="subhead">
-                Capture the essence of family celebration.
-              </div>
-              <p>Share the moments that weave your family tale.</p>
-            </div>
-          </div>
-          <div
-            id="CelebratingLifeTogether"
-            class="SecondLockup block-center-start"
+    <MotionConfig transition={{ duration: 0.5, ease: "easeInOut" }}>
+      <div className="services-page min-h-screen text-white bg-gradient-to-br from-[whitesmoke] via-[rgb(255 255 255 / 50%)] via-[rgb(0 0 0 / 10%)] to-[#f0eded]">
+        {/* Hero Section */}
+        <div className="text-center py-32 relative services-hero-section">
+          <motion.h1 
+            initial={{ opacity: 0, y: -20 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            className="text-6xl font-extrabold drop-shadow-lg"
           >
-            <div class="block gap-3">
-              <h3>Celebrating Life Together</h3>
-              <div class="subhead">Embrace the significance of shared joy.</div>
-              <p>In every celebration, find the heartwarming stories.</p>
-            </div>
-          </div>
-          <div id="TheArtofGiving" class="ThirdLockup block-center-start">
-            <div class="block gap-3">
-              <h3>The Art of Giving</h3>
-              <div class="subhead">
-                Explore the stories within each present.
-              </div>
-              <p>Every gift is a chapter in your family's narrative.</p>
-            </div>
-          </div>
+            Our Services
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }} 
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="mt-6 text-lg max-w-2xl mx-auto opacity-90"
+          >
+            Discover cutting-edge solutions designed to propel your business forward.
+          </motion.p>
         </div>
 
-        {/* <!-- mobile sda  --> */}
-        <div class="SmallScreenContent block-center-center">
-          <p class="FirstStory">The Art of Giving</p>
-          <p class="SecondStory">Celebrating Life Together</p>
-          <p class="ThirdStory">Stories Unveiled</p>
-        </div>
-      </section>
-
-      <div class="pagination block-center-center content-full">
-        <div class="inline gap-3">
-          <a href="#StoriesUnveiled"></a>
-          <a href="#CelebratingLifeTogether"></a>
-          <a href="#TheArtofGiving"></a>
+        {/* Services List */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto py-20">
+          {services.map((service, index) => (
+            <Link href={service.link} key={index}>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.3 }}
+                className="min-h-[23rem] p-6 bg-white text-[#584d2a] rounded-2xl shadow-xl cursor-pointer transform hover:shadow-2xl hover:translate-y-[-5px]"
+              >
+                <div className="flex items-center space-x-4">
+                  <div>{service.icon}</div>
+                  <h2 className="text-2xl font-bold">{service.title}</h2>
+                </div>
+                <p className="mt-4 text-gray-600">{service.description}</p> 
+                <div className="text-[#807045] mt-6 inline-block">Explore {service.title} →</div>             
+              </motion.div>
+            </Link>
+          ))}
         </div>
       </div>
-    </div>
-  )
+    </MotionConfig>
+  );
 }
-
-export default Services

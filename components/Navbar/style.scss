@@ -12,7 +12,43 @@ nav {
     }
   }
 
-  .active-link:hover {cursor: default !important;}
+  // .active-link:hover {cursor: default !important;}
+
+  .mega-menu {
+    display: flex;
+    justify-content: space-around;
+    background: white;
+    border-radius: 0.5rem;
+    gap: 1rem;
+    padding: 1.75rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+    width: 90vw;
+    max-width: 90w;
+    // margin-top: 1.25rem;  
+    margin-left: 5vw;
+    color: var(--shreeji-primary);
+
+    a {
+      cursor: pointer !important;
+    }
+    a:hover {
+      color: #473e26 !important;
+    }
+  }
+
+  .flex-mega-menu {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    max-height: 80vh;
+    width: max-content;
+    // padding: 1.5rem 2rem;
+  }
+
+  .flex-mega-menu  > div {
+    max-width: 15rem;
+    width: fit-content;
+  }
 }
 .nav-logo {
   height: 4rem;

@@ -10,14 +10,8 @@ import Services from "@/components/services/Services";
 export default function Home() {
   return (
     <div className="relative">
-      <HeroSection />
-      <OurStory />
-      <OurExpertise />
+      {/* <HeroSection /> */}
       <Services />
-      {/* <OurJourney /> */}
-      <Team />
-      {/* <WhyUs /> */}
-      {/* <JoinUs /> */}
     </div>      
   );
 }
