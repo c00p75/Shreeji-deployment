@@ -1,4 +1,4 @@
-import { getProductByName } from "@/app/data/productsData";
+import { getProductByName, subcategoryExists } from "@/app/data/productsData";
 import LatestProductsByCategory from "@/components/products/main grid/latest products category";
 import ProductDetails from "@/components/products/product details";
 import ProductCategory from "@/components/products/product category";
@@ -10,80 +10,78 @@ import CategoryPromotionalBanner from "@/components/products/product category/ca
 import Breadcrumbs from "@/components/products/product category/breadcrumbs";
 import ProductList from "@/components/products/product category/product list";
 
-const ProductPage = async({ params }) => {
-  const { slug } = await params;
-  let [category, subcategory, product] =  slug;
-  // return <h1>page</h1>
-  // let product
+const ProductPage = async ({ params }) => {
+  const { slug } = params;
+  let [category, subcategory, product] = slug || [];
 
-  // const { slug } = params; // `slug` is an array
+  // Ensure variables are defined to avoid errors
+  subcategory = subcategory || "";
+  product = product || "";
 
   // Product
   let productDetails;
-  let productName; 
+  let productName;
 
   // Sub category
   let subcategoryName;
-  
+
   // Category
   let categoryName;
-  
 
-  if (product) { 
-    productName = decodeURIComponent(product); 
-    categoryName = decodeURIComponent(category).replace(/-/g, " "); 
-    subcategoryName = decodeURIComponent(subcategory).replace(/-/g, " "); 
+  if (product) {
+    productName = decodeURIComponent(product);
+    categoryName = decodeURIComponent(category)
+    subcategoryName = decodeURIComponent(subcategory)
     productDetails = getProductByName(productName);
-  } else if (subcategory) { 
-    categoryName = decodeURIComponent(category).replace(/-/g, " "); 
-    subcategoryName = decodeURIComponent(subcategory).replace(/-/g, " "); 
+  } else if (subcategory) {
+    categoryName = decodeURIComponent(category)
+    subcategoryName = decodeURIComponent(subcategory)
+    console.log('category', subcategoryName)
+    if(!subcategoryExists(subcategory)){
+      productName = subcategory;
+      productDetails = getProductByName(subcategoryName);
+      console.log(productDetails)
+    };
   } else if (category) {
-    categoryName = decodeURIComponent(category).replace(/-/g, " "); 
+    categoryName = decodeURIComponent(category)
   }
 
   return (
-    <section className={`z-[1] products-main-section min-h-screen relative pl-5 pr-8 gap-5 pb-[2rem] text-white h-fit ${product ? 'product-details-page' : ''}`}>    
+    <section
+      className={`z-[1] products-main-section min-h-screen relative pl-5 pr-8 gap-5 pb-[2rem] text-white h-fit ${
+        product ? "product-details-page" : ""
+      }`}
+    >
       <SideGrid />
-      <section className="main-grid flex-[3] relative flex flex-col gap-5">        
+      <section className="main-grid flex-[3] relative flex flex-col gap-5">
         {product ? (
           <>
             <Breadcrumbs breadcrumbs={[categoryName, subcategoryName, productName]} />
             <ProductDetails product={productDetails} />
           </>
-        ) : (
-          subcategory ? (
+        ) : subcategory ? (
+          subcategoryExists(subcategory) ? (
             <>
               <Breadcrumbs breadcrumbs={[categoryName, subcategoryName]} />
               <CategoryPromotionalBanner subcategory={subcategoryName} />
-              <ProductList filterBy='subcategory' filter={subcategoryName} />
+              <ProductList filterBy="subcategory" filter={subcategoryName} />
             </>
           ) : (
             <>
-              <Breadcrumbs breadcrumbs={[categoryName]} />
-              <CategoryPromotionalBanner category={categoryName} />
-              <ProductList filterBy='category' filter={categoryName} />
+              <Breadcrumbs breadcrumbs={[categoryName, productName]} />
+              <ProductDetails product={productDetails} />
             </>
           )
+        ) : (
+          <>
+            <Breadcrumbs breadcrumbs={[categoryName]} />
+            <CategoryPromotionalBanner category={categoryName} />
+            <ProductList filterBy="category" filter={categoryName} />
+          </>
         )}
-      </section>      
+      </section>
     </section>
-  )
-
-  // if(slug.length === 3){
-  //   let productName = decodeURIComponent(slug[slug.length-1]).replace(/-/g, " ")
-  //   product = getProductByName(productName);
-  //   return <ProductDetails product={product}/>
-  // } 
-
-  // if(slug.length === 2){
-  //   let subCategoryName = decodeURIComponent(slug[slug.length-1]).replace(/-/g, " ")    
-  //   return <div>{subCategoryName}</div>
-  // } 
-
-  // if(slug.length === 1){
-  //   let categoryName = decodeURIComponent(slug[0]).replace(/-/g, " ")    
-  //   return <div>{categoryName}</div>
-  // } 
+  );
 };
 
 export default ProductPage;

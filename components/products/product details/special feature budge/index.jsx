@@ -1,4 +1,5 @@
 import React from 'react'
+import './style.scss'
 
 const SpecialFeaturBudge = ({product}) => {
   if(!product['special feature']){return}
@@ -7,7 +8,7 @@ const SpecialFeaturBudge = ({product}) => {
       <div className="special-feature text-2xl mt-5 font-bold flex items-center z-0">
         {product['special feature']['stat'] && (
           <div className={
-            `text-${product['special feature']['stat text size'] ? product['special feature']['stat text size'] : 9}xl special-feature-stat`
+            `text-${product['special feature']['stat text size'] ? product['special feature']['stat text size'] : 9} special-feature-stat`
           }>
             {product['special feature']['stat']}
             <span className='speacial-feature-shadow' />

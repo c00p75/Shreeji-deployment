@@ -477,7 +477,7 @@ export const allProducts = [
     "discounted price": "K5,000",
     "special feature": {
       "stat": '10',
-      'stat text size': 8,
+      'stat text size': 5,
       "symbol": "+",
       "feature": "Hours Battery Charge"
     }
@@ -1433,7 +1433,7 @@ export const allProducts = [
     "discounted-price": "K5,000",
     "special feature": {
       "stat": '4K',
-      'stat text size': 8,
+      'stat text size': 4,
       // "symbol": "+",
       "feature": "Display"
     }
@@ -4552,23 +4552,7 @@ export const randomProduct = (filterBy, filter, count) => {
   return allProducts[index]
 }
 
-// export const getRecentProductsByCategory = (category, count) => {
-//   let products = allProducts
-//     .filter(product => product.category === category)
-//     .sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded))
-    
-//   if(count){ return products.slice(0, count); } 
-
-//   return products  
-// };
-
-// export const getRecentProductsBySubCategory = (subcategory, count) => {
-//   let products = allProducts
-//     .filter(product => product.subcategory === subcategory)
-//     .sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded))
-
-//   if(count){ return products.slice(0, count); } 
-
-//   return products; 
-// };
+export const subcategoryExists = (subcategory) => {
+  return allProducts.some(product => product.subcategory === subcategory);
+};
 

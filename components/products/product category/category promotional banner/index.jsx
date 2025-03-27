@@ -11,6 +11,8 @@ const CategoryPromotionalBanner = ({category, subcategory}) => {
     promoProduct = randomProduct('category', category);
   }
 
+  if (!promoProduct) return null;
+  
   return (
     <div className="bg-[var(--shreeji-primary)] h-fit relative">
       <div className='flex'>
