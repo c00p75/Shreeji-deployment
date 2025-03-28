@@ -7,7 +7,7 @@ import './style.scss'
 import Link from "next/link";
 import MovingTextEffect from "../moving text";
 
-const services = [
+export const services = [
   {
     title: "Enterprise Printing & Scanning",
     link: "/services/enterprise-printing-and-Scanning",

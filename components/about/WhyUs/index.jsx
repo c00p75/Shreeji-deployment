@@ -28,7 +28,7 @@ const WhyUs = () => {
     },
   ];
   return (
-    <section className="why-us flex flex-row-reverse text-[#171717] pt-32 pb-20 overflow-visible px-20">
+    <section className="why-us flex flex-row-reverse text-[#171717] pt-32 pb-20 overflow-visible px-20 bg-gradient-to-br from-white to-[#f9f6e6]">
       {/* <Image src={buildings} alt="Shreeji" className="buildings-bg-img absolute bottom-0 right-[0%] w-[100vh] h-[80vh] grayscale opacity-30"/> */}
       <div className="flex flex-col gap-10 relative flex-[3]">
         <div className="flex flex-col gap-5 relative">

@@ -5,12 +5,10 @@
     flex-wrap: wrap;
 
     .expertise-card {
-      background: white;
       border-radius: 10px;
-      padding: 1rem;
-      width: 19rem;
+      width: 45%;
+      height: fit-content;
       color: #675630;
-      box-shadow: -1px 10px 10px rgba(0, 0, 0, 0.4);
     }
   }  
 
