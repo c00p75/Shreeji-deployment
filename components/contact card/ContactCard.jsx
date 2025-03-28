@@ -168,7 +168,7 @@ const ContactCard = () => {
       </div>
 
       {displayForm && (
-        <div className="contact-card contact-card-form max-w-md mx-auto bg-red-500 p-6 rounded-lg shadow-lg overflow-hidden">
+        <div className="contact-card contact-card-form max-w-md mx-auto p-6 rounded-lg shadow-lg overflow-hidden">
           <AnimatePresence mode="wait" custom={direction}>
             <motion.div
               key={currentStep}
@@ -189,7 +189,7 @@ const ContactCard = () => {
                 <input
                   type="text"
                   placeholder={steps[currentStep].placeholder}
-                  className="w-full p-2 border rounded text-[var(--shreeji-primary)]"
+                  className="w-full p-2 border rounded text-[var(--shreeji-primary)] focus:outline-none"
                   onChange={handleChange}
                   value={formData[steps[currentStep].field] || ""} />
               )}
@@ -200,7 +200,7 @@ const ContactCard = () => {
             {currentStep < steps.length - 1 ? (
               <button className="px-4 py-2 bg-white text-[var(--shreeji-primary)] rounded" onClick={handleNext}>Next</button>
             ) : (
-              <button className="px-4 py-2 bg-green-500 text-white rounded" onClick={() => alert("Form submitted: " + JSON.stringify(formData))}>Submit</button>
+              <button className="px-4 py-2 bg-green-500 text-white rounded" onClick={() => {alert("Form submitted successfully"); setMinimize(true); setDisplayForm(false);}}>Submit</button>
             )}
           </div>
         </div>
