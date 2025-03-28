@@ -17,24 +17,6 @@ export default function PrintingPage() {
         image=""
       />
 
-      {/* <div className="services-hero-section relative py-28 px-6 text-center text-white">
-        <motion.h1 
-          initial={{ opacity: 0, y: -50 }} 
-          animate={{ opacity: 1, y: 0 }} 
-          className="text-5xl font-extrabold drop-shadow-md"
-        >
-          Enterprise Printing & Scanning
-        </motion.h1>
-        <motion.p 
-          initial={{ opacity: 0, y: 20 }} 
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mt-4 text-lg max-w-3xl mx-auto opacity-80"
-        >
-          Transform your document management with cutting-edge printing and scanning solutions designed for efficiency, security, and cost savings.
-        </motion.p>
-      </div> */}
-
       {/* Features Section */}
       <div className="relative py-20 px-8 max-w-7xl mx-auto">
         <h2 className="text-3xl font-semibold text-[#807045] text-center mb-12">Why Choose Our Printing & Scanning Solutions?</h2>
@@ -80,7 +62,7 @@ export default function PrintingPage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 + index * 0.2 }}
-                    className="backdrop-blur-lg bg-white/50 p-8 rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all"
+                    className="backdrop-blur-lg bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all"
                   >
                     <div className="flex items-center space-x-4">
                       {feature.icon}
@@ -97,7 +79,7 @@ export default function PrintingPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 + index * 0.2 }}
-                  className="backdrop-blur-lg bg-white/50 p-8 rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all"
+                  className="backdrop-blur-lg bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all"
                 >
                   <div className="flex items-center space-x-4">
                     {feature.icon}
@@ -174,7 +156,7 @@ export default function PrintingPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 + index * 0.2 }}
-              className="p-6 bg-[#f8f6f0] rounded-lg shadow-md"
+              className="p-6 bg-white rounded-lg shadow-md"
             >
               <div className="flex items-center space-x-4">
                 <HelpCircle size={30} className="text-[#807045]" />
@@ -188,8 +170,11 @@ export default function PrintingPage() {
 
       {/* Call to Action */}
       <div className="text-center py-16 bg-[#807045] text-white shadow-inner">
-        <h2 className="text-3xl font-semibold">Get Started Today</h2>
-        <button className="mt-6 px-8 py-3 bg-white text-[#807045] font-semibold rounded-full shadow-md hover:bg-[#f0ebd5] transition-all">
+        <h2 className="text-3xl font-semibold mb-6">Get Started Today</h2>
+        <p className="text-lg max-w-2xl mx-auto mb-8">
+          Ready to take your business to the next level? Our printing and scanning solutions can help streamline your operations, reduce costs, and improve efficiency.
+        </p>
+        <button className="px-8 py-3 bg-white text-[#807045] font-semibold rounded-full shadow-md hover:bg-[#5c5132] hover:text-white transition-all">
           Contact Us
         </button>
       </div>

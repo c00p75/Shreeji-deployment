@@ -21,23 +21,6 @@ export default function PrintingPage() {
         subtitle="Innovative, cost-effective, and high-quality printing solutions tailored to meet the demands of your business."
         image=""
       />
-      {/* <div className="services-hero-section relative bg-[#807045] text-white py-20 px-8 text-center">
-        <motion.h1 
-          initial={{ opacity: 0, y: -20 }} 
-          animate={{ opacity: 1, y: 0 }} 
-          className="text-5xl font-extrabold drop-shadow-lg"
-        >
-          Enterprise-Level Printing
-        </motion.h1>
-        <motion.p 
-          initial={{ opacity: 0, y: 20 }} 
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mt-4 text-lg max-w-2xl mx-auto opacity-90"
-        >
-          Innovative, cost-effective, and high-quality printing solutions tailored to meet the demands of your business.
-        </motion.p>
-      </div> */}
 
       {/* About the Service */}
       <section className="py-16 px-8">
@@ -200,8 +183,7 @@ export default function PrintingPage() {
       </section>
 
       {/* Contact Section */}
-      <section className="p-5 pr-9">
-        <div className="bg-[#807045] text-white py-16 px-8 rounded-[40px]">
+        <div className="bg-[#807045] text-white py-16 px-8">
           <div className="max-w-6xl mx-auto text-center">
             <motion.h3 
               initial={{ opacity: 0, y: -20 }} 
@@ -214,12 +196,11 @@ export default function PrintingPage() {
             <p className="text-lg mb-8">
               Ready to optimize your business's printing operations? Contact us today for a personalized consultation and discover how we can help streamline your printing processes.
             </p>
-            <button className="mt-6 px-8 py-3 bg-white text-[#807045] font-semibold rounded-full shadow-md hover:bg-[#f0ebd5] transition-all">
+            <button className="px-8 py-3 bg-white text-[#807045] font-semibold rounded-full shadow-md hover:bg-[#f0ebd5] transition-all">
               Contact us
             </button>
           </div>
-        </div>
-      </section>      
+        </div>        
     </div>
   );
 }

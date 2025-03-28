@@ -7,7 +7,7 @@ import MovingTextEffect from "@/components/moving text";
 
 export default function BackOfficeSupportPage() {
   return (
-    <div className="back-office-support-page min-h-screen bg-gradient-to-br from-white to-[#f5f5f5] text-[#403d2a]">
+    <div className="back-office-support-page min-h-screen bg-gradient-to-br from-white to-[#f9f6e6] text-[#403d2a]">
 
       {/* Hero Section */}
       <MovingTextEffect
@@ -34,7 +34,7 @@ export default function BackOfficeSupportPage() {
       </div> */}
 
       {/* Our Back Office Support Services */}
-      <div className="py-20 px-8 max-w-7xl mx-auto text-center">
+      <div className="pt-20 pb-10 px-8 max-w-7xl mx-auto text-center">
         <h2 className="text-3xl font-semibold text-[#807045]">Our Back Office Support Services</h2>
         <p className="mt-6 text-lg max-w-4xl mx-auto text-gray-700">
           At <strong>Company Name</strong>, we handle the crucial behind-the-scenes tasks so you can focus on your core business operations. Our back office support services are designed to improve your overall productivity, reduce operational costs, and enhance workflow efficiency. We provide tailored solutions to meet the specific needs of your business.
@@ -141,10 +141,10 @@ export default function BackOfficeSupportPage() {
       </div>
 
       {/* Call to Action */}
-      <div className="text-center py-16 bg-[#807045] text-white rounded-[40px] m-5 mr-9 shadow-inner">
+      <div className="text-center py-16 bg-[#807045] text-white shadow-inner flex-center">
         <h2 className="text-3xl font-semibold">Streamline Your Business Operations with Us</h2>
-        <p className="mt-2 text-lg">Our back office support services are designed to free up your valuable resources, allowing your team to focus on strategic initiatives while we handle the administrative tasks.</p>
-        <button className="mt-6 px-8 py-3 bg-white text-[#807045] font-semibold rounded-full shadow-md hover:bg-[#f0ebd5] transition-all">
+        <p className="mt-5 max-w-5xl text-lg">Our back office support services are designed to free up your valuable resources, allowing your team to focus on strategic initiatives while we handle the administrative tasks.</p>
+        <button className="mt-6 px-8 py-3 bg-white text-[#807045] font-semibold rounded-full shadow-md hover:bg-[#5c5132] hover:text-white transition-all">
           Get Started with Back Office Support
         </button>
       </div>

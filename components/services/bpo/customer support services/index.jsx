@@ -34,7 +34,7 @@ export default function CustomerSupportPage() {
       </div> */}
 
       {/* Our Support Services */}
-      <div className="py-20 px-8 max-w-7xl mx-auto text-center">
+      <div className="pt-20 pb-10 px-8 max-w-7xl mx-auto text-center">
         <h2 className="text-3xl font-semibold text-[#807045]">Our Customer Support Services</h2>
         <p className="mt-6 text-lg max-w-4xl mx-auto text-gray-700">
           At <strong>Company Name</strong>, we understand the importance of customer satisfaction. Our comprehensive customer support services are designed to provide timely, effective solutions across various communication channels. Whether it's through phone, email, chat, or social media, we ensure your customers receive seamless support at all times.
@@ -141,10 +141,10 @@ export default function CustomerSupportPage() {
       </div>
 
       {/* Call to Action */}
-      <div className="text-center py-16 bg-[#807045] text-white rounded-[40px] m-5 mr-9 shadow-inner">
+      <div className="text-center py-16 bg-[#807045] text-white shadow-inner flex-center">
         <h2 className="text-3xl font-semibold">Enhance Your Customer Experience with Us</h2>
-        <p className="mt-2 text-lg">Partner with us for superior customer support solutions that drive satisfaction, retention, and business growth. Let’s work together to elevate your support services.</p>
-        <button className="mt-6 px-8 py-3 bg-white text-[#807045] font-semibold rounded-full shadow-md hover:bg-[#f0ebd5] transition-all">
+        <p className="mt-5 text-lg max-w-5xl">Partner with us for superior customer support solutions that drive satisfaction, retention, and business growth. Let’s work together to elevate your support services.</p>
+        <button className="mt-6 px-8 py-3 bg-white text-[#807045] font-semibold rounded-full shadow-md hover:bg-[#5c5132] hover:text-white transition-all">
           Get Started with Customer Support
         </button>
       </div>

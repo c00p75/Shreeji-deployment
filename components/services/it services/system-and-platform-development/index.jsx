@@ -14,26 +14,9 @@ export default function SystemPlatformDevelopmentPage() {
         subtitle="Scalable, high-performance, and future-proof platforms tailored to your business needs."
         image=""
       />
-      {/* <div className="services-hero-section relative py-32 px-6 text-center bg-[#807045] text-white">
-        <motion.h1 
-          initial={{ opacity: 0, y: -50 }} 
-          animate={{ opacity: 1, y: 0 }} 
-          className="text-6xl font-extrabold"
-        >
-          System & Platform Development
-        </motion.h1>
-        <motion.p 
-          initial={{ opacity: 0, y: 50 }} 
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mt-6 text-lg max-w-3xl mx-auto opacity-90"
-        >
-          Scalable, high-performance, and future-proof platforms tailored to your business needs.
-        </motion.p>
-      </div> */}
 
       {/* Our Solutions */}
-      <div className="py-16 px-8">
+      <div className="pt-16 pb-10 px-8">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -143,6 +126,8 @@ export default function SystemPlatformDevelopmentPage() {
             >
               <h3 className="text-xl font-semibold text-[#807045]">{benefit.title}</h3>
               <p className="mt-4 text-gray-700">{benefit.description}</p>
+              
+              {/* Call to Action */}
               <motion.button
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -154,12 +139,7 @@ export default function SystemPlatformDevelopmentPage() {
             </motion.div>
           ))}
         </div>
-      </div>
-
-      {/* Call to Action */}
-      <div className="text-center px-40 m-5 mr-10 rounded-[40px] text-white">
-        
-      </div>
+      </div>      
     </div>
   );
 }

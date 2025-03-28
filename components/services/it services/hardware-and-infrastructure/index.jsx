@@ -14,23 +14,6 @@ export default function HardwareInfrastructurePage() {
         subtitle="Providing reliable and cutting-edge infrastructure to support your business operations and growth."
         image=""
       />
-      {/* <div className="services-hero-section relative py-32 px-6 text-center bg-[#807045] text-white">
-        <motion.h1 
-          initial={{ opacity: 0, y: -50 }} 
-          animate={{ opacity: 1, y: 0 }} 
-          className="text-6xl font-extrabold drop-shadow-lg"
-        >
-          Hardware & Infrastructure Solutions
-        </motion.h1>
-        <motion.p 
-          initial={{ opacity: 0, y: 50 }} 
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mt-6 text-lg max-w-3xl mx-auto opacity-90"
-        >
-          Providing reliable and cutting-edge infrastructure to support your business operations and growth.
-        </motion.p>
-      </div> */}
 
       {/* Introduction Section */}
       <div className="py-16 px-8 text-center max-w-4xl mx-auto">
@@ -199,7 +182,7 @@ export default function HardwareInfrastructurePage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
-          className="mt-6 px-8 py-3 bg-[#584d2a] text-white rounded-lg hover:bg-[#807045] transition-colors"
+          className="mt-6 px-8 py-3 bg-[white] text-[#807045] rounded-lg hover:bg-[#5d5232] hover:text-white transition-colors"
         >
           Get a Free Consultation
         </motion.button>

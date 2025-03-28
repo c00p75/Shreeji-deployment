@@ -1,9 +1,9 @@
-import BPOPage from "@/components/services/bpo";
+import CustomerSupportPage from "@/components/services/bpo/customer support services";
 
 export default function Home() {
   return (
     <div className="relative">
-      <BPOPage />
+      <CustomerSupportPage />
     </div>      
   );
 }

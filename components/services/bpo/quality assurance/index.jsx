@@ -153,10 +153,10 @@ export default function QualityAssurancePage() {
       </div>
 
       {/* Call to Action */}
-      <div className="text-center py-16 bg-[#807045] text-white rounded-[40px] m-5 mr-10 shadow-inner">
+      <div className="text-center flex-center py-16 bg-[#807045] text-white shadow-inner">
         <h2 className="text-3xl font-semibold">Get Reliable Quality Assurance Today</h2>
-        <p className="mt-2 text-lg">With our QA services, ensure your product meets the highest standards of quality, security, and performance. Trust our expertise to deliver seamless experiences for your users.</p>
-        <button className="mt-6 px-8 py-3 bg-white text-[#807045] font-semibold rounded-full shadow-md hover:bg-[#f0ebd5] transition-all">
+        <p className="mt-2 text-lg max-w-xl">With our QA services, ensure your product meets the highest standards of quality, security, and performance. Trust our expertise to deliver seamless experiences for your users.</p>
+        <button className="mt-6 px-8 py-3 bg-white text-[#807045] font-semibold rounded-full shadow-md hover:bg-[#5c5132] hover:text-white transition-all">
           Contact Us for QA Services
         </button>
       </div>

@@ -15,23 +15,6 @@ export default function SIMRegistrationPage() {
         subtitle="Efficient, compliant, and secure SIM registration services designed to enhance mobile network operations and customer satisfaction."
         image=""
       />
-      {/* <div className="services-hero-section relative py-32 px-6 text-center bg-[#f5f5f5]">
-        <motion.h1 
-          initial={{ opacity: 0, y: -50 }} 
-          animate={{ opacity: 1, y: 0 }} 
-          className="text-5xl font-extrabold drop-shadow-md"
-        >
-          SIM Registration & Management
-        </motion.h1>
-        <motion.p 
-          initial={{ opacity: 0, y: 20 }} 
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mt-4 text-lg max-w-3xl mx-auto opacity-80"
-        >
-          Efficient, compliant, and secure SIM registration services designed to enhance mobile network operations and customer satisfaction.
-        </motion.p>
-      </div> */}
 
       {/* What is SIM Registration & Management? */}
       <div className="py-20 px-8 max-w-7xl mx-auto text-center">
@@ -155,10 +138,10 @@ export default function SIMRegistrationPage() {
       </div>
 
       {/* Call to Action */}
-      <div className="text-center py-16 bg-[#807045] text-white rounded-[40px] m-5 mr-9 shadow-inner">
+      <div className="text-center py-16 bg-[#807045] text-white shadow-inner">
         <h2 className="text-3xl font-semibold">Let’s Streamline Your SIM Registration Process</h2>
         <p className="mt-2 text-lg">Start enhancing your customer experience and compliance with our efficient SIM Registration & Management services today.</p>
-        <button className="mt-6 px-8 py-3 bg-white text-[#807045] font-semibold rounded-full shadow-md hover:bg-[#f0ebd5] transition-all">
+        <button className="mt-6 px-8 py-3 bg-white text-[#807045] font-semibold rounded-full shadow-md hover:bg-[#5c5132] hover:text-white transition-all">
           Get Started
         </button>
       </div>

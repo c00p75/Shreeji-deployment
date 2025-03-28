@@ -4,29 +4,18 @@ import { motion } from "framer-motion";
 import { Briefcase, Users, Phone, Clipboard, ShieldCheck, Settings, CheckCircle } from "lucide-react";
 import '@/components/services/style.scss'
 import Link from "next/link";
+import MovingTextEffect from "@/components/moving text";
 
 export default function BPOPage() {
   return (
     <div className="bpo-page min-h-screen bg-gradient-to-br from-white to-[#f0f0f0] text-[#403d2a]">
 
       {/* Hero Section */}
-      <div className="services-hero-section text-white relative py-32 px-6 text-center bg-[#f9f6e6]">
-        <motion.h1 
-          initial={{ opacity: 0, y: -50 }} 
-          animate={{ opacity: 1, y: 0 }} 
-          className="text-5xl font-extrabold drop-shadow-md"
-        >
-          Business Process Outsourcing (BPO)
-        </motion.h1>
-        <motion.p 
-          initial={{ opacity: 0, y: 20 }} 
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mt-4 text-lg max-w-3xl mx-auto opacity-80"
-        >
-          Streamline your business operations with expert outsourcing services for seamless processes, enhanced productivity, and cost-efficiency.
-        </motion.p>
-      </div>
+      <MovingTextEffect
+        title="Business Process Outsourcing"
+        subtitle="Streamline your business operations with expert outsourcing services for seamless processes, enhanced productivity, and cost-efficiency."
+        image=""
+      />
 
       {/* What is BPO Section */}
       <div className="py-20 px-8 max-w-7xl mx-auto text-center">
@@ -83,7 +72,7 @@ export default function BPOPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 + index * 0.2 }}
-                className="bg-white p-8 rounded-xl shadow-lg hover:scale-105 transform transition-all"
+                className="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl hover:scale-105 transform transition-all"
               >
                 <div className="flex items-center space-x-4">
                   {service.icon}
@@ -98,7 +87,7 @@ export default function BPOPage() {
       </div>
 
       {/* Client Benefits Section */}
-      <div className="py-20 px-8 bg-[#f5f5f5] text-center">
+      <div className="py-20 px-8 bg-[#f9f8f6] text-center">
         <h2 className="text-3xl font-semibold text-[#807045]">Benefits of Our BPO Services</h2>
         <p className="mt-6 text-lg max-w-4xl mx-auto text-gray-700">
           Outsourcing business processes to us offers your organization a range of <strong>benefits</strong> that will lead to <strong>increased productivity</strong>, <strong>cost savings</strong> and a <strong>stronger focus</strong> on your core services. Here’s why our clients love working with us:
@@ -170,7 +159,7 @@ export default function BPOPage() {
       </div>
 
       {/* Call to Action */}
-      <div className="text-center py-16 bg-[#807045] text-white rounded-[40px] m-5 shadow-inner">
+      <div className="text-center py-16 bg-[#807045] text-white shadow-inner">
         <h2 className="text-3xl font-semibold">Let’s Optimize Your Business Processes</h2>
         <p className="mt-2 text-lg">Start improving efficiency, reducing costs, and enhancing service delivery today.</p>
         <button className="mt-6 px-8 py-3 bg-white text-[#807045] font-semibold rounded-full shadow-md hover:bg-[#f0ebd5] transition-all">

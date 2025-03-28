@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion';
-import { Printer, ShieldCheck, FileText, CloudUpload, Users } from 'lucide-react';
+import { Printer, ShieldCheck, FileText, CloudUpload, Users, Cross, Hospital, Landmark, Scale, PiggyBank, Factory, BookText } from 'lucide-react';
 import print from "@/public/backgrounds/hero-print.png";
 import '@/components/services/style.scss'
 import MovingTextEffect from '@/components/moving text';
@@ -15,23 +15,6 @@ export default function DocumentScanningPage() {
         subtitle="Convert physical documents into secure, high-quality digital formats with our enterprise-level scanning solutions."
         image=""
       />
-      {/* <section className="services-hero-section relative bg-[#807045] text-white py-24 px-8 text-center">
-        <motion.h1 
-          initial={{ opacity: 0, y: -20 }} 
-          animate={{ opacity: 1, y: 0 }} 
-          className="text-5xl font-bold drop-shadow-md"
-        >
-          Precision Document Scanning
-        </motion.h1>
-        <motion.p 
-          initial={{ opacity: 0, y: 20 }} 
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mt-4 text-lg max-w-3xl mx-auto opacity-90"
-        >
-          Convert physical documents into secure, high-quality digital formats with our enterprise-level scanning solutions.
-        </motion.p>
-      </section> */}
 
       {/* Service Overview */}
       <section className="py-16 px-6 md:px-12">
@@ -104,7 +87,7 @@ export default function DocumentScanningPage() {
                 transition={{ delay: 0.1 * index }}
                 className="p-6 bg-white rounded-lg shadow-md text-center"
               >
-                <div className="text-[#807045] mx-auto">{feature.icon}</div>
+                <div className="text-[#807045] mx-auto flex-center">{feature.icon}</div>
                 <h4 className="text-xl font-semibold mt-4 text-[#807045]">{feature.title}</h4>
                 <p className="mt-3 text-gray-700">{feature.description}</p>
               </motion.div>
@@ -124,21 +107,40 @@ export default function DocumentScanningPage() {
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
-              "Healthcare & Medical Records",
-              "Government Agencies",
-              "Legal & Law Firms",
-              "Financial Institutions",
-              "Manufacturing & Logistics",
-              "Education & Research Institutions"
+              {
+                name: "Healthcare & Medical Records",
+                icon: <Hospital size={40}/>
+              },
+              {
+                name: "Government Agencies",
+                icon: <Landmark size={40}/>
+              },
+              {
+                name: "Legal & Law Firms",
+                icon: <Scale size={40}/>
+              },
+              {
+                name: "Financial Institutions",
+                icon: <PiggyBank size={40}/>
+              },
+              {
+                name: "Manufacturing & Logistics",
+                icon: <Factory size={40}/>
+              },
+              {
+                name: "Education & Research Institutions",
+                icon: <BookText size={40}/>
+              },
             ].map((industry, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 * index }}
-                className="p-6 bg-white rounded-lg shadow-md text-center"
+                className="p-6 bg-white rounded-lg shadow-md text-center flex items-center space-x-4"
               >
-                <h4 className="text-xl font-semibold text-[#807045]">{industry}</h4>
+                <div className="text-[#807045]">{industry.icon}</div>
+                <h4 className="text-xl font-semibold text-[#807045]">{industry.name}</h4>
               </motion.div>
             ))}
           </div>
@@ -146,19 +148,17 @@ export default function DocumentScanningPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="p-5 pr-9">
-        <div className='bg-[#807045] text-white py-16 px-8 text-center rounded-[40px]'>
-          <h3 className="text-3xl font-semibold mb-6">
-            Ready to Streamline Your Document Management?
-          </h3>
-          <p className="text-lg max-w-2xl mx-auto mb-8">
-            Let’s help you transition into a paperless environment with secure and efficient document scanning.
-          </p>
-          <button className="mt-6 px-8 py-3 bg-white text-[#807045] font-semibold rounded-full shadow-md hover:bg-[#f0ebd5] transition-all">
-            Get Started Today
-          </button>
-        </div>
-      </section>
+      <div className='bg-[#807045] text-white py-16 px-8 text-center'>
+        <h3 className="text-3xl font-semibold mb-6">
+          Ready to Streamline Your Document Management?
+        </h3>
+        <p className="text-lg max-w-2xl mx-auto mb-8">
+          Let’s help you transition into a paperless environment with secure and efficient document scanning.
+        </p>
+        <button className="px-8 py-3 bg-white text-[#807045] rounded-full font-semibold shadow-md hover:bg-[#3f3822] hover:shadow-2xl hover:text-white transition-all">
+          Get Started Today
+        </button>
+      </div>
     </div>
   );
 }

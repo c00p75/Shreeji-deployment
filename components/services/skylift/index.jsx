@@ -17,28 +17,10 @@ export default function SkyliftServicesPage() {
         subtitle="Comprehensive lifting and material handling solutions for large-scale industrial, construction, and infrastructure projects. We offer top-tier cranes, equipment, and a highly trained team to elevate your operations."
         image=""
       />
-      {/* <div className="services-hero-section text-center py-28 px-8 relative ">
-        <motion.h1
-          initial={{ opacity: 0, y: -50 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-5xl md:text-6xl font-extrabold drop-shadow-lg"
-        >
-          Skylift Services
-        </motion.h1>
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mt-4 text-lg md:text-xl max-w-3xl mx-auto opacity-90"
-        >
-          <strong>Comprehensive lifting and material handling solutions</strong> for large-scale industrial, construction, and infrastructure projects. We offer top-tier cranes, equipment, and a highly trained team to elevate your operations.
-        </motion.p>
-        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-[#00000033] to-transparent"></div>
-      </div> */}
 
       {/* Skylift Services Overview */}
       <div className="max-w-6xl mx-auto py-20 px-8">
-        <h2 className="text-4xl font-semibold text-[#403d2a] mb-8 text-center">Skylift Solutions Overview</h2>
+        <h2 className="text-4xl font-semibold text-[#807045] mb-8 text-center">Skylift Solutions Overview</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
           {[
             {
@@ -66,7 +48,7 @@ export default function SkyliftServicesPage() {
             >
               <div className="flex items-center justify-center space-x-6 mb-4">
                 {service.icon}
-                <h3 className="text-2xl font-semibold text-[#403d2a]">{service.title}</h3>
+                <h3 className="text-2xl font-semibold text-[#807045]">{service.title}</h3>
               </div>
               <p className="text-gray-600">{service.description}</p>
             </motion.div>
@@ -76,10 +58,10 @@ export default function SkyliftServicesPage() {
 
       {/* Skylift Technology Section */}
       <div className="bg-[#f2f2f2] py-20 px-8 relative overflow-hidden">
-        <h2 className="text-4xl font-semibold text-[#403d2a] mb-12 text-center">Advanced Skylift Technology</h2>
+        <h2 className="text-4xl font-semibold text-[#807045] mb-12 text-center">Advanced Skylift Technology</h2>
         <div className="flex flex-col md:flex-row items-center space-y-12 md:space-y-0 justify-between">
           <div className="flex-1 text-center md:text-left">
-            <h3 className="text-3xl font-semibold text-[#403d2a]">State-of-the-Art Equipment</h3>
+            <h3 className="text-3xl font-semibold text-[#807045]">State-of-the-Art Equipment</h3>
             <p className="mt-4 text-gray-600">
               Our fleet of cutting-edge cranes and lifting equipment is constantly updated to ensure that we provide the most efficient and reliable service. Our technology is rigorously tested to meet the highest standards of safety and performance.
             </p>
@@ -99,7 +81,7 @@ export default function SkyliftServicesPage() {
 
       {/* Skylift Process Section */}
       <div className="py-20 px-8 max-w-6xl mx-auto">
-        <h2 className="text-4xl font-semibold text-[#403d2a] mb-8 text-center">Our Skylift Process</h2>
+        <h2 className="text-4xl font-semibold text-[#807045] mb-8 text-center">Our Skylift Process</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
           <div className="flex flex-col items-center bg-white p-8 rounded-2xl shadow-lg transform hover:scale-105 transition-all hover:shadow-2xl">
             <Image
@@ -114,7 +96,7 @@ export default function SkyliftServicesPage() {
             </p>
           </div>
           <div className="flex flex-col items-center bg-white p-8 rounded-2xl shadow-lg transform hover:scale-105 transition-all hover:shadow-2xl">
-            <h3 className="text-2xl font-semibold text-[#403d2a] mb-4">Our Key Steps</h3>
+            <h3 className="text-2xl font-semibold text-[#807045] mb-4">Our Key Steps</h3>
             <ul className="list-disc text-gray-600 space-y-4">
               <li>Site Analysis and Consultation</li>
               <li>Planning and Risk Assessment</li>
@@ -127,7 +109,7 @@ export default function SkyliftServicesPage() {
 
       {/* Safety Standards Section */}
       <div className="bg-[#e2e2e2] py-20 px-8 relative">
-        <h2 className="text-4xl font-semibold text-[#403d2a] mb-12 text-center">Safety Standards</h2>
+        <h2 className="text-4xl font-semibold text-[#807045] mb-12 text-center">Safety Standards</h2>
         <div className="text-center max-w-4xl mx-auto">
           <p className="text-lg text-gray-600 mb-6">
             At Skylift Services, safety is our number one priority. Our team follows strict safety protocols and utilizes the latest safety equipment to ensure that all operations are carried out with the highest standards of safety and performance.
@@ -141,7 +123,7 @@ export default function SkyliftServicesPage() {
 
       {/* Industries Served Section */}
       <div className="py-20 px-8 max-w-6xl mx-auto">
-        <h2 className="text-4xl font-semibold text-[#403d2a] mb-12 text-center">Industries We Serve</h2>
+        <h2 className="text-4xl font-semibold text-[#807045] mb-12 text-center">Industries We Serve</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16">
           {[
             {
@@ -184,7 +166,7 @@ export default function SkyliftServicesPage() {
             >
               <div className="flex items-center justify-center space-x-6 mb-4">
                 {industry.icon}
-                <h3 className="text-2xl font-semibold text-[#403d2a]">{industry.title}</h3>
+                <h3 className="text-2xl font-semibold text-[#807045]">{industry.title}</h3>
               </div>
               <p className="mt-4 text-gray-600">{industry.description}</p>
             </motion.div>
@@ -194,7 +176,7 @@ export default function SkyliftServicesPage() {
 
       {/* Why Choose Us Section */}
       <div className="bg-[#f2f2f2] py-20 px-8">
-        <h2 className="text-4xl font-semibold text-[#403d2a] mb-12 text-center">Why Choose Skylift Services?</h2>
+        <h2 className="text-4xl font-semibold text-[#807045] mb-12 text-center">Why Choose Skylift Services?</h2>
         <div className="text-center max-w-3xl mx-auto">
           <p className="text-lg text-gray-600 mb-6">
             Skylift Services stands out in the industry for several reasons. Our fleet of modern equipment, highly skilled operators, and commitment to safety ensure that we deliver superior lifting solutions for every project. Whether you're working on a construction site or an infrastructure project, Skylift Services has the expertise to meet your needs.
@@ -206,10 +188,10 @@ export default function SkyliftServicesPage() {
       </div>
 
       {/* Call to Action Section */}
-      <div className="bg-[#807045] text-white py-16 px-8 text-center rounded-[40px] m-5 mr-9 shadow-lg">
+      <div className="bg-[#807045] text-white py-16 px-8 text-center flex-center shadow-lg">
         <h2 className="text-3xl font-semibold">Get Started with Skylift Services</h2>
-        <p className="mt-2 text-lg">Maximize the efficiency and safety of your lifting operations with our expert solutions. Let us handle the heavy lifting so you can focus on your core business.</p>
-        <button className="mt-6 px-8 py-3 bg-white text-[#807045] font-semibold rounded-full hover:bg-[#f0f0f0] transition-all">
+        <p className="mt-2 text-lg max-w-5xl">Maximize the efficiency and safety of your lifting operations with our expert solutions. Let us handle the heavy lifting so you can focus on your core business.</p>
+        <button className="mt-6 px-8 py-3 bg-white text-[#807045] font-semibold rounded-full hover:bg-[#5c5132] hover:text-white transition-all">
           Request a Consultation
         </button>
       </div>

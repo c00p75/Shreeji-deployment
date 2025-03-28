@@ -14,23 +14,6 @@ export default function ITConsultingPage() {
         subtitle="Optimize your IT infrastructure, enhance security, and streamline business operations with our expert consulting services."
         image=""
       />
-      {/* <div className="services-hero-section relative py-32 px-6 text-center bg-[#807045] text-white">
-        <motion.h1 
-          initial={{ opacity: 0, y: -50 }} 
-          animate={{ opacity: 1, y: 0 }} 
-          className="text-6xl font-extrabold"
-        >
-          IT Consulting & Managed Services
-        </motion.h1>
-        <motion.p 
-          initial={{ opacity: 0, y: 50 }} 
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mt-6 text-lg max-w-3xl mx-auto opacity-90"
-        >
-          Optimize your IT infrastructure, enhance security, and streamline business operations with our expert consulting services.
-        </motion.p>
-      </div> */}
 
       {/* Our Services Section */}
       <div className="py-16 px-8">
@@ -168,7 +151,7 @@ export default function ITConsultingPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
-          className="mt-6 px-8 py-3 bg-white text-[#807045] rounded-lg hover:bg-[#E0A200] hover:text-white transition-colors"
+          className="mt-6 px-8 py-3 bg-white text-[#807045] rounded-lg hover:bg-[#4b4228] hover:text-white transition-colors"
         >
           Get a Free IT Consultation
         </motion.button>

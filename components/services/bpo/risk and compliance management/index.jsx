@@ -12,7 +12,7 @@ export default function RiskCompliancePage() {
       {/* Hero Section */}
       <MovingTextEffect
         title="Our Risk & Compliance Management Services"
-        subtitle="At Company Name, we prioritize the identification, mitigation, and management of risks while ensuring your business adheres to industry regulations and best practices. Our holistic approach to risk and compliance management will help safeguard your business's assets, reputation, and sustainability."
+        subtitle="We focus on identifying and managing risks while ensuring compliance with industry regulations and best practices, protecting your business's assets, reputation, and sustainability."
         image=""
       />
       {/* <div className="relative py-32 px-6 text-center bg-[#f5f5f5] services-hero-section">
@@ -34,7 +34,7 @@ export default function RiskCompliancePage() {
       </div> */}
 
       {/* Our Risk & Compliance Management Services */}
-      <div className="py-20 px-8 max-w-7xl mx-auto text-center">
+      <div className="pt-20 pb-10 px-8 max-w-7xl mx-auto text-center">
         <h2 className="text-3xl font-semibold text-[#807045]">Our Risk & Compliance Management Services</h2>
         <p className="mt-6 text-lg max-w-4xl mx-auto text-gray-700">
           At <strong>Company Name</strong>, we prioritize the identification, mitigation, and management of risks while ensuring your business adheres to industry regulations and best practices. Our holistic approach to risk and compliance management will help safeguard your business's assets, reputation, and sustainability.
@@ -141,10 +141,10 @@ export default function RiskCompliancePage() {
       </div>
 
       {/* Call to Action */}
-      <div className="text-center py-16 bg-[#807045] text-white rounded-[40px] m-5 mr-9 shadow-inner">
+      <div className="text-center py-16 bg-[#807045] text-white flex-center shadow-inner">
         <h2 className="text-3xl font-semibold">Secure Your Business with Our Risk & Compliance Services</h2>
-        <p className="mt-2 text-lg">Partner with us to safeguard your business from potential risks and ensure regulatory compliance, empowering your business to thrive in a secure environment.</p>
-        <button className="mt-6 px-8 py-3 bg-white text-[#807045] font-semibold rounded-full shadow-md hover:bg-[#f0ebd5] transition-all">
+        <p className="mt-5 text-lg max-w-5xl">Partner with us to safeguard your business from potential risks and ensure regulatory compliance, empowering your business to thrive in a secure environment.</p>
+        <button className="mt-6 px-8 py-4 bg-white text-[#807045]  hover:text-white hover:bg-[#5c5132] font-semibold rounded-full shadow-md transition-all">
           Get Started with Risk & Compliance Management
         </button>
       </div>
