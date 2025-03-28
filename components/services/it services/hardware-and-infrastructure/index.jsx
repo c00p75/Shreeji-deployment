@@ -3,12 +3,18 @@
 import { motion } from "framer-motion";
 import { Server, HardDrive, Cpu } from "lucide-react";
 import '@/components/services/style.scss'
+import MovingTextEffect from "@/components/moving text";
 
 export default function HardwareInfrastructurePage() {
   return (
     <div className="hardware-infrastructure-page min-h-screen bg-gradient-to-br from-[#F9F9F9] to-[#E0E0E0]">
       {/* Hero Section */}
-      <div className="services-hero-section relative py-32 px-6 text-center bg-[#807045] text-white">
+      <MovingTextEffect
+        title="Hardware & Infrastructure Solutions"
+        subtitle="Providing reliable and cutting-edge infrastructure to support your business operations and growth."
+        image=""
+      />
+      {/* <div className="services-hero-section relative py-32 px-6 text-center bg-[#807045] text-white">
         <motion.h1 
           initial={{ opacity: 0, y: -50 }} 
           animate={{ opacity: 1, y: 0 }} 
@@ -24,7 +30,7 @@ export default function HardwareInfrastructurePage() {
         >
           Providing reliable and cutting-edge infrastructure to support your business operations and growth.
         </motion.p>
-      </div>
+      </div> */}
 
       {/* Introduction Section */}
       <div className="py-16 px-8 text-center max-w-4xl mx-auto">

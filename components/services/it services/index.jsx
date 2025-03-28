@@ -3,8 +3,11 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Server, Monitor, Shield } from "lucide-react";
+import bg from '@/public/backgrounds/service-hero-bg.jpg'
 import '@/components/services/style.scss'
 import Link from "next/link";
+import Image from "next/image";
+import MovingTextEffect from "@/components/moving text";
 
 const itSolutions = [
   {
@@ -35,23 +38,29 @@ export default function ITSolutionsPage() {
   return (
     <div className="bg-white min-h-screen">
       {/* Hero Section */}
-      <div className="text-center text-white py-32 relative services-hero-section">
+      <MovingTextEffect
+        title="Our IT Solutions"
+        subtitle="Comprehensive IT services tailored for your business success."
+        image="https://w0.peakpx.com/wallpaper/1019/567/HD-wallpaper-white-3d-polygons-background-geometric-abstraction-white-background-3d-honeycomb-white-honeycomb-background.jpg"
+      />
+      {/* <div className="text-center text-white py-32 relative services-hero-section">
         <motion.h1 
           initial={{ opacity: 0, y: -20 }} 
           animate={{ opacity: 1, y: 0 }} 
-          className="font-extrabold drop-shadow-lg mt-10"
+          className="font-extrabold drop-shadow-lg mt-10 relative z-[1] text-transparent bg-clip-text flex-center h-[6rem] bg-cover"
+          style={{ backgroundImage: `url(https://img.freepik.com/free-photo/abstract-blue-geometric-shapes-background_24972-1837.jpg)` }}
         >
-          Our IT Solutions
+          
         </motion.h1>
         <motion.p 
           initial={{ opacity: 0, y: 20 }} 
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="pt-14 text-lg max-w-2xl mx-auto opacity-90"
+          className="pt-14 text-lg max-w-2xl mx-auto opacity-90 relative z-[1]"
         >
-          Comprehensive IT services tailored for your business success.
+          
         </motion.p>
-      </div>
+      </div> */}
 
       {/* Introduction Section */}
       <div className="max-w-6xl mx-auto py-16 px-6 text-center">

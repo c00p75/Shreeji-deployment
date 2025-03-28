@@ -4,13 +4,20 @@ import { motion } from "framer-motion";
 import { Printer, Scan, FileText, CheckCircle, Building, Briefcase, GraduationCap, ShieldCheck, HelpCircle } from "lucide-react";
 import '@/components/services/style.scss'
 import Link from "next/link";
+import MovingTextEffect from "@/components/moving text";
 
 export default function PrintingPage() {
   return (
     <div className="enterprise-printing min-h-screen bg-gradient-to-br from-[#ffffff] to-[#eae7df] text-[#403d2a]">
       
       {/* Hero Section */}
-      <div className="services-hero-section relative py-28 px-6 text-center text-white">
+      <MovingTextEffect
+        title="Enterprise Printing & Scanning"
+        subtitle="Transform your document management with cutting-edge printing and scanning solutions designed for efficiency, security, and cost savings."
+        image=""
+      />
+
+      {/* <div className="services-hero-section relative py-28 px-6 text-center text-white">
         <motion.h1 
           initial={{ opacity: 0, y: -50 }} 
           animate={{ opacity: 1, y: 0 }} 
@@ -26,7 +33,7 @@ export default function PrintingPage() {
         >
           Transform your document management with cutting-edge printing and scanning solutions designed for efficiency, security, and cost savings.
         </motion.p>
-      </div>
+      </div> */}
 
       {/* Features Section */}
       <div className="relative py-20 px-8 max-w-7xl mx-auto">

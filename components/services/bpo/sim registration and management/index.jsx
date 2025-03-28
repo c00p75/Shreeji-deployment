@@ -3,13 +3,19 @@
 import { motion } from "framer-motion";
 import { Phone, Clipboard, ShieldCheck, CheckCircle, UserPlus, Database } from "lucide-react";
 import '@/components/services/style.scss'
+import MovingTextEffect from "@/components/moving text";
 
 export default function SIMRegistrationPage() {
   return (
     <div className="sim-registration-page min-h-screen bg-gradient-to-br from-white to-[#f9f6e6] text-[#403d2a]">
 
       {/* Hero Section */}
-      <div className="services-hero-section relative py-32 px-6 text-center bg-[#f5f5f5]">
+      <MovingTextEffect
+        title="SIM Registration & Management"
+        subtitle="Efficient, compliant, and secure SIM registration services designed to enhance mobile network operations and customer satisfaction."
+        image=""
+      />
+      {/* <div className="services-hero-section relative py-32 px-6 text-center bg-[#f5f5f5]">
         <motion.h1 
           initial={{ opacity: 0, y: -50 }} 
           animate={{ opacity: 1, y: 0 }} 
@@ -25,7 +31,7 @@ export default function SIMRegistrationPage() {
         >
           Efficient, compliant, and secure SIM registration services designed to enhance mobile network operations and customer satisfaction.
         </motion.p>
-      </div>
+      </div> */}
 
       {/* What is SIM Registration & Management? */}
       <div className="py-20 px-8 max-w-7xl mx-auto text-center">
@@ -96,7 +102,7 @@ export default function SIMRegistrationPage() {
       <div className="py-20 px-8 bg-[#f5f5f5] text-center">
         <h2 className="text-3xl font-semibold text-[#807045]">Why Choose Our SIM Registration & Management Service?</h2>
         <p className="mt-6 text-lg max-w-4xl mx-auto text-gray-700">
-          Our SIM Registration & Management service is designed to help telecom operators, corporate clients, and organizations meet **regulatory compliance**, **improve service delivery**, and **reduce operational costs**. Here are some reasons why we're the best choice:
+          Our SIM Registration & Management service is designed to help telecom operators, corporate clients, and organizations meet <strong>regulatory compliance</strong>, <strong>improve service delivery</strong>, and <strong>reduce operational costs</strong>. Here are some reasons why we're the best choice:
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
           {[

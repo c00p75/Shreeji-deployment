@@ -3,12 +3,18 @@
 import { motion } from "framer-motion";
 import { Briefcase, ShieldCheck, UserCheck, Globe, ServerCog, Headset } from "lucide-react";
 import '@/components/services/style.scss'
+import MovingTextEffect from "@/components/moving text";
 
 export default function ITConsultingPage() {
   return (
     <div className="it-consulting-page min-h-screen bg-white">
       {/* Hero Section */}
-      <div className="services-hero-section relative py-32 px-6 text-center bg-[#807045] text-white">
+      <MovingTextEffect
+        title="IT Consulting & Managed Services"
+        subtitle="Optimize your IT infrastructure, enhance security, and streamline business operations with our expert consulting services."
+        image=""
+      />
+      {/* <div className="services-hero-section relative py-32 px-6 text-center bg-[#807045] text-white">
         <motion.h1 
           initial={{ opacity: 0, y: -50 }} 
           animate={{ opacity: 1, y: 0 }} 
@@ -24,7 +30,7 @@ export default function ITConsultingPage() {
         >
           Optimize your IT infrastructure, enhance security, and streamline business operations with our expert consulting services.
         </motion.p>
-      </div>
+      </div> */}
 
       {/* Our Services Section */}
       <div className="py-16 px-8">

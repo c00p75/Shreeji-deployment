@@ -3,12 +3,18 @@
 import { motion } from "framer-motion";
 import { Layers, Code, Cloud, Server, Settings } from "lucide-react";
 import '@/components/services/style.scss'
+import MovingTextEffect from "@/components/moving text";
 
 export default function SystemPlatformDevelopmentPage() {
   return (
     <div className="system-platform-page min-h-screen bg-white">
       {/* Hero Section */}
-      <div className="services-hero-section relative py-32 px-6 text-center bg-[#807045] text-white">
+      <MovingTextEffect
+        title="System & Platform Development"
+        subtitle="Scalable, high-performance, and future-proof platforms tailored to your business needs."
+        image=""
+      />
+      {/* <div className="services-hero-section relative py-32 px-6 text-center bg-[#807045] text-white">
         <motion.h1 
           initial={{ opacity: 0, y: -50 }} 
           animate={{ opacity: 1, y: 0 }} 
@@ -24,7 +30,7 @@ export default function SystemPlatformDevelopmentPage() {
         >
           Scalable, high-performance, and future-proof platforms tailored to your business needs.
         </motion.p>
-      </div>
+      </div> */}
 
       {/* Our Solutions */}
       <div className="py-16 px-8">

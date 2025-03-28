@@ -10,7 +10,7 @@ const SpecialFeaturBudge = ({product}) => {
           <div className={
             `text-${product['special feature']['stat text size'] ? product['special feature']['stat text size'] : 9} special-feature-stat`
           }>
-            {product['special feature']['stat']}
+            <h3>{product['special feature']['stat']}</h3>
             <span className='speacial-feature-shadow' />
           </div>
         )}

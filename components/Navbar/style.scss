@@ -16,14 +16,14 @@ nav {
 
   .mega-menu {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-evenly;
     background: white;
     border-radius: 0.5rem;
     gap: 1rem;
-    padding: 1.75rem;
+    padding: 2rem 1.75rem;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
-    width: 90vw;
-    max-width: 90w;
+    width: 85vw;
+    max-width: 90vw;
     // margin-top: 1.25rem;  
     margin-left: 5vw;
     color: var(--shreeji-primary);

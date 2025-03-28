@@ -3,13 +3,19 @@
 import { motion } from "framer-motion";
 import { FileText, Archive, FileCheck, Users } from "lucide-react";
 import '@/components/services/style.scss';
+import MovingTextEffect from "@/components/moving text";
 
 export default function BackOfficeSupportPage() {
   return (
     <div className="back-office-support-page min-h-screen bg-gradient-to-br from-white to-[#f5f5f5] text-[#403d2a]">
 
       {/* Hero Section */}
-      <div className="relative py-32 px-6 text-center bg-[#f5f5f5] services-hero-section">
+      <MovingTextEffect
+        title="Back Office Support"
+        subtitle="Optimizing your business operations through expert back office support services, ensuring efficiency and seamless operations behind the scenes."
+        image=""
+      />
+      {/* <div className="relative py-32 px-6 text-center bg-[#f5f5f5] services-hero-section">
         <motion.h1 
           initial={{ opacity: 0, y: -50 }} 
           animate={{ opacity: 1, y: 0 }} 
@@ -25,7 +31,7 @@ export default function BackOfficeSupportPage() {
         >
           <strong>Optimizing your business operations</strong> through expert back office support services, ensuring efficiency and seamless operations behind the scenes.
         </motion.p>
-      </div>
+      </div> */}
 
       {/* Our Back Office Support Services */}
       <div className="py-20 px-8 max-w-7xl mx-auto text-center">

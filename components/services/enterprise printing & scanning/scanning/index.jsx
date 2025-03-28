@@ -4,12 +4,18 @@ import { motion } from 'framer-motion';
 import { Printer, ShieldCheck, FileText, CloudUpload, Users } from 'lucide-react';
 import print from "@/public/backgrounds/hero-print.png";
 import '@/components/services/style.scss'
+import MovingTextEffect from '@/components/moving text';
 
 export default function DocumentScanningPage() {
   return (
     <div className="bg-[#f9f8f6] text-gray-900">
       {/* Hero Section */}
-      <section className="services-hero-section relative bg-[#807045] text-white py-24 px-8 text-center">
+      <MovingTextEffect
+        title="Precision Document Scanning"
+        subtitle="Convert physical documents into secure, high-quality digital formats with our enterprise-level scanning solutions."
+        image=""
+      />
+      {/* <section className="services-hero-section relative bg-[#807045] text-white py-24 px-8 text-center">
         <motion.h1 
           initial={{ opacity: 0, y: -20 }} 
           animate={{ opacity: 1, y: 0 }} 
@@ -25,7 +31,7 @@ export default function DocumentScanningPage() {
         >
           Convert physical documents into secure, high-quality digital formats with our enterprise-level scanning solutions.
         </motion.p>
-      </section>
+      </section> */}
 
       {/* Service Overview */}
       <section className="py-16 px-6 md:px-12">

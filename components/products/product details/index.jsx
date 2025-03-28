@@ -35,14 +35,14 @@ const ProductDetails = ({product}) => {
       {product['name'] && <h1 className="text-6xl font-bold text-center pb-5 bg-gradient-to-r from-[#807045] to-[#544829] bg-clip-text text-transparent">{product['name']}</h1>}
       {product['description'] && <p className="text-2xl text-[#544829] text-center">{product['description']}</p>}
       
-      <div className={`flex justify-center items-center flex-row ${ product['special feature'] ? 'mt-14' : ''}`}>
+      <div className={`flex justify-center items-start flex-row ${ product['special feature'] ? 'mt-14' : ''}`}>
         <div className='flex-1 relative mt-10'>
           {product['images'] && (
             <ProductImage images={product['images']} name={product.name} product={product} />
           )}      
         </div>
 
-        <div className='product-specs flex-1 p-10 pr-0 scroll-container -mt-[15%]'>    
+        <div className='product-specs flex-1 p-10 pr-0 scroll-container'>    
           {product['tagline'] && <h1 className="text-3xl mb-10 font-bold bg-gradient-to-r from-[#807045] to-[#544829] bg-clip-text text-transparent">{product['tagline']}</h1>}            
           {product['specs'] && (
             <ul className='text-xl flex flex-col gap-2'>

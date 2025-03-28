@@ -5,6 +5,7 @@ import laptop from "@/public/elements/laptop.png";
 import factory from "@/public/elements/factory.png";
 import "./style.scss";
 import { Printer, Triangle } from "lucide-react";
+import Link from "next/link";
 
 const OurSolutions = () => {
   return (
@@ -12,7 +13,7 @@ const OurSolutions = () => {
       <h2 className="text-4xl pb-16 relative z-[2]">Solutions That We Deliver</h2>
       <div className="flex w-full gap-10">
         <div className="flex flex-col justify-between flex-1 gap-16 relative z-[2]">
-          <div className="flex flex-col gap-3 service-hover">
+          <Link href="/services/it-solutions" className="flex flex-col gap-3 service-hover">
             <div className="flex gap-5 items-center">
               <div className="solution-card-img-container px-1 py-2 rounded-[10px]">
                 <Image
@@ -33,9 +34,9 @@ const OurSolutions = () => {
                 specific requirements.
               </p>
             </div>
-          </div>
+          </Link>
 
-          <div className="flex flex-col gap-3 service-hover">
+          <Link href="/services/enterprise-printing-and-Scanning" className="flex flex-col gap-3 service-hover">
             <div className="flex gap-5 items-center">
               <div className="solution-card-img-container px-1 py-2 rounded-[10px] text-black">
                 <Printer strokeWidth={1.1} className="w-10 h-10" />
@@ -50,7 +51,7 @@ const OurSolutions = () => {
                 signage, and fine-art (gi- clée) printing.
               </p>
             </div>
-          </div>
+          </Link>
         </div>
 
         <div className="middle-text-container flex-center w-[50%] relative flex-1">
@@ -71,7 +72,7 @@ const OurSolutions = () => {
         </div>
 
         <div className="flex flex-col justify-between flex-1 text-right gap-16 relative z-[2]">
-          <div className="flex flex-col gap-3 service-hover service-hover-3">
+          <Link href="/services/bpo" className="flex flex-col gap-3 service-hover service-hover-3">
             <div className="flex gap-5 items-center justify-end">
               <h3 className="font-bold text-2xl">
                 Business Process Outsourcing
@@ -93,9 +94,9 @@ const OurSolutions = () => {
                 experiences.
               </p>
             </div>
-          </div>
+          </Link>
 
-          <div className="flex flex-col gap-3 service-hover service-hover-4">
+          <Link href="/services/skylift" className="flex flex-col gap-3 service-hover service-hover-4">
             <div className="flex gap-5 items-center justify-end">
               <h3 className="font-bold text-2xl">Skylift Services</h3>
               <div className="solution-card-img-container px-1 py-2 rounded-[10px]">
@@ -115,7 +116,7 @@ const OurSolutions = () => {
                 and inspections.
               </p>
             </div>
-          </div>
+          </Link>
         </div>
       </div>
     </section>

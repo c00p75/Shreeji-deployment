@@ -10,12 +10,18 @@ import Image from 'next/image';
 import sample1 from "@/public/backgrounds/hero-print.png";
 import sample2 from "@/public/backgrounds/hero-print.png";
 import sample3 from "@/public/backgrounds/hero-print.png";
+import MovingTextEffect from '@/components/moving text';
 
 export default function PrintingPage() {
   return (
     <div className="bg-white text-gray-800">
       {/* Hero Section */}
-      <div className="services-hero-section relative bg-[#807045] text-white py-20 px-8 text-center">
+      <MovingTextEffect
+        title="Enterprise-Level Printing"
+        subtitle="Innovative, cost-effective, and high-quality printing solutions tailored to meet the demands of your business."
+        image=""
+      />
+      {/* <div className="services-hero-section relative bg-[#807045] text-white py-20 px-8 text-center">
         <motion.h1 
           initial={{ opacity: 0, y: -20 }} 
           animate={{ opacity: 1, y: 0 }} 
@@ -31,7 +37,7 @@ export default function PrintingPage() {
         >
           Innovative, cost-effective, and high-quality printing solutions tailored to meet the demands of your business.
         </motion.p>
-      </div>
+      </div> */}
 
       {/* About the Service */}
       <section className="py-16 px-8">

@@ -5,13 +5,19 @@ import { Truck, Loader, Server, ArrowUpRight, Building, HardHat, Factory, Eclips
 import Image from 'next/image';
 import skyliftImage from '@/public/backgrounds/hero-skylift.png'; // Image to use inside content
 import '@/components/services/style.scss';
+import MovingTextEffect from "@/components/moving text";
 
 export default function SkyliftServicesPage() {
   return (
     <div className="skylift-services-page bg-[#f5f5f5] text-[#2a2a2a]">
 
       {/* Hero Section */}
-      <div className="services-hero-section text-center py-28 px-8 relative ">
+      <MovingTextEffect
+        title="Skylift Services"
+        subtitle="Comprehensive lifting and material handling solutions for large-scale industrial, construction, and infrastructure projects. We offer top-tier cranes, equipment, and a highly trained team to elevate your operations."
+        image=""
+      />
+      {/* <div className="services-hero-section text-center py-28 px-8 relative ">
         <motion.h1
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
@@ -28,7 +34,7 @@ export default function SkyliftServicesPage() {
           <strong>Comprehensive lifting and material handling solutions</strong> for large-scale industrial, construction, and infrastructure projects. We offer top-tier cranes, equipment, and a highly trained team to elevate your operations.
         </motion.p>
         <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-[#00000033] to-transparent"></div>
-      </div>
+      </div> */}
 
       {/* Skylift Services Overview */}
       <div className="max-w-6xl mx-auto py-20 px-8">

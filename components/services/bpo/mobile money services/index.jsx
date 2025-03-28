@@ -3,13 +3,19 @@
 import { motion } from "framer-motion";
 import { CheckCircle, CreditCard, DollarSign, Phone, ShieldCheck, ShoppingCart, Users } from "lucide-react";
 import '@/components/services/style.scss'
+import MovingTextEffect from "@/components/moving text";
 
 export default function MobileMoneyPage() {
   return (
     <div className="mobile-money-page min-h-screen bg-gradient-to-br from-white to-[#f9f6e6] text-[#403d2a]">
 
       {/* Hero Section */}
-      <div className="services-hero-section relative py-32 px-6 text-center bg-[#f5f5f5]">
+      <MovingTextEffect
+        title="Mobile Money Services"
+        subtitle="Convenient, fast, and secure mobile money solutions that empower individuals and businesses to manage financial transactions on the go."
+        image=""
+      />
+      {/* <div className="services-hero-section relative py-32 px-6 text-center bg-[#f5f5f5]">
         <motion.h1 
           initial={{ opacity: 0, y: -50 }} 
           animate={{ opacity: 1, y: 0 }} 
@@ -25,7 +31,7 @@ export default function MobileMoneyPage() {
         >
           Convenient, fast, and secure mobile money solutions that empower individuals and businesses to manage financial transactions on the go.
         </motion.p>
-      </div>
+      </div> */}
 
       {/* What is Mobile Money? */}
       <div className="py-20 px-8 max-w-7xl mx-auto text-center">

@@ -3,13 +3,19 @@
 import { motion } from "framer-motion";
 import { ShieldCheck, FileText, AlertCircle, Lock } from "lucide-react";
 import '@/components/services/style.scss';
+import MovingTextEffect from "@/components/moving text";
 
 export default function RiskCompliancePage() {
   return (
     <div className="risk-compliance-page min-h-screen bg-gradient-to-br from-white to-[#f5f5f5] text-[#403d2a]">
 
       {/* Hero Section */}
-      <div className="relative py-32 px-6 text-center bg-[#f5f5f5] services-hero-section">
+      <MovingTextEffect
+        title="Our Risk & Compliance Management Services"
+        subtitle="At Company Name, we prioritize the identification, mitigation, and management of risks while ensuring your business adheres to industry regulations and best practices. Our holistic approach to risk and compliance management will help safeguard your business's assets, reputation, and sustainability."
+        image=""
+      />
+      {/* <div className="relative py-32 px-6 text-center bg-[#f5f5f5] services-hero-section">
         <motion.h1 
           initial={{ opacity: 0, y: -50 }} 
           animate={{ opacity: 1, y: 0 }} 
@@ -25,7 +31,7 @@ export default function RiskCompliancePage() {
         >
           Ensure the security, integrity, and regulatory compliance of your operations with our comprehensive risk and compliance management services.
         </motion.p>
-      </div>
+      </div> */}
 
       {/* Our Risk & Compliance Management Services */}
       <div className="py-20 px-8 max-w-7xl mx-auto text-center">

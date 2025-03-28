@@ -146,7 +146,7 @@ export const allProducts = [
     "discounted price": "K45,000",
     "special feature": {
       "stat": '10',
-      "stat text size": 8,
+      "stat text size": 7,
       "symbol": "Gen",
       // "feature": "Gen",
     }
