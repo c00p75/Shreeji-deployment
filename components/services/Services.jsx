@@ -5,6 +5,7 @@ import { MotionConfig, motion } from "framer-motion";
 import { Server, Printer, Briefcase, Globe } from "lucide-react";
 import './style.scss'
 import Link from "next/link";
+import MovingTextEffect from "../moving text";
 
 const services = [
   {
@@ -42,7 +43,12 @@ export default function ServicesPage() {
     <MotionConfig transition={{ duration: 0.5, ease: "easeInOut" }}>
       <div className="services-page min-h-screen text-white bg-gradient-to-br from-[whitesmoke] via-[rgb(255 255 255 / 50%)] via-[rgb(0 0 0 / 10%)] to-[#f0eded]">
         {/* Hero Section */}
-        <div className="text-center py-32 relative services-hero-section">
+        <MovingTextEffect
+          title="Our Services"
+          subtitle="Discover cutting-edge solutions designed to propel your business forward."
+          image=""
+        />
+        {/* <div className="text-center py-32 relative services-hero-section">
           <motion.h1 
             initial={{ opacity: 0, y: -20 }} 
             animate={{ opacity: 1, y: 0 }} 
@@ -58,7 +64,7 @@ export default function ServicesPage() {
           >
             Discover cutting-edge solutions designed to propel your business forward.
           </motion.p>
-        </div>
+        </div> */}
 
         {/* Services List */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto py-20">
@@ -66,8 +72,7 @@ export default function ServicesPage() {
             <Link href={service.link} key={index}>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                whileHover={{ scale: 1.05 }}
+                animate={{ opacity: 1, y: 0 }}                
                 transition={{ duration: 0.3 }}
                 className="min-h-[23rem] p-6 bg-white text-[#584d2a] rounded-2xl shadow-xl cursor-pointer transform hover:shadow-2xl hover:translate-y-[-5px]"
               >

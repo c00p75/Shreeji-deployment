@@ -6,6 +6,7 @@
   color: white;
   transition: opacity 0.3s ease-in-out;
   border-radius: 0.5rem;
+  cursor: pointer;
 
   .card_container {
     position: relative;
@@ -90,6 +91,11 @@
     display: none;
   }
 
+  .btn-focus {
+    color: red;
+    display: none !important;
+  }
+
   .say-hi {
     svg {
       left: -1.5rem;
@@ -166,4 +172,15 @@
 .card_container:has(.part-15:hover) {
   --X: calc(var(--angleX) * -1);
   --Y: var(--angleY);
+}
+
+.contact-card-form {
+  background: radial-gradient(#a78d55, #87703f, #87703f);
+  box-shadow: 0 12px 8px 0 rgba(0, 0, 0, 0.8);
+  width: 20rem;
+  transition: all ease-in-out 0.3s;
+
+  select {
+    padding-right: 1rem;
+  }
 }
