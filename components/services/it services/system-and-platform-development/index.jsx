@@ -139,33 +139,26 @@ export default function SystemPlatformDevelopmentPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 + index * 0.2 }}
-              className="bg-[#F8F6F0] p-8 rounded-xl shadow-lg"
+              className="bg-[#F8F6F0] p-8 rounded-xl shadow-lg flex-center"
             >
               <h3 className="text-xl font-semibold text-[#807045]">{benefit.title}</h3>
               <p className="mt-4 text-gray-700">{benefit.description}</p>
+              <motion.button
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4 }}
+                className="mt-6 px-8 mb-10 py-3 bg-[#807045] text-white rounded-lg hover:bg-[#4b4228] hover:text-white transition-colors"
+              >
+                Get a Free Consultation
+              </motion.button>
             </motion.div>
           ))}
         </div>
       </div>
 
       {/* Call to Action */}
-      <div className="text-center py-16 bg-[#807045] text-white">
-        <motion.h2
-          initial={{ opacity: 0, y: -50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="text-3xl font-semibold"
-        >
-          Ready to Elevate Your Business?
-        </motion.h2>
-        <motion.button
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
-          className="mt-6 px-8 py-3 bg-white text-[#807045] rounded-lg hover:bg-[#E0A200] hover:text-white transition-colors"
-        >
-          Get a Free Consultation
-        </motion.button>
+      <div className="text-center px-40 m-5 mr-10 rounded-[40px] text-white">
+        
       </div>
     </div>
   );
