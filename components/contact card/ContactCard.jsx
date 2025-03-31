@@ -7,7 +7,7 @@ import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const steps = [
-  { id: 1, title: "What service are you looking for?", field: "service", options: ["Printing", "Document Management", "Enterprise Solutions"] },
+  { id: 1, title: "What service are you looking for?", field: "service", options: ["Printing", "Skylift services", "Enterprise Solutions"] },
   { id: 2, title: "Can you provide more details about your needs?", field: "details", placeholder: "Describe your needs..." },
   { id: 3, title: "How can we contact you?", field: "contact", placeholder: "Enter your email or phone..." },
 ];
@@ -179,7 +179,7 @@ const ContactCard = () => {
             >
               <h2 className="text-xl font-bold mb-4">{steps[currentStep].title}</h2>
               {steps[currentStep].options ? (
-                <select className="w-full p-2 border rounded bg-transparent" onChange={handleChange} value={formData[steps[currentStep].field] || ""}>
+                <select className="w-full p-2 border rounded bg-transparent focus:outline-none" onChange={handleChange} value={formData[steps[currentStep].field] || ""}>
                   <option value="" disabled>Select an option</option>
                   {steps[currentStep].options.map((option) => (
                     <option key={option} value={option} className="text-[var(--shreeji-primary)] cursor-pointer">{option}</option>

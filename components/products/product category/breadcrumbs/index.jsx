@@ -17,7 +17,7 @@ const Breadcrumbs = ({ breadcrumbs }) => {
             <Link
               key={index}
               href={`/products/${encodeURIComponent(breadcrumbs[0])}`}
-              className="font-medium text-white cursor-pointer"
+              className="font-medium  text-white cursor-pointer"
             >
               {word}
               {index < breadcrumbs.length - 1 && " > "}
@@ -37,12 +37,12 @@ const Breadcrumbs = ({ breadcrumbs }) => {
             </Link>
           );
         } else {
-          <span>{word}</span>
+          <span>{decodeURIComponent(word)}</span>
         }
 
         return (
           <span key={index} className="text-white">
-            {word}
+            {decodeURIComponent(word)}
             {index < breadcrumbs.length - 1 && " > "}
           </span>
         );

@@ -3,6 +3,7 @@ import footerLogo from "@/public/logos/Shreeji Logos w1.png";
 import footerBg from "@/public/backgrounds/footer-bg.jpeg";
 import Image from "next/image";
 import { Facebook, Linkedin } from "lucide-react";
+import Link from "next/link";
 
 const Footer = () => {
   return (
@@ -48,6 +49,15 @@ const Footer = () => {
           <p>+260 97 774 0588</p>
           <p>sales@shreeji.co.zm</p>
         </div>
+      </div>
+
+      <div className="flex flex-col justify-center items-center z-[2] relative text-white mt-14 gap-2">
+        <p className="text-[1rem] text-[#ece5de] font-extralight">
+          Designed & created by <Link href="https://www.balloinnovations.com/" className="font-semibold hover:underline">Ballo Innovations</Link>
+        </p>
+        <p>
+          ©2025 Shreeji Investments Limited Limited. All Rights Reserved
+        </p>
       </div>
     </section>
   );

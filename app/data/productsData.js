@@ -4553,6 +4553,6 @@ export const randomProduct = (filterBy, filter, count) => {
 }
 
 export const subcategoryExists = (subcategory) => {
-  return allProducts.some(product => product.subcategory === subcategory);
+  return allProducts.some(product => product.subcategory === decodeURIComponent(subcategory));
 };
 

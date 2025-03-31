@@ -36,11 +36,9 @@ const ProductPage = async ({ params }) => {
   } else if (subcategory) {
     categoryName = decodeURIComponent(category)
     subcategoryName = decodeURIComponent(subcategory)
-    console.log('category', subcategoryName)
-    if(!subcategoryExists(subcategory)){
+    if(!subcategoryExists(subcategoryName)){
       productName = subcategory;
       productDetails = getProductByName(subcategoryName);
-      console.log(productDetails)
     };
   } else if (category) {
     categoryName = decodeURIComponent(category)

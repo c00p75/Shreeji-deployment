@@ -19,6 +19,83 @@ const Navbar = () => {
   const [productCategories, setProductCategories] = useState([]);
   const [isProductMenuOpen, setIsProductMenuOpen] = useState(false);
 
+  const links = {
+    services: [
+      { 
+        'name': 'ICT Solutions',
+        'link': '/services/it-solutions',
+        'sub-links': [
+          {
+            'title': 'Hardware & Infrastructure',
+            'link': '/services/it-solutions/hardware-and-infrastructure'
+          },
+          {
+            'title': 'System & Platform Development',
+            'link': '/services/it-solutions/system-and-platform-development'
+          },
+          {
+            'title': 'IT Consulting & Managed Services',
+            'link': '/services/it-solutions/it-consulting-and-managed-services'
+          },
+        ]
+      },
+      {
+        'name': 'Enterprise-Level Printing & Scanning',
+        'link': '/services/enterprise-printing-and-Scanning',
+        'sub-links': [
+          {
+            'title': 'Printing',
+            'link': '/services/enterprise-printing-and-Scanning/printing'
+          },
+          {
+            'title': 'Document Scanning',
+            'link': '/services/enterprise-printing-and-Scanning/scanning'
+          },
+        ]
+      },
+      {
+        'name': 'Business Process Outsourcing (BPO)',
+        'link': '/services/bpo',
+        'sub-links': [
+          {
+            'title': 'SIM Registration & Management',
+            'link': '/services/bpo/sim-registration-and-management'
+          },
+          {
+            'title': 'Mobile Money Services',
+            'link': '/services/bpo/mobile-money-services'
+          },
+          {
+            'title': 'Quality Assurance',
+            'link': '/services/bpo/quality-assurance'
+          },
+          {
+            'title': 'Customer Support Services',
+            'link': '/services/bpo/customer-support-services'
+          },
+          {
+            'title': 'Back Office Support',
+            'link': '/services/bpo/back-office-support'
+          },
+          {
+            'title': 'Risk & Compliance Management',
+            'link': '/services/bpo/risk-and-compliance-management'
+          },
+        ]
+      },
+      {
+        'name': 'Skylift Services',
+        'link': '/services/skylift',
+        'sub-links': [
+          {
+            'title': 'Skylift Services',
+            'link': '/services/skylift'
+          },
+        ]
+      },
+    ]
+  }
+  
   useEffect(() => {
     if (typeof window === "undefined") return;
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
@@ -83,52 +160,29 @@ const Navbar = () => {
                 <div
                   className=" pt-5 absolute left-0 top-10"
                   onMouseEnter={() => setIsServiceMenuOpen(true)} onMouseLeave={() => setIsServiceMenuOpen(false)}
-                >
+                >                  
                   <div className="mega-menu">
-                    <div>
-                      <Link href="/services/it-solutions" className="relative">
-                        <h4 className="font-bold text-lg">ICT Solutions</h4>
-                        <span className="absolute mt-1 h-[2px] w-full bg-[#dbd4c0] rounded-full" />
-                      </Link>
-                      <ul className="mt-5 space-y-2">
-                        <li><Link href="/services/it-solutions/hardware-and-infrastructure">Hardware & Infrastructure</Link></li>
-                        <li><Link href="/services/it-solutions/system-and-platform-development">System & Platform Development</Link></li>
-                        <li><Link href="/services/it-solutions/it-consulting-and-managed-services">IT Consulting & Managed Services</Link></li>
-                      </ul>
-                    </div>
-                    <div>
-                      <Link href="/services/enterprise-printing-and-Scanning" className="relative">
-                        <h4 className="font-bold text-lg">Enterprise-Level Printing & Scanning</h4>
-                        <span className="absolute mt-1 h-[2px] w-full bg-[#dbd4c0] rounded-full" />
-                      </Link>
-                      <ul className="mt-5 space-y-2">
-                        <li><Link href="/services/enterprise-printing-and-Scanning/printing">Printing</Link></li>
-                        <li><Link href="/services/enterprise-printing-and-Scanning/scanning">Document Scanning</Link></li>
-                      </ul>
-                    </div>
-                    <div>
-                      <Link href="/services/bpo" className="relative">
-                        <h4 className="font-bold text-lg">Business Process Outsourcing (BPO)</h4>
-                        <span className="absolute mt-1 h-[2px] w-full bg-[#dbd4c0] rounded-full" />
-                      </Link>
-                      <ul className="mt-5 space-y-2">
-                        <li><Link href="/services/bpo/sim-registration-and-management">SIM Registration & Management</Link></li>
-                        <li><Link href="/services/bpo/mobile-money-services">Mobile Money Services</Link></li>
-                        <li><Link href="/services/bpo/quality-assurance">Quality Assurance</Link></li>
-                        <li><Link href="/services/bpo/customer-support-services">Customer Support Services</Link></li>
-                        <li><Link href="/services/bpo/back-office-support">Back Office Support</Link></li>
-                        <li><Link href="/services/bpo/risk-and-compliance-management">Risk & Compliance Management</Link></li>
-                      </ul>
-                    </div>
-                    <div>
-                      <Link href="/services/skylift" className="relative">
-                        <h4 className="font-bold text-lg">Skylift Services</h4>
-                        <span className="absolute mt-1 h-[2px] w-full bg-[#dbd4c0] rounded-full" />
-                      </Link>
-                      <ul className="mt-5 space-y-2">
-                        <li><Link href="/services/skylift">Skylift Services</Link></li>                        
-                      </ul>
-                    </div>                    
+                    {links.services.map((service, index) => (
+                      <div key={service}>
+                        <Link href={service['link']} className="relative">
+                          <h4 className="font-bold text-lg">{service['name']}</h4>
+                          <span className="absolute mt-1 h-[2px] w-full bg-[#dbd4c0] rounded-full" />
+                        </Link>
+
+                        <ul className="mt-5 space-y-2">
+                          {service['sub-links'].map((link, index) => (
+                            <li key={index}>
+                              <Link
+                                href={link['link']}
+                                className={`${pathname === link['link'] ? "mega-menu-active-link  " : ""}`}
+                              >
+                                {link['title']}
+                              </Link>
+                            </li>
+                          ))}                        
+                        </ul>
+                      </div>
+                    ))}                                 
                   </div>
                 </div>
               )}
@@ -155,14 +209,19 @@ const Navbar = () => {
                           <ul className="mt-5 space-y-2">
                             {subcategories.map((sub, subIndex) => (
                               <li key={subIndex}>
-                                <Link href={`/products/${encodeURIComponent(category)}/${encodeURIComponent(sub)}`} className="font-medium cursor-pointer">{sub}</Link>
+                                <Link
+                                  href={`/products/${encodeURIComponent(category)}/${encodeURIComponent(sub)}`}
+                                  className={`font-medium cursor-pointer ${pathname === `/products/${encodeURIComponent(category)}/${encodeURIComponent(sub)}` ? "mega-menu-active-link  " : ""}`}
+                                >
+                                    {sub}
+                                </Link>
                               </li>                            
                             ))}                          
                           </ul>
                           ) : (
                             <ul className="mt-5 space-y-2">
                               <li>
-                                <Link href={`/products/${encodeURIComponent(category)}`} className="font-medium cursor-pointer">{category}</Link>
+                                <Link className={`font-medium cursor-pointer ${pathname === `/products/${encodeURIComponent(category)}` ? "mega-menu-active-link  " : ""}`} href={`/products/${encodeURIComponent(category)}`}>{category}</Link>
                               </li>                      
                           </ul>
                           )
@@ -173,7 +232,7 @@ const Navbar = () => {
                 </div>
               )}
             </li>
-            <li><Link href="/collaborate-with-us" className={`${pathname === "/collaborate-with-us" ? "active-link" : ""}`}>Collaborate</Link></li>
+            <li><Link href="/collaborate" className={`${pathname === "/collaborate" ? "active-link" : ""}`}>Collaborate</Link></li>
             <li><Link href="/contact-us" className={`${pathname === "/contact-us" ? "active-link" : ""}`}>Contact Us</Link></li>
           </ul>
 

@@ -32,8 +32,23 @@ nav {
       cursor: pointer !important;
     }
     a:hover {
-      color: #473e26 !important;
+      color: #473e26;
+      border-left: none ;
+      padding-left: 0;
     }
+  }
+
+  .mega-menu-active-link {
+    // color: #473e26 !important;
+    border-left: 3px solid #87703f;
+    padding-left: 0.5rem;
+  }
+
+  .mega-menu-active-link:hover {
+    color: #87703f !important;
+    border-bottom: none !important;
+    border-left: 3px solid #87703f !important;
+    padding-left: 0.5rem !important;
   }
 
   .flex-mega-menu {
