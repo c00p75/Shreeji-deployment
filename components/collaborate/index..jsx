@@ -1,134 +1,160 @@
 'use client'
 
-import { Briefcase, Handshake, Globe, Users, CheckCircle, Building, Lightbulb, Layers, Award, BarChart, ShieldCheck, PhoneCall } from "lucide-react";
-import Image from "next/image";
-import collaborateImage from "@/public/backgrounds/hex-pattern.jpeg";
-import partner1 from "@/public/backgrounds/hex-pattern.jpeg";
-import partner2 from "@/public/backgrounds/hex-pattern.jpeg";
-import partner3 from "@/public/backgrounds/hex-pattern.jpeg";
-import partner4 from "@/public/backgrounds/hex-pattern.jpeg";
-import testimonialImage from "@/public/backgrounds/hex-pattern.jpeg";
+import { motion } from "framer-motion";
+import { Handshake, Users, Globe, Building, Network, Star } from "lucide-react";
+import MovingTextEffect from "../moving text";
+// import './style.scss';
 
-export default function CollaborateWithUs() {
+export default function CollaborationsPage() {
   return (
-    <div className="min-h-screen bg-[#f9f9f9] text-[#403d2a]">
-      
+    <div className="collaborations-page min-h-screen bg-white">
       {/* Hero Section */}
-      <div className="relative bg-white shadow-md rounded-[40px] mx-6 mt-10 mb-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 items-center max-w-6xl mx-auto p-12">
-          <div className="text-center md:text-left">
-            <h1 className="text-5xl font-extrabold mb-6 text-[#403d2a]">Collaborate With Us</h1>
-            <p className="text-lg text-gray-700 mb-6">
-              Partner with us to leverage <strong>cutting-edge enterprise solutions</strong>, enhance business efficiency, and drive growth in a competitive landscape.
-            </p>
-            <a 
-              href="/contact" 
-              className="inline-block py-3 px-8 bg-[#807045] text-white text-lg font-semibold rounded-full transform hover:bg-[#403d2a] transition-all"
-            >
-              Get In Touch
-            </a>
-          </div>
-          <div className="hidden md:block">
-            <Image 
-              src={collaborateImage} 
-              alt="Collaboration" 
-              className="rounded-xl shadow-lg"
-              width={500} 
-              height={400} 
-            />
-          </div>
-        </div>
-      </div>
+      <MovingTextEffect
+        title="Collaborate With Us"
+        subtitle="We build powerful partnerships to drive innovation, efficiency, and mutual growth."
+        image=""
+      />
 
-      {/* Why Collaborate With Us? */}
-      <div className="max-w-6xl mx-auto px-6 py-20">
-        <h2 className="text-4xl font-semibold text-center mb-12 text-[#403d2a]">Why Collaborate With Us?</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-          {[
-            {
-              icon: <Handshake size={50} className="text-[#807045]" />, 
-              title: "Trusted Partnerships", 
-              description: "We have built strong alliances with leading enterprises, ensuring seamless collaboration for success-driven projects."
-            },
-            {
-              icon: <Globe size={50} className="text-[#807045]" />, 
-              title: "Global Reach", 
-              description: "With a presence in diverse industries, we provide innovative solutions that cater to businesses worldwide."
-            },
-            {
-              icon: <Users size={50} className="text-[#807045]" />, 
-              title: "Industry Expertise", 
-              description: "Our team of professionals brings years of experience, helping businesses navigate challenges and achieve their goals."
-            },
-            {
-              icon: <Award size={50} className="text-[#807045]" />, 
-              title: "Proven Track Record", 
-              description: "We have successfully partnered with top companies to deliver impactful and sustainable solutions."
-            },
-            {
-              icon: <ShieldCheck size={50} className="text-[#807045]" />, 
-              title: "Security & Compliance", 
-              description: "We prioritize security and regulatory compliance to ensure a safe and transparent collaboration experience."
-            },
-            {
-              icon: <BarChart size={50} className="text-[#807045]" />, 
-              title: "Data-Driven Insights", 
-              description: "We leverage analytics to make informed decisions and optimize business operations for long-term success."
-            }
-          ].map((item, index) => (
-            <div key={index} className="bg-white p-8 rounded-2xl shadow-lg text-center transform hover:scale-105 transition-all hover:shadow-2xl">
-              <div className="mb-4">{item.icon}</div>
-              <h3 className="text-2xl font-semibold mb-2 text-[#403d2a]">{item.title}</h3>
-              <p className="text-gray-600">{item.description}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Industries We Serve */}
-      <div className="bg-[#f9f9f9] py-20 px-6">
-        <h2 className="text-4xl font-semibold text-center mb-12 text-[#403d2a]">Industries We Collaborate With</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 text-center">
-          {[
-            { title: "Finance & Banking", icon: <Building size={50} className="text-[#807045] mx-auto" /> },
-            { title: "Telecommunications", icon: <PhoneCall size={50} className="text-[#807045] mx-auto" /> },
-            { title: "Retail & E-Commerce", icon: <Layers size={50} className="text-[#807045] mx-auto" /> },
-            { title: "Healthcare", icon: <ShieldCheck size={50} className="text-[#807045] mx-auto" /> },
-            { title: "Government & Public Sector", icon: <Globe size={50} className="text-[#807045] mx-auto" /> },
-            { title: "Technology & IT", icon: <Lightbulb size={50} className="text-[#807045] mx-auto" /> }
-          ].map((item, index) => (
-            <div key={index} className="p-6 bg-white rounded-2xl shadow-md hover:shadow-lg transition-all">
-              {item.icon}
-              <h3 className="text-2xl font-semibold mt-4 text-[#403d2a]">{item.title}</h3>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Partners Section */}
-      <div className="bg-[#f9f9f9] py-20 px-6">
-        <h2 className="text-4xl font-semibold text-center mb-12 text-[#403d2a]">Our Trusted Partners</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 justify-center">
-          {[partner1, partner2, partner3, partner4].map((partner, index) => (
-            <div key={index} className="bg-white p-6 rounded-2xl shadow-md hover:shadow-lg transition-all">
-              <Image src={partner} alt={`Partner ${index + 1}`} className="rounded-xl" width={150} height={150} />
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Call to Action Section */}
-      <div className="text-center py-16 bg-[#f9f9f9]">
-        <h2 className="text-3xl font-bold text-[#403d2a]">Let’s Build a Stronger Future Together</h2>
-        <p className="text-lg text-gray-700 mt-4 mb-8">
-          Contact us today to discuss how we can collaborate for success.
-        </p>
-        <a 
-          href="/contact" 
-          className="inline-block py-3 px-8 bg-[#807045] text-white text-lg font-semibold rounded-full transform hover:bg-[#403d2a] transition-all"
+      {/* Why Collaborate? */}
+      <div className="py-16 px-8">
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="text-3xl font-semibold text-center text-[#807045]"
         >
-          Contact Us
-        </a>
+          Why Collaborate With Us?
+        </motion.h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
+          {[
+            {
+              icon: <Handshake size={50} className="text-[#807045]" />,
+              title: "Strategic Partnerships",
+              description: "Align with an industry leader to drive innovation and market expansion."
+            },
+            {
+              icon: <Users size={50} className="text-[#807045]" />,
+              title: "Industry Expertise",
+              description: "Leverage our decades of experience in ICT, business solutions, and enterprise services."
+            },
+            {
+              icon: <Globe size={50} className="text-[#807045]" />,
+              title: "Global Reach",
+              description: "Expand your presence with our extensive network and international collaborations."
+            },
+            {
+              icon: <Building size={50} className="text-[#807045]" />,
+              title: "Enterprise-Level Solutions",
+              description: "Partner with us for large-scale, customized solutions tailored to your needs."
+            },
+            {
+              icon: <Network size={50} className="text-[#807045]" />,
+              title: "Technology Integration",
+              description: "Integrate cutting-edge technologies to enhance efficiency and productivity."
+            },
+            {
+              icon: <Star size={50} className="text-[#807045]" />,
+              title: "Proven Success",
+              description: "Work with a trusted partner known for delivering high-impact results."
+            }
+          ].map((benefit, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 + index * 0.2 }}
+              className="bg-[#F8F6F0] rounded-2xl p-8 shadow-lg hover:shadow-2xl transform hover:translate-y-[-5px] cursor-pointer"
+            >
+              <div className="flex items-center space-x-4">
+                {benefit.icon}
+                <h3 className="text-2xl font-semibold text-[#807045]">{benefit.title}</h3>
+              </div>
+              <p className="mt-4 text-gray-700">{benefit.description}</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* Collaboration Models */}
+      <div className="bg-[#807045] text-white py-16 px-8">
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="text-3xl font-semibold text-center"
+        >
+          How We Collaborate
+        </motion.h2>
+        <div className="max-w-3xl mx-auto mt-12 space-y-8">
+          {[
+            { step: "Technology Partnerships", description: "Join forces with us to create next-generation solutions in ICT, printing, and enterprise software." },
+            { step: "Joint Ventures", description: "Combine resources and expertise for mutual business growth and market expansion." },
+            { step: "Research & Development", description: "Work with us on cutting-edge projects that drive innovation and industry advancement." },
+            { step: "Enterprise Solutions", description: "Collaborate on large-scale projects that deliver high-impact business transformations." }
+          ].map((collab, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 + index * 0.2 }}
+              className="bg-white text-[#807045] p-6 rounded-xl shadow-lg"
+            >
+              <h3 className="text-xl font-semibold">{collab.step}</h3>
+              <p className="mt-2 text-gray-700">{collab.description}</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* Success Stories */}
+      <div className="py-16 px-8">
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="text-3xl font-semibold text-center text-[#807045]"
+        >
+          Success Stories
+        </motion.h2>
+        <div className="grid md:grid-cols-2 gap-8 mt-12">
+          {[
+            { title: "Telecom Partnerships", description: "We work with major telecom providers for seamless connectivity and enterprise solutions." },
+            { title: "Corporate Digital Transformation", description: "Helping businesses transition to cloud-based, data-driven infrastructures." },
+            { title: "Smart City Initiatives", description: "Developing urban solutions with biometric kiosks, enterprise software, and data analytics." },
+            { title: "Financial & Banking Sector", description: "Enabling secure, efficient banking through advanced IT and BPO services." }
+          ].map((story, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 + index * 0.2 }}
+              className="bg-[#F8F6F0] p-8 rounded-xl shadow-lg"
+            >
+              <h3 className="text-xl font-semibold text-[#807045]">{story.title}</h3>
+              <p className="mt-4 text-gray-700">{story.description}</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* Call to Action */}
+      <div className="text-center py-16 bg-[#807045] text-white">
+        <motion.h2
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="text-3xl font-semibold"
+        >
+          Ready to Collaborate?
+        </motion.h2>
+        <motion.button
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          className="mt-6 px-8 py-3 bg-white text-[#807045] rounded-lg hover:bg-[#E0A200] hover:text-white transition-colors"
+        >
+          Get in Touch
+        </motion.button>
       </div>
     </div>
   );

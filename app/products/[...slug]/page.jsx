@@ -9,6 +9,7 @@ import PromotionBanner from "@/components/products/main grid/promotion banner";
 import CategoryPromotionalBanner from "@/components/products/product category/category promotional banner";
 import Breadcrumbs from "@/components/products/product category/breadcrumbs";
 import ProductList from "@/components/products/product category/product list";
+// import '@/components/products/product details/style.scss'
 
 const ProductPage = async ({ params }) => {
   const { slug } = params;
@@ -47,7 +48,7 @@ const ProductPage = async ({ params }) => {
   return (
     <section
       className={`z-[1] products-main-section min-h-screen relative pl-5 pr-8 gap-5 pb-[2rem] text-white h-fit ${
-        product ? "product-details-page" : ""
+        productName ? "product-details-page" : ""
       }`}
     >
       <SideGrid />

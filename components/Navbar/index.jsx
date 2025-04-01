@@ -232,7 +232,7 @@ const Navbar = () => {
                 </div>
               )}
             </li>
-            <li><Link href="/collaborate" className={`${pathname === "/collaborate" ? "active-link" : ""}`}>Collaborate</Link></li>
+            <li><Link href="/collaborations" className={`${pathname === "/collaborations" ? "active-link" : ""}`}>Collaborations</Link></li>
             <li><Link href="/contact-us" className={`${pathname === "/contact-us" ? "active-link" : ""}`}>Contact Us</Link></li>
           </ul>
 
