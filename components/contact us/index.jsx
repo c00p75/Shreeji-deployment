@@ -72,12 +72,12 @@ export default function ContactUsPage() {
       </div>
 
       {/* Map Section (Optional) */}
-      <div className="py-16 px-8 mx-auto text-center bg-[#f9f8f6]">
+      <div className="py-16 px-8 mx-auto text-center bg-[#F8F6F0]">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="text-3xl font-semibold text-[#807045]"
+          className="text-3xl font-bold text-[#807045]"
         >
           Find Us Here
         </motion.h2>
