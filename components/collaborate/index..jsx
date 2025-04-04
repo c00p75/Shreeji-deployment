@@ -3,9 +3,36 @@
 import { motion } from "framer-motion";
 import { Handshake, Users, Globe, Building, Network, Star } from "lucide-react";
 import MovingTextEffect from "../moving text";
+import Partner1 from "@/public/logos/adobe.png";
+import Partner2 from "@/public/logos/cisco.png";
+import Partner3 from "@/public/logos/dellpartner.png";
+import Partner4 from "@/public/logos/Epson.png";
+import Partner5 from "@/public/logos/adobe.png";
+import Partner6 from "@/public/logos/IBM.png";
+import Partner7 from "@/public/logos/fujitsu.svg";
+import Partner8 from "@/public/logos/acer.svg";
+import Partner9 from "@/public/logos/escan.png";
+import Partner10 from "@/public/logos/toshiba.svg";
+import Partner11 from "@/public/logos/APC.svg";
+import Image from "next/image";
 // import './style.scss';
 
 export default function CollaborationsPage() {
+  const partners = [
+    { name: "adobe", logo: Partner1 },
+    { name: "cisco", logo: Partner2 },
+    { name: "dell", logo: Partner3 },
+    { name: "epson", logo: Partner4 },
+    { name: "IBM", logo: Partner6 },
+    { name: "Toshiba", logo: Partner10 },
+    { name: "eScan", logo: Partner9 },
+    // { name: "Fujitsu", logo: Partner7 },
+    { name: "Acer", logo: Partner8 },
+    { name: "Green Box", logo: Partner1 },
+    { name: "APC", logo: Partner11 },
+    // { name: "Cisco", logo: Partner1 },
+    // { name: "ESET", logo: Partner1 },
+  ];
   return (
     <div className="collaborations-page min-h-screen bg-white">
       {/* Hero Section */}
@@ -63,7 +90,7 @@ export default function CollaborationsPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 + index * 0.2 }}
-              className="bg-[#F8F6F0] rounded-2xl p-8 shadow-lg hover:shadow-2xl transform hover:translate-y-[-5px] cursor-pointer"
+              className="bg-[#F8F6F0] rounded-2xl p-8 shadow-lg hover:shadow-2xl transform hover:translate-y-[-5px]"
             >
               <div className="flex items-center space-x-4">
                 {benefit.icon}
@@ -137,21 +164,44 @@ export default function CollaborationsPage() {
         </div>
       </div>
 
+      {/* Partners & Distributors Section */}
+      <div className="bg-[#F8F6F0] text-[#807045] py-16 px-8">
+        <motion.h2 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-3xl font-semibold text-center">
+          Our Trusted Partners & Distributors
+        </motion.h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8 mt-12 max-w-5xl mx-auto">
+          {partners.map((partner, index) => (
+            <motion.div key={index} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2 + index * 0.1 }} className="flex justify-center items-center p-4 bg-white rounded-lg shadow-lg hover:shadow-2xl transform hover:scale-105">
+              <Image src={partner.logo} alt={partner.name} width={100} height={50} className="object-contain" />
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
       {/* Call to Action */}
       <div className="text-center py-16 bg-[#807045] text-white">
-        <motion.h2
-          initial={{ opacity: 0, y: -50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
+        <motion.h2 
+          initial={{ opacity: 0, y: -50 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          transition={{ delay: 0.2 }} 
           className="text-3xl font-semibold"
         >
           Ready to Collaborate?
         </motion.h2>
-        <motion.button
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
-          className="mt-6 px-8 py-3 bg-white text-[#807045] rounded-lg hover:bg-[#E0A200] hover:text-white transition-colors"
+        <motion.p 
+          initial={{ opacity: 0, y: 20 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          transition={{ delay: 0.3 }} 
+          className="mt-4 text-lg max-w-7xl mx-auto opacity-90"
+        >
+          Join forces with us and leverage cutting-edge technology, industry expertise, and global networks to achieve unparalleled growth.  
+          Whether you're looking for innovative IT solutions, enterprise-grade printing, or strategic business partnerships, we are here to help.  
+        </motion.p>
+        <motion.button 
+          initial={{ opacity: 0 }} 
+          animate={{ opacity: 1 }} 
+          transition={{ delay: 0.5 }} 
+          className="mt-6 px-8 py-3 bg-white text-[#807045] font-semibold rounded-lg hover:bg-[#3f3822] hover:shadow-2xl hover:text-white transition-colors"
         >
           Get in Touch
         </motion.button>

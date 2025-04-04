@@ -72,7 +72,7 @@ export default function ContactUsPage() {
       </div>
 
       {/* Map Section (Optional) */}
-      <div className="py-16 px-8 max-w-5xl mx-auto text-center">
+      <div className="py-16 px-8 mx-auto text-center bg-[#f9f8f6]">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -85,10 +85,10 @@ export default function ContactUsPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="mt-8 rounded-2xl overflow-hidden shadow-lg"
+          className="mt-8 rounded-2xl overflow-hidden shadow-lg mx-20"
         >
           <iframe 
-            className="w-full h-96"
+            className="w-full h-[60vh]"
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3846.5344434981585!2d28.307104199999998!3d-15.401679699999997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x19408b36cfc88f83%3A0x35e0f42d1a0f1487!2sShreeji%20House!5e0!3m2!1sen!2szm!4v1743500618985!5m2!1sen!2szm"
             loading="lazy"
           ></iframe>
