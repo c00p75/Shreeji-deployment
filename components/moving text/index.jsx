@@ -25,7 +25,7 @@ const MovingTextEffect = ({title, subtitle, image}) => {
         <motion.h1 
           initial={{ opacity: 0, y: -20 }} 
           animate={{ opacity: 1, y: 0 }} 
-          className="font-extrabold text-transparent text-[120px] uppercase bg-clip-text leading-[100px] px-[20vw] text-wrap pb-1"
+          className="font-extrabold text-transparent text-6xl md:text-[120px] leading-tight md:leading-[100px] uppercase bg-clip-text md:px-[20vw] text-wrap pb-1"
           style={{
             backgroundImage: `url('${hex.src}')`,
             backgroundPosition: '20% 30%',

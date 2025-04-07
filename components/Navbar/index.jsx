@@ -13,7 +13,7 @@ import { ChevronDown } from "lucide-react";
 
 const Navbar = () => {
   const pathname = usePathname();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isServiceMenuOpen, setIsServiceMenuOpen] = useState(false);
   const [productCategories, setProductCategories] = useState([]);
@@ -131,8 +131,8 @@ const Navbar = () => {
             <Image src={logo2} alt="Logo" quality={100} className="logo-dark absolute top-[0.5rem] h-10 md:h-16 w-auto nav-logo" />
           </Link>
 
-          {/* Navbar Links */}
-          <ul className="hidden md:flex space-x-6 pl-1 py-5 rounded-lg">
+          {/*Navbar Links */}
+          <ul id="navbar-links" className={`flex space-x-6 pl-1 py-5 rounded-lg ${isMobileMenuOpen ? 'mobile-menu-open': 'mobile-menu-closed'}`}>
             <li><Link href="/" className={`${pathname === "/" ? "active-link" : ""}`}>Home</Link></li>
             <li><Link href="/about-us" className={`${pathname === "/about-us" ? "active-link" : ""}`}>About Us</Link></li>
 
@@ -158,7 +158,7 @@ const Navbar = () => {
               {/* Mega Menu */}
               {isServiceMenuOpen && (
                 <div
-                  className=" pt-5 absolute left-0 top-10"
+                  className="mega-menu-container pt-5 absolute left-0 top-10"
                   onMouseEnter={() => setIsServiceMenuOpen(true)} onMouseLeave={() => setIsServiceMenuOpen(false)}
                 >                  
                   <div className="mega-menu">
@@ -187,7 +187,6 @@ const Navbar = () => {
                 </div>
               )}
             </li>
-
             <li className="group flex gap-1">
               <Link href="/products" className={`${pathname === "/products" ? "active-link" : ""}`}>Products</Link>
               <button onMouseEnter={() => setIsProductMenuOpen(true)} onMouseLeave={() => setIsProductMenuOpen(false)} className="focus:outline-none">
@@ -232,16 +231,20 @@ const Navbar = () => {
                 </div>
               )}
             </li>
-            <li><Link href="/collaborations" className={`${pathname === "/collaborations" ? "active-link" : ""}`}>Collaborations</Link></li>
-            <li><Link href="/contact-us" className={`${pathname === "/contact-us" ? "active-link" : ""}`}>Contact Us</Link></li>
+            <li>
+              <Link href="/collaborations" className={`${pathname === "/collaborations" ? "active-link" : ""}`}>Collaborations</Link>
+            </li>
+            <li>
+              <Link href="/contact-us" className={`${pathname === "/contact-us" ? "active-link" : ""}`}>Contact Us</Link>
+            </li>
           </ul>
 
           <ThemeBtn isScrolled={isScrolled} />
           
           {/* Mobile Menu Button */}
-          <button className="block md:hidden focus:outline-none" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            <svg className="w-9 h-9" fill="none" stroke="white" strokeWidth="2" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d={isMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}></path>
+          <button className="fixed right-10 md:hidden focus:outline-none" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+            <svg className="w-9 h-9" fill="none" stroke={isMobileMenuOpen ? "white" : isScrolled ? "#807045" : "white"} strokeWidth="2" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d={isMobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}></path>
             </svg>
           </button>
         </div>

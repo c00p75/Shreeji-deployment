@@ -19,7 +19,7 @@ const ThemeBtn = ({isScrolled}) => {
   };
 
   return (
-    <button className={`btn-container cursor-pointer ${isScrolled ? 'opacity-1' : 'opacity-0'}`} onClick={toggleTheme}>
+    <button className={`hidden md:block btn-container cursor-pointer ${isScrolled ? 'opacity-1' : 'opacity-0'}`} onClick={toggleTheme}>
       <label className="theme">
         <input
           className="input"

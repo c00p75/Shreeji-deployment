@@ -12,10 +12,10 @@ const JoinUs = () => {
         <div className="w-full flex flex-col gap-5 relative">
           <div className="flex flex-col gap-10">
             <div className="flex gap-3 flex-center flex-1">            
-              <form class="w-[90%] mx-auto p-8 flex-center gap-5 pt-10 shadow-[0_0_10px_rgba(0,0,0,0.4)] rounded-lg border-[#e8d9c24f] border-4">            
-              <h2 className="font-bold text-6xl text-center px-32 my-3">
-                <span className="text-[#171717]">Join Us</span> on Our Journey
-              </h2>
+              <form class="bg-white/5 w-[90%] mx-auto p-8 flex-center gap-5 pt-10 shadow-[0_0_10px_rgba(0,0,0,0.4)] rounded-lg border-[#e8d9c24f] border-4">            
+                <h2 className="font-bold text-6xl text-center px-32 my-3">
+                  <span className="text-[#171717]">Join Us</span> on Our Journey
+                </h2>
                 <p className="px-10 pb-5">At Shreeji Investments Limited, we are more than just a technology company—we are partners in your success. Whether you are looking for cutting-edge ICT solutions, enterprise printing, advertising, or system development, we are here to help you achieve your business goals.</p>
                 <div className="flex justify-evenly text-[#524427] font-medium w-full">
                   <div>

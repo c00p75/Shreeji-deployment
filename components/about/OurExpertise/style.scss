@@ -1,5 +1,9 @@
 .our-expertise {
   // background: linear-gradient(white, #f1eee6);
+  .expertise-card-description {
+    margin-top: 1rem;
+  }
+
   .expertise-card-container {
     display: flex;
     flex-wrap: wrap;

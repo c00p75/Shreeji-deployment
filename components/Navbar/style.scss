@@ -262,5 +262,41 @@ nav {
     .active-link:hover {
       color: #b59b65 !important;
     } 
-  }  
+  }   
+}
+
+@media (width <= 768px) {
+  #navbar-links {
+    transition: all 0.3s ease-in-out;
+    color: white;
+    position: fixed;
+    top: 0;
+    border-radius: 0;
+    flex-direction: column;
+    gap: 2rem;
+    background: #807045;
+    width: 100vw;
+    height: 100vh;
+    padding: 10vh 10vw;
+    font-size: x-large;
+
+    li {
+      margin: 0;
+    }
+
+    .mega-menu-container {
+      position: relative;
+    }
+
+    .mega-menu {
+      flex-direction: column;
+    }
+  }
+}
+.mobile-menu-closed {
+  left: 200%;
+}
+
+.mobile-menu-open {
+  left: 0 !important;
 }
