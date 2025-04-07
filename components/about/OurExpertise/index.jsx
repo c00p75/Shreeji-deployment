@@ -35,7 +35,7 @@ const OurExpertise = () => {
                   <h2 className="text-2xl font-bold">{service.title}</h2>
                 </div>
                 <p className="expertise-card-description">{service.description}</p> 
-                <div className="text-[#807045] mt-6 inline-block">Explore {service.title} →</div>             
+                <div className="text-[#6c5f3a] mt-6 inline-block">Explore {service.title} →</div>             
               </motion.div>
             </Link>
           ))}
