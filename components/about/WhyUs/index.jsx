@@ -28,11 +28,11 @@ const WhyUs = () => {
     },
   ];
   return (
-    <section className="why-us flex flex-row-reverse text-[#171717] pt-32 pb-20 overflow-visible px-20 bg-gradient-to-br from-white to-[#f9f6e6]">
+    <section className="why-us flex flex-row-reverse text-[#171717] pt-16 md:pt-32 pb-16 md:pb-20 overflow-visible px-5 md:px-20 bg-gradient-to-br from-white to-[#f9f6e6]">
       {/* <Image src={buildings} alt="Shreeji" className="buildings-bg-img absolute bottom-0 right-[0%] w-[100vh] h-[80vh] grayscale opacity-30"/> */}
       <div className="flex flex-col gap-10 relative flex-[3]">
         <div className="flex flex-col gap-5 relative">
-          <h2 className="font-bold text-6xl text-center mb-10 text-[var(--primary)]">
+          <h2 className="font-bold text-5xl md:text-6xl text-center mb-2 md:mb-10 text-[var(--primary)]">
             Why <span className="text-[#171717]">Choose</span> Shreeji Investments Limited?
           </h2>
           <div className="flex flex-col gap-10">
@@ -43,7 +43,7 @@ const WhyUs = () => {
           </div>
         </div>
 
-        <div className="flex flex-col gap-5 ml-[3rem]">
+        <div className="flex flex-col gap-5 md:ml-[3rem]">
           {team.map((item, i) => (
             <div className="flex gap-3 items-center" key={`value-${i}`}>
               <span>
@@ -55,7 +55,7 @@ const WhyUs = () => {
         </div>                  
       </div>
 
-      <div className="flex-[2]">
+      <div className="flex-[2] hidden md:flex">
         <div className="w-[90%] h-[80%] bg-[#87703f] mt-28 rounded-sm">
           <Image src={bulb} className="scale-x-[-1] h-full object-cover rounded-sm -rotate-6 shadow-xl shadow-black/40" />
         </div>

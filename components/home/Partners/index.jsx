@@ -25,9 +25,9 @@ const Partners   = () => {
 
   return (
     <div className="scrollContainer pt-2">
-      <div className="logos flex items-center gap-2 md:gap-4">
+      <div className="logos flex flex-col md:flex-row items-center gap-2 md:gap-4 w-full md:w-auto">
         <div className="px-10">
-          <h2 className="text-6xl font-bold">Our High Level Partners</h2>
+          <h2 className="text-4xl md:text-6xl font-bold">Our High Level Partners</h2>
           <p className="mt-10">
             We cooperate with top partners and provide access to over 1m
             products and services.

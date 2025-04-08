@@ -15,12 +15,12 @@
 
   .milestone:first-child {
     margin-left: 7rem;
+
+    @media (width <= 768px) {
+      margin-left: 4rem;
+    }
   }
     .milestone-title {
       width: 100%;
-    }
-  // } 
-
-      
+    }      
 }
-

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import hex from "@/public/backgrounds/hex-pattern.jpeg";
-// import './style.scss'
+import './style.scss'
 
 const MovingTextEffect = ({title, subtitle, image}) => {
   const [backgroundPosition, setBackgroundPosition] = useState("40% 50%");

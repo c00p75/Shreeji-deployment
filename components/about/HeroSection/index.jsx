@@ -13,7 +13,7 @@ const HeroSection = () => {
       <div className="absolute left-0 top-0 h-full w-full z-[1] flex-center">        
         <div className="text-center absolute">
           <h1
-            className="flex-center md:w-[70%] font-extrabold text-8xl uppercase text-transparent bg-clip-text leading-[80px] px-10 text-wrap pb-1"
+            className="flex-center md:w-[70%] font-extrabold text-5xl md:text-8xl uppercase text-transparent bg-clip-text md:leading-[80px] px-10 text-wrap pb-1"
             style={{
               backgroundImage: `url('${hex.src}')`,
               backgroundPosition: '20% 30%',

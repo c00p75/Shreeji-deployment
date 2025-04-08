@@ -38,7 +38,7 @@ const Team = () => {
     },
   ]
   return (
-    <section className="our-team z-[1] bg-white our-team flex flex-row items-center text-[#171717] py-20 px-10 overflow-visible relative gap-10">
+    <section className="our-team z-[1] bg-white our-team flex flex-col md:flex-row items-center text-[#171717] py-20 px-10 overflow-visible relative gap-10">
       {/* <Image src={buildings} alt="Shreeji" className="buildings-bg-img absolute bottom-0 right-[0%] w-[100vh] h-[80vh] grayscale opacity-30"/> */}
       <div className="flex flex-col gap-10 relative flex-[4]">
         <div className="w-full flex flex-col gap-5 relative">

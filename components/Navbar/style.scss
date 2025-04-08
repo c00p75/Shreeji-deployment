@@ -90,6 +90,10 @@ nav {
   .container {
     padding-inline: 5rem !important;
     justify-content: space-between;
+
+    @media (width <= 768px) {
+      padding-inline: 2rem !important;
+    }
   }
 }
 
@@ -267,6 +271,7 @@ nav {
 
 @media (width <= 768px) {
   #navbar-links {
+    overflow: auto;
     transition: all 0.3s ease-in-out;
     color: white;
     position: fixed;
@@ -277,11 +282,12 @@ nav {
     background: #807045;
     width: 100vw;
     height: 100vh;
-    padding: 10vh 10vw;
+    padding: 10vh 1rem;
     font-size: x-large;
 
     li {
       margin: 0;
+      padding-inline: 1rem;
     }
 
     .mega-menu-container {
@@ -289,7 +295,34 @@ nav {
     }
 
     .mega-menu {
+      flex-direction: column;      
+    }
+
+    .group {
+      display: none !important;
+    }
+    
+    .collapse {
+      min-height: fit-content;
+      padding-inline: 0;
+    }
+
+    .collapse-content {
+      background: #473e26;
+      border-radius: 10px;
+      font-size: medium;      
+      display: flex;
       flex-direction: column;
+      padding-inline: 1rem !important;
+      // gap: 1.5rem;
+    }
+
+    div:first-child h4{
+      padding-top: 2rem;
+    }
+
+    div:last-child ul {
+      padding-bottom: 1.5rem;
     }
   }
 }

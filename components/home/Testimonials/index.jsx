@@ -8,12 +8,12 @@ import { Quote, Star, UserRound } from "lucide-react";
 
 const Testimonials = () => {
   return (
-    <section className="testimonials-section flex-center text-white py-20 px-10">
+    <section className="testimonials-section flex-center text-white py-20 md:px-10">
       <p>Testemonials</p>
-      <h2 className="font-bold text-4xl text-center px-32 mt-5 mb-10">
+      <h2 className="font-bold text-4xl text-center px-10 md:px-32 mt-5 mb-10">
         What Our Clients Say
       </h2>
-      <div className="flex w-full gap-10 justify-center">
+      <div className="flex w-full gap-5 md:gap-10 md:justify-center overflow-auto">
         <figure className="snip1533">
           <figcaption>
             <blockquote>

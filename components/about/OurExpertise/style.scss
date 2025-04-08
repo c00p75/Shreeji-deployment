@@ -13,12 +13,23 @@
       width: 45%;
       height: fit-content;
       color: #675630;
+
+      @media (width <= 768px) {
+        width: 100%;
+      }
     }
   }  
 
   .expertise-img-container {
     box-shadow: -10px 40px 50px black;
+    @media (width <= 768px) {
+      display: none;
+    }    
   }
 
   background: radial-gradient(#a78d55, #87703f, #87703f, #68542c);
+}
+
+.our-expertise > div:first-child {
+  padding: 0;
 }

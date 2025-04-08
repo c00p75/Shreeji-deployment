@@ -9,10 +9,10 @@ import Link from "next/link";
 
 const OurSolutions = () => {
   return (
-    <section className="our-solutions-section flex-center pt-10 pb-52 px-16">
+    <section className="our-solutions-section flex-center pt-10 pb-52 md:px-16">
       <h2 className="text-4xl pb-16 relative z-[2]">Solutions That We Deliver</h2>
-      <div className="flex w-full gap-10">
-        <div className="flex flex-col justify-between flex-1 gap-16 relative z-[2]">
+      <div className="flex flex-col md:flex-row w-full gap-10">
+        <div className="flex flex-col justify-between flex-1 gap-5 md:gap-16 relative z-[2]">
           <Link href="/services/it-solutions" className="flex flex-col gap-3 service-hover">
             <div className="flex gap-5 items-center">
               <div className="solution-card-img-container px-1 py-2 rounded-[10px]">
@@ -54,7 +54,7 @@ const OurSolutions = () => {
           </Link>
         </div>
 
-        <div className="middle-text-container flex-center w-[50%] relative flex-1">
+        <div className="middle-text-container flex-center md:w-[50%] relative flex-1">
           <h4 className="font-bold text-6xl text-center mb-10 relative z-[2]">
             Over <span className="text-[var(--primary)]">25 Years</span> of
             Expertise!
@@ -71,9 +71,9 @@ const OurSolutions = () => {
           <Triangle color="#807045" fill="#807045" strokeWidth={3} className="absolute z-[0] rounded-3xl w-[40%] h-[40%] rotate-[230deg] right-[-2%] bottom-[-5%]" />
         </div>
 
-        <div className="flex flex-col justify-between flex-1 text-right gap-16 relative z-[2]">
+        <div className="flex flex-col justify-between flex-1 md:text-right gap-5 md:gap-16 relative z-[2]">
           <Link href="/services/bpo" className="flex flex-col gap-3 service-hover service-hover-3">
-            <div className="flex gap-5 items-center justify-end">
+            <div className="flex flex-row-reverse md:flex-row gap-5 items-center justify-end">
               <h3 className="font-bold text-2xl">
                 Business Process Outsourcing
               </h3>
@@ -97,7 +97,7 @@ const OurSolutions = () => {
           </Link>
 
           <Link href="/services/skylift" className="flex flex-col gap-3 service-hover service-hover-4">
-            <div className="flex gap-5 items-center justify-end">
+            <div className="flex flex-row-reverse md:flex-row gap-5 items-center justify-end">
               <h3 className="font-bold text-2xl">Skylift Services</h3>
               <div className="solution-card-img-container px-1 py-2 rounded-[10px]">
                 <Image

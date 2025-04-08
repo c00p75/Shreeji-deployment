@@ -47,13 +47,13 @@ const milestones = [
 const OurJourney = () => {
 
   return (
-    <section className="z-[1] our-journey relative w-screen scroll-smooth pb-28 pt-10 bg-gradient-to-br from-white to-[#f9f6e6]">
-      <h2 className="w-full font-bold text-6xl mb-20 text-[var(--primary)] mt-20 flex flex-center relative gap-10 md:px-5">
+    <section className="z-[1] our-journey relative w-screen scroll-smooth pb-16 md:pb-28 md:pt-10 bg-gradient-to-br from-white to-[#f9f6e6]">
+      <h2 className="w-full font-bold text-6xl mb-5 md:mb-20 text-[var(--primary)] mt-20 flex flex-center relative gap-10 md:px-5 text-center md:text-start">
         <p className="w-fit relative px-5 bg-gradient-to-br from-white to-[#fcfaf2] z-[1]"><span className="text-[#171717]">Our</span> Journey <span className="text-[#171717]"> & </span> Milestones</p>
         <span className="w-[90%] h-[2px] bg-[#87703fe6] absolute z-0 top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2"/>
       </h2>
    
-      <p className="text-center pb-20">
+      <p className="text-center pb-10 md:pb-20 px-5 md:px-0">
         Our journey has been marked by strategic growth, impactful projects, and long-lasting partnerships.
       </p>
 

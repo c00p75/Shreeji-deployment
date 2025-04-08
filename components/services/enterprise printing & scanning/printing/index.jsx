@@ -14,7 +14,7 @@ import MovingTextEffect from '@/components/moving text';
 
 export default function PrintingPage() {
   return (
-    <div className="bg-white text-gray-800">
+    <div className="enterprise-level-printing-page bg-white text-gray-800">
       {/* Hero Section */}
       <MovingTextEffect
         title="Enterprise-Level Printing"

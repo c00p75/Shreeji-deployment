@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Server, HardDrive, Cpu } from "lucide-react";
 import '@/components/services/style.scss'
 import MovingTextEffect from "@/components/moving text";
+import './style.scss';
 
 export default function HardwareInfrastructurePage() {
   return (

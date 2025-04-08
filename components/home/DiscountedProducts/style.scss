@@ -61,6 +61,12 @@
     // color: #655832 !important;
     font-size: 3.5rem !important;
     text-shadow: none !important;    
+
+    @media (width <= 768px) {
+      font-size: 3rem !important;
+      padding-inline: 0;
+      text-align: center;
+    }
   }
 }
 

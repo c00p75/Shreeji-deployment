@@ -4,8 +4,6 @@
   padding-bottom: 3.5rem;
   min-width: 100vw;
   position: relative;
-  // background-color: var(--secondary);
-  // background-image: url("https://www.transparenttextures.com/patterns/concrete-wall.png");
   z-index: 1;
 }
 
@@ -24,6 +22,11 @@
   border: 5px solid var(--shreeji-primary);
   opacity: 0.8;
   z-index: 0;
+
+  @media (width <= 768px) {
+    transform: scale(1.5);
+    border: 4px solid var(--shreeji-primary);
+  }
 }
 
 .curved-lines > div::before {
@@ -38,6 +41,10 @@
   border: 5px solid var(--shreeji-primary);
   opacity: 0.8;
   z-index: 0;
+
+  @media (width <= 768px) {
+    border: 6px solid var(--shreeji-primary);
+  }
 }
 
 .curved-lines > div::after {
@@ -52,6 +59,10 @@
   border: 5px solid var(--shreeji-primary);
   opacity: 0.8;
   z-index: 0;
+
+  @media (width <= 768px) {
+    border: 10px solid var(--shreeji-primary);
+  }
 }
 
 .skylift-bg-circle {
