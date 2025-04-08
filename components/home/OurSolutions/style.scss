@@ -8,6 +8,13 @@
     border-radius: 15px;
     cursor: pointer;
     transition: 0.3s ease-in-out;
+
+    @media (width <= 768px) {
+      background: var(--primary) !important;
+      color: white;
+      position: relative;
+      box-shadow: -5px 5px 8px 5px gray;
+    }
   }
 
   .service-hover:hover {

@@ -49,7 +49,7 @@ const OurStory = () => {
 
         <div className="flex-[5] md:pt-[3.5rem] leading-8">
           <Image src={expertiseImg} fill className="w-full h-full object-cover z-[-1] opacity-10 mt-20"/>
-          <h2 className="font-bold text-6xl mb-10 text-[var(--primary)] pt-20 flex items-center relative gap-10 px-5">
+          <h2 className="font-bold text-5xl md:text-6xl text-center md:text-start mb-10 text-[var(--primary)] pt-20 flex items-center relative gap-3 md:gap-10 px-5">
             <p className="w-fit">Our <span className="text-[#171717]">Story</span></p>
             <span className="flex-grow h-[2px] mt-5 bg-[#87703fe6]"/>
           </h2>
@@ -62,7 +62,7 @@ const OurStory = () => {
               <Image src={expertiseImg} className="h-[auto] w-full object-fill rounded-md -rotate-6 border-2 border-[#87703f]"/>
             </div>             */}
           </div>
-          <h2 className="font-bold text-6xl mb-10 text-[var(--primary)] pt-20 flex items-center relative gap-10 px-5">
+          <h2 className="font-bold text-5xl md:text-6xl mb-10 text-[var(--primary)] pt-20 flex items-center relative gap-3 md:gap-10 px-5">
             <p className="w-fit"><span className="text-[#171717]">Our</span> Mission</p>
             <span className="flex-grow h-[2px] mt-2 bg-[black]"/>
           </h2>
@@ -71,23 +71,23 @@ const OurStory = () => {
               <p>
                 At Shreeji Investments Limited, our mission is to provide innovative, reliable, and efficient technology and business solutions tailored to the needs of our clients. We are driven by a passion for delivering excellence, ensuring that every project we undertake results in customer satisfaction and long-term success.
               </p>
-              <p className="flex gap-3 flex-wrap items-center">
-                <span>
+              <p className="flex gap-3 md:items-center">
+                <span className="mt-2 md:mt-0">
                   <Square className="w-8 h-8" fill="#87703f" strokeWidth={0} />
                 </span>
-                We may not have the answer, but <span className="font-bold">we’ll find it.</span>
+                <div>We may not have the answer, but <strong>we’ll find it.</strong></div>
               </p>
-              <p className="flex gap-3 flex-wrap items-center">
-                <span>
+              <p className="flex gap-3 md:items-center">
+                <span className="mt-2 md:mt-0">
                   <Square className="w-8 h-8" fill="#87703f" strokeWidth={0} />
                 </span>
-                We may not have the time, but <span className="font-bold">we’ll make it.</span>
+                <div>We may not have the time, but <strong>we’ll make it.</strong></div>
               </p>
-              <p className="flex gap-3 flex-wrap items-center">
-                <span>
+              <p className="flex gap-3 md:items-center">
+                <span className="mt-2 md:mt-0">
                   <Square className="w-8 h-8" fill="#87703f" strokeWidth={0} />
                 </span>
-                We may not be the biggest, but <span className="font-bold">we’ll be the most committed to your success.</span>
+                <div>We may not be the biggest, but <strong>we’ll be the most committed to your success.</strong></div>
               </p>              
             </div>            
           </div>

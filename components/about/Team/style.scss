@@ -7,5 +7,9 @@
     height: 15rem;
     width: 12rem;
     background: white;
+
+    @media (width <= 768px) {
+      width: 10rem;
+    }
   }
 }

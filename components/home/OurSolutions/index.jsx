@@ -9,8 +9,8 @@ import Link from "next/link";
 
 const OurSolutions = () => {
   return (
-    <section className="our-solutions-section flex-center pt-10 pb-52 md:px-16">
-      <h2 className="text-4xl pb-16 relative z-[2]">Solutions That We Deliver</h2>
+    <section className="our-solutions-section flex-center pt-10 pb-52 px-5 md:px-16">
+      <h2 className="text-4xl text-center md:text-start pb-10 md:pb-16 relative z-[2]">Solutions That We Deliver</h2>
       <div className="flex flex-col md:flex-row w-full gap-10">
         <div className="flex flex-col justify-between flex-1 gap-5 md:gap-16 relative z-[2]">
           <Link href="/services/it-solutions" className="flex flex-col gap-3 service-hover">

@@ -59,7 +59,7 @@
     height: 95vh;
 
     @media (width <= 768px) {
-      height: 10rem;
+      height: 10.5rem;
       width: 100vw;
       padding-block: 1rem;
     }
@@ -70,6 +70,18 @@
     border-radius: 10px;
     display: flex;
     align-items: center;
+
+    @media (width <= 768px) {
+      flex-direction: column;
+      width: fit-content;
+      text-align: center;
+
+      span {
+        width: max-content;
+        max-width: 14rem;
+        padding-top: 0.5rem;
+      }
+    }
   }
 
   .scroll-container::-webkit-scrollbar {

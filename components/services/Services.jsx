@@ -67,7 +67,7 @@ export default function ServicesPage() {
         </div> */}
 
         {/* Services List */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto py-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto py-10 md:py-20 px-5 md:px-0">
           {services.map((service, index) => (
             <Link href={service.link} key={index}>
               <motion.div

@@ -18,8 +18,8 @@ const OurExpertise = () => {
 
         <div className="flex flex-[4] expertise-card-container">
           <h2 className="w-full font-bold text-6xl mb-16 text-[var(--primary)] flex flex-center relative px-5">
-            <p className="w-fit relative bg-gradient-to-br from-[#87703f] to-[#816b3b] z-[1] text-white px-2">Our <span className="text-[#171717]">Expertise</span></p>
-            <span className="w-full h-[2px] bg-white absolute z-0 top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2"/>
+            <p className="w-fit relative md:bg-gradient-to-br from-[#87703f] to-[#816b3b] z-[1] text-white text-center md:text-start px-2">Our <span className="text-[#171717]">Expertise</span></p>
+            <span className="hidden md:flex w-full h-[2px] bg-white absolute z-0 top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2"/>
           </h2>
 
           {services.map((service, index) => (

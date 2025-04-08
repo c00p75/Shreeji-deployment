@@ -44,7 +44,7 @@ const JoinUs = () => {
                 </div>
 
                 <button type="submit"
-                  class="w-fit mt-5 px-10 py-2 text-white bg-[#786437] md:bg-[#87703f] rounded-full hover:bg-opacity-90 border-[#e8d9c2] border-4 focus:outline-none focus:ring-2 focus:ring-[#87703f]">
+                  class="w-fit mt-5 mb-10 md:mb-0 px-10 py-2 text-white bg-[#786437] md:bg-[#87703f] rounded-full hover:bg-opacity-90 border-[#e8d9c2] border-2 md:border-4 focus:outline-none focus:ring-2 focus:ring-[#87703f]">
                   Submit
                 </button>
               </form>

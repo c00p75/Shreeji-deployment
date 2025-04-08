@@ -32,7 +32,7 @@ const WhyUs = () => {
       {/* <Image src={buildings} alt="Shreeji" className="buildings-bg-img absolute bottom-0 right-[0%] w-[100vh] h-[80vh] grayscale opacity-30"/> */}
       <div className="flex flex-col gap-10 relative flex-[3]">
         <div className="flex flex-col gap-5 relative">
-          <h2 className="font-bold text-5xl md:text-6xl text-center mb-2 md:mb-10 text-[var(--primary)]">
+          <h2 className="font-bold text-5xl md:text-6xl md:text-center mb-2 md:mb-10 text-[var(--primary)]">
             Why <span className="text-[#171717]">Choose</span> Shreeji Investments Limited?
           </h2>
           <div className="flex flex-col gap-10">
@@ -45,7 +45,7 @@ const WhyUs = () => {
 
         <div className="flex flex-col gap-5 md:ml-[3rem]">
           {team.map((item, i) => (
-            <div className="flex gap-3 items-center" key={`value-${i}`}>
+            <div className="flex gap-3 md:items-center" key={`value-${i}`}>
               <span>
                   <Square className="w-8 h-8" fill="#87703f" strokeWidth={0} />
                 </span>

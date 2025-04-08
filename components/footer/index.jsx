@@ -9,7 +9,7 @@ const Footer = () => {
   return (
     <section className="footer-section relative">
       <div className="footer-overlay" />
-      <div className="footer-content z-[2] flex text-white gap-5 relative flex-wrap">
+      <div className="footer-content z-[2] flex flex-col md:flex-row text-white gap-5 relative flex-wrap">
         <div className="footer-logo w-full sm:w-[30%] flex flex-col gap-10 mb-10 sm:mb-0 md:mr-10">
           <Image
             src={footerLogo}
@@ -24,6 +24,14 @@ const Footer = () => {
           </p>
         </div>
 
+        <div className="footer-contact w-full sm:w-[22%] flex-1 flex md:hidden flex-col gap-5 mb-10 sm:mb-0 text-center">
+          <h2>Opening Time</h2>
+          <p>Mon - Fri: 08:00am - 05:00pm</p>
+          <p>Shreeji House, Plot No. 1209, Addis Ababa Drive</p>
+          <p>+260 97 774 0588</p>
+          <p>sales@shreeji.co.zm</p>
+        </div>
+
         <div className="footer-info w-full sm:w-[22%] flex-1 flex flex-col gap-5 mb-10 sm:mb-0 text-center md:text-left">
           <h2>Information</h2>
           <p>About Us</p>
@@ -32,7 +40,7 @@ const Footer = () => {
         </div>
 
         <div className="footer-social w-full sm:w-[22%] flex-1 flex flex-col gap-5 mb-10 sm:mb-0 items-center md:items-start">
-          <h2>Our Social</h2>
+          <h2>Our Socials</h2>
           <p className="flex items-center gap-2">
             <Linkedin strokeWidth={1} color="#807045" />
             <span className="pt-1">LinkedIn</span>
@@ -43,7 +51,7 @@ const Footer = () => {
           </p>
         </div>
 
-        <div className="footer-contact w-full sm:w-[22%] flex-1 flex flex-col gap-5 mb-10 sm:mb-0 text-center md:text-left">
+        <div className="footer-contact w-full sm:w-[22%] flex-1 hidden md:flex flex-col gap-5 mb-10 sm:mb-0 text-center md:text-left">
           <h2>Opening Time</h2>
           <p>Mon - Fri: 08:00am - 05:00pm</p>
           <p>Shreeji House, Plot No. 1209, Addis Ababa Drive</p>
@@ -52,7 +60,7 @@ const Footer = () => {
         </div>
       </div>
 
-      <div className="flex flex-col justify-center items-center z-[2] relative text-white mt-14 gap-2 text-center md:text-left">
+      <div className="flex flex-col justify-center items-center z-[2] relative text-white mt-5 md:mt-14 gap-2 text-center md:text-left">
         <p className="text-[1rem] text-[#ece5de] font-extralight">
           Designed & created by <Link href="https://www.balloinnovations.com/" className="font-semibold hover:underline">Ballo Innovations</Link>
         </p>

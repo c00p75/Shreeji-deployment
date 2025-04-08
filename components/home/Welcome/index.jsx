@@ -7,8 +7,8 @@ const Welcome  = () => {
   return (
     <div className="welcome pt-2 bg-[var(--light-secondary)]">
       <div className="flex items-stretch gap-2 md:gap-4">
-        <div className="welcome-text flex-[3] px-10">
-          <h2 className="text-4xl md:text-6xl font-bold">Empowering Businesses Since 1998</h2>
+        <div className="welcome-text flex-[3] px-5 md:px-10">
+          <h2 className="text-5xl md:text-6xl font-bold">Empowering Businesses Since 1998</h2>
           <p className="mt-10">
             At Shreeji Investments Limited, we are dedicated to providing cutting-edge ICT solutions, high-quality enterprise printing, innovative advertising, and system-platform development to businesses and organizations across Zambia.
           </p>

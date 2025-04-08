@@ -5,6 +5,10 @@
   min-width: 100vw;
   position: relative;
   z-index: 1;
+
+  @media (width <= 768px) {
+    z-index: 2;
+  }
 }
 
 .box {

@@ -18,8 +18,8 @@ export default function PrintingPage() {
       />
 
       {/* Features Section */}
-      <div className="relative py-20 px-8 max-w-7xl mx-auto">
-        <h2 className="text-3xl font-semibold text-[#807045] text-center mb-12">Why Choose Our Printing & Scanning Solutions?</h2>
+      <div className="relative py-20 px-5 md:px-8 max-w-7xl mx-auto">
+        <h2 className="text-3xl font-bold md:font-semibold text-[#807045] text-center mb-12">Why Choose Our Printing & Scanning Solutions?</h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
           {[
             {
