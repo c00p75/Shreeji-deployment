@@ -43,7 +43,7 @@ const ProductPage = async ({ params }) => {
 
   return (
     <section
-      className={`z-[1] products-main-section min-h-screen relative pl-0 md:pl-5 pr-0 md:pr-8 gap-5 pb-[2rem] text-white h-fit ${
+      className={`z-[1] products-main-section min-h-screen relative pl-1 pr-1 md:pr-8 gap-5 pb-[2rem] text-white h-fit ${
         productName ? "product-details-page" : ""
       }`}
     >

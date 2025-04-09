@@ -9,7 +9,7 @@ import SpecialOrders from "./special orders";
 const Products = () => {
   return (
     <div className="text-white">
-    <section className="z-[1] products-main-section min-h-screen relative md:pl-5 md:pr-8 gap-5 pb-[2rem] h-fit">      
+    <section className="z-[1] products-main-section min-h-screen relative pl-1 pr-1 md:pl-5 md:pr-8 gap-5 pb-[2rem] h-fit">      
       <SideGrid />
       <MainGrid />
     </section> 
