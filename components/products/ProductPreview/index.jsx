@@ -11,7 +11,7 @@ const ProductPreview = ({product, index, additionalClass}) => {
           ? `/products/${encodeURIComponent(product.category)}/${encodeURIComponent(product["subcategory"])}/${encodeURIComponent(product.name)}`
           : `/products/${encodeURIComponent(product.category)}/${encodeURIComponent(product.name)}`
       }
-      className={`products-page-product mr-2 px-5 flex flex-col gap-2 items-center py-4 cursor-pointer ${additionalClass}`}
+      className={`products-page-product md:mr-2 px-5 flex flex-col gap-2 items-center py-4 cursor-pointer ${additionalClass}`}
     >
       {/* <div className="products-page-product__price flex flex-col text-sm">
         <span className="line-through">{product.price}</span>  

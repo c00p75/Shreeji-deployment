@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import React, { useState } from 'react'
-import SpecialFeaturBudge from '@/components/products/product details/special feature budge';
+import SpecialFeaturBudge from '@/components/products/product details/special feature badge';
 import './style.scss'
 
 const ProductImage = ({images, name, product}) => {

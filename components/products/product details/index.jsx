@@ -3,7 +3,8 @@ import './style.scss'
 import { ArrowRightCircle } from 'lucide-react'
 import Link from 'next/link';
 import ProductImage from './product image';
-import SpecialFeaturBudge from './special feature budge';
+import SpecialFeaturBudge from './special feature badge';
+import OneYearWarrantyBadge from './warranty badge';
 
 const ProductDetails = ({product}) => {  
   console.log('Fetching product', product)
@@ -42,10 +43,10 @@ const ProductDetails = ({product}) => {
           )}      
         </div>
 
-        <div className='product-specs mt-10 md:mt-0 flex-1 md:p-10 pr-0 scroll-container'>    
+        <div className='product-specs mt-10 md:mt-0 flex-1 md:p-10 pr-0'>    
           {product['tagline'] && <h1 className="text-3xl text-center md:text-start mb-10 font-bold bg-gradient-to-r from-[#807045] to-[#544829] bg-clip-text text-transparent">{product['tagline']}</h1>}            
           {product['specs'] && (
-            <ul className='text-xl flex flex-col gap-2'>
+            <ul className='scroll-container text-xl flex flex-col gap-2'>
               {Object.entries(product.specs).map(([key, value]) => (
                 <li key={key}>
                   <strong className='text-[#544829] capitalize'>{key.replace(/-/g, ' ')}:</strong>{" "}
@@ -73,7 +74,7 @@ const ProductDetails = ({product}) => {
             </ul>
           )}
 
-          {/* {product['tagline'] && <h1 className="text-4xl text-[#544829] mt-5 font-bold">{product['tagline']}</h1>}           */}
+          {/* <OneYearWarrantyBadge /> */}
         </div>
       </div>
 
