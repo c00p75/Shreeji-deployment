@@ -13,7 +13,7 @@ const HeroSection = () => {
       <div className="absolute left-0 top-0 h-full w-full z-[1] flex-center">        
         <div className="text-center absolute">
           <h1
-            className="flex-center md:w-[70%] font-extrabold text-5xl md:text-8xl uppercase text-transparent bg-clip-text md:leading-[80px] px-10 text-wrap pb-1"
+            className="flex-center md:w-[70%] font-extrabold text-5xl md:text-8xl uppercase text-transparent bg-clip-text md:leading-[95px] px-10 text-wrap pb-1"
             style={{
               backgroundImage: `url('${hex.src}')`,
               backgroundPosition: '20% 30%',
@@ -21,8 +21,8 @@ const HeroSection = () => {
               // backgroundAttachment: 'fixed'
             }}
           >
-            <span className="font-extrabold">ICT, enterprise printing, and digital solutions.</span>
-            <span className="text-2xl capitalize font-normal pt-7">We provide ICT, enterprise printing, and digital solutions to drive efficiency and innovation in Zambia.</span>            
+            <span className="font-extrabold">ICT<span className="text-7xl">,</span> enterprise printing & digital solutions.</span>
+            <span className="text-2xl md:text-xl capitalize font-normal pt-7 md:px-[10%]">We provide ICT, enterprise printing, and digital solutions to drive efficiency and innovation in Zambia.</span>            
           </h1>
         </div>        
       </div>      

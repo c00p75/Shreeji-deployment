@@ -28,7 +28,7 @@
     }
 
     p span:last-child {
-      font-size: 1rem;
+      font-size: 1.1rem;
       line-height: 20px;
     }
 
@@ -78,7 +78,8 @@
 
       span {
         width: max-content;
-        max-width: 14rem;
+        max-width: 15rem;
+        min-width: 12rem;
         padding-top: 0.5rem;
       }
     }

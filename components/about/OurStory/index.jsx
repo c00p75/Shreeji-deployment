@@ -14,36 +14,36 @@ const OurStory = () => {
     <div className="our-story md:px-14 bg-white z-[2] relative">
       <div className="logos flex flex-col-reverse md:flex-row items-start gap-2 md:gap-10">
         <div className="side-grid-container pt-[4rem] flex-[2] relative">
-          <div className="side-grid scroll-container flex flex-row md:flex-col gap-5  stat-container px-5 text-[whitesmoke] rounded-md">
-            <p className="flex">
+          <div className="text-center side-grid scroll-container flex flex-row md:flex-col gap-5  stat-container px-5 text-[whitesmoke] rounded-md">
+            <p className="flex flex-col gap-3">
               <span>25+</span>
               <span>Years of Experience</span>
             </p>
 
-            <p>
-              <span>3M+</span>
-              <span>documents scanned</span>
+            <p className="flex flex-col gap-3">
+              <span>200+</span>
+              <span>Employees</span>
             </p>
 
-            <p>
-              <span>150+</span>
-              <span>schools & examination centers computerized across 6 provinces</span>
+            <p className="flex flex-col gap-3">
+              <span>40M+</span>
+              <span>Live KYC records processed since 2022</span>
             </p>
 
-            <p>
-              <span>1.5K+</span>
-              <span>computers supplied and installed nationwide</span>
+            <p className="flex flex-col gap-3">
+              <span>Nationwide</span>
+              <span>delivery and installations</span>
             </p>
 
-            <p>
+            {/* <p>
               <span>500+</span>
               <span>large-format advertising projects</span>
-            </p>
+            </p> */}
 
-            <p>
+            {/* <p>
               <span>1.5M+</span>
               <span>handwritten KYC forms converted into digital format</span>
-            </p>
+            </p> */}
           </div>
         </div>
 
