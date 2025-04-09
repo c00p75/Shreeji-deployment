@@ -14,20 +14,22 @@ const MainGrid = () => {
   let product = getProductByName('HP Proliant ML110 Desktop Server')
   return (
     <section className="main-grid relative flex flex-col gap-5">
-        <PrimaryPromotionalBanner promoProduct={heroProductImage1} />
+      <h1 className='block md:hidden uppercase text-5xl pt-8 pb-5 font-extrabold text-[#807045] text-center w-full [text-shadow:2px_2px_4px_rgba(0,0,0,0.3)]  '>
+        Our Products
+      </h1>
+      <PrimaryPromotionalBanner promoProduct={heroProductImage1} />
 
-        <LatestProductsByCategory category="Computers" count={5} heading="Latest Computers" />
+      <LatestProductsByCategory category="Computers" count={5} heading="Latest Computers" />
 
-        <PromotionBanner promoProduct={heroProductImage2} />
+      <PromotionBanner promoProduct={heroProductImage2} />
 
-        <LatestProductsBySubCategory subcategory="Routers" count={5} heading="Latest Routers" />
+      <LatestProductsBySubCategory subcategory="Routers" count={5} heading="Latest Routers" />
 
-        {/* <LatestProducts2 products={allProducts} heading={'Latest Scanners'} /> */}
+      {/* <LatestProducts2 products={allProducts} heading={'Latest Scanners'} /> */}
 
-        <Featured category="Computers" count={15} />
+      <Featured category="Computers" count={15} />
 
-        
-      </section>
+    </section>
   )
 }
 

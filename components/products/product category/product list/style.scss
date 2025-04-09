@@ -4,5 +4,9 @@
   .product-container {
     display: flex;
     flex-wrap: wrap;
+
+    @media (width <= 768px) {
+      flex-direction: column;
+    }
   }
 }

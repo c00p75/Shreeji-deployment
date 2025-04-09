@@ -21,8 +21,8 @@ const LatestProductsBySubCategory = ({subcategory, count, heading}) => {
 
   return (
     <div className="bg-[var(--shreeji-primary)] h-fit relative flex flex-col ">
-      <div className='py-5 mt-5 mx-5 border-b flex justify-between'>
-        <h2 className="text-4xl font-bold [text-shadow:2px_2px_4px_rgba(0,0,0,0.3)] px-10">{heading}</h2>
+      <div className='py-5 mt-5 mx-5 border-b flex justify-between items-center'>
+        <h2 className="text-4xl font-bold [text-shadow:2px_2px_4px_rgba(0,0,0,0.3)] px-5 md:px-10">{heading}</h2>
         <div className="flex gap-5 text-black">
           <button
             onClick={() => scroll("left")}

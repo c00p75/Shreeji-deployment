@@ -57,7 +57,7 @@ const ContactCard = () => {
   return (
     <>
       <div
-        className={`contact-card bg-transparent ${showCard ? "opacity-1" : "opacity-0"}`}
+        className={`contact-card bg-transparent ${showCard ? "opacity-1 z-20" : "opacity-0 -z-40"}`}
       >
         <div
           className={`card_container ${minimize ? "card-minimized cursor-pointer" : ""}`}

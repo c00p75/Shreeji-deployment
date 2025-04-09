@@ -1,14 +1,10 @@
-import { getProductByName, subcategoryExists } from "@/app/data/productsData";
-import LatestProductsByCategory from "@/components/products/main grid/latest products category";
+import { getProductByName, randomProduct, subcategoryExists } from "@/app/data/productsData";
 import ProductDetails from "@/components/products/product details";
-import ProductCategory from "@/components/products/product category";
 import SideGrid from "@/components/products/side grid";
 import "@/components/products/style.scss";
-import LatestProductsBySubCategory from "@/components/products/main grid/latest products subcategory";
-import PromotionBanner from "@/components/products/main grid/promotion banner";
-import CategoryPromotionalBanner from "@/components/products/product category/category promotional banner";
 import Breadcrumbs from "@/components/products/product category/breadcrumbs";
 import ProductList from "@/components/products/product category/product list";
+import PrimaryPromotionalBanner from "@/components/products/main grid/primary promotional banner";
 // import '@/components/products/product details/style.scss'
 
 const ProductPage = async ({ params }) => {
@@ -47,12 +43,12 @@ const ProductPage = async ({ params }) => {
 
   return (
     <section
-      className={`z-[1] products-main-section min-h-screen relative pl-5 pr-8 gap-5 pb-[2rem] text-white h-fit ${
+      className={`z-[1] products-main-section min-h-screen relative pl-5 pr-5 md:pr-8 gap-5 pb-[2rem] text-white h-fit ${
         productName ? "product-details-page" : ""
       }`}
     >
       <SideGrid />
-      <section className="main-grid flex-[3] relative flex flex-col gap-5">
+      <section className="main-grid overflow-visible flex-[3] relative flex flex-col gap-5">
         {product ? (
           <>
             <Breadcrumbs breadcrumbs={[categoryName, subcategoryName, productName]} />
@@ -62,7 +58,7 @@ const ProductPage = async ({ params }) => {
           subcategoryExists(subcategory) ? (
             <>
               <Breadcrumbs breadcrumbs={[categoryName, subcategoryName]} />
-              <CategoryPromotionalBanner subcategory={subcategoryName} />
+              <PrimaryPromotionalBanner promoProduct={randomProduct('subcategory', subcategoryName, 1)} />
               <ProductList filterBy="subcategory" filter={subcategoryName} />
             </>
           ) : (
@@ -74,7 +70,7 @@ const ProductPage = async ({ params }) => {
         ) : (
           <>
             <Breadcrumbs breadcrumbs={[categoryName]} />
-            <CategoryPromotionalBanner category={categoryName} />
+            <PrimaryPromotionalBanner promoProduct={randomProduct('category', categoryName, 1)} />
             <ProductList filterBy="category" filter={categoryName} />
           </>
         )}

@@ -2901,6 +2901,7 @@ export const allProducts = [
   //   "price": "K3,800",
   //   "discounted price": "K3,500"
   // },
+  // Jonathan end
   // {
   //   "name": "ASUS Dual GeForce RTX 4060 EVO OC Edition 8GB GDDR6",
   //   "category": "Components",
@@ -4531,8 +4532,14 @@ export const getProductByName = (name) => {
   return allProducts.find(product => product.name.toLowerCase() === name.toLowerCase()) || null;
 };
 
-export const filterProducts = (filterBy, filter, count) => {
-  let products = allProducts
+export const filterProducts =
+  (
+    filterBy,  // filterBy either category or sub category
+    filter,    // filter is name of category or sub category
+    count      // count is specific number of items to be returned
+  ) => {     
+  
+    let products = allProducts
     .filter(product => product[filterBy] === filter)
     .sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded))
     

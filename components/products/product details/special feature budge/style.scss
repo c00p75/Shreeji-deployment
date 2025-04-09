@@ -11,6 +11,12 @@
   width: 9.5rem;
   overflow: hidden;
 
+  @media (width <= 768px) {
+    top: -40%;
+    height: 8.5rem;
+    width: 8.5rem;
+  }
+
   .text-10 {
     font-size: 10rem;
   }

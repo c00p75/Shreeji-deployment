@@ -55,4 +55,8 @@
   .scroll-container {
     scrollbar-color: auto !important;
   }
+
+  @media (width <= 768px) {
+    padding-top: 5rem;
+  }
 }

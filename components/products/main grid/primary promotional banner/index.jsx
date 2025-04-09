@@ -6,9 +6,15 @@ const PrimaryPromotionalBanner = ({promoProduct}) => {
   return (
     <div className="bg-[var(--shreeji-primary)] h-fit relative">
       <div className='flex'>
-        <div className="flex flex-col w-[60%] justify-center items-center gap-10 py-24 px-10 text-center z-[1] relative">
-          <h2 className="text-4xl font-extralight [text-shadow:2px_2px_4px_rgba(0,0,0,0.3)] line-clamp-2">{promoProduct['tagline']}</h2>
-          <h2 className="text-4xl font-bold [text-shadow:2px_2px_4px_rgba(0,0,0,0.3)] line-clamp-3">{promoProduct['description']}</h2>
+        <div className="flex flex-col md:w-[60%] justify-center items-center gap-10 py-10 md:py-24 px-5 md:px-10 text-center z-[1] relative">
+          <h2 className="text-4xl font-bold md:font-extralight [text-shadow:2px_2px_4px_rgba(0,0,0,0.3)] md:line-clamp-2">{promoProduct['tagline']}</h2>
+          <div className='flex md:hidden relative flex-1'>
+            {promoProduct.images.length > 1 ? 
+              (<Image src={promoProduct.images[1]} className="object-cover overflow-visible scale-x-[-1] z-0 w-full h-auto -mt-5" />):
+              (<Image src={promoProduct.images[0]} className="object-cover overflow-visible z-0 w-[100%] h-auto -mt-5" />)      
+            }
+          </div>  
+          <h2 className="text-xl md:text-4xl font-extralight md:font-bold [text-shadow:2px_2px_4px_rgba(0,0,0,0.3)] md:line-clamp-3">{promoProduct['description']}</h2>
           <Link 
             href={
               promoProduct["subcategory"]
@@ -21,7 +27,7 @@ const PrimaryPromotionalBanner = ({promoProduct}) => {
           </Link>
         </div>  
 
-        <div className='relative flex-1'>
+        <div className='hidden md:flex relative flex-1'>
           {promoProduct.images.length > 1 ? 
             (<Image src={promoProduct.images[1]} className="object-cover overflow-visible scale-x-[-1] z-0 h-[80%] w-auto absolute top-[50%] left-[35%] -translate-x-1/2 -translate-y-1/2" />):
             (<Image src={promoProduct.images[0]} className="object-cover overflow-visible z-0 h-[52%] w-auto absolute top-[45%] -right-[15%] -translate-x-1/2 -translate-y-1/2" />)      
@@ -29,19 +35,19 @@ const PrimaryPromotionalBanner = ({promoProduct}) => {
         </div>   
       </div> 
 
-      <div className="bg-[#605432] flex justify-around text-center rounded-2xl py-5 px-5">
+      <div className="bg-[#605432] flex justify-around text-center rounded-2xl py-5 px-5 space-x-4 md:space-x-0 font-medium">
         <div>
-          <h3 className="text-2xl">Money Back</h3>
+          <h3 className="text-xl md:text-2xl font-semibold">Money Back</h3>
           <p className="text-base font-extralight">30 Days Money Back Guarantee</p>
         </div>
 
         <div>
-          <h3 className="text-2xl">Free Delivery</h3>
+          <h3 className="text-xl md:text-2xl">Free Delivery</h3>
           <p className="text-base font-extralight">Delivery on orders</p>
         </div>
 
         <div>
-          <h3 className="text-2xl">Special Sale</h3>
+          <h3 className="text-xl md:text-2xl">Special Sale</h3>
           <p className="text-base font-extralight">Discounts on selected items</p>
         </div>
       </div>
