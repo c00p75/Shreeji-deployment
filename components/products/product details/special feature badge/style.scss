@@ -53,19 +53,20 @@
     background: #8b723c;
     transform-style: preserve-3d;
     border-radius: 50%;
-    animation: 8s spin linear infinite;
+    animation: 9s spin linear infinite;
+    color: white;
   }
   
   @keyframes spin {
-    10% {
+    0% {
+      transform: rotateY(0deg);
+    }
+    
+    40% {
       transform: rotateY(0deg);
     }
     
     50% {
-      transform: rotateY(0deg);
-    }
-    
-    60% {
       transform: rotateY(180deg);
     }
     
@@ -95,11 +96,11 @@
     backface-visibility: hidden;
   }
   
-  .title {
+  .special-feature-title {
     transform: translateZ(4rem);
   }
   
-  .subtitle {
+  .special-feature-subtitle {
     transform: translateZ(5rem);
   }
   

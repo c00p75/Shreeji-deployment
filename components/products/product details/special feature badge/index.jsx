@@ -11,7 +11,7 @@ const SpecialFeaturBudge = ({product}) => {
               <h3 className="text-[8rem]">1</h3>
               <span className='speacial-feature-shadow' />
             </div>
-            <div className='z-[10] flex flex-col mb-5 subtitle absolute right-[15%] top-[40%]'>                                
+            <div className='z-[10] flex flex-col mb-5 special-feature-subtitle absolute right-[15%] top-[40%]'>                                
               <span className='w-14 font-light'>
                 Year Warranty
               </span>                
@@ -26,7 +26,7 @@ const SpecialFeaturBudge = ({product}) => {
     <div className="special-feature special-badge text-2xl mt-5 font-bold flex items-center z-0">
       <div className="content">
         <div className="front">
-          <div className='z-[10] flex flex-col mb-5 subtitle absolute h-full justify-center items-center right-[10%] top-0'>
+          <div className='z-[10] flex flex-col mb-5 special-feature-subtitle absolute h-full justify-center items-center right-[10%] top-0'>
             {product['special feature']['symbol'] && (
               <span className='text-4xl text-center font-semibold -mb-2'>{product['special feature']['symbol']}</span>
             )}
@@ -39,9 +39,9 @@ const SpecialFeaturBudge = ({product}) => {
           </div>
           {product['special feature']['stat'] && (
             <div className={
-              `text-${product['special feature']['stat text size'] ? product['special feature']['stat text size'] : 9} special-feature-stat title z-[1]`
+              `text-${product['special feature']['stat text size'] ? product['special feature']['stat text size'] : 9} special-feature-stat special-feature-title z-[1]`
             }>
-              <h3 className="title">{product['special feature']['stat']}</h3>
+              <h3 className="special-feature-title">{product['special feature']['stat']}</h3>
               <span className='speacial-feature-shadow' />
             </div>
           )}  
@@ -52,7 +52,7 @@ const SpecialFeaturBudge = ({product}) => {
             <h3 className="text-[8rem]">1</h3>
             <span className='speacial-feature-shadow' />
           </div>
-          <div className='z-[10] flex flex-col mb-5 subtitle absolute right-[15%] top-[40%]'>                                
+          <div className='z-[10] flex flex-col mb-5 special-feature-subtitle absolute right-[15%] top-[40%]'>                                
             <span className='w-14 font-light'>
               Year Warranty
             </span>                
