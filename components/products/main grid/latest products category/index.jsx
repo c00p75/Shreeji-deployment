@@ -40,7 +40,7 @@ const LatestProductsByCategory = ({category, count, heading}) => {
           </button>
         </div>
       </div>
-      <div ref={scrollRef} className='flex overflow-x-auto overflow-visible scroll-container pt-10 gap-14'>
+      <div ref={scrollRef} className='z-[2] flex overflow-x-auto overflow-visible scroll-container pt-10 gap-14'>
         {latestProducts.map((product, index) => (
           <ProductPreview product={product} index={index} additionalClass={'min-w-[20rem] first:ml-20'} />            
         ))}

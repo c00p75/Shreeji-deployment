@@ -1,5 +1,5 @@
 import Image from "next/image";
-import skylift from "@/public/elements/skylift.png";
+import skylift from "@/public/elements/skylift.svg";
 import buildings from "@/public/backgrounds/city_buildings.png";
 import "./style.scss";
 import { Square } from "lucide-react";
@@ -21,7 +21,7 @@ const SkyliftSolutions = () => {
           src={skylift}
           alt="SHreeji"
           quality={100}
-          className="absolute z-[0] rounded-2xl w-auto grayscale h-[70vh] md:h-[120vh] object-cover mt-[-25rem] md:mt-[-25rem] overflow-visible ml-[-10%] md:ml-0"
+          className="absolute z-[0] rounded-2xl w-auto  h-[70vh] md:h-[120vh] object-cover mt-[-25rem] md:mt-[-25rem] brightness-90 overflow-visible md:ml-[-3%]"
         />
 
         <div className="w-full md:w-[60%] flex flex-col gap-5 relative">
