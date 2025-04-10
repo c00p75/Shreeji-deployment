@@ -113,6 +113,10 @@
     transform: translateZ(3rem);
     
   }
+
+  .no-spin {
+    animation: none !important;
+  }
 }
 
 .special-feature > div span:last-child {

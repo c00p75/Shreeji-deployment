@@ -34,7 +34,7 @@ const ProductDetails = ({product}) => {
         </div>
       )}
       {product['name'] && <h1 className="text-6xl font-bold text-center pb-5 bg-gradient-to-r from-[#807045] to-[#544829] bg-clip-text text-transparent">{product['name']}</h1>}
-      {product['description'] && <p className="text-2xl text-[#544829] text-center">{product['description']}</p>}
+      {product['description'] && <p className="text-2xl text-[#544829] text-center relative z-[3]">{product['description']}</p>}
       
       <div className={`flex justify-center items-start flex-col md:flex-row ${ product['special feature'] ? 'mt-14' : ''}`}>
         <div className='flex-1 relative mt-10'>
