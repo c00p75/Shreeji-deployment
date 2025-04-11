@@ -5,7 +5,7 @@ import { Handshake, Users, Globe, Building, Network, Star } from "lucide-react";
 import MovingTextEffect from "../moving text";
 import Partner1 from "@/public/logos/adobe.png";
 import Partner2 from "@/public/logos/cisco.png";
-import Partner3 from "@/public/logos/dellpartner.png";
+import Partner3 from "@/public/logos/dell_partner.png";
 import Partner4 from "@/public/logos/Epson.png";
 import Partner5 from "@/public/logos/adobe.png";
 import Partner6 from "@/public/logos/IBM.png";
