@@ -15,7 +15,7 @@ const ProductImage = ({images, name, product}) => {
             src={img}
             key={index}
             alt={name}            
-            className={`absolute w-full h-auto z-[1] mt-4 cursor-pointer transition-all duration-150 object-contain opacity-0 ${img == activeImage && 'active-image'}`}
+            className={`absolute w-full h-auto z-[1] mt-4 cursor-pointer transition-all duration-150 object-contain opacity-0 product-shadow ${img == activeImage && 'active-image'}`}
           />
         ))}
         <Image src={images[0]} alt={name} className='w-full h-auto z-[1] relative mt-2 transition-all duration-200 opacity-0' />
