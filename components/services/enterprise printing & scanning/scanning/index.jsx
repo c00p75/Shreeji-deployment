@@ -12,7 +12,7 @@ export default function DocumentScanningPage() {
       {/* Hero Section */}
       <MovingTextEffect
         title="Precision Document Scanning"
-        subtitle="Convert physical documents into secure, high-quality digital formats with our enterprise-level scanning solutions."
+        subtitle="Scanning Speed ranges from 80 pages per minute to 135 pages per minute. Documents Management and Records Management and Archiving, which includes News Papers."
         image=""
       />
 

@@ -6,6 +6,7 @@ import it from "@/public/backgrounds/hero-it.png";
 import bpo from "@/public/backgrounds/hero-bpo.png";
 import print from "@/public/backgrounds/hero-print.png";
 import skylift from "@/public/backgrounds/hero-skylift.png";
+import scanning from "@/public/backgrounds/scanning.png";
 import "./style.scss";
 import { useEffect, useState } from "react";
 import ActiveButton from "./ActiveButton";
@@ -22,6 +23,8 @@ const HeroSection = () => {
       setActive(3);
     } else if (selected == 4) {
       setActive(4);
+    } else if (selected == 5) {
+      setActive(5);
     }
   };
 
@@ -30,12 +33,13 @@ const HeroSection = () => {
     2: "/videos/bpo.mp4",
     3: "/videos/printing.mp4",
     4: "/videos/skylift.mp4",
+    5: "/videos/scanning.mp4",
   };
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setActive((prevActive) => (prevActive < 4 ? prevActive + 1 : 1));
-    }, 10000);
+      setActive((prevActive) => (prevActive < 5 ? prevActive + 1 : 1));
+    }, 7000);
 
     return () => clearInterval(interval); // Cleanup to prevent memory leaks
   }, [active]);
@@ -82,6 +86,17 @@ const HeroSection = () => {
           }`}
           fill
         />
+
+        <Image
+          src={scanning}
+          alt="Shreeji"
+          quality={100}
+          className={`object-cover z-0 ${
+            active == 5 ? "opacity-100" : "opacity-0"
+          }`}
+          fill
+        />
+
         <video
           className="w-full h-full object-cover rounded-lg z-[1] relative"
           muted
@@ -94,12 +109,6 @@ const HeroSection = () => {
 
       <div className="z-[1] absolute left-0 top-0 h-full w-full hero-overlay" />
       <div className="absolute right-0 top-0 h-full w-full md:w-1/2 z-[1] flex-center">
-        {/* <h1 className="slider-text">
-          {active == 1 && "IT Solutions"}
-          {active == 2 && "BPO Services"}
-          {active == 3 && "Print Advertisement"}
-          {active == 4 && "Skylift Services"}
-        </h1> */}
 
         {active == 1 && (
           <div className="text-container">
@@ -133,6 +142,15 @@ const HeroSection = () => {
             <h1 className="home-title">
               <span>Skylift</span>
               <span>Rentals</span>
+            </h1>
+          </div>
+        )}
+
+        {active == 5 && (
+          <div className="text-container">
+            <h1 className="home-title">
+              <span>Scanning &</span>
+              <span>Digitalization</span>
             </h1>
           </div>
         )}

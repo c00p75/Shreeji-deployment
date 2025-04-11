@@ -7,15 +7,21 @@ import { Square } from "lucide-react";
 import celtel from "@/public/elements/celtel.png";
 import zicta from "@/public/elements/zicta.jpg";
 import mtn from "@/public/elements/mtn.jpg";
-import moe from "@/public/elements/moe.png";
+import airtel from "@/public/elements/airtel.jpg";
+import moe from "@/public/elements/moe_bus.png";
 import lafarge from "@/public/elements/lafarge-holcim.png";
 import stc from "@/public/elements/save-the-children.jpg";
 
-const milestones = [    
+const milestones = [      
   {
     title: 'ZICTA Initiative',
-    description: `Computerization of over 150 schools and examination centers in 6 provinces countrywide. Supplied delivered and installed over 1764 Computers and 1200 Thin Clients with Teachers PC/Server using Class-room Manager.`,
+    description: `Computerization of over 235 Schools and examination centers in 9 provinces countrywide. Supplied delivered and installed over 1764 Computers and 1200 Thin Clients with Teachers PC/Server using Class-room Manager.`,
     image: zicta,
+  },
+  {
+    title: 'Ministry of Education',
+    description: `CSR-Support rendered in branding, Lab design, creation and maintenance for the Ministry's Mobile Computer E-Learning Bus platform.`,
+    image: moe,
   },
   {
     title: 'LaFarge Holcim',
@@ -23,14 +29,14 @@ const milestones = [
     image: lafarge,
   },
   {
+    title: 'Airtel Zambia',
+    description: `Digitized over 1.5 million customer records using metadata-driven forms. Improved data accuracy, retrieval speed, and system integration while ensuring compliance with regulatory standards.`,
+    image: airtel,
+  },
+  {
     title: 'MTN Zambia',
     description: ` Bulk scanning of 3,000,000 documents, including handwritten KYC forms, and converting them to Digital Format. Recreation of 1,500,000 unrecognizable handwritten KYC forms to Digital forms by using Meta Data.`,
     image: mtn,
-  },
-  {
-    title: 'Ministry of Education',
-    description: `CSR-Support rendered in branding, Lab design, creation and maintenance for the Ministry's Mobile Computer E-Learning Bus platform.`,
-    image: moe,
   },
   {
     title: 'Save the Children',

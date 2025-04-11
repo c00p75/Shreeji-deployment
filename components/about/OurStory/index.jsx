@@ -1,7 +1,7 @@
 import styles from "./style.scss";
 import Partner1 from "@/public/logos/adobe.png";
 import Partner2 from "@/public/logos/cisco.png";
-import Partner3 from "@/public/logos/dellpartner.png";
+import Partner3 from "@/public/logos/dell_partner.png";
 import Partner4 from "@/public/logos/Epson.png";
 import Partner5 from "@/public/logos/ESET.png";
 import Partner6 from "@/public/logos/IBM.png";
@@ -24,15 +24,20 @@ const OurStory = () => {
               <span>200+</span>
               <span>Employees</span>
             </p>
-
+          
             <p className="flex flex-col gap-3">
               <span>40M+</span>
               <span>Live KYC records processed since 2022</span>
-            </p>
+            </p>            
 
             <p className="flex flex-col gap-3">
               <span>Nationwide</span>
               <span>delivery and installations</span>
+            </p>
+
+            <p className="flex flex-col gap-3">
+              <span>150+</span>
+              <span>Schools and exmination centers computerized accross 9 provinces</span>
             </p>
 
             {/* <p>

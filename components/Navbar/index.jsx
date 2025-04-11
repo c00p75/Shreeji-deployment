@@ -58,6 +58,18 @@ const Navbar = () => {
         'link': '/services/bpo',
         'sub-links': [
           {
+            'title': 'Back Office Support',
+            'link': '/services/bpo/back-office-support'
+          },
+          {
+            'title': 'Customer Support Services',
+            'link': '/services/bpo/customer-support-services'
+          },
+          {
+            'title': 'Tele-Marketing',
+            'link': '/services/bpo/tele-marketing-services'
+          },
+          {
             'title': 'SIM Registration & Management',
             'link': '/services/bpo/sim-registration-and-management'
           },
@@ -68,14 +80,6 @@ const Navbar = () => {
           {
             'title': 'Quality Assurance',
             'link': '/services/bpo/quality-assurance'
-          },
-          {
-            'title': 'Customer Support Services',
-            'link': '/services/bpo/customer-support-services'
-          },
-          {
-            'title': 'Back Office Support',
-            'link': '/services/bpo/back-office-support'
           },
           {
             'title': 'Risk & Compliance Management',
