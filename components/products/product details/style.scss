@@ -24,8 +24,9 @@
 
   .product-details .scroll-container {
     max-height: 65vh; 
+    min-height: 60vh; 
     overflow: auto;
-    padding-block: 1rem;
+    padding-block: 1.25rem;
 
     @media (width <= 768px) {
       max-height: fit-content; 
@@ -95,7 +96,7 @@
   .fadeDown1 {    
     // top: calc(100% + 2rem);
     left: 0;
-    background: linear-gradient(180deg, #fbfbfb, rgba(255, 255, 255, 0));    
+    background: linear-gradient(to top, #f8f8e7, rgba(255, 255, 255, 0));    
   }
   
   .fadeDown2 {    
@@ -119,5 +120,4 @@
     background: linear-gradient(to top, #f0efd6, rgba(255, 255, 255, 0));   
     width: calc(20% - 6px); 
   }
-
 }
