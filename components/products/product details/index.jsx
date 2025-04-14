@@ -44,37 +44,50 @@ const ProductDetails = ({product}) => {
         </div>
 
         <div className='product-specs mt-10 md:mt-0 flex-1 md:p-10 pr-0'>    
-          {product['tagline'] && <h1 className="text-3xl text-center md:text-start mb-10 font-bold bg-gradient-to-r from-[#807045] to-[#544829] bg-clip-text text-transparent">{product['tagline']}</h1>}            
+          {product['tagline'] && (
+            <h1 className="text-3xl text-center md:text-start mb-6 font-bold bg-gradient-to-r from-[#807045] to-[#544829] bg-clip-text text-transparent relative">
+              {product['tagline']}
+            </h1>
+          )}            
           {product['specs'] && (
-            <ul className='scroll-container text-xl flex flex-col gap-2'>
-              {Object.entries(product.specs).map(([key, value]) => (
-                <li key={key}>
-                  <strong className='text-[#544829] capitalize'>{key.replace(/-/g, ' ')}:</strong>{" "}
-            
-                  {typeof value === "object" && !Array.isArray(value) ? (
-                    // Handle nested objects
-                    Object.entries(value).map(([subKey, subValue]) => (
-                      <div className='ml-10' key={subKey}>
-                        <strong className='text-[#544829] capitalize'>{subKey.replace(/-/g, ' ')}:</strong> {subValue}
-                      </div>
-                    ))
-                  ) : Array.isArray(value) ? (
-                    // Handle arrays
-                    <ul className='ml-10 list-disc'>
-                      {value.map((item, index) => (
-                        <li key={index}>{item}</li>
-                      ))}
-                    </ul>
-                  ) : (
-                    // Handle regular values
-                    value
-                  )}
-                </li>
-              ))}
-            </ul>
+            <div className='relative'>
+              <div className='fadeUp fadeUp1' />
+              <div className='fadeUp fadeUp2' />
+              <div className='fadeUp fadeUp3' />
+              <div className='fadeUp fadeUp4' />
+              <div className='fadeUp fadeUp5' />
+              <div className='fadeDown fadeDown1' />
+              <div className='fadeDown fadeDown2' />
+              <div className='fadeDown fadeDown3' />
+              <div className='fadeDown fadeDown4' />
+              <div className='fadeDown fadeDown5' />
+              <ul className='scroll-container text-xl flex flex-col gap-2'>                          
+                {Object.entries(product.specs).map(([key, value]) => (
+                  <li key={key}>
+                    <strong className='text-[#544829] capitalize'>{key.replace(/-/g, ' ')}:</strong>{" "}              
+                    {typeof value === "object" && !Array.isArray(value) ? (
+                      // Handle nested objects
+                      Object.entries(value).map(([subKey, subValue]) => (
+                        <div className='ml-10' key={subKey}>
+                          <strong className='text-[#544829] capitalize'>{subKey.replace(/-/g, ' ')}:</strong> {subValue}
+                        </div>
+                      ))
+                    ) : Array.isArray(value) ? (
+                      // Handle arrays
+                      <ul className='ml-10 list-disc'>
+                        {value.map((item, index) => (
+                          <li key={index}>{item}</li>
+                        ))}
+                      </ul>
+                    ) : (
+                      // Handle regular values
+                      value
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
-
-          {/* <OneYearWarrantyBadge /> */}
         </div>
       </div>
 

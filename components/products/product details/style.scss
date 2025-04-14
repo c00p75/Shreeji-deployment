@@ -23,8 +23,9 @@
   }
 
   .product-details .scroll-container {
-    max-height: 70vh; 
+    max-height: 65vh; 
     overflow: auto;
+    padding-block: 1rem;
 
     @media (width <= 768px) {
       max-height: fit-content; 
@@ -34,4 +35,89 @@
   .product-details .scroll-container:hover::-webkit-scrollbar-thumb  {
     background-color: #4b4124;
   }
+
+  .fadeUp,
+  .fadeDown {
+    position: absolute;
+    width: 100px;
+    z-index: 1;
+    pointer-events: none;
+    left: 0;
+    width: 20%;
+
+    @media (width <= 768px) {
+      display: none;
+    }
+  }
+
+  .fadeUp {    
+    // top: calc(100% + 2rem);
+    top: 0;
+    background: linear-gradient(to bottom, #f8f8e7, rgba(255, 255, 255, 0));
+    height: 2rem;
+    width: 20%;
+  }
+
+  .fadeUp1 {    
+    // top: calc(100% + 2rem);
+    left: 0;
+    background: linear-gradient(to bottom, #fbfbfb, rgba(255, 255, 255, 0));    
+  }
+  
+  .fadeUp2 {    
+    // top: calc(100% + 2rem);
+    left: 20%;
+    background: linear-gradient(to bottom, #fcfcfc, rgba(255, 255, 255, 0));      
+  }
+
+  .fadeUp3 {    
+    left: 40%;
+    background: linear-gradient(to bottom, #fdfdf6, rgba(255, 255, 255, 0));    
+  }
+
+  .fadeUp4 {    
+    left: 60%;
+    background: linear-gradient(to bottom, #fafaf0, rgba(255, 255, 255, 0));    
+  }
+
+  .fadeUp5 {    
+    left: 80%;
+    background: linear-gradient(to bottom, #f8f8e7, rgba(255, 255, 255, 0));   
+    width: calc(20% - 6px); 
+  }
+
+  .fadeDown {
+    bottom: 0;
+    height: 2rem;
+    background: linear-gradient(to top, white, rgba(255, 255, 255, 0));
+  }
+
+  .fadeDown1 {    
+    // top: calc(100% + 2rem);
+    left: 0;
+    background: linear-gradient(180deg, #fbfbfb, rgba(255, 255, 255, 0));    
+  }
+  
+  .fadeDown2 {    
+    // top: calc(100% + 2rem);
+    left: 20%;
+    background: linear-gradient(to top, #f8f8e7, rgba(255, 255, 255, 0));      
+  }
+
+  .fadeDown3 {    
+    left: 40%;
+    background: linear-gradient(to top, #f7f7e4, rgba(255, 255, 255, 0));    
+  }
+
+  .fadeDown4 {    
+    left: 60%;
+    background: linear-gradient(to top, #f3f3da, rgba(255, 255, 255, 0));    
+  }
+
+  .fadeDown5 {    
+    left: 80%;
+    background: linear-gradient(to top, #f0efd6, rgba(255, 255, 255, 0));   
+    width: calc(20% - 6px); 
+  }
+
 }
