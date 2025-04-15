@@ -138,6 +138,9 @@ import LG_27QN880_B_3 from "@/public/products/LG 27QN880-B 1.1.png";
 import LG_29WQ500_B_1 from "@/public/products/LG 29WQ500-B.png";
 import LG_29WQ500_B_2 from "@/public/products/LG 29WQ500-B 1.1.png";
 import LG_29WQ500_B_3 from "@/public/products/LG 29WQ500-B 1.png";
+import LG_32GP850_B_1 from "@/public/products/LG 32GP850-B.png";
+import LG_32GP850_B_2 from "@/public/products/LG 32GP850-B 1.png";
+import LG_32GP850_B_3 from "@/public/products/LG 32GP850-B 1.1.png";
 
 
 
@@ -273,6 +276,9 @@ export const productImages = {
   LG_29WQ500_B_1,
   LG_29WQ500_B_2,
   LG_29WQ500_B_3,
+  LG_32GP850_B_1,
+  LG_32GP850_B_2,
+  LG_32GP850_B_3,
 }
 
 export const brandLogo = {

@@ -1504,31 +1504,33 @@ export const allProducts = [
       "feature": "display"
     }
   },
-  // {
-  //   "name": "LG 32GP850-B",
-  //   "category": "Monitors",
-  //   "images": [
-  //     productImages.HPEnvyMOVE
-  //   ],
-  //   "brand": "LG",
-  //   "brand logo": "",
-  //   "specs": {
-  //     "size": "32 inches",
-  //     "resolution": "QHD (2560x1440)",
-  //     "panel-type": "Nano IPS",
-  //     "refresh-rate": "165Hz",
-  //     "response-time": "1ms",
-  //     "color-gamut": "sRGB 98%",
-  //     "hdr": "HDR10",
-  //     "vesa-mount": "Yes",
-  //     "ports": ["HDMI", "DisplayPort"]
-  //   },
-  //   "date-added": "2025-03-06",
-  //   "tagline": "High-speed gaming monitor with vibrant visuals.",
-  //   "description": "The LG 32GP850-B offers a fast refresh rate and response time, ensuring smooth gameplay. Its Nano IPS panel delivers rich colors, and it's VESA mount compatible for flexible setup.",
-  //   "price": "K7,500",
-  //   "discounted-price": "K7,000"
-  // },
+  {
+    "name": "LG 32GP850-B",
+    "category": "Monitors",
+    "images": [
+      productImages.LG_32GP850_B_1,
+      productImages.LG_32GP850_B_2,
+      productImages.LG_32GP850_B_3,
+    ],
+    "brand": "LG",
+    "brand logo": brandLogo.LG,
+    "specs": {
+      "size": "32 inches",
+      "resolution": "QHD (2560x1440)",
+      "panel-type": "Nano IPS",
+      "refresh-rate": "165Hz",
+      "response-time": "1ms",
+      "color-gamut": "sRGB 98%",
+      "hdr": "HDR10",
+      "vesa-mount": "Yes",
+      "ports": ["HDMI", "DisplayPort"]
+    },
+    "date-added": "2025-03-06",
+    "tagline": "High-speed gaming monitor with vibrant visuals.",
+    "description": "The LG 32GP850-B offers a fast refresh rate and response time, ensuring smooth gameplay. Its Nano IPS panel delivers rich colors, and it's VESA mount compatible for flexible setup.",
+    "price": "K7,500",
+    "discounted-price": "K7,000"
+  },
   // {
   //   "name": "LG 55UL3J-M",
   //   "category": "Monitors",
