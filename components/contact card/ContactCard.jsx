@@ -57,7 +57,7 @@ const ContactCard = () => {
   return (
     <>
       <div
-        className={`contact-card bg-transparent ${showCard ? "opacity-1 z-20" : "opacity-0 -z-40"}`}
+        className={`contact-card-container bg-transparent ${showCard ? "opacity-1 z-20" : "opacity-0 -z-40"}`}
       >
         <div
           className={`card_container ${minimize ? "card-minimized cursor-pointer" : ""}`}
@@ -69,67 +69,67 @@ const ContactCard = () => {
             } }
           >
             <div
-              className="part part-1 cursor-pointer"
+              className="card-part part-1 cursor-pointer"
               onClick={() => setMinimize(false)}
              />
             <div
-              className="part part-2 cursor-pointer"
+              className="card-part part-2 cursor-pointer"
               onClick={() => setMinimize(false)}
              />
             <div 
-              className="part part-3"
+              className="card-part part-3"
               onClick={() => {!minimize && setDisplayForm(true)}}  
              />
             <div 
-              className="part part-4"
+              className="card-part part-4"
               onClick={() => {!minimize && setDisplayForm(true)}}  
              />
             <div
-              className="part part-5 cursor-pointer"
+              className="card-part part-5 cursor-pointer"
               onClick={() => setMinimize(true)}
              />
             <div
-              className="part part-6"
+              className="card-part part-6"
               onClick={() => {!minimize && setDisplayForm(true)}} 
             />
             <div
-              className="part part-7"
+              className="card-part part-7"
               onClick={() => {!minimize && setDisplayForm(true)}} 
             />
             <div
-              className="part part-8"
+              className="card-part part-8"
               onClick={() => {!minimize && setDisplayForm(true)}} 
             />
             <div
-              className="part part-9"
+              className="card-part part-9"
               onClick={() => {!minimize && setDisplayForm(true)}} 
             />
             <div
-              className="part part-10"
+              className="card-part part-10"
               onClick={() => {!minimize && setDisplayForm(true)}} 
             />
             <div
-              className="part part-11"
+              className="card-part part-11"
               onClick={() => {!minimize && setDisplayForm(true)}} 
             />
             <div
-              className="part part-12"
+              className="card-part part-12"
               onClick={() => {!minimize && setDisplayForm(true)}} 
             />
             <div
-              className="part part-13"
+              className="card-part part-13"
               onClick={() => {!minimize && setDisplayForm(true)}} 
             />
             <div
-              className="part part-14"
+              className="card-part part-14"
               onClick={() => {!minimize && setDisplayForm(true)}} 
             />
             <div
-              className="part part-15"
+              className="card-part part-15"
               onClick={() => {!minimize && setDisplayForm(true)}} 
             />
           </div>
-          <div className="card flex">
+          <div className="contact-card flex">
             <div className="absolute right-4 top-3 p-1 flex-center w-8 h-8 z-0 close-btn">
               <X className="close-btn" />
             </div>
@@ -168,7 +168,7 @@ const ContactCard = () => {
       </div>
 
       {displayForm && (
-        <div className="contact-card contact-card-form max-w-md mx-auto p-6 rounded-lg shadow-lg overflow-hidden">
+        <div className="contact-card-container contact-card-form max-w-md mx-auto p-6 rounded-lg shadow-lg overflow-hidden">
           <AnimatePresence mode="wait" custom={direction}>
             <motion.div
               key={currentStep}

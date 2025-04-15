@@ -1,4 +1,4 @@
-.contact-card {
+.contact-card-container {
   position: fixed;
   bottom: 3rem;
   right: 2rem;
@@ -17,7 +17,7 @@
     --angleY: 20deg;
   }
 
-  .card {
+  .contact-card {
     --light: #d9d9d9;
     --dark: #1f1f1f;
     position: relative;
@@ -79,7 +79,7 @@
 }
 
 .card-minimized {
-  .card {
+  .contact-card {
     width: 4rem;
     height: 4rem;
   }
@@ -116,7 +116,7 @@
   height: 100%;
 }
 
-.card_hover .part {
+.card_hover .card-part {
   width: 20%;
   height: calc(100% / 3);
   background-color: transparent;
@@ -178,6 +178,7 @@
   box-shadow: 0 12px 8px 0 rgba(0, 0, 0, 0.8);
   width: 20rem;
   transition: all ease-in-out 0.3s;
+  z-index: 20;
 
   select {
     padding-right: 1rem;

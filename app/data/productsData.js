@@ -1414,7 +1414,7 @@ export const allProducts = [
       productImages.LG_27UL500_W_3,
     ],
     "brand": "LG",
-    "brand logo": brandLogo.HP,
+    "brand logo": brandLogo.LG,
     "specs": {
       "size": "27 inches",
       "resolution": "4K UHD (3840x2160)",
@@ -1438,56 +1438,72 @@ export const allProducts = [
       "feature": "Display"
     }
   },
-  // {
-  //   "name": "LG 27QN880-B",
-  //   "category": "Monitors",
-  //   "images": [
-  //     productImages.HPEnvyMOVE
-  //   ],
-  //   "brand": "LG",
-  //   "brand logo": "",
-  //   "specs": {
-  //     "size": "27 inches",
-  //     "resolution": "QHD (2560x1440)",
-  //     "panel-type": "IPS",
-  //     "refresh-rate": "75Hz",
-  //     "response-time": "5ms",
-  //     "color-gamut": "sRGB 99%",
-  //     "hdr": "HDR10",
-  //     "vesa-mount": "Yes",
-  //     "ports": ["USB Type-C", "HDMI", "DisplayPort"]
-  //   },
-  //   "date-added": "2025-03-06",
-  //   "tagline": "Ergonomic design with comprehensive connectivity.",
-  //   "description": "The LG 27QN880-B features an ergonomic stand with multiple adjustments and a USB Type-C port for convenient connectivity, catering to professionals seeking comfort and versatility.",
-  //   "price": "K6,500",
-  //   "discounted-price": "K6,000"
-  // },
-  // {
-  //   "name": "LG 29WQ500-B",
-  //   "category": "Monitors",
-  //   "images": [
-  //     productImages.HPEnvyMOVE
-  //   ],
-  //   "brand": "LG",
-  //   "brand logo": "",
-  //   "specs": {
-  //     "size": "29 inches",
-  //     "resolution": "FHD (2560x1080)",
-  //     "panel-type": "IPS",
-  //     "refresh-rate": "75Hz",
-  //     "response-time": "5ms",
-  //     "color-gamut": "sRGB 99%",
-  //     "hdr": "HDR10",
-  //     "vesa-mount": "Yes",
-  //     "ports": ["HDMI", "DisplayPort"]
-  //   },
-  //   "date-added": "2025-03-06",
-  //   "tagline": "Wide-screen productivity with immersive visuals.",
-  //   "description": "The LG 29WQ500-B ultrawide monitor enhances productivity with its expansive screen, providing clear and vibrant visuals suitable for multitasking and entertainment.",
-  //   "price": "K4,500",
-  //   "discounted-price": "K4,000"
-  // },
+  {
+    "name": "LG 27QN880-B",
+    "category": "Monitors",
+    "images": [
+      productImages.LG_27QN880_B_1,
+      productImages.LG_27QN880_B_2,
+      productImages.LG_27QN880_B_3,
+    ],
+    "brand": "LG",
+    "brand logo": brandLogo.LG,
+    "specs": {
+      "size": "27 inches",
+      "resolution": "QHD (2560x1440)",
+      "panel-type": "IPS",
+      "refresh-rate": "75Hz",
+      "response-time": "5ms",
+      "color-gamut": "sRGB 99%",
+      "hdr": "HDR10",
+      "vesa-mount": "Yes",
+      "ports": ["USB Type-C", "HDMI", "DisplayPort"]
+    },
+    "date-added": "2025-03-06",
+    "tagline": "Ergonomic design with comprehensive connectivity.",
+    "description": "The LG 27QN880-B features an ergonomic stand with multiple adjustments and a USB Type-C port for convenient connectivity, catering to professionals seeking comfort and versatility.",
+    "price": "K6,500",
+    "discounted-price": "K6,000",
+    "special feature": {
+      "stat": '8',
+      'stat text size': 8,
+      "symbol": "+",
+      "feature": "Hours Battery Charge"
+    }
+  },
+  {
+    "name": "LG 29WQ500-B",
+    "category": "Monitors",
+    "images": [
+      productImages.LG_29WQ500_B_1,
+      productImages.LG_29WQ500_B_2,
+      productImages.LG_29WQ500_B_3,
+    ],
+    "brand": "LG",
+    "brand logo": brandLogo.LG,
+    "specs": {
+      "size": "29 inches",
+      "resolution": "FHD (2560x1080)",
+      "panel-type": "IPS",
+      "refresh-rate": "75Hz",
+      "response-time": "5ms",
+      "color-gamut": "sRGB 99%",
+      "hdr": "HDR10",
+      "vesa-mount": "Yes",
+      "ports": ["HDMI", "DisplayPort"]
+    },
+    "date-added": "2025-03-06",
+    "tagline": "Wide-screen productivity with immersive visuals.",
+    "description": "The LG 29WQ500-B ultrawide monitor enhances productivity with its expansive screen, providing clear and vibrant visuals suitable for multitasking and entertainment.",
+    "price": "K4,500",
+    "discounted-price": "K4,000",
+    "special feature": {
+      "stat": '4K',
+      'stat text size': 6,
+      // "symbol": "+",
+      "feature": "display"
+    }
+  },
   // {
   //   "name": "LG 32GP850-B",
   //   "category": "Monitors",
@@ -2126,75 +2142,97 @@ export const allProducts = [
   //   "price": "K10,500",
   //   "discounted-price": "K9,800"
   // },
-  // {
-  //   "name": "Huawei IdeaHub S2 65\" Interactive Display",
-  //   "category": "Interactive Displays",
-  //   "images": [
-  //     productImages.HPEnvyMOVE
-  //   ],
-  //   "brand": "Huawei",
-  //   "brand logo": "",
-  //   "specs": {
-  //     "screen-size": "65 inches",
-  //     "resolution": "4K UHD (3840x2160)",
-  //     "touchpoints": "20-point multi-touch",
-  //     "camera": "1080p30 resolution with Auto Framing and voice tracking",
-  //     "speakers": "6 stereo speakers (40Hz–20kHz)",
-  //     "microphones": "12 microphones with 8m pickup distance",
-  //     "ports": ["HDMI 2.1", "USB Type-C", "USB 3.0", "RJ45 Ethernet", "Wi-Fi 6"]
-  //   },
-  //   "date-added": "2025-03-06",
-  //   "tagline": "Seamless collaboration with HD video conferencing and interactive touch capabilities.",
-  //   "description": "The Huawei IdeaHub S2 65\" Interactive Display transforms meeting rooms into smart collaboration spaces. It features a 4K UHD display with 20-point multi-touch support, a 1080p camera with Auto Framing, and high-fidelity audio with 6 stereo speakers and 12 microphones. Equipped with Wi-Fi 6 for direct projection, it ensures smooth connectivity and collaboration.",
-  //   "price": "K15,000",
-  //   "discounted-price": "K14,500"
-  // },
-  // {
-  //   "name": "Huawei IdeaHub S2 75\" Interactive Display",
-  //   "category": "Interactive Displays",
-  //   "images": [
-  //     productImages.HPEnvyMOVE
-  //   ],
-  //   "brand": "Huawei",
-  //   "brand logo": "",
-  //   "specs": {
-  //     "screen-size": "75 inches",
-  //     "resolution": "4K UHD (3840x2160)",
-  //     "touchpoints": "20-point multi-touch",
-  //     "camera": "1080p30 resolution with Auto Framing and voice tracking",
-  //     "speakers": "6 stereo speakers (40Hz–20kHz)",
-  //     "microphones": "12 microphones with 8m pickup distance",
-  //     "ports": ["HDMI 2.1", "USB Type-C", "USB 3.0", "RJ45 Ethernet", "Wi-Fi 6"]
-  //   },
-  //   "date-added": "2025-03-06",
-  //   "tagline": "Enhanced collaboration experience with a larger interactive display and advanced features.",
-  //   "description": "The Huawei IdeaHub S2 75\" Interactive Display offers an expansive 75-inch 4K UHD touchscreen, ideal for larger meeting spaces. It includes a 1080p camera with Auto Framing, immersive audio with 6 stereo speakers and 12 microphones, and Wi-Fi 6 connectivity for seamless collaboration and productivity.",
-  //   "price": "K18,000",
-  //   "discounted-price": "K17,500"
-  // },
-  // {
-  //   "name": "Huawei IdeaHub S2 86\" Interactive Display",
-  //   "category": "Interactive Displays",
-  //   "images": [
-  //     productImages.HPEnvyMOVE
-  //   ],
-  //   "brand": "Huawei",
-  //   "brand logo": "",
-  //   "specs": {
-  //     "screen-size": "86 inches",
-  //     "resolution": "4K UHD (3840x2160)",
-  //     "touchpoints": "20-point multi-touch",
-  //     "camera": "1080p30 resolution with Auto Framing and voice tracking",
-  //     "speakers": "6 stereo speakers (40Hz–20kHz)",
-  //     "microphones": "12 microphones with 8m pickup distance",
-  //     "ports": ["HDMI 2.1", "USB Type-C", "USB 3.0", "RJ45 Ethernet", "Wi-Fi 6"]
-  //   },
-  //   "date-added": "2025-03-06",
-  //   "tagline": "Ultimate interactive display solution for large venues with superior collaboration features.",
-  //   "description": "The Huawei IdeaHub S2 86\" Interactive Display provides a massive 86-inch 4K UHD touchscreen, perfect for large conference rooms and auditoriums. It features a 1080p camera with Auto Framing, high-quality audio with 6 stereo speakers and 12 microphones, and Wi-Fi 6 technology for efficient wireless collaboration.",
-  //   "price": "K22,000",
-  //   "discounted-price": "K21,500"
-  // },
+  {
+    "name": "Huawei IdeaHub S2 65\" Interactive Display",
+    "category": "Interactive Displays",
+    "images": [
+      productImages.HuaweiIdeaHubS2_1,
+      productImages.HuaweiIdeaHubS2_2,
+      productImages.HuaweiIdeaHubS2_3,
+    ],
+    "brand logo": brandLogo.Huawei,
+    "specs": {
+      "screen-size": "65 inches",
+      "resolution": "4K UHD (3840x2160)",
+      "touchpoints": "20-point multi-touch",
+      "camera": "1080p30 resolution with Auto Framing and voice tracking",
+      "speakers": "6 stereo speakers (40Hz–20kHz)",
+      "microphones": "12 microphones with 8m pickup distance",
+      "ports": ["HDMI 2.1", "USB Type-C", "USB 3.0", "RJ45 Ethernet", "Wi-Fi 6"]
+    },
+    "date-added": "2025-03-06",
+    "tagline": "Seamless collaboration with HD video conferencing and interactive touch capabilities.",
+    "description": `The Huawei IdeaHub S2 65" Interactive Display enhances meetings with a 4K multi-touch screen, 1080p Auto Framing camera, and high-quality audio. Wi-Fi 6 enables seamless wireless projection and collaboration.`,
+    "price": "K15,000",
+    "discounted-price": "K14,500",
+    "special feature": {
+      "stat": '4K',
+      'stat text size': 6,
+      // "symbol": "+",
+      "feature": "display"
+    }
+  },
+  {
+    "name": "Huawei IdeaHub S2 75\" Interactive Display",
+    "category": "Interactive Displays",
+    "images": [
+      productImages.HuaweiIdeaHubS2_75_1,
+      productImages.HuaweiIdeaHubS2_75_2
+    ],
+    "brand logo": brandLogo.Huawei,
+    "brand logo": "",
+    "specs": {
+      "screen-size": "75 inches",
+      "resolution": "4K UHD (3840x2160)",
+      "touchpoints": "20-point multi-touch",
+      "camera": "1080p30 resolution with Auto Framing and voice tracking",
+      "speakers": "6 stereo speakers (40Hz–20kHz)",
+      "microphones": "12 microphones with 8m pickup distance",
+      "ports": ["HDMI 2.1", "USB Type-C", "USB 3.0", "RJ45 Ethernet", "Wi-Fi 6"]
+    },
+    "date-added": "2025-03-06",
+    "tagline": "Enhanced collaboration experience with a larger interactive display and advanced features.",
+    "description": `The Huawei IdeaHub S2 75" features a 75-inch 4K touchscreen, 1080p Auto Framing camera, powerful audio, and Wi-Fi 6 for smooth collaboration in larger meeting spaces.`,
+    "price": "K18,000",
+    "discounted-price": "K17,500",
+    "special feature": {
+      "stat": '4K',
+      'stat text size': 6,
+      // "symbol": "+",
+      "feature": "display"
+    }
+  },
+  {
+    "name": "Huawei IdeaHub S2 86\" Interactive Display",
+    "category": "Interactive Displays",
+    "images": [
+      productImages.HuaweiIdeaHubS2_86_1,
+      productImages.HuaweiIdeaHubS2_86_2,
+      productImages.HuaweiIdeaHubS2_86_3,
+    ],
+    "brand": "Huawei",
+    "brand logo": "",
+    "specs": {
+      "screen-size": "86 inches",
+      "resolution": "4K UHD (3840x2160)",
+      "touchpoints": "20-point multi-touch",
+      "camera": "1080p30 resolution with Auto Framing and voice tracking",
+      "speakers": "6 stereo speakers (40Hz–20kHz)",
+      "microphones": "12 microphones with 8m pickup distance",
+      "ports": ["HDMI 2.1", "USB Type-C", "USB 3.0", "RJ45 Ethernet", "Wi-Fi 6"]
+    },
+    "date-added": "2025-03-06",
+    "tagline": "Ultimate interactive display solution for large venues with superior collaboration features.",
+    "description": `The Huawei IdeaHub S2 86" offers a large 4K touchscreen, 1080p Auto Framing camera, rich audio, and Wi-Fi 6 for seamless collaboration in big conference spaces.`,
+    "price": "K22,000",
+    "discounted-price": "K21,500",
+    "special feature": {
+      "stat": '4K',
+      'stat text size': 6,
+      // "symbol": "+",
+      "feature": "display"
+    }
+  },
 
   // George
   {
@@ -2280,7 +2318,7 @@ export const allProducts = [
     },
     "date-added": "2025-03-06",
     "tagline": "Compact design with excellent cooling and cable management features.",
-    "description": "The ASUS A21 Micro-ATX Chassis is designed for minimalist DIY PC builders seeking a balance between size and functionality. It supports various AIO coolers and graphics cards, providing flexibility for different build configurations. The front-panel mesh enhances airflow, and the chassis offers sufficient space for cable management to maintain a clean interior.",
+    "description": "The ASUS A21 Micro-ATX Chassis offers a compact, functional design with support for AIO coolers and GPUs, front mesh for airflow, and ample space for clean cable management.",
     "price": "K1,200",
     "discounted-price": "K1,100"
   },

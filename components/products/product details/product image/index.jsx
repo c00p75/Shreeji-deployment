@@ -18,8 +18,7 @@ const ProductImage = ({images, name, product}) => {
             className={`absolute w-full h-auto z-[1] mt-4 cursor-pointer transition-all duration-150 object-contain opacity-0 product-shadow ${img == activeImage && 'active-image'}`}
           />
         ))}
-        <Image src={images[0]} alt={name} className='w-full h-auto z-[1] relative mt-2 transition-all duration-200 opacity-0' />
-        <SpecialFeaturBudge product={product} />
+        <Image src={images[0]} alt={name} className='w-full h-auto z-[1] relative mt-2 transition-all duration-200 opacity-0' />        
       </div>
       <div className='flex gap-7 justify-center mt-3 relative z-[3]'>
         {images.map((img, index) => (

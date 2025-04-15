@@ -1,3 +1,5 @@
+import LG from "@/public/products/brand logos/LG.png";
+import Huawei from "@/public/products/brand logos/huawei.png";
 import Lenovo from "@/public/products/brand logos/lenovo.svg";
 import APC from "@/public/products/brand logos/APC.svg";
 import XPG from "@/public/products/brand logos/xpg-logo.svg";
@@ -122,6 +124,20 @@ import TP_LINK_24_Port_Gigabit_Easy_Smart_Switch_3 from "@/public/products/TP-LI
 import LG_27UL500_W_1 from "@/public/products/LG 27UL500-W (1).png";
 import LG_27UL500_W_2 from "@/public/products/LG 27UL500-W (2).png";
 import LG_27UL500_W_3 from "@/public/products/LG 27UL500-W (3).png";
+import HuaweiIdeaHubS2_1 from "@/public/products/Huawei IdeaHub S2 65 Interactive Display1.1.png";
+import HuaweiIdeaHubS2_3 from "@/public/products/Huawei IdeaHub S2 65 Interactive Display1.png";
+import HuaweiIdeaHubS2_2 from "@/public/products/Huawei IdeaHub S2 65 Interactive Display.png";
+import HuaweiIdeaHubS2_75_2 from "@/public/products/Huawei IdeaHub S2 75 Interactive Display.png";
+import HuaweiIdeaHubS2_75_1 from "@/public/products/Huawei IdeaHub S2 75 Interactive Display1.png";
+import HuaweiIdeaHubS2_86_1 from "@/public/products/Huawei IdeaHub S2 86 Interactive Display.png";
+import HuaweiIdeaHubS2_86_2 from "@/public/products/Huawei IdeaHub S2 86 Interactive Display1.1.png";
+import HuaweiIdeaHubS2_86_3 from "@/public/products/Huawei IdeaHub S2 86 Interactive Display1.png";
+import LG_27QN880_B_1 from "@/public/products/LG 27QN880-B.png";
+import LG_27QN880_B_2 from "@/public/products/LG 27QN880-B 1.png";
+import LG_27QN880_B_3 from "@/public/products/LG 27QN880-B 1.1.png";
+import LG_29WQ500_B_1 from "@/public/products/LG 29WQ500-B.png";
+import LG_29WQ500_B_2 from "@/public/products/LG 29WQ500-B 1.1.png";
+import LG_29WQ500_B_3 from "@/public/products/LG 29WQ500-B 1.png";
 
 
 
@@ -242,6 +258,21 @@ export const productImages = {
   LenovoIdeaPad1_1,
   LenovoIdeaPad1_2,
   LenovoIdeaPad1_3,
+  LenovoIdeaPad1_3,
+  HuaweiIdeaHubS2_1,
+  HuaweiIdeaHubS2_2,
+  HuaweiIdeaHubS2_3,
+  HuaweiIdeaHubS2_75_1,
+  HuaweiIdeaHubS2_75_2,
+  HuaweiIdeaHubS2_86_1,
+  HuaweiIdeaHubS2_86_2,
+  HuaweiIdeaHubS2_86_3,
+  LG_27QN880_B_1,
+  LG_27QN880_B_2,
+  LG_27QN880_B_3,
+  LG_29WQ500_B_1,
+  LG_29WQ500_B_2,
+  LG_29WQ500_B_3,
 }
 
 export const brandLogo = {
@@ -252,5 +283,7 @@ export const brandLogo = {
   TPLink,
   Dell,
   APC,
-  XPG
+  XPG,
+  Huawei,
+  LG,
 }

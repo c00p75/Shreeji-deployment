@@ -4,7 +4,6 @@ import { ArrowRightCircle } from 'lucide-react'
 import Link from 'next/link';
 import ProductImage from './product image';
 import SpecialFeaturBudge from './special feature badge';
-import OneYearWarrantyBadge from './warranty badge';
 
 const ProductDetails = ({product}) => {  
   console.log('Fetching product', product)
@@ -34,7 +33,12 @@ const ProductDetails = ({product}) => {
         </div>
       )}
       {product['name'] && <h1 className="text-6xl font-bold text-center pb-5 bg-gradient-to-r from-[#807045] to-[#544829] bg-clip-text text-transparent">{product['name']}</h1>}
-      {product['description'] && <p className="text-2xl text-[#544829] text-center relative z-[3]">{product['description']}</p>}
+      {product['description'] && (
+        <div className='relative'>
+          <p className="text-2xl text-[#544829] text-center relative z-[2]">{product['description']}</p>
+          <SpecialFeaturBudge product={product} />
+        </div>
+      )}
       
       <div className={`flex justify-center items-start flex-col md:flex-row ${ product['special feature'] ? 'mt-14' : ''}`}>
         <div className='flex-1 relative mt-10'>
