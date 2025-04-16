@@ -141,7 +141,33 @@ import LG_29WQ500_B_3 from "@/public/products/LG 29WQ500-B 1.png";
 import LG_32GP850_B_1 from "@/public/products/LG 32GP850-B.png";
 import LG_32GP850_B_2 from "@/public/products/LG 32GP850-B 1.png";
 import LG_32GP850_B_3 from "@/public/products/LG 32GP850-B 1.1.png";
-
+import LG_55UL3J_M_1 from "@/public/products/LG 55UL3J-M.png";
+import LG_55UL3J_M_2 from "@/public/products/LG 55UL3J-M 1.png";
+import LG_55UL3J_M_3 from "@/public/products/LG 55UL3J-M 1.1.png";
+import LG_65EP5G_B_1 from "@/public/products/LG 65EP5G-B.png";
+import LG_65EP5G_B_2 from "@/public/products/LG 65EP5G-B 1.png";
+import LG_65EP5G_B_3 from "@/public/products/LG 65EP5G-B 1.1.png";
+import Asus_ZenScreen_MB16AC_1 from "@/public/products/Asus_ZenScreen_MB16AC_1.png";
+import Asus_ZenScreen_MB16AC_2 from "@/public/products/Asus ZenScreen MB16AC_2.png";
+import Asus_ZenScreen_MB16AC_3 from "@/public/products/Asus_ZenScreen_MB16AC_3.png";
+import Asus_ZenScreen_MB16QHG from "@/public/products/Asus ZenScreen MB16QHG.png";
+import Asus_ZenScreen_MB16QHG_2 from "@/public/products/Asus ZenScreen MB16QHG_2.png";
+import Asus_ZenScreen_MB16QHG_3 from "@/public/products/Asus ZenScreen MB16QHG_3.png";
+import Dell_SE2422H_1 from "@/public/products/Dell SE2422H (1).png";
+import Dell_SE2422H_2 from "@/public/products/Dell SE2422H (2).png";
+import Dell_SE2422H_3 from "@/public/products/Dell SE2422H (3).png";
+import Dell_Inspiron_7640_1 from "@/public/products/Dell Inspiron 7640 (1).png";
+import Dell_Inspiron_7640_2 from "@/public/products/Dell Inspiron 7640 (2).png";
+import Dell_Inspiron_7640_3 from "@/public/products/Dell Inspiron 7640 (3).png";
+import Dell_Inspiron_5530_Gaming_Laptop_1 from "@/public/products/Dell Inspiron 5530 Gaming Laptop (1).png";
+import Dell_Inspiron_5530_Gaming_Laptop_2 from "@/public/products/Dell Inspiron 5530 Gaming Laptop (2).png";
+import Dell_Inspiron_5530_Gaming_Laptop_3 from "@/public/products/Dell Inspiron 5530 Gaming Laptop (3).png";
+import Dell_Precision_3590_1 from "@/public/products/Dell Precision 3590 (1).png";
+import Dell_Precision_3590_2 from "@/public/products/Dell Precision 3590 (2).png";
+import Dell_Precision_3590_3 from "@/public/products/Dell Precision 3590 (3).png";
+import Dell_Precision_3591_1 from "@/public/products/Dell Precision 3591 (1).png";
+import Dell_Precision_3591_2 from "@/public/products/Dell Precision 3591 (2).png";
+import Dell_Precision_3591_3 from "@/public/products/Dell Precision 3591 (3).png";
 
 
 export const productImages = {
@@ -279,6 +305,33 @@ export const productImages = {
   LG_32GP850_B_1,
   LG_32GP850_B_2,
   LG_32GP850_B_3,
+  LG_55UL3J_M_1,
+  LG_55UL3J_M_2,
+  LG_55UL3J_M_3,
+  LG_65EP5G_B_1,
+  LG_65EP5G_B_2,
+  LG_65EP5G_B_3,
+  Asus_ZenScreen_MB16AC_1,
+  Asus_ZenScreen_MB16AC_2,
+  Asus_ZenScreen_MB16AC_3,
+  Asus_ZenScreen_MB16QHG,
+  Asus_ZenScreen_MB16QHG_2,
+  Asus_ZenScreen_MB16QHG_3,
+  Dell_SE2422H_1,
+  Dell_SE2422H_2,
+  Dell_SE2422H_3,
+  Dell_Inspiron_7640_1,
+  Dell_Inspiron_7640_2,
+  Dell_Inspiron_7640_3,
+  Dell_Inspiron_5530_Gaming_Laptop_1,
+  Dell_Inspiron_5530_Gaming_Laptop_2,
+  Dell_Inspiron_5530_Gaming_Laptop_3,
+  Dell_Precision_3590_1,
+  Dell_Precision_3590_2,
+  Dell_Precision_3590_3,
+  Dell_Precision_3591_1,
+  Dell_Precision_3591_2,
+  Dell_Precision_3591_3,
 }
 
 export const brandLogo = {

@@ -945,121 +945,123 @@ export const allProducts = [
       "feature": "Hours Battery Charge"
     }
   },
-  // {
-  //   "name": "Dell Inspiron 7450 Foldable",
-  //   "category": "Computers",
-  //   "subcategory": "Laptops",
-  //   "images": [
-  //     productImages.HPEnvyMOVE
-  //   ],
-  //   "brand": "Dell",
-  //   "brand logo": brandLogo.Dell,
-  //   "specs": {
-  //     "processor": "Intel Core i7-1365U",
-  //     "RAM": "16GB LPDDR5",
-  //     "storage": "512GB SSD",
-  //     "display": "14-inch FHD+ (1920x1200) touchscreen, 360-degree hinge",
-  //     "ports": "2 x USB-A 3.2 Gen 1, 2 x Thunderbolt 4 with DisplayPort, HDMI 2.1, Universal audio port",
-  //     "operating-system": "Windows 11 Pro"
-  //   },
-  //   "date-added": "2025-3-6",
-  //   "tagline": "Flexible 2-in-1 Laptop with High-End Performance.",
-  //   "description": "A versatile laptop offering both tablet and laptop modes, equipped with powerful specifications for demanding tasks.",
-  //   "price": "K11,500",
-  //   "discounted price": "K11,000"
-  // },
-  // {
-  //   "name": "Dell Inspiron 7640",
-  //   "category": "Computers",
-  //   "subcategory": "Laptops",
-  //   "images": [
-  //     productImages.HPEnvyMOVE
-  //   ],
-  //   "brand": "Dell",
-  //   "brand logo": brandLogo.Dell,
-  //   "specs": {
-  //     "processor": "Intel Core i7-1365U",
-  //     "RAM": "16GB LPDDR5",
-  //     "storage": "256GB SSD",
-  //     "display": "16-inch FHD+ (1920x1200) display",
-  //     "ports": "2 x USB-A 3.2 Gen 1, Thunderbolt 4, HDMI 1.4, Universal audio jack",
-  //     "operating-system": "Windows 11 Pro"
-  //   },
-  //   "date-added": "2025-3-6",
-  //   "tagline": "Powerful Performance in a Sleek Design.",
-  //   "description": "Ideal for professionals seeking a balance between performance and portability.",
-  //   "price": "K9,500",
-  //   "discounted price": "K9,000"
-  // },
-  // {
-  //   "name": "Dell Inspiron 5530 Gaming Laptop",
-  //   "category": "Computers",
-  //   "subcategory": "Laptops",
-  //   "images": [
-  //     productImages.HPEnvyMOVE
-  //   ],
-  //   "brand": "Dell",
-  //   "brand logo": brandLogo.Dell,
-  //   "specs": {
-  //     "processor": "Intel Core i7-13700H",
-  //     "RAM": "32GB DDR5",
-  //     "storage": "1TB SSD",
-  //     "display": "15.6-inch FHD (1920x1080) display with 144Hz refresh rate",
-  //     "ports": "2 x USB-A 3.2 Gen 1, Thunderbolt 4, HDMI 2.1, RJ-45, Universal audio jack",
-  //     "operating-system": "Windows 11 Pro"
-  //   },
-  //   "date-added": "2025-3-6",
-  //   "tagline": "High-Performance Gaming Laptop.",
-  //   "description": "Designed for gamers seeking high frame rates and immersive experiences.",
-  //   "price": "K15,000",
-  //   "discounted price": "K14,500"
-  // },
-  // {
-  //   "name": "Dell Precision 3590",
-  //   "category": "Computers",
-  //   "subcategory": "Laptops",
-  //   "images": [
-  //     productImages.HPEnvyMOVE
-  //   ],
-  //   "brand": "Dell",
-  //   "brand logo": brandLogo.Dell,
-  //   "specs": {
-  //     "processor": "Intel Core Ultra 7 155H vPro® Essentials (24 MB cache, 16 cores, 22 threads, up to 4.8 GHz, 45W)",
-  //     "RAM": "Up to 32GB DDR5, 5600 MT/s, non-ECC",
-  //     "storage": "Up to 1TB SSD",
-  //     "display": "15.6-inch FHD (1920x1080), 60Hz, 250 nits, Non-Touch",
-  //     "ports": "USB-A 3.2 Gen 1, Thunderbolt 4, HDMI 2.1, RJ-45, Universal audio jack",
-  //     "operating-system": "Windows 11 Pro"
-  //   },
-  //   "date-added": "2025-3-6",
-  //   "tagline": "Reliable Workstation for Entry-Level Design and Creative Applications.",
-  //   "description": "The Dell Precision 3590 offers intelligently optimized performance for light design and creative tasks, featuring the latest Intel Core Ultra processors with AI Boost.",
-  //   "price": "K9,500",
-  //   "discounted price": "K9,000"
-  // },
-  // {
-  //   "name": "Dell Precision 3591",
-  //   "category": "Computers",
-  //   "subcategory": "Laptops",
-  //   "images": [
-  //     productImages.HPEnvyMOVE
-  //   ],
-  //   "brand": "Dell",
-  //   "brand logo": brandLogo.Dell,
-  //   "specs": {
-  //     "processor": "Intel Core Ultra 7 165H vPro® Enterprise (24MB cache, 16 cores, 22 threads, up to 5.0 GHz Turbo, 45W)",
-  //     "RAM": "Up to 32GB DDR5, 5600 MT/s, non-ECC",
-  //     "storage": "Up to 1TB SSD",
-  //     "display": "15.6-inch FHD (1920x1080), 60Hz, 250 nits, Non-Touch",
-  //     "ports": "USB-A 3.2 Gen 1, Thunderbolt 4, HDMI 2.1, RJ-45, Universal audio jack",
-  //     "operating-system": "Windows 11 Pro"
-  //   },
-  //   "date-added": "2025-3-6",
-  //   "tagline": "High-Performance Workstation for Demanding Applications.",
-  //   "description": "The Dell Precision 3591 is a powerful entry-level workstation designed for design and creative applications, featuring Intel Core Ultra processors with AI Boost and optional NVIDIA RTX Ada professional graphics.",
-  //   "price": "K10,500",
-  //   "discounted price": "K10,000"
-  // },
+  {
+    "name": "Dell Inspiron 7640",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "images": [
+      productImages.Dell_Inspiron_7640_1,
+      productImages.Dell_Inspiron_7640_2,
+      productImages.Dell_Inspiron_7640_3,
+    ],
+    "brand": "Dell",
+    "brand logo": brandLogo.Dell,
+    "specs": {
+      "processor": "Intel Core i7-1365U",
+      "RAM": "16GB LPDDR5",
+      "storage": "256GB SSD",
+      "display": "16-inch, Touch, FHD+ (1920x1200) display",
+      "ports": "2 x USB-A 3.2 Gen 1, Thunderbolt 4, HDMI 1.4, Universal audio jack",
+      "operating-system": "Windows 11 Pro",
+      "Battery Life": "Up to 15 hours, 36 minutes",
+      "Slots": "1 SD-card slot"
+    },
+    "date-added": "2025-3-6",
+    "tagline": "Powerful Performance in a Sleek Design.",
+    "description": "Ideal for professionals seeking a balance between performance and portability.",
+    "price": "K9,500",
+    "discounted price": "K9,000",
+    "special feature": {
+      "stat": '15',
+      'stat text size': 5,
+      "symbol": "+",
+      "feature": "Hours Battery Charge"
+    }
+  },
+  {
+    "name": "Dell Inspiron 5530 Gaming Laptop",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "images": [
+      productImages.Dell_Inspiron_5530_Gaming_Laptop_1,
+      productImages.Dell_Inspiron_5530_Gaming_Laptop_2,
+      productImages.Dell_Inspiron_5530_Gaming_Laptop_3,
+    ],
+    "brand": "Dell",
+    "brand logo": brandLogo.Dell,
+    "specs": {
+      "processor": "13th Gen Intel® Core™ i5-13450HX (20 MB cache, 10 cores, up to 4.60 GHz Turbo)",
+      "Graphics": "NVIDIA® GeForce RTX™ 3050, 6 GB GDDR6",
+      "RAM": "8GB DDR5, 1x8GB, 4800MT/s",
+      "storage": "512 GB, M.2, PCIe NVMe, SSD",
+      "display": `15.6", FHD 1920x1080, 120Hz`,
+      "ports": "2 x USB-A 3.2 Gen 1, Thunderbolt 4, HDMI 2.1, RJ-45, Universal audio jack",
+      "operating-system": "Windows 11 Pro",
+      "Primary Battery": "3 Cell, 56 Wh, integrated",
+      "Battery Life": "Up to 6 hours, 31 minutes"
+    },
+    "date-added": "2025-3-6",
+    "tagline": "High-Performance Gaming Laptop.",
+    "description": "Designed for gamers seeking high frame rates and immersive experiences.",
+    "price": "K15,000",
+    "discounted price": "K14,500",
+    "special feature": {
+      "stat": '6',
+      'stat text size': 8,
+      "symbol": "+",
+      "feature": "Hours Battery Charge"
+    }
+  },
+  {
+    "name": "Dell Precision 3590",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "images": [
+      productImages.Dell_Precision_3590_1,
+      productImages.Dell_Precision_3590_2,
+      productImages.Dell_Precision_3590_3,
+    ],
+    "brand": "Dell",
+    "brand logo": brandLogo.Dell,
+    "specs": {
+      "processor": "Intel Core Ultra 7 155H vPro® Essentials (24 MB cache, 16 cores, 22 threads, up to 4.8 GHz, 45W)",
+      "RAM": "Up to 32GB DDR5, 5600 MT/s, non-ECC",
+      "storage": "Up to 1TB SSD",
+      "display": "15.6-inch FHD (1920x1080), 60Hz, 250 nits, Non-Touch",
+      "ports": "USB-A 3.2 Gen 1, Thunderbolt 4, HDMI 2.1, RJ-45, Universal audio jack",
+      "operating-system": "Windows 11 Pro"
+    },
+    "date-added": "2025-3-6",
+    "tagline": "Reliable Workstation for Entry-Level Design and Creative Applications.",
+    "description": "The Dell Precision 3590 offers intelligently optimized performance for light design and creative tasks, featuring the latest Intel Core Ultra processors with AI Boost.",
+    "price": "K9,500",
+    "discounted price": "K9,000"
+  },
+  {
+    "name": "Dell Precision 3591",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "images": [
+      productImages.Dell_Precision_3591_1,
+      productImages.Dell_Precision_3591_2,
+      productImages.Dell_Precision_3591_3,
+    ],
+    "brand": "Dell",
+    "brand logo": brandLogo.Dell,
+    "specs": {
+      "processor": "Intel Core Ultra 7 165H vPro® Enterprise (24MB cache, 16 cores, 22 threads, up to 5.0 GHz Turbo, 45W)",
+      "RAM": "Up to 32GB DDR5, 5600 MT/s, non-ECC",
+      "storage": "Up to 1TB SSD",
+      "display": "15.6-inch FHD (1920x1080), 60Hz, 250 nits, Non-Touch",
+      "ports": "USB-A 3.2 Gen 1, Thunderbolt 4, HDMI 2.1, RJ-45, Universal audio jack",
+      "operating-system": "Windows 11 Pro"
+    },
+    "date-added": "2025-3-6",
+    "tagline": "High-Performance Workstation for Demanding Applications.",
+    "description": "The Dell Precision 3591 is a powerful entry-level workstation designed for design and creative applications, featuring Intel Core Ultra processors with AI Boost and optional NVIDIA RTX Ada professional graphics.",
+    "price": "K10,500",
+    "discounted price": "K10,000"
+  },
   // {
   //   "name": "Dell Vostro 3440",
   //   "category": "Computers",
@@ -1529,83 +1531,107 @@ export const allProducts = [
     "tagline": "High-speed gaming monitor with vibrant visuals.",
     "description": "The LG 32GP850-B offers a fast refresh rate and response time, ensuring smooth gameplay. Its Nano IPS panel delivers rich colors, and it's VESA mount compatible for flexible setup.",
     "price": "K7,500",
-    "discounted-price": "K7,000"
+    "discounted-price": "K7,000",
+    "special feature": {
+      "stat": '4K',
+      'stat text size': 4,
+      // "symbol": "+",
+      "feature": "Display"
+    }
   },
-  // {
-  //   "name": "LG 55UL3J-M",
-  //   "category": "Monitors",
-  //   "images": [
-  //     productImages.HPEnvyMOVE
-  //   ],
-  //   "brand": "LG",
-  //   "brand logo": "",
-  //   "specs": {
-  //     "size": "55 inches",
-  //     "resolution": "4K UHD (3840x2160)",
-  //     "panel-type": "IPS",
-  //     "refresh-rate": "60Hz",
-  //     "response-time": "8ms",
-  //     "color-gamut": "sRGB 99%",
-  //     "hdr": "HDR10",
-  //     "vesa-mount": "Yes",
-  //     "ports": ["HDMI", "DisplayPort", "USB"]
-  //   },
-  //   "date-added": "2025-03-06",
-  //   "tagline": "Professional display with extended duty cycle.",
-  //   "description": "Designed for continuous operation, the LG 55UL3J-M features a 16-hour duty cycle, making it suitable for business environments requiring prolonged display usage.",
-  //   "price": "K12,000",
-  //   "discounted-price": "K11,500"
-  // },
-  // {
-  //   "name": "LG 65EP5G-B",
-  //   "category": "Monitors",
-  //   "images": [
-  //     productImages.HPEnvyMOVE
-  //   ],
-  //   "brand": "LG",
-  //   "brand logo": "",
-  //   "specs": {
-  //     "size": "65 inches",
-  //     "resolution": "UHD (3840x2160)",
-  //     "panel-type": "OLED",
-  //     "refresh-rate": "120Hz",
-  //     "response-time": "1ms",
-  //     "color-gamut": "P3 98.5%",
-  //     "hdr": "HDR10, Dolby Vision",
-  //     "vesa-mount": "Yes",
-  //     "ports": ["HDMI", "DisplayPort", "USB-C"]
-  //   },
-  //   "date-added": "2025-03-06",
-  //   "tagline": "Premium OLED display for professional applications.",
-  //   "description": "The LG 65EP5G-B offers exceptional color accuracy and contrast with OLED technology, suitable for professional use with its 24/7 operation capability and advanced connectivity options.",
-  //   "price": "K20,000",
-  //   "discounted-price": "K19,500"
-  // },
-  // {
-  //   "name": "Asus ZenScreen MB16AC",
-  //   "category": "Monitors",
-  //   "images": [
-  //     productImages.HPEnvyMOVE
-  //   ],
-  //   "brand": "Asus",
-  //   "brand logo": brandLogo.Asus,
-  //   "specs": {
-  //     "size": "15.6 inches",
-  //     "resolution": "Full HD (1920x1080)",
-  //     "panel-type": "IPS",
-  //     "refresh-rate": "60Hz",
-  //     "response-time": "5ms",
-  //     "color-gamut": "sRGB 100%",
-  //     "hdr": "No",
-  //     "vesa-mount": "No",
-  //     "ports": ["USB Type-C", "USB Type-A (requires DisplayLink driver)"]
-  //   },
-  //   "date-added": "2025-03-06",
-  //   "tagline": "Portable Full HD display with hybrid signal compatibility.",
-  //   "description": "The Asus ZenScreen MB16AC is a 15.6-inch portable monitor featuring a Full HD IPS display. Its hybrid-signal solution allows compatibility with both USB Type-C and Type-A devices, making it versatile for various setups. The monitor is ultra-portable, weighing just 0.78 kg (1.7 lbs), and includes a foldable smart case that doubles as a stand, supporting both landscape and portrait orientations. ASUS Eye Care technology ensures a comfortable viewing experience by reducing blue light emissions and eliminating flicker.",
-  //   "price": "K3,500",
-  //   "discounted-price": "K3,000"
-  // },
+  {
+    "name": "LG 55UL3J-M",
+    "category": "Monitors",
+    "images": [
+      productImages.LG_55UL3J_M_1,
+      productImages.LG_55UL3J_M_2,
+      productImages.LG_55UL3J_M_3,
+    ],
+    "brand": "LG",
+    "brand logo": brandLogo.LG,
+    "specs": {
+      "size": "55 inches",
+      "resolution": "4K UHD (3840x2160)",
+      "panel-type": "IPS",
+      "refresh-rate": "60Hz",
+      "response-time": "8ms",
+      "color-gamut": "sRGB 99%",
+      "hdr": "HDR10",
+      "vesa-mount": "Yes",
+      "ports": ["HDMI", "DisplayPort", "USB"]
+    },
+    "date-added": "2025-03-06",
+    "tagline": "Professional display with extended duty cycle.",
+    "description": "Designed for continuous operation, the LG 55UL3J-M features a 16-hour duty cycle, making it suitable for business environments requiring prolonged display usage.",
+    "price": "K12,000",
+    "discounted-price": "K11,500",
+    "special feature": {
+      "stat": '4K',
+      'stat text size': 4,
+      // "symbol": "+",
+      "feature": "Display"
+    }
+  },
+  {
+    "name": "LG 65EP5G-B",
+    "category": "Monitors",
+    "images": [
+      productImages.LG_65EP5G_B_1,
+      productImages.LG_65EP5G_B_2,
+      productImages.LG_65EP5G_B_3,
+    ],
+    "brand": "LG",
+    "brand logo": brandLogo.LG,
+    "specs": {
+      "size": "65 inches",
+      "resolution": "UHD (3840x2160)",
+      "panel-type": "OLED",
+      "refresh-rate": "120Hz",
+      "response-time": "1ms",
+      "color-gamut": "P3 98.5%",
+      "hdr": "HDR10, Dolby Vision",
+      "vesa-mount": "Yes",
+      "ports": ["HDMI", "DisplayPort", "USB-C"]
+    },
+    "date-added": "2025-03-06",
+    "tagline": "Premium OLED display for professional applications.",
+    "description": "The LG 65EP5G-B offers exceptional color accuracy and contrast with OLED technology, suitable for professional use with its 24/7 operation capability and advanced connectivity options.",
+    "price": "K20,000",
+    "discounted-price": "K19,500",
+    "special feature": {
+      "stat": '4K',
+      'stat text size': 4,
+      // "symbol": "+",
+      "feature": "Display"
+    }
+  },
+  {
+    "name": "Asus ZenScreen MB16AC",
+    "category": "Monitors",
+    "images": [
+      productImages.Asus_ZenScreen_MB16AC_1,
+      productImages.Asus_ZenScreen_MB16AC_2,
+      productImages.Asus_ZenScreen_MB16AC_3,
+    ],
+    "brand": "Asus",
+    "brand logo": brandLogo.Asus,
+    "specs": {
+      "size": "15.6 inches",
+      "resolution": "Full HD (1920x1080)",
+      "panel-type": "IPS",
+      "refresh-rate": "60Hz",
+      "response-time": "5ms",
+      "color-gamut": "sRGB 100%",
+      "hdr": "No",
+      "vesa-mount": "No",
+      "ports": ["USB Type-C", "USB Type-A (requires DisplayLink driver)"]
+    },
+    "date-added": "2025-03-06",
+    "tagline": "Portable Full HD display with hybrid signal compatibility.",
+    "description": `The Asus ZenScreen MB16AC is a lightweight 15.6" portable monitor with USB-C/A support and eye-friendly features.`,
+    "price": "K3,500",
+    "discounted-price": "K3,000"
+  },
   // {
   //   "name": "Asus ZenScreen MB166C",
   //   "category": "Monitors",
@@ -1631,81 +1657,60 @@ export const allProducts = [
   //   "price": "K3,200",
   //   "discounted-price": "K2,800"
   // },
-  // {
-  //   "name": "Asus ZenScreen MB16QHG",
-  //   "category": "Monitors",
-  //   "images": [
-  //     productImages.HPEnvyMOVE
-  //   ],
-  //   "brand": "Asus",
-  //   "brand logo": brandLogo.Asus,
-  //   "specs": {
-  //     "size": "15.6 inches",
-  //     "resolution": "WQXGA (2560x1600)",
-  //     "panel-type": "IPS",
-  //     "refresh-rate": "120Hz",
-  //     "response-time": "3ms",
-  //     "color-gamut": "DCI-P3 100%",
-  //     "hdr": "DisplayHDR 400",
-  //     "vesa-mount": "Yes",
-  //     "ports": ["USB Type-C", "HDMI"]
-  //   },
-  //   "date-added": "2025-03-06",
-  //   "tagline": "High-refresh-rate portable monitor for smooth visuals.",
-  //   "description": "The Asus ZenScreen MB16QHG is a 15.6-inch portable monitor featuring a high-resolution WQXGA IPS display with a 120Hz refresh rate, ensuring smooth visuals for multimedia and productivity tasks. It supports DisplayHDR 400 and covers 100% of the DCI-P3 color gamut, providing vibrant and accurate colors. Connectivity options include USB Type-C and HDMI ports, and the monitor comes with an L-shaped kickstand and tripod socket for flexible positioning.",
-  //   "price": "K4,500",
-  //   "discounted-price": "K4,000"
-  // },
-  // {
-  //   "name": "Dell SE2422H",
-  //   "category": "Monitors",
-  //   "images": [
-  //     productImages.HPEnvyMOVE
-  //   ],
-  //   "brand": "Dell",
-  //   "brand logo": brandLogo.Dell,
-  //   "specs": {
-  //     "size": "24 inches",
-  //     "resolution": "Full HD (1920x1080)",
-  //     "panel-type": "VA",
-  //     "refresh-rate": "75Hz",
-  //     "response-time": "5ms",
-  //     "color-gamut": "sRGB 99%",
-  //     "hdr": "No",
-  //     "vesa-mount": "Yes",
-  //     "ports": ["HDMI"]
-  //   },
-  //   "date-added": "2025-03-06",
-  //   "tagline": "24-inch FHD monitor with fast response time for leisure gaming.",
-  //   "description": "The Dell SE2422H features a 24-inch VA panel with a 75Hz refresh rate and 5ms response time, ensuring smooth visuals for casual gaming and daily tasks. Its slim design and VESA compatibility offer flexibility in mounting options.",
-  //   "price": "K3,000",
-  //   "discounted-price": "K2,800"
-  // },
-  // {
-  //   "name": "Dell SE2722H",
-  //   "category": "Monitors",
-  //   "images": [
-  //     productImages.HPEnvyMOVE
-  //   ],
-  //   "brand": "Dell",
-  //   "brand logo": brandLogo.Dell,
-  //   "specs": {
-  //     "size": "27 inches",
-  //     "resolution": "Full HD (1920x1080)",
-  //     "panel-type": "VA",
-  //     "refresh-rate": "75Hz",
-  //     "response-time": "5ms",
-  //     "color-gamut": "sRGB 99%",
-  //     "hdr": "No",
-  //     "vesa-mount": "Yes",
-  //     "ports": ["HDMI"]
-  //   },
-  //   "date-added": "2025-03-06",
-  //   "tagline": "27-inch FHD monitor with enhanced comfort features.",
-  //   "description": "The Dell SE2722H offers a larger 27-inch display with a 75Hz refresh rate and 5ms response time, providing a comfortable viewing experience for extended periods. Its ergonomic design includes tilt and height adjustments, and it supports VESA mounting.",
-  //   "price": "K3,500",
-  //   "discounted-price": "K3,200"
-  // },
+  {
+    "name": "Asus ZenScreen MB16QHG",
+    "category": "Monitors",
+    "images": [
+      productImages.Asus_ZenScreen_MB16QHG,
+      productImages.Asus_ZenScreen_MB16QHG_2,
+      productImages.Asus_ZenScreen_MB16QHG_3,
+    ],
+    "brand": "Asus",
+    "brand logo": brandLogo.Asus,
+    "specs": {
+      "size": "15.6 inches",
+      "resolution": "WQXGA (2560x1600)",
+      "panel-type": "IPS",
+      "refresh-rate": "120Hz",
+      "response-time": "3ms",
+      "color-gamut": "DCI-P3 100%",
+      "hdr": "DisplayHDR 400",
+      "vesa-mount": "Yes",
+      "ports": ["USB Type-C", "HDMI"]
+    },
+    "date-added": "2025-03-06",
+    "tagline": "High-refresh-rate portable monitor for smooth visuals.",
+    "description": `The Asus ZenScreen MB16QHG is a 15.6" portable monitor with a sharp WQXGA display, 120Hz refresh rate, HDR support, and wide color coverage. It offers USB-C and HDMI ports, plus flexible stand options.`,
+    "price": "K4,500",
+    "discounted-price": "K4,000"
+  },
+  {
+    "name": "Dell SE2422H",
+    "category": "Monitors",
+    "images": [
+      productImages.Dell_SE2422H_1,
+      productImages.Dell_SE2422H_2,
+      productImages.Dell_SE2422H_3,
+    ],
+    "brand": "Dell",
+    "brand logo": brandLogo.Dell,
+    "specs": {
+      "size": "24 inches",
+      "resolution": "Full HD (1920x1080)",
+      "panel-type": "VA",
+      "refresh-rate": "75Hz",
+      "response-time": "5ms",
+      "color-gamut": "sRGB 99%",
+      "hdr": "No",
+      "vesa-mount": "Yes",
+      "ports": ["HDMI"]
+    },
+    "date-added": "2025-03-06",
+    "tagline": "24-inch FHD monitor with fast response time for leisure gaming.",
+    "description": "The Dell SE2422H features a 24-inch VA panel with a 75Hz refresh rate and 5ms response time, ensuring smooth visuals for casual gaming and daily tasks. Its slim design and VESA compatibility offer flexibility in mounting options.",
+    "price": "K3,000",
+    "discounted-price": "K2,800"
+  },
   // {
   //   "name": "Dell P2722H",
   //   "category": "Monitors",
