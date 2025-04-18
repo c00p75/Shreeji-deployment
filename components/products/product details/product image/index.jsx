@@ -8,7 +8,7 @@ import './style.scss'
 const ProductImage = ({images, name, product}) => {
   const [activeImage, setActiveImage] = useState(images[0]);
   return (
-    <div className='flex flex-col'>
+    <div className='product-details-image flex flex-col'>
       <div className='relative z-[2]'>
         {images.map((img, index) => (
           <Image

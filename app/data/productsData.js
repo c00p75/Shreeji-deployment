@@ -1062,29 +1062,32 @@ export const allProducts = [
     "price": "K10,500",
     "discounted price": "K10,000"
   },
-  // {
-  //   "name": "Dell Vostro 3440",
-  //   "category": "Computers",
-  //   "subcategory": "Laptops",
-  //   "images": [
-  //     productImages.HPEnvyMOVE
-  //   ],
-  //   "brand": "Dell",
-  //   "brand logo": brandLogo.Dell,
-  //   "specs": {
-  //     "processor": "Intel Core i5-1135G7 (4 cores, 8 threads, 2.4 GHz to 4.2 GHz)",
-  //     "RAM": "8 GB DDR4",
-  //     "storage": "512GB SSD",
-  //     "display": "14-inch HD (1366x768), Anti-Glare, 250 nits",
-  //     "ports": "1 x USB-A 3.2, 1 x USB-C 3.2, 1 x HDMI 1.4, 1 x RJ-45, Universal audio jack, 1 x SD card reader",
-  //     "operating-system": "Windows 10 Home"
-  //   },
-  //   "date-added": "2025-3-6",
-  //   "tagline": "Compact and Efficient for Everyday Work.",
-  //   "description": "Ideal for professionals looking for a portable laptop with efficient performance for business tasks.",
-  //   "price": "K7,000",
-  //   "discounted price": "K6,500"
-  // },
+  {
+    "name": "Dell Vostro 3440",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "images": [
+      productImages.dell_vostro_3440_1,
+      productImages.dell_vostro_3440_2,
+      productImages.dell_vostro_3440_3,
+    ],
+    "brand": "Dell",
+    "brand logo": brandLogo.Dell,
+    "specs": {
+      "processor": "13th Gen Intel® Core™ i3-1305U (5 cores, up to 4.5 GHz Turbo)",
+      "RAM": "8 GB DDR4",
+      "storage": "512GB SSD",
+      "Graphics": "Intel® UHD Graphics",
+      "display": "14-inch HD (1366x768), Anti-Glare, 250 nits",
+      "ports": "1 x USB-A 3.2, 1 x USB-C 3.2, 1 x HDMI 1.4, 1 x RJ-45, Universal audio jack, 1 x SD card reader",
+      "operating-system": "Windows 10 Home"
+    },
+    "date-added": "2025-3-6",
+    "tagline": "Compact and Efficient for Everyday Work.",
+    "description": "Ideal for professionals looking for a portable laptop with efficient performance for business tasks.",
+    "price": "K7,000",
+    "discounted price": "K6,500"
+  },
   // {
   //   "name": "Dell Vostro 3501",
   //   "category": "Computers",

@@ -168,6 +168,9 @@ import Dell_Precision_3590_3 from "@/public/products/Dell Precision 3590 (3).png
 import Dell_Precision_3591_1 from "@/public/products/Dell Precision 3591 (1).png";
 import Dell_Precision_3591_2 from "@/public/products/Dell Precision 3591 (2).png";
 import Dell_Precision_3591_3 from "@/public/products/Dell Precision 3591 (3).png";
+import dell_vostro_3440_1 from "@/public/products/dell vostro 3440 (1).png";
+import dell_vostro_3440_2 from "@/public/products/dell vostro 3440 (2).png";
+import dell_vostro_3440_3 from "@/public/products/dell vostro 3440 (3).png";
 
 
 export const productImages = {
@@ -332,6 +335,9 @@ export const productImages = {
   Dell_Precision_3591_1,
   Dell_Precision_3591_2,
   Dell_Precision_3591_3,
+  dell_vostro_3440_1,
+  dell_vostro_3440_2,
+  dell_vostro_3440_3,
 }
 
 export const brandLogo = {

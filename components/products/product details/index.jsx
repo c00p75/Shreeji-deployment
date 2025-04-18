@@ -1,12 +1,19 @@
+'use client'
+
 import Image from 'next/image'
 import './style.scss'
 import { ArrowRightCircle } from 'lucide-react'
 import Link from 'next/link';
 import ProductImage from './product image';
 import SpecialFeaturBudge from './special feature badge';
+import RequestQuoteModal from '../request quote';
+import { useState } from 'react';
 
 const ProductDetails = ({product}) => {  
-  console.log('Fetching product', product)
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleOpenModal = () => setIsModalOpen(true);
+  const handleCloseModal = () => setIsModalOpen(false);
+
   if (!product) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] text-center">
@@ -102,8 +109,8 @@ const ProductDetails = ({product}) => {
           Addis Ababa Drive
         </p>
         
-        <div className='flex-1 flex justify-center items-center gap-2 text-center uppercase'>
-          <span>Request Quote</span>
+        <div className='flex-1 flex justify-center items-center gap-2 text-center uppercase cursor-pointer'>
+          <button onClick={handleOpenModal}>Request Quote</button>
           <ArrowRightCircle size={30} strokeWidth={2.5} />
         </div>
 
@@ -111,6 +118,12 @@ const ProductDetails = ({product}) => {
           +260 77 116 1111
         </p>
       </div>
+
+      <RequestQuoteModal 
+        product={product}
+        isOpen={isModalOpen} 
+        onClose={handleCloseModal} 
+      />
     </div>
   )
 }
