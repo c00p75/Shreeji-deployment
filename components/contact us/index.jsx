@@ -38,7 +38,7 @@ export default function ContactUsPage() {
       </div>
 
       {/* Contact Form */}
-      <div className="bg-[#807045] text-white py-16 px-8">
+      <div className="bg-[#807045] text-white py-16 px-2 md:px-8">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -48,18 +48,22 @@ export default function ContactUsPage() {
           Send Us a Message
         </motion.h2>
 
-        <form className="max-w-3xl mx-auto mt-12 bg-white p-8 rounded-xl shadow-lg text-[#807045] space-y-6">
+        <form className="max-w-3xl mx-auto mt-12 bg-white py-8 px-5 md:px-8 rounded-xl shadow-lg text-[#807045] space-y-6">
           <div>
-            <label className="block font-semibold">Your Name</label>
-            <input type="text" placeholder="Enter your name" className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#807045]" />
+            <label className="block font-semibold">Name</label>
+            <input type="text" required placeholder="Name" className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#807045]" />
           </div>
           <div>
-            <label className="block font-semibold">Your Email</label>
-            <input type="email" placeholder="Enter your email" className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#807045]" />
+            <label className="block font-semibold">Company</label>
+            <input type="text" placeholder="Company" className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#807045]" />
+          </div>
+          <div>
+            <label className="block font-semibold">Email</label>
+            <input type="email" required placeholder="Email" className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#807045]" />
           </div>
           <div>
             <label className="block font-semibold">Message</label>
-            <textarea placeholder="Type your message..." rows="4" className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#807045]"></textarea>
+            <textarea required placeholder="Type your message..." rows="4" className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#807045]"></textarea>
           </div>
           <motion.button
             type="submit"
@@ -72,7 +76,7 @@ export default function ContactUsPage() {
       </div>
 
       {/* Map Section (Optional) */}
-      <div className="py-16 px-8 mx-auto text-center bg-[#F8F6F0]">
+      <div className="py-16 md:px-8 mx-auto text-center bg-[#F8F6F0]">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -85,7 +89,7 @@ export default function ContactUsPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="mt-8 rounded-2xl overflow-hidden shadow-lg mx-20"
+          className="mt-8 rounded-2xl overflow-hidden shadow-lg mx-3 md:mx-20"
         >
           <iframe 
             className="w-full h-[60vh]"

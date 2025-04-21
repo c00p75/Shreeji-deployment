@@ -102,10 +102,20 @@ const Navbar = () => {
   
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const handleScroll = () => setIsScrolled(window.scrollY > 10);
+    if (window.innerWidth < 1024) {
+      setIsScrolled(true);
+    }
+    const handleScroll = () => {
+      if (window.innerWidth >= 1024) {
+        setIsScrolled(window.scrollY > 10)
+      } else {
+        setIsScrolled(true);
+      }
+    };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [pathname]);
+  
 
   useEffect(() => {
     // Group categories with their subcategories
@@ -237,7 +247,7 @@ const Navbar = () => {
             </li>
 
             {/* Mobile Mega Menu */}
-            <li tabIndex={0} className="md:hidden mobile-link collapse collapse-plus">
+            <li tabIndex={0} className="lg:hidden mobile-link collapse collapse-plus">
               <input type="checkbox" className="peer" />
               <div className="collapse-title" />                
               <Link onClick={() => setIsMobileMenuOpen(false)} href="/services" className={`absolute z-[2] top-4 left-4 ${ pathname == "/services" ? "active-link" : ""}`}>
@@ -270,7 +280,7 @@ const Navbar = () => {
                 ))}                                 
               </div>
             </li>
-            <li tabIndex={1} className="md:hidden mobile-link collapse collapse-plus">
+            <li tabIndex={1} className="lg:hidden mobile-link collapse collapse-plus">
               <input type="checkbox" className="peer" />
               <div className="collapse-title" />
               <Link href="/products" className={`absolute z-[2] top-4 left-4 ${ pathname == "/services" ? "active-link" : ""}`} onClick={() => setIsMobileMenuOpen(false)}>
@@ -326,7 +336,7 @@ const Navbar = () => {
           <ThemeBtn isScrolled={isScrolled} />
           
           {/* Mobile Menu Button */}
-          <button className="fixed right-5 md:hidden focus:outline-none" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+          <button className="fixed right-5 lg:hidden focus:outline-none" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
             <svg className="w-9 h-9" fill="none" stroke={isMobileMenuOpen ? "white" : isScrolled ? "#807045" : "white"} strokeWidth="2" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d={isMobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}></path>
             </svg>

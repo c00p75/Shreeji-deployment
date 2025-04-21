@@ -273,7 +273,7 @@ nav {
   }   
 }
 
-@media (width <= 768px) {
+@media (width <= 1024px) {
   #navbar-links {
     overflow: auto;
     transition: all 0.3s ease-in-out;

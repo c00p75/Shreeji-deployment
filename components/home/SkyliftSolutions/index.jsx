@@ -21,13 +21,13 @@ const SkyliftSolutions = () => {
           src={skylift}
           alt="SHreeji"
           quality={100}
-          className="absolute z-[0] rounded-2xl w-auto  h-[70vh] md:h-[120vh] object-cover mt-[-25rem] md:mt-[-25rem] brightness-90 overflow-visible md:ml-[-3%]"
+          className="absolute z-[0] rounded-2xl w-auto h-[80vh] md:h-[120vh] object-cover mt-[-25rem] md:mt-[-25rem] brightness-90 overflow-visible md:ml-[-3%]"
         />
 
         <div className="w-full md:w-[60%] flex flex-col gap-5 relative">
           {/* <div className="absolute z-[0] box rounded-2xl w-[20rem] h-[25rem] mb-10 -ml-[70%] bg-[var(--secondary)]" /> */}
 
-          <h2 className="font-bold text-6xl text-center md:px-32 md:mb-10 text-[var(--primary)]">
+          <h2 className="font-bold text-6xl text-center md:px-32 md:mb-10 text-[var(--primary)] w-full bg-[#fcfcfcd6] md:bg-none">
             Why <span className="text-[#171717]">Skylift Solutions</span> ?
           </h2>
           <div className="flex flex-col gap-5 md:gap-10">
