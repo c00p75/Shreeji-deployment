@@ -18,7 +18,7 @@ export default function PrintingPage() {
       />
 
       {/* Features Section */}
-      <div className="relative py-20 px-5 md:px-8 max-w-7xl mx-auto">
+      <div className="relative py-20 px-3 md:px-8 max-w-7xl mx-auto">
         <h2 className="text-3xl font-bold md:font-semibold text-[#807045] text-center mb-12">Why Choose Our Printing & Scanning Solutions?</h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
           {[
@@ -95,7 +95,7 @@ export default function PrintingPage() {
 
       {/* Industry Use Cases */}
       <div className="py-16 bg-white">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto px-3 md:px-6">
           <h2 className="text-3xl font-semibold text-[#807045] text-center mb-8">Who Benefits from Our Solutions?</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
@@ -134,7 +134,7 @@ export default function PrintingPage() {
       </div>
 
       {/* FAQ Section */}
-      <div className="py-16 px-6 max-w-6xl mx-auto">
+      <div className="py-16 px-3 md:px-6 max-w-6xl mx-auto">
         <h2 className="text-3xl font-semibold text-[#807045] text-center mb-8">Frequently Asked Questions</h2>
         <div className="space-y-6">
           {[
@@ -169,7 +169,7 @@ export default function PrintingPage() {
       </div>
 
       {/* Call to Action */}
-      <div className="text-center py-16 bg-[#807045] text-white shadow-inner">
+      <div className="text-center py-16 bg-[#807045] text-white shadow-inner px-5 md:px-0">
         <h2 className="text-3xl font-semibold mb-6">Get Started Today</h2>
         <p className="text-lg max-w-2xl mx-auto mb-8">
           Ready to take your business to the next level? Our printing and scanning solutions can help streamline your operations, reduce costs, and improve efficiency.

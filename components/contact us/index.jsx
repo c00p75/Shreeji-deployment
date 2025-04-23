@@ -51,19 +51,19 @@ export default function ContactUsPage() {
         <form className="max-w-3xl mx-auto mt-12 bg-white py-8 px-5 md:px-8 rounded-xl shadow-lg text-[#807045] space-y-6">
           <div>
             <label className="block font-semibold">Name</label>
-            <input type="text" required placeholder="Name" className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#807045]" />
+            <input type="text" required className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#807045]" />
           </div>
           <div>
             <label className="block font-semibold">Company</label>
-            <input type="text" placeholder="Company" className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#807045]" />
+            <input type="text" className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#807045]" />
           </div>
           <div>
             <label className="block font-semibold">Email</label>
-            <input type="email" required placeholder="Email" className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#807045]" />
+            <input type="email" required className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#807045]" />
           </div>
           <div>
             <label className="block font-semibold">Message</label>
-            <textarea required placeholder="Type your message..." rows="4" className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#807045]"></textarea>
+            <textarea required rows="4" className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#807045]"></textarea>
           </div>
           <motion.button
             type="submit"

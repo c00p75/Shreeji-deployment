@@ -45,7 +45,7 @@ const WhyUs = () => {
 
         <div className="flex flex-col gap-5 md:ml-[3rem]">
           {team.map((item, i) => (
-            <div className="flex gap-3 md:items-center" key={`value-${i}`}>
+            <div className="flex gap-3 md:items-center text-start" key={`value-${i}`}>
               <span>
                   <Square className="w-8 h-8" fill="#87703f" strokeWidth={0} />
                 </span>

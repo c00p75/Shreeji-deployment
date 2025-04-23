@@ -35,7 +35,7 @@ const SkyliftSolutions = () => {
               Cherry picker skylift services have become essential for various
               industries due to their versatility, safety, and efficiency.
             </p>
-            <div className="flex flex-col gap-5 md:ml-[7rem]">
+            <div className="flex flex-col gap-5 md:ml-[7rem] text-start">
               <p className="flex gap-3 items-center">
                 <span>
                   <Square className="w-4 h-4" fill="#171717" strokeWidth={3} />

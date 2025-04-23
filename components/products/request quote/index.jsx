@@ -106,7 +106,12 @@ const RequestQuoteModal = ({ product, isOpen, onClose }) => {
                 {product['images'] && (
                   <ProductImage images={product['images']} name={product.name} product={product} />
                 )}  
-              </div>              
+              </div> 
+              {product['brand logo'] && (
+                <div className='absolute inset-0 w-full h-full flex-center mb-5'>
+                  <Image src={product['brand logo']} quality={100} alt={product['name']} className='w-auto h-[95%] z-[1] object-contain opacity-10' />
+                </div>
+              )}           
             </div>
             <div className='md:overflow-auto flex-1 p-8'>
               <h2 className="text-3xl font-semibold text-center mb-6">

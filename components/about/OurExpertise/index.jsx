@@ -12,7 +12,7 @@ const OurExpertise = () => {
   return (
     <section className="our-expertise z-[3] bg-white our-expertise relative w-screen scroll-smooth pb-16 gap-10">      
       <div className="flex mt-24 px-5 gap-10 items-center">
-        <div className="flex-[3] bg-[whitesmoke] p-2 rounded-sm m-10 mr-20 mt-5 rotate-6 expertise-img-container h-[85vh]">
+        <div className="flex-[3] bg-[#f1eeee] p-2 rounded-sm m-10 mr-20 mt-5 rotate-6 expertise-img-container h-[85vh]">
           <Image src={expertiseImg} className="scale-x-[-1] h-full object-cover rounded-sm -rotate-6 shadow-xl shadow-black/40" />
         </div>
 

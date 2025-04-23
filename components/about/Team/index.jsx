@@ -1,9 +1,6 @@
 import Image from "next/image";
-import skylift from "@/public/elements/skylift.png";
-import buildings from "@/public/backgrounds/city_buildings.png";
 import "./style.scss";
-import { Square } from "lucide-react";
-
+import expertiseImg from "@/public/elements/team.jpg";
 const Team = () => {
   const team = [
     {
@@ -55,7 +52,7 @@ const Team = () => {
         </div>                   
       </div>
 
-      <div className="flex-[6]">
+      {/* <div className="flex-[6]">
         <div className="flex justify-center flex-wrap gap-3 md:gap-10">
           {team.map((item, i) => (
             <div className="flex-center gap-5">
@@ -66,7 +63,12 @@ const Team = () => {
               </div>                
             </div>
           ))}                            
-        </div>       
+        </div>
+      </div> */}
+      <div className="flex-[4] hidden md:flex">
+        <div className="bg-[#f1eeee] p-2 rounded-sm m-10 mr-20 mt-5 rotate-6 expertise-img-container h-[85vh]">
+          <Image src={expertiseImg} className="scale-x-[-1] h-full object-cover rounded-sm -rotate-6 shadow-xl shadow-black/40" />
+        </div>
       </div>
     </section>
   );

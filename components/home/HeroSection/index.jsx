@@ -148,7 +148,7 @@ const HeroSection = () => {
 
         {active == 5 && (
           <div className="text-container">
-            <h1 className="home-title">
+            <h1 className="home-title text-5xl md:text-[4rem]">
               <span>Scanning &</span>
               <span>Digitalization</span>
             </h1>

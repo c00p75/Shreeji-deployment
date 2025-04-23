@@ -76,19 +76,19 @@ const OurStory = () => {
               <p>
                 At Shreeji Investments Limited, our mission is to provide innovative, reliable, and efficient technology and business solutions tailored to the needs of our clients. We are driven by a passion for delivering excellence, ensuring that every project we undertake results in customer satisfaction and long-term success.
               </p>
-              <p className="flex gap-3 md:items-center">
+              <p className="flex gap-3 md:items-center text-start">
                 <span className="mt-2 md:mt-0">
                   <Square className="w-8 h-8" fill="#87703f" strokeWidth={0} />
                 </span>
                 <div>We may not have the answer, but <strong>we’ll find it.</strong></div>
               </p>
-              <p className="flex gap-3 md:items-center">
+              <p className="flex gap-3 md:items-center text-start">
                 <span className="mt-2 md:mt-0">
                   <Square className="w-8 h-8" fill="#87703f" strokeWidth={0} />
                 </span>
                 <div>We may not have the time, but <strong>we’ll make it.</strong></div>
               </p>
-              <p className="flex gap-3 md:items-center">
+              <p className="flex gap-3 md:items-center text-start">
                 <span className="mt-2 md:mt-0">
                   <Square className="w-8 h-8" fill="#87703f" strokeWidth={0} />
                 </span>

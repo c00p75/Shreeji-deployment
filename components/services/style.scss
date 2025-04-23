@@ -16,3 +16,9 @@
     font-size: 1.5rem;
   }
 }
+
+.enterprise-printing .text-effect-hero h1 {
+  @media (width <= 768px) {
+    font-size: 3rem !important;
+  }
+}

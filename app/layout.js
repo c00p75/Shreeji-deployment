@@ -16,7 +16,7 @@ export default function RootLayout({ children }) {
         className="antialiased light-theme"
       >
         <Navbar />
-        <main className="text-lg">{children}</main>
+        <main className="text-lg text-center md:text-start">{children}</main>
         <ContactCard />
         <Footer />
       </body>
