@@ -5,6 +5,7 @@ import { Printer, Scan, FileText, CheckCircle, Building, Briefcase, GraduationCa
 import '@/components/services/style.scss'
 import Link from "next/link";
 import MovingTextEffect from "@/components/moving text";
+import ContactModal from "./contact us";
 
 export default function PrintingPage() {
   return (
@@ -173,10 +174,8 @@ export default function PrintingPage() {
         <h2 className="text-3xl font-semibold mb-6">Get Started Today</h2>
         <p className="text-lg max-w-2xl mx-auto mb-8">
           Ready to take your business to the next level? Our printing and scanning solutions can help streamline your operations, reduce costs, and improve efficiency.
-        </p>
-        <button className="px-8 py-3 bg-white text-[#807045] font-semibold rounded-full shadow-md hover:bg-[#5c5132] hover:text-white transition-all">
-          Contact Us
-        </button>
+        </p>        
+        <ContactModal />
       </div>
     </div>
   );

@@ -211,3 +211,7 @@ a:hover {cursor: pointer;}
 .product-shadow {
   filter: drop-shadow(0px 10px 6px rgba(0, 0, 0, 0.5));
 }
+
+.brown-bg-gradient {  
+  background: radial-gradient(#a78d55, #87703f, #87703f, #68542c);
+}
