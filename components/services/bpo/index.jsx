@@ -5,6 +5,7 @@ import { Briefcase, Users, Phone, Clipboard, ShieldCheck, Settings, CheckCircle 
 import '@/components/services/style.scss'
 import Link from "next/link";
 import MovingTextEffect from "@/components/moving text";
+import ContactModal from "./contact us";
 
 export default function BPOPage() {
   return (
@@ -30,7 +31,7 @@ export default function BPOPage() {
       </div>
 
       {/* Our BPO Services */}
-      <div className="relative py-20 px-8 max-w-7xl mx-auto">
+      <div className="relative py-20 px-3 md:px-8 max-w-7xl mx-auto">
         <h2 className="text-3xl font-semibold text-[#807045] text-center mb-12">Our BPO Services</h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
           {[
@@ -72,7 +73,7 @@ export default function BPOPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 + index * 0.2 }}
-                className="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl hover:scale-105 transform transition-all"
+                className="bg-white py-8 px-3 md:px-8 rounded-xl shadow-lg hover:shadow-2xl hover:scale-105 transform transition-all"
               >
                 <div className="flex items-center space-x-4">
                   {service.icon}
@@ -87,7 +88,7 @@ export default function BPOPage() {
       </div>
 
       {/* Client Benefits Section */}
-      <div className="py-20 px-8 bg-[#f9f8f6] text-center">
+      <div className="py-20 px-3 md:px-8 bg-[#f9f8f6] text-center">
         <h2 className="text-3xl font-semibold text-[#807045]">Benefits of Our BPO Services</h2>
         <p className="mt-6 text-lg max-w-4xl mx-auto text-gray-700">
           Outsourcing business processes to us offers your organization a range of <strong>benefits</strong> that will lead to <strong>increased productivity</strong>, <strong>cost savings</strong> and a <strong>stronger focus</strong> on your core services. Here’s why our clients love working with us:
@@ -131,13 +132,13 @@ export default function BPOPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 + index * 0.2 }}
-              className="bg-white p-8 rounded-xl shadow-lg hover:scale-105 transform transition-all"
+              className="bg-white py-8 px-3 md:px-8 rounded-xl shadow-lg hover:scale-105 transform transition-all"
             >
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center justify-center md:text-start space-x-4">
                 {benefit.icon}
                 <h3 className="text-xl font-semibold text-[#807045]">{benefit.title}</h3>
               </div>
-              <p className="mt-4 text-gray-700">{benefit.description}</p>
+              <p className="mt-4 text-gray-700 md:text-start">{benefit.description}</p>
             </motion.div>
           ))}
         </div>
@@ -161,10 +162,8 @@ export default function BPOPage() {
       {/* Call to Action */}
       <div className="text-center py-16 bg-[#807045] text-white shadow-inner">
         <h2 className="text-3xl font-semibold">Let’s Optimize Your Business Processes</h2>
-        <p className="mt-2 text-lg">Start improving efficiency, reducing costs, and enhancing service delivery today.</p>
-        <button className="mt-6 px-8 py-3 bg-white text-[#807045] font-semibold rounded-full shadow-md hover:bg-[#f0ebd5] transition-all">
-          Get in Touch
-        </button>
+        <p className="mt-2 text-lg mb-5">Start improving efficiency, reducing costs, and enhancing service delivery today.</p>
+        <ContactModal />
       </div>
 
     </div>

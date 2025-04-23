@@ -45,7 +45,7 @@ export default function ContactModal() {
       <button 
         onClick={() => setOpen(true)}
         className="px-8 py-3 bg-white text-[#807045] font-semibold rounded-full shadow-md hover:bg-[#5c5132] hover:text-white transition-all">
-        Contact Us
+        Get in Touch
       </button>
 
       {open && (
@@ -66,7 +66,7 @@ export default function ContactModal() {
               </button>
 
               <h2 className="md:px-10 text-4xl md:text-6xl font-extrabold bg-gradient-to-r from-[white] to-[whitesmoke] bg-clip-text text-transparent text-center mt-10 mb-14">
-                Let’s Optimize Your Document Workflow
+                Tell Us About Your Business Needs
               </h2>
 
               <form onSubmit={handleSubmit} className="space-y-6 flex flex-col">
@@ -103,15 +103,15 @@ export default function ContactModal() {
                 </div>
 
                 <fieldset className="space-y-2 flex-center text-white">
-                  <legend className="font-semibold text-3xl pt-10">Solutions of Interest</legend>
+                  <legend className="font-semibold text-3xl pt-10">Services of Interest</legend>
                   <div className="flex md:justify-center flex-wrap md:space-x-5 gap-5 py-5">
                     {[
-                      "High-Speed Printing",
-                      "Smart Document Scanning",
-                      "Automated Workflows",
-                      "Secure Printing & Compliance",
-                      "Eco-Friendly Printing",
-                      "System Integration"
+                      "SIM Registration & Management",
+                      "Mobile Money Services",
+                      "Quality Assurance",
+                      "Customer Support Services",
+                      "Back Office Support",
+                      "Risk & Compliance Management"
                     ].map((solution) => (
                       <label key={solution} className="flex items-center w-fit">
                         <input
@@ -136,11 +136,11 @@ export default function ContactModal() {
 
                 <div className="flex flex-col md:flex-row gap-10 pb-5">
                   <select name="volume" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleChange}>
-                    <option value="">Estimated Monthly Volume</option>
-                    <option value="Under 1,000">Under 1,000 pages</option>
-                    <option value="1,000–10,000">1,000–10,000 pages</option>
-                    <option value="10,000–50,000">10,000–50,000 pages</option>
-                    <option value="50,000+">50,000+ pages</option>
+                    <option value="">Estimated Monthly Workload</option>
+                    <option value="Under 1,000 tasks/transactions">Under 1,000 tasks/transactions</option>
+                    <option value="1,000–10,000">1,000–10,000</option>
+                    <option value="10,000–50,000">10,000–50,000</option>
+                    <option value="50,000+">50,000+</option>
                   </select>
                   
                   <select name="bestTime" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleChange}>
