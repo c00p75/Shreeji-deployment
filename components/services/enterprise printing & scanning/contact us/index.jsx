@@ -50,7 +50,7 @@ export default function ContactModal() {
 
       {open && (
         <div
-          className="printing-contact w-screen h-screen fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center md:p-20 text-[black]"
+          className="printing-contact w-screen h-screen fixed inset-0 z-50 bg-black bg-opacity-80 flex justify-center items-center md:p-20 text-[black]"
           onClick={() => setOpen(false)} // Close on backdrop click
         >
           <div
@@ -65,7 +65,7 @@ export default function ContactModal() {
                 <X size={24} />
               </button>
 
-              <h2 className="md:px-10 text-4xl md:text-6xl font-extrabold bg-gradient-to-r from-[white] to-[whitesmoke] bg-clip-text text-transparent text-center mt-10 mb-14">
+              <h2 className="md:px-20 text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-[white] to-[whitesmoke] bg-clip-text text-transparent text-center mt-10 mb-14">
                 Let’s Optimize Your Document Workflow
               </h2>
 

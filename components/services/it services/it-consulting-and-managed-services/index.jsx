@@ -144,7 +144,7 @@ export default function ITConsultingPage() {
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="text-3xl font-semibold mb-5"
+          className="text-3xl font-semibold mb-5 px-5"
         >
           Ready to Optimize Your IT Strategy?
         </motion.h2>

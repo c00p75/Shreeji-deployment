@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { ShieldCheck, FileText, AlertCircle, Lock } from "lucide-react";
 import '@/components/services/style.scss';
 import MovingTextEffect from "@/components/moving text";
+import ContactModal from "./contact us";
 
 export default function RiskCompliancePage() {
   return (
@@ -34,16 +35,16 @@ export default function RiskCompliancePage() {
       </div> */}
 
       {/* Our Risk & Compliance Management Services */}
-      <div className="pt-20 pb-10 px-8 max-w-7xl mx-auto text-center">
-        <h2 className="text-3xl font-semibold text-[#807045]">Our Risk & Compliance Management Services</h2>
+      <div className="pt-14 md:pt-20 pb-10 px-8 max-w-7xl mx-auto text-center">
+        <h2 className="text-3xl font-bold text-[#807045]">Our Risk & Compliance Management Services</h2>
         <p className="mt-6 text-lg max-w-4xl mx-auto text-gray-700">
           At <strong>Company Name</strong>, we prioritize the identification, mitigation, and management of risks while ensuring your business adheres to industry regulations and best practices. Our holistic approach to risk and compliance management will help safeguard your business's assets, reputation, and sustainability.
         </p>
       </div>
 
       {/* Key Features */}
-      <div className="relative py-20 px-8 max-w-7xl mx-auto">
-        <h2 className="text-3xl font-semibold text-[#807045] text-center mb-12">Key Features of Our Risk & Compliance Management Services</h2>
+      <div className="relative py-20 px-3 md:px-8 max-w-7xl mx-auto">
+        <h2 className="text-3xl font-bold text-[#807045] text-center mb-12">Key Features of Our Risk & Compliance Management Services</h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
           {[
             {
@@ -74,7 +75,7 @@ export default function RiskCompliancePage() {
               transition={{ delay: 0.3 + index * 0.2 }}
               className="bg-white p-8 rounded-xl shadow-lg hover:scale-105 transform transition-all"
             >
-              <div className="flex items-center space-x-4">
+              <div className="flex flex-col md:flex-row gap-2 md:gap-0 items-center space-x-4">
                 {feature.icon}
                 <h3 className="text-2xl font-semibold text-[#807045]">{feature.title}</h3>
               </div>
@@ -85,9 +86,9 @@ export default function RiskCompliancePage() {
       </div>
 
       {/* Why Choose Our Risk & Compliance Services */}
-      <div className="py-20 px-8 bg-[#f5f5f5] text-center">
-        <h2 className="text-3xl font-semibold text-[#807045]">Why Choose Our Risk & Compliance Management Services?</h2>
-        <p className="mt-6 text-lg max-w-4xl mx-auto text-gray-700">
+      <div className="py-20 px-3 md:px-8 bg-[#f5f5f5] text-center">
+        <h2 className="px-5 text-3xl font-bold text-[#807045]">Why Choose Our Risk & Compliance Management Services?</h2>
+        <p className="px-5 mt-6 text-lg max-w-4xl mx-auto text-gray-700">
           Our services are designed to mitigate risks, ensure business continuity, and maintain regulatory compliance, giving you the confidence to operate in a dynamic market.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
@@ -130,7 +131,7 @@ export default function RiskCompliancePage() {
               transition={{ delay: 0.3 + index * 0.2 }}
               className="bg-white p-8 rounded-xl shadow-lg hover:scale-105 transform transition-all"
             >
-              <div className="flex items-center space-x-4">
+              <div className="flex flex-col md:flex-row gap-2 md:gap-0 items-center md:space-x-4">
                 {benefit.icon}
                 <h3 className="text-xl font-semibold text-[#807045]">{benefit.title}</h3>
               </div>
@@ -142,11 +143,9 @@ export default function RiskCompliancePage() {
 
       {/* Call to Action */}
       <div className="text-center py-16 bg-[#807045] text-white flex-center shadow-inner">
-        <h2 className="text-3xl font-semibold">Secure Your Business with Our Risk & Compliance Services</h2>
-        <p className="mt-5 text-lg max-w-5xl">Partner with us to safeguard your business from potential risks and ensure regulatory compliance, empowering your business to thrive in a secure environment.</p>
-        <button className="mt-6 px-8 py-4 bg-white text-[#807045]  hover:text-white hover:bg-[#5c5132] font-semibold rounded-full shadow-md transition-all">
-          Get Started with Risk & Compliance Management
-        </button>
+        <h2 className="text-3xl font-bold">Secure Your Business with Our Risk & Compliance Services</h2>
+        <p className="my-5 text-lg max-w-5xl">Partner with us to safeguard your business from potential risks and ensure regulatory compliance, empowering your business to thrive in a secure environment.</p>
+        <ContactModal />
       </div>
 
     </div>

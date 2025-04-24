@@ -39,7 +39,7 @@ const MovingTextEffect = ({title, subtitle, image}) => {
           initial={{ opacity: 0, y: 20 }} 
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="pt-14 max-w-2xl mx-auto opacity-90 relative z-[1] text-2xl"
+          className="pt-14 px-10 md:px-0 max-w-2xl mx-auto opacity-90 relative z-[1] text-2xl"
         >
           {subtitle}
         </motion.p>

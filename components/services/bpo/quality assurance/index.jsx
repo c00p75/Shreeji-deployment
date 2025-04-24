@@ -3,6 +3,7 @@
 import MovingTextEffect from "@/components/moving text";
 import { motion } from "framer-motion";
 import { CheckCircle, ShieldCheck, LifeBuoy, FileCheck } from "lucide-react";
+import ContactModal from "./contact us";
 // import './style.scss';
 
 export default function QualityAssurancePage() {
@@ -36,7 +37,7 @@ export default function QualityAssurancePage() {
 
       {/* What is Quality Assurance? */}
       <div className="py-20 px-8 max-w-7xl mx-auto text-center">
-        <h2 className="text-3xl font-semibold text-[#807045]">What is Quality Assurance?</h2>
+        <h2 className="text-3xl font-bold text-[#807045]">What is Quality Assurance?</h2>
         <p className="mt-6 text-lg max-w-4xl mx-auto text-gray-700">
           Quality Assurance (QA) is a vital process that ensures products or services meet a specified set of standards, ensuring reliability, performance, and customer satisfaction. Our QA services provide businesses with systematic testing, continuous monitoring, and proactive measures to improve the overall quality of their offerings.
           From software testing to product evaluations, we deliver expert QA solutions that ensure every aspect of your product or service operates at peak efficiency.
@@ -44,8 +45,8 @@ export default function QualityAssurancePage() {
       </div>
 
       {/* Key Features */}
-      <div className="relative py-20 px-8 max-w-7xl mx-auto">
-        <h2 className="text-3xl font-semibold text-[#807045] text-center mb-12">Our Quality Assurance Process</h2>
+      <div className="relative py-20 px-3 md:px-8 max-w-7xl mx-auto">
+        <h2 className="text-3xl font-bold text-[#807045] text-center mb-12">Our Quality Assurance Process</h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
           {[
             {
@@ -86,7 +87,7 @@ export default function QualityAssurancePage() {
               transition={{ delay: 0.3 + index * 0.2 }}
               className="bg-white p-8 rounded-xl shadow-lg hover:scale-105 transform transition-all"
             >
-              <div className="flex items-center space-x-4">
+              <div className="flex flex-col md:flex-row gap-2 md:gap-0 items-center md:space-x-4">
                 {feature.icon}
                 <h3 className="text-2xl font-semibold text-[#807045]">{feature.title}</h3>
               </div>
@@ -97,8 +98,8 @@ export default function QualityAssurancePage() {
       </div>
 
       {/* Why Quality Assurance Matters */}
-      <div className="py-20 px-8 bg-[#f5f5f5] text-center">
-        <h2 className="text-3xl font-semibold text-[#807045]">Why Quality Assurance Matters</h2>
+      <div className="py-20 px-3 md:px-8 bg-[#f5f5f5] text-center">
+        <h2 className="text-3xl font-bold text-[#807045]">Why Quality Assurance Matters</h2>
         <p className="mt-6 text-lg max-w-4xl mx-auto text-gray-700">
           Implementing a robust QA strategy ensures your products are free from defects, comply with industry regulations, and deliver a consistent user experience. The benefits of our Quality Assurance services include:
         </p>
@@ -142,7 +143,7 @@ export default function QualityAssurancePage() {
               transition={{ delay: 0.3 + index * 0.2 }}
               className="bg-white p-8 rounded-xl shadow-lg hover:scale-105 transform transition-all"
             >
-              <div className="flex items-center space-x-4">
+              <div className="flex flex-col md:flex-row gap-2 md:gap-0 items-center md:space-x-4">
                 {benefit.icon}
                 <h3 className="text-xl font-semibold text-[#807045]">{benefit.title}</h3>
               </div>
@@ -155,10 +156,8 @@ export default function QualityAssurancePage() {
       {/* Call to Action */}
       <div className="text-center flex-center py-16 bg-[#807045] text-white shadow-inner">
         <h2 className="text-3xl font-semibold">Get Reliable Quality Assurance Today</h2>
-        <p className="mt-2 text-lg max-w-xl">With our QA services, ensure your product meets the highest standards of quality, security, and performance. Trust our expertise to deliver seamless experiences for your users.</p>
-        <button className="mt-6 px-8 py-3 bg-white text-[#807045] font-semibold rounded-full shadow-md hover:bg-[#5c5132] hover:text-white transition-all">
-          Contact Us for QA Services
-        </button>
+        <p className="my-5 text-lg max-w-xl">With our QA services, ensure your product meets the highest standards of quality, security, and performance. Trust our expertise to deliver seamless experiences for your users.</p>
+        <ContactModal />
       </div>
 
     </div>

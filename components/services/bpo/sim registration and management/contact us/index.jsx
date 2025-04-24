@@ -44,8 +44,9 @@ export default function ContactModal() {
     <>
       <button 
         onClick={() => setOpen(true)}
-        className="px-8 py-3 bg-white text-[#807045] font-semibold rounded-full shadow-md hover:bg-[#5c5132] hover:text-white transition-all">
-        Get in Touch
+        className="px-8 py-3 bg-white text-[#807045] font-semibold rounded-full shadow-md hover:bg-[#5c5132] hover:text-white transition-all"
+      >
+        Get Started
       </button>
 
       {open && (
@@ -65,19 +66,19 @@ export default function ContactModal() {
                 <X size={24} />
               </button>
 
-              <h2 className="md:px-20 text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-[white] to-[whitesmoke] bg-clip-text text-transparent text-center mt-10 mb-14">
-                Tell Us About Your Business Needs
+              <h2 className="md:px-20 pb-5 text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-[white] to-[whitesmoke] bg-clip-text text-transparent text-center mt-10 mb-14">
+                Streamline Your SIM Registration & Management
               </h2>
 
               <form onSubmit={handleSubmit} className="space-y-6 flex flex-col">
-                <div className="flex flex-col gap-10 md:gap-4">
+                <div className="flex flex-col gap-10 md:gap-4 pb-5">
                   <div className="flex flex-col md:flex-row gap-10 md:gap-10">
-                    <div className="flex flex-col w-full text-start mt-2">
+                    <div className="flex flex-col w-full text-start">
                       <label className="text-white font-semibold mb-2">Name</label>
                       <input name="fullName" type="text" required placeholder="Full Name" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleChange} />
                     </div>
 
-                    <div className="flex flex-col w-full text-start mt-2">
+                    <div className="flex flex-col w-full text-start">
                       <label className="text-white font-semibold mb-2">Email</label>
                       <input name="email" type="email" required placeholder="Email Address" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleChange} />
                     </div>
@@ -97,54 +98,27 @@ export default function ContactModal() {
 
                   <div className="flex flex-col md:flex-row gap-8 md:gap-10">
                     <div className="flex flex-col w-full text-start mt-2">
-                      <label className="text-white font-semibold mb-2">Industry</label>
-                      <select name="industry" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleChange}>
-                        <option value="">Select Industry</option>
-                        <option value="Corporate">Corporate</option>
-                        <option value="Education">Education</option>
-                        <option value="Government">Government</option>
-                        <option value="Healthcare">Healthcare</option>
+                      <label className="text-white font-semibold mb-2">Service Type</label>
+                        <select name="industry" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleChange}>
+                        <option value="Telecom Operator">Telecom Operator</option>
+                        <option value="Corporate Client">Corporate Client</option>
+                        <option value="Individual Subscriber">Individual Subscriber</option>
                         <option value="Other">Other</option>
                       </select>
                     </div>
                     
                     <div className="flex flex-col w-full text-start mt-2">
-                      <label className="text-white font-semibold mb-2">Company Size</label>
+                      <label className="text-white font-semibold mb-2">SIM Registration Volume (per month)</label>
                       <select name="size" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleChange}>
-                        <option value="1–10">1–10</option>
-                        <option value="11–50">11–50</option>
-                        <option value="51–200">51–200</option>
-                        <option value="201–500">201–500</option>
-                        <option value="500+">500+</option>
+                        <option value="1–100">1–100</option>
+                        <option value="101–500">101–500</option>
+                        <option value="501–1000">501–1000</option>
+                        <option value="1001–3000">1001–3000</option>
+                        <option value="3000+">3000+</option>
                       </select>
                     </div>
                   </div>
-                  
                 </div>
-
-                <fieldset className="space-y-2 flex-center text-white">
-                  <legend className="font-semibold text-3xl pt-10">Services of Interest</legend>
-                  <div className="flex md:justify-center flex-wrap md:space-x-5 gap-5 py-5">
-                    {[
-                      "SIM Registration & Management",
-                      "Mobile Money Services",
-                      "Quality Assurance",
-                      "Customer Support Services",
-                      "Back Office Support",
-                      "Risk & Compliance Management"
-                    ].map((solution) => (
-                      <label key={solution} className="flex items-center w-fit">
-                        <input
-                          type="checkbox"
-                          value={solution}
-                          onChange={handleCheckbox}
-                          className="mr-2 w-6 h-6"
-                        />
-                        {solution}
-                      </label>
-                    ))}
-                  </div>
-                </fieldset>
 
                 <textarea
                   name="message"

@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Phone, Clipboard, ShieldCheck, CheckCircle, UserPlus, Database } from "lucide-react";
 import '@/components/services/style.scss'
 import MovingTextEffect from "@/components/moving text";
+import ContactModal from "./contact us";
 
 export default function SIMRegistrationPage() {
   return (
@@ -29,8 +30,8 @@ export default function SIMRegistrationPage() {
       </div>
 
       {/* Key Features */}
-      <div className="relative py-20 px-8 max-w-7xl mx-auto">
-        <h2 className="text-3xl font-semibold text-[#807045] text-center mb-12">Key Features of Our SIM Registration & Management Service</h2>
+      <div className="relative py-10 md:py-20 px-3 md:px-8 max-w-7xl mx-auto">
+        <h2 className="px-5 text-3xl font-bold text-[#807045] text-center mb-12">Key Features of Our SIM Registration & Management Service</h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
           {[
             {
@@ -71,7 +72,7 @@ export default function SIMRegistrationPage() {
               transition={{ delay: 0.3 + index * 0.2 }}
               className="bg-white p-8 rounded-xl shadow-lg hover:scale-105 transform transition-all"
             >
-              <div className="flex items-center space-x-4">
+              <div className="flex flex-col md:flex-row gap-2 md:gap-0 items-center md:space-x-4">
                 {feature.icon}
                 <h3 className="text-2xl font-semibold text-[#807045]">{feature.title}</h3>
               </div>
@@ -82,8 +83,8 @@ export default function SIMRegistrationPage() {
       </div>
 
       {/* Why Choose Us? */}
-      <div className="py-20 px-8 bg-[#f5f5f5] text-center">
-        <h2 className="text-3xl font-semibold text-[#807045]">Why Choose Our SIM Registration & Management Service?</h2>
+      <div className="py-20 px-3 md:px-8 bg-[#f5f5f5] text-center">
+        <h2 className="text-3xl font-bold text-[#807045]">Why Choose Our SIM Registration & Management Service?</h2>
         <p className="mt-6 text-lg max-w-4xl mx-auto text-gray-700">
           Our SIM Registration & Management service is designed to help telecom operators, corporate clients, and organizations meet <strong>regulatory compliance</strong>, <strong>improve service delivery</strong>, and <strong>reduce operational costs</strong>. Here are some reasons why we're the best choice:
         </p>
@@ -127,7 +128,7 @@ export default function SIMRegistrationPage() {
               transition={{ delay: 0.3 + index * 0.2 }}
               className="bg-white p-8 rounded-xl shadow-lg hover:scale-105 transform transition-all"
             >
-              <div className="flex items-center space-x-4">
+              <div className="flex flex-col md:flex-row gap-2 md:gap-0 items-center space-x-4">
                 {benefit.icon}
                 <h3 className="text-xl font-semibold text-[#807045]">{benefit.title}</h3>
               </div>
@@ -138,12 +139,10 @@ export default function SIMRegistrationPage() {
       </div>
 
       {/* Call to Action */}
-      <div className="text-center py-16 bg-[#807045] text-white shadow-inner">
-        <h2 className="text-3xl font-semibold">Let’s Streamline Your SIM Registration Process</h2>
-        <p className="mt-2 text-lg">Start enhancing your customer experience and compliance with our efficient SIM Registration & Management services today.</p>
-        <button className="mt-6 px-8 py-3 bg-white text-[#807045] font-semibold rounded-full shadow-md hover:bg-[#5c5132] hover:text-white transition-all">
-          Get Started
-        </button>
+      <div className="text-center px-5 py-16 bg-[#807045] text-white shadow-inner">
+        <h2 className="text-3xl font-bold">Let’s Streamline Your SIM Registration Process</h2>
+        <p className="my-5 text-lg">Start enhancing your customer experience and compliance with our efficient SIM Registration & Management services today.</p>
+        <ContactModal />
       </div>
 
     </div>

@@ -45,7 +45,7 @@ export default function ContactModal() {
       <button 
         onClick={() => setOpen(true)}
         className="px-8 py-3 bg-white text-[#807045] font-semibold rounded-full shadow-md hover:bg-[#5c5132] hover:text-white transition-all">
-        Get in Touch
+        Get Started with Back Office Support
       </button>
 
       {open && (
@@ -66,7 +66,7 @@ export default function ContactModal() {
               </button>
 
               <h2 className="md:px-20 text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-[white] to-[whitesmoke] bg-clip-text text-transparent text-center mt-10 mb-14">
-                Tell Us About Your Business Needs
+                Need Back Office Help? We’re Here for You
               </h2>
 
               <form onSubmit={handleSubmit} className="space-y-6 flex flex-col">
@@ -126,12 +126,11 @@ export default function ContactModal() {
                   <legend className="font-semibold text-3xl pt-10">Services of Interest</legend>
                   <div className="flex md:justify-center flex-wrap md:space-x-5 gap-5 py-5">
                     {[
-                      "SIM Registration & Management",
-                      "Mobile Money Services",
-                      "Quality Assurance",
-                      "Customer Support Services",
-                      "Back Office Support",
-                      "Risk & Compliance Management"
+                      "Data Entry & Management",
+                      "Document Management",
+                      "Invoice Processing",
+                      "Human Resources Support",
+                      "Other",
                     ].map((solution) => (
                       <label key={solution} className="flex items-center w-fit">
                         <input

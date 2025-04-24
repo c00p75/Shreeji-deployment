@@ -5,6 +5,7 @@ import { Printer, ShieldCheck, FileText, CloudUpload, Users, Cross, Hospital, La
 import print from "@/public/backgrounds/hero-print.png";
 import '@/components/services/style.scss'
 import MovingTextEffect from '@/components/moving text';
+import ContactModal from '../contact us';
 
 export default function DocumentScanningPage() {
   return (
@@ -155,9 +156,7 @@ export default function DocumentScanningPage() {
         <p className="text-lg max-w-2xl mx-auto mb-8">
           Let’s help you transition into a paperless environment with secure and efficient document scanning.
         </p>
-        <button className="px-8 py-3 bg-white text-[#807045] rounded-full font-semibold shadow-md hover:bg-[#3f3822] hover:shadow-2xl hover:text-white transition-all">
-          Get Started Today
-        </button>
+        <ContactModal />
       </div>
     </div>
   );

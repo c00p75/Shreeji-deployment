@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Layers, Code, Cloud, Server, Settings } from "lucide-react";
 import '@/components/services/style.scss'
 import MovingTextEffect from "@/components/moving text";
+import ContactModal from "../contact us";
 
 export default function SystemPlatformDevelopmentPage() {
   return (
@@ -16,12 +17,12 @@ export default function SystemPlatformDevelopmentPage() {
       />
 
       {/* Our Solutions */}
-      <div className="pt-16 pb-10 px-8">
+      <div className="pt-16 pb-10 px-3 md:px-8">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="text-3xl font-semibold text-center text-[#807045]"
+          className="text-3xl font-bold text-center text-[#807045]"
         >
           Our System & Platform Development Solutions
         </motion.h2>
@@ -60,7 +61,7 @@ export default function SystemPlatformDevelopmentPage() {
               transition={{ delay: 0.3 + index * 0.2 }}
               className="bg-[#F8F6F0] rounded-2xl p-8 shadow-lg hover:shadow-2xl transform hover:translate-y-[-5px] cursor-pointer"
             >
-              <div className="flex items-center space-x-4">
+              <div className="flex flex-col md:flex-row gap-2 md:gap-0 items-center md:space-x-4">
                 {service.icon}
                 <h3 className="text-2xl font-semibold text-[#807045]">{service.title}</h3>
               </div>
@@ -76,7 +77,7 @@ export default function SystemPlatformDevelopmentPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="text-3xl font-semibold text-center"
+          className="text-3xl font-bold text-center"
         >
           Our Development Process
         </motion.h2>
@@ -102,43 +103,27 @@ export default function SystemPlatformDevelopmentPage() {
         </div>
       </div>
 
-      {/* Why Choose Us Section */}
-      <div className="py-16 px-8">
+      {/* Call to Action Section */}
+      <div className="text-center py-16 bg-[#807045] text-white">
         <motion.h2
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="text-3xl font-semibold text-center text-[#807045]"
+          className="text-3xl font-semibold"
         >
-          Why Choose Us?
+          Let’s Build Your Platform
         </motion.h2>
-        <div className="grid md:grid-cols-2 gap-8 mt-12">
-          {[
-            { title: "Expert Development Team", description: "Seasoned professionals delivering innovative, high-performance solutions." },
-            { title: "Scalability & Security", description: "Future-proof systems designed with security and scalability at the core." }
-          ].map((benefit, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 + index * 0.2 }}
-              className="bg-[#F8F6F0] p-8 rounded-xl shadow-lg flex-center"
-            >
-              <h3 className="text-xl font-semibold text-[#807045]">{benefit.title}</h3>
-              <p className="mt-4 text-gray-700">{benefit.description}</p>
-              
-              {/* Call to Action */}
-              <motion.button
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.4 }}
-                className="mt-6 px-8 mb-10 py-3 bg-[#807045] text-white rounded-lg hover:bg-[#4b4228] hover:text-white transition-colors"
-              >
-                Get a Free Consultation
-              </motion.button>
-            </motion.div>
-          ))}
-        </div>
+        <motion.p
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="mt-6 text-lg max-w-2xl mx-auto mb-5"
+        >
+          Streamline your operations with tailored systems built for performance and growth. From custom platforms to seamless integrations, we deliver solutions that scale with your business.
+        </motion.p>
+        
+        <ContactModal />
+        
       </div>      
     </div>
   );

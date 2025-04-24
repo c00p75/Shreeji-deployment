@@ -44,8 +44,9 @@ export default function ContactModal() {
     <>
       <button 
         onClick={() => setOpen(true)}
-        className="px-8 py-3 bg-white text-[#807045] font-semibold rounded-full shadow-md hover:bg-[#5c5132] hover:text-white transition-all">
-        Get in Touch
+        className="px-8 py-3 bg-white text-[#807045] font-semibold rounded-full shadow-md hover:bg-[#5c5132] hover:text-white transition-all"
+      >
+        Contact Us for QA Services
       </button>
 
       {open && (
@@ -65,19 +66,19 @@ export default function ContactModal() {
                 <X size={24} />
               </button>
 
-              <h2 className="md:px-20 text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-[white] to-[whitesmoke] bg-clip-text text-transparent text-center mt-10 mb-14">
-                Tell Us About Your Business Needs
+              <h2 className="md:px-20 pb-2 text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-[white] to-[whitesmoke] bg-clip-text text-transparent text-center mt-10 mb-14">
+                Get Reliable Quality Assurance Today
               </h2>
 
               <form onSubmit={handleSubmit} className="space-y-6 flex flex-col">
                 <div className="flex flex-col gap-10 md:gap-4">
                   <div className="flex flex-col md:flex-row gap-10 md:gap-10">
-                    <div className="flex flex-col w-full text-start mt-2">
+                    <div className="flex flex-col w-full text-start">
                       <label className="text-white font-semibold mb-2">Name</label>
                       <input name="fullName" type="text" required placeholder="Full Name" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleChange} />
                     </div>
 
-                    <div className="flex flex-col w-full text-start mt-2">
+                    <div className="flex flex-col w-full text-start">
                       <label className="text-white font-semibold mb-2">Email</label>
                       <input name="email" type="email" required placeholder="Email Address" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleChange} />
                     </div>
@@ -123,15 +124,16 @@ export default function ContactModal() {
                 </div>
 
                 <fieldset className="space-y-2 flex-center text-white">
-                  <legend className="font-semibold text-3xl pt-10">Services of Interest</legend>
+                  <legend className="font-semibold text-3xl pt-10">Quality Assurance Needs</legend>
                   <div className="flex md:justify-center flex-wrap md:space-x-5 gap-5 py-5">
                     {[
-                      "SIM Registration & Management",
-                      "Mobile Money Services",
-                      "Quality Assurance",
-                      "Customer Support Services",
-                      "Back Office Support",
-                      "Risk & Compliance Management"
+                      "Functional Testing",
+                      "Security Testing",
+                      "Performance Testing",
+                      "Compliance Testing",
+                      "User Acceptance Testing (UAT)",
+                      "Continuous Monitoring",
+                      "Other",
                     ].map((solution) => (
                       <label key={solution} className="flex items-center w-fit">
                         <input

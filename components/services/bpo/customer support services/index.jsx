@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Headphones, MessageCircle, Smartphone, LifeBuoy } from "lucide-react";
 import '@/components/services/style.scss';
 import MovingTextEffect from "@/components/moving text";
+import ContactModal from "./contact us";
 
 export default function CustomerSupportPage() {
   return (
@@ -15,35 +16,18 @@ export default function CustomerSupportPage() {
         subtitle="Delivering exceptional support for your customers, ensuring satisfaction, retention, and long-term relationships through multiple support channels."
         image=""
       />
-      {/* <div className="relative py-32 px-6 text-center bg-[#f5f5f5] services-hero-section">
-        <motion.h1 
-          initial={{ opacity: 0, y: -50 }} 
-          animate={{ opacity: 1, y: 0 }} 
-          className="text-5xl font-extrabold drop-shadow-md"
-        >
-          Customer Support Services
-        </motion.h1>
-        <motion.p 
-          initial={{ opacity: 0, y: 20 }} 
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mt-4 text-lg max-w-3xl mx-auto opacity-80"
-        >
-          <strong>Delivering exceptional support</strong> for your customers, ensuring satisfaction, retention, and long-term relationships through multiple support channels.
-        </motion.p>
-      </div> */}
 
       {/* Our Support Services */}
       <div className="pt-20 pb-10 px-8 max-w-7xl mx-auto text-center">
-        <h2 className="text-3xl font-semibold text-[#807045]">Our Customer Support Services</h2>
+        <h2 className="text-3xl font-bold text-[#807045]">Our Customer Support Services</h2>
         <p className="mt-6 text-lg max-w-4xl mx-auto text-gray-700">
           At <strong>Company Name</strong>, we understand the importance of customer satisfaction. Our comprehensive customer support services are designed to provide timely, effective solutions across various communication channels. Whether it's through phone, email, chat, or social media, we ensure your customers receive seamless support at all times.
         </p>
       </div>
 
       {/* Key Support Features */}
-      <div className="relative py-20 px-8 max-w-7xl mx-auto">
-        <h2 className="text-3xl font-semibold text-[#807045] text-center mb-12">Key Support Features</h2>
+      <div className="relative py-20 px-3 md:px-8 max-w-7xl mx-auto">
+        <h2 className="text-3xl font-bold text-[#807045] text-center mb-12">Key Support Features</h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
           {[
             {
@@ -74,7 +58,7 @@ export default function CustomerSupportPage() {
               transition={{ delay: 0.3 + index * 0.2 }}
               className="bg-white p-8 rounded-xl shadow-lg hover:scale-105 transform transition-all"
             >
-              <div className="flex items-center space-x-4">
+              <div className="flex flex-col md:flex-row gap-2 md:gap-0 items-center space-x-4">
                 {feature.icon}
                 <h3 className="text-2xl font-semibold text-[#807045]">{feature.title}</h3>
               </div>
@@ -85,7 +69,7 @@ export default function CustomerSupportPage() {
       </div>
 
       {/* Why Choose Our Support Services */}
-      <div className="py-20 px-8 bg-[#f5f5f5] text-center">
+      <div className="py-20 px-3 md:px-8 bg-[#f5f5f5] text-center">
         <h2 className="text-3xl font-semibold text-[#807045]">Why Choose Our Support Services?</h2>
         <p className="mt-6 text-lg max-w-4xl mx-auto text-gray-700">
           With our comprehensive customer support services, we ensure that your customers always feel heard and valued. Here's why choosing us makes sense:
@@ -130,7 +114,7 @@ export default function CustomerSupportPage() {
               transition={{ delay: 0.3 + index * 0.2 }}
               className="bg-white p-8 rounded-xl shadow-lg hover:scale-105 transform transition-all"
             >
-              <div className="flex items-center space-x-4">
+              <div className="flex flex-col md:flex-row gap-2 md:gap-0 items-center space-x-4">
                 {benefit.icon}
                 <h3 className="text-xl font-semibold text-[#807045]">{benefit.title}</h3>
               </div>
@@ -141,12 +125,10 @@ export default function CustomerSupportPage() {
       </div>
 
       {/* Call to Action */}
-      <div className="text-center py-16 bg-[#807045] text-white shadow-inner flex-center">
-        <h2 className="text-3xl font-semibold">Enhance Your Customer Experience with Us</h2>
-        <p className="mt-5 text-lg max-w-5xl">Partner with us for superior customer support solutions that drive satisfaction, retention, and business growth. Let’s work together to elevate your support services.</p>
-        <button className="mt-6 px-8 py-3 bg-white text-[#807045] font-semibold rounded-full shadow-md hover:bg-[#5c5132] hover:text-white transition-all">
-          Get Started with Customer Support
-        </button>
+      <div className="text-center px-5 py-16 bg-[#807045] text-white shadow-inner flex-center">
+        <h2 className="text-3xl font-bold">Enhance Your Customer Experience with Us</h2>
+        <p className="my-5 text-lg max-w-5xl">Partner with us for superior customer support solutions that drive satisfaction, retention, and business growth. Let’s work together to elevate your support services.</p>
+        <ContactModal />
       </div>
 
     </div>

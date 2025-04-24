@@ -9,17 +9,31 @@
     font-size: 2.5rem;
   }
 
-  .sim-registration-page .text-effect-hero h1,
   .bpo-page .text-effect-hero h1,
   .risk-compliance-page .text-effect-hero h1
    {
     font-size: 2.75rem;
   }
 
-  .system-platform-page .text-effect-hero h1,
   .enterprise-level-printing-page .text-effect-hero h1,
-  .quality-assurance-page .text-effect-hero h1
+  .quality-assurance-page .text-effect-hero h1,
+  .telemarketing-page .text-effect-hero h1,
+  .customer-support-page .text-effect-hero h1
    {
     font-size: 3rem;
+  }
+
+  .system-platform-page .text-effect-hero h1 {
+    font-size: 2.5rem;
+  }
+
+  .sim-registration-page .text-effect-hero {    
+    h1 {
+      font-size: 2.3rem;
+    }
+
+    p {
+      padding-inline: 1rem !important;
+    }
   }
 }

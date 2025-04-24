@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { CheckCircle, CreditCard, DollarSign, Phone, ShieldCheck, ShoppingCart, Users } from "lucide-react";
 import '@/components/services/style.scss'
 import MovingTextEffect from "@/components/moving text";
+import ContactModal from "./contact us";
 
 export default function MobileMoneyPage() {
   return (
@@ -17,8 +18,8 @@ export default function MobileMoneyPage() {
       />
 
       {/* What is Mobile Money? */}
-      <div className="py-20 px-8 max-w-7xl mx-auto text-center">
-        <h2 className="text-3xl font-semibold text-[#807045]">What is Mobile Money?</h2>
+      <div className="py-14 md:py-20 px-8 max-w-7xl mx-auto text-center">
+        <h2 className="text-3xl font-bold text-[#807045]">What is Mobile Money?</h2>
         <p className="mt-6 text-lg max-w-4xl mx-auto text-gray-700">
           Mobile Money is a digital financial service that allows users to send, receive, and store money using their mobile phones. It offers a fast, secure, and convenient alternative to traditional banking services, especially in regions with limited access to physical banks.
           Our Mobile Money services offer seamless transactions, secure payment processing, and the ability to transfer funds across different platforms, making financial services more accessible for everyone.
@@ -30,8 +31,8 @@ export default function MobileMoneyPage() {
       </div>
 
       {/* Key Features */}
-      <div className="relative py-20 px-8 max-w-7xl mx-auto">
-        <h2 className="text-3xl font-semibold text-[#807045] text-center mb-12">Key Features of Our Mobile Money Service</h2>
+      <div className="relative py-20 px-3 md:px-8 max-w-7xl mx-auto">
+        <h2 className="text-3xl font-bold text-[#807045] text-center mb-12">Key Features of Our Mobile Money Service</h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
           {[
             {
@@ -72,7 +73,7 @@ export default function MobileMoneyPage() {
               transition={{ delay: 0.3 + index * 0.2 }}
               className="bg-white p-8 rounded-xl shadow-lg hover:scale-105 transform transition-all"
             >
-              <div className="flex items-center space-x-4">
+              <div className="flex flex-col md:flex-row gap-2 md:gap-0 items-center md:space-x-4">
                 {feature.icon}
                 <h3 className="text-2xl font-semibold text-[#807045]">{feature.title}</h3>
               </div>
@@ -83,8 +84,8 @@ export default function MobileMoneyPage() {
       </div>
 
       {/* Why Choose Us? */}
-      <div className="py-20 px-8 bg-[#f5f5f5] text-center">
-        <h2 className="text-3xl font-semibold text-[#807045]">Why Choose Our Mobile Money Service?</h2>
+      <div className="py-20 px-3 md:px-8 bg-[#f5f5f5] text-center">
+        <h2 className="text-3xl font-bold text-[#807045]">Why Choose Our Mobile Money Service?</h2>
         <p className="mt-6 text-lg max-w-4xl mx-auto text-gray-700">
           Our Mobile Money service is built to cater to a wide range of financial needs, whether you're an individual looking for an easy way to send money or a business seeking efficient, secure payment solutions. Here's why we stand out:
         </p>
@@ -128,7 +129,7 @@ export default function MobileMoneyPage() {
               transition={{ delay: 0.3 + index * 0.2 }}
               className="bg-white p-8 rounded-xl shadow-lg hover:scale-105 transform transition-all"
             >
-              <div className="flex items-center space-x-4">
+              <div className="flex flex-col md:flex-row gap-2 md:gap-0 items-center space-x-4">
                 {benefit.icon}
                 <h3 className="text-xl font-semibold text-[#807045]">{benefit.title}</h3>
               </div>
@@ -139,12 +140,10 @@ export default function MobileMoneyPage() {
       </div>
 
       {/* Call to Action */}
-      <div className="text-center py-16 bg-[#807045] text-white shadow-inner">
-        <h2 className="text-3xl font-semibold">Start Using Mobile Money Today</h2>
-        <p className="mt-2 text-lg">Efficient, secure, and affordable mobile money services designed to help individuals and businesses manage their finances with ease.</p>
-        <button className="mt-6 px-8 py-3 bg-white text-[#807045] font-semibold rounded-full shadow-md hover:bg-[#5c5132] hover:text-white transition-all">
-          Get Started
-        </button>
+      <div className="text-center px-5 py-16 bg-[#807045] text-white shadow-inner">
+        <h2 className="text-3xl font-bold">Start Using Mobile Money Today</h2>
+        <p className="my-5 text-lg">Efficient, secure, and affordable mobile money services designed to help individuals and businesses manage their finances with ease.</p>
+        <ContactModal />
       </div>
 
     </div>

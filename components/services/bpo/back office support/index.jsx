@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { FileText, Archive, FileCheck, Users } from "lucide-react";
 import '@/components/services/style.scss';
 import MovingTextEffect from "@/components/moving text";
+import ContactModal from "./contact us";
 
 export default function BackOfficeSupportPage() {
   return (
@@ -15,34 +16,17 @@ export default function BackOfficeSupportPage() {
         subtitle="Optimizing your business operations through expert back office support services, ensuring efficiency and seamless operations behind the scenes."
         image=""
       />
-      {/* <div className="relative py-32 px-6 text-center bg-[#f5f5f5] services-hero-section">
-        <motion.h1 
-          initial={{ opacity: 0, y: -50 }} 
-          animate={{ opacity: 1, y: 0 }} 
-          className="text-5xl font-extrabold drop-shadow-md"
-        >
-          Back Office Support
-        </motion.h1>
-        <motion.p 
-          initial={{ opacity: 0, y: 20 }} 
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mt-4 text-lg max-w-3xl mx-auto opacity-80"
-        >
-          <strong>Optimizing your business operations</strong> through expert back office support services, ensuring efficiency and seamless operations behind the scenes.
-        </motion.p>
-      </div> */}
 
       {/* Our Back Office Support Services */}
       <div className="pt-20 pb-10 px-8 max-w-7xl mx-auto text-center">
-        <h2 className="text-3xl font-semibold text-[#807045]">Our Back Office Support Services</h2>
+        <h2 className="text-3xl font-bold text-[#807045]">Our Back Office Support Services</h2>
         <p className="mt-6 text-lg max-w-4xl mx-auto text-gray-700">
           At <strong>Company Name</strong>, we handle the crucial behind-the-scenes tasks so you can focus on your core business operations. Our back office support services are designed to improve your overall productivity, reduce operational costs, and enhance workflow efficiency. We provide tailored solutions to meet the specific needs of your business.
         </p>
       </div>
 
       {/* Key Features */}
-      <div className="relative py-20 px-8 max-w-7xl mx-auto">
+      <div className="relative py-20 px-3 md:px-8 max-w-7xl mx-auto">
         <h2 className="text-3xl font-semibold text-[#807045] text-center mb-12">Key Features of Our Back Office Support</h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
           {[
@@ -74,7 +58,7 @@ export default function BackOfficeSupportPage() {
               transition={{ delay: 0.3 + index * 0.2 }}
               className="bg-white p-8 rounded-xl shadow-lg hover:scale-105 transform transition-all"
             >
-              <div className="flex items-center space-x-4">
+              <div className="flex flex-col md:flex-row gap-2 md:gap-0 items-center md:space-x-4">
                 {feature.icon}
                 <h3 className="text-2xl font-semibold text-[#807045]">{feature.title}</h3>
               </div>
@@ -85,8 +69,8 @@ export default function BackOfficeSupportPage() {
       </div>
 
       {/* Why Choose Our Back Office Support Services */}
-      <div className="py-20 px-8 bg-[#f5f5f5] text-center">
-        <h2 className="text-3xl font-semibold text-[#807045]">Why Choose Our Back Office Support?</h2>
+      <div className="py-20 px-3 md:px-8 bg-white text-center">
+        <h2 className="text-3xl font-bold text-[#807045]">Why Choose Our Back Office Support?</h2>
         <p className="mt-6 text-lg max-w-4xl mx-auto text-gray-700">
           Our back office support services help streamline your processes, reduce costs, and improve efficiency. Here’s why partnering with us is beneficial:
         </p>
@@ -128,9 +112,9 @@ export default function BackOfficeSupportPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 + index * 0.2 }}
-              className="bg-white p-8 rounded-xl shadow-lg hover:scale-105 transform transition-all"
+              className="bg-[#fefdf5] p-8 rounded-xl shadow-lg hover:scale-105 transform transition-all"
             >
-              <div className="flex items-center space-x-4">
+              <div className="flex flex-col md:flex-row gap-2 md:gap-0 items-center md:space-x-4">
                 {benefit.icon}
                 <h3 className="text-xl font-semibold text-[#807045]">{benefit.title}</h3>
               </div>
@@ -141,12 +125,10 @@ export default function BackOfficeSupportPage() {
       </div>
 
       {/* Call to Action */}
-      <div className="text-center py-16 bg-[#807045] text-white shadow-inner flex-center">
-        <h2 className="text-3xl font-semibold">Streamline Your Business Operations with Us</h2>
-        <p className="mt-5 max-w-5xl text-lg">Our back office support services are designed to free up your valuable resources, allowing your team to focus on strategic initiatives while we handle the administrative tasks.</p>
-        <button className="mt-6 px-8 py-3 bg-white text-[#807045] font-semibold rounded-full shadow-md hover:bg-[#5c5132] hover:text-white transition-all">
-          Get Started with Back Office Support
-        </button>
+      <div className="text-center px-5 py-16 bg-[#807045] text-white shadow-inner flex-center">
+        <h2 className="text-3xl font-bold">Streamline Your Business Operations with Us</h2>
+        <p className="my-5 max-w-5xl text-lg">Our back office support services are designed to free up your valuable resources, allowing your team to focus on strategic initiatives while we handle the administrative tasks.</p>
+        <ContactModal />
       </div>
 
     </div>

@@ -5,6 +5,7 @@
 import MovingTextEffect from "@/components/moving text";
 import { motion } from "framer-motion";
 import { PhoneCall, Headphones, MessageCircle } from "lucide-react";
+import ContactModal from "./contact us";
 
 export default function TelemarketingPage() {
   return (
@@ -17,7 +18,7 @@ export default function TelemarketingPage() {
       />
 
       {/* Features Section */}
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-6xl mx-auto my-24 overflow-visible">
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-6xl mx-auto my-14 md:my-24 overflow-visible px-3 md:px-8">
         {[
           {
             icon: <PhoneCall size={40} />,
@@ -44,7 +45,7 @@ export default function TelemarketingPage() {
             transition={{ duration: 0.3 }}
             className="bg-[#fdfdfc] border border-[#ddd8cb] p-6 rounded-2xl shadow-md hover:shadow-xl"
           >
-            <div className="flex items-center space-x-4 mb-4 text-[#807045]">
+            <div className="flex flex-col md:flex-row gap-2 md:gap-0 items-center space-x-4 mb-4 text-[#807045]">
               {item.icon}
               <h2 className="text-2xl font-semibold">{item.title}</h2>
             </div>
@@ -54,7 +55,7 @@ export default function TelemarketingPage() {
       </section>
 
       {/* Deep Content Section */}
-      <div className="text-[#807045] bg-[#F8F6F0] py-16 px-8">
+      <div className="text-[#807045] bg-[#F8F6F0] py-16 px-3 md:px-8">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -85,12 +86,10 @@ export default function TelemarketingPage() {
         </div>
       </div>
       {/* Call to Action */}
-      <div className="text-center py-16 bg-[#807045] text-white flex-center shadow-inner">
+      <div className="text-center px-5 py-16 bg-[#807045] text-white flex-center shadow-inner">
         <h2 className="text-3xl font-semibold">Let's Talk Growth</h2>
-        <p className="mt-5 text-lg max-w-5xl">Ready to scale your outreach, nurture your leads, and improve customer retention through impactful voice campaigns? Our team is ready to amplify your brand.</p>
-        <button className="mt-6 px-8 py-4 bg-white text-[#807045]  hover:text-white hover:bg-[#5c5132] font-semibold rounded-full shadow-md transition-all">
-        Get in Touch with Our Experts
-        </button>
+        <p className="my-5 text-lg max-w-5xl">Ready to scale your outreach, nurture your leads, and improve customer retention through impactful voice campaigns? Our team is ready to amplify your brand.</p>
+        <ContactModal />
       </div>      
     </div>
   );
