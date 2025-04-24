@@ -8,7 +8,7 @@ import MovingTextEffect from "@/components/moving text";
 
 export default function SkyliftServicesPage() {
   return (
-    <div className="skylift-services-page bg-[#f9f6e6] text-[#2a2a2a]">
+    <div className="skylift-services-page bg-gradient-to-br from-[#fffdf5] to-[#f9f6e6] text-[#2a2a2a]">
 
       {/* Hero Section */}
       <MovingTextEffect
@@ -45,7 +45,7 @@ export default function SkyliftServicesPage() {
               transition={{ delay: 0.3 + index * 0.2 }}
               className="bg-white p-8 rounded-2xl shadow-lg hover:scale-105 transform transition-all hover:shadow-2xl"
             >
-              <div className="flex items-center justify-center space-x-6 mb-4">
+              <div className="flex flex-col md:flex-row gap-2 md:gap-0 items-center justify-center space-x-6 mb-4">
                 {service.icon}
                 <h3 className="text-2xl font-semibold text-[#807045]">{service.title}</h3>
               </div>
@@ -122,7 +122,7 @@ export default function SkyliftServicesPage() {
               transition={{ delay: 0.3 + index * 0.2 }}
               className="bg-white px-3 md:px-8 py-8 rounded-2xl shadow-lg transform hover:scale-105 transition-all hover:shadow-2xl"
             >
-              <div className="flex items-center justify-center space-x-6 mb-4">
+              <div className="flex flex-col md:flex-row gap-2 md:gap-0 items-center justify-center md:space-x-6 mb-4">
                 {industry.icon}
                 <h3 className="text-2xl font-semibold text-[#807045]">{industry.title}</h3>
               </div>

@@ -5,6 +5,7 @@ import { Server, HardDrive, Cpu } from "lucide-react";
 import '@/components/services/style.scss'
 import MovingTextEffect from "@/components/moving text";
 import './style.scss';
+import ContactModal from "../contact us";
 
 export default function HardwareInfrastructurePage() {
   return (
@@ -37,7 +38,7 @@ export default function HardwareInfrastructurePage() {
       </div>
 
       {/* Key Offerings Section */}
-      <div className="bg-[#f1f1f1] py-16 px-8">
+      <div className="bg-[#f1f1f1] py-16 px-3 md:px-8">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -95,7 +96,7 @@ export default function HardwareInfrastructurePage() {
       </div>
 
       {/* Our Approach & Solutions Section */}
-      <div className="py-16 px-8">
+      <div className="py-16 px-5 md:px-8">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -125,7 +126,7 @@ export default function HardwareInfrastructurePage() {
       </div>
 
       {/* Why Choose Us Section */}
-      <div className="bg-[#F1F1F1] py-16 px-8">
+      <div className="bg-[#F1F1F1] py-16 px-3 md:px-8">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -175,18 +176,13 @@ export default function HardwareInfrastructurePage() {
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="mt-6 text-lg max-w-2xl mx-auto"
+          className="mt-6 text-lg max-w-2xl mx-auto mb-5"
         >
           Contact us today to discuss your hardware and infrastructure needs, and let us help you build a scalable, secure, and reliable IT ecosystem.
         </motion.p>
-        <motion.button
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-          className="mt-6 px-8 py-3 bg-[white] text-[#807045] rounded-lg hover:bg-[#5d5232] hover:text-white transition-colors"
-        >
-          Get a Free Consultation
-        </motion.button>
+        
+        <ContactModal />
+        
       </div>
     </div>
   );

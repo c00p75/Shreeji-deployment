@@ -71,34 +71,52 @@ export default function ContactModal() {
 
               <form onSubmit={handleSubmit} className="space-y-6 flex flex-col">
                 <div className="flex flex-col gap-10 md:gap-4">
-                  <div className="flex flex-col md:flex-row gap-10 md:gap-10">
-                    <input name="fullName" type="text" required placeholder="Full Name" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleChange} />
-                    <input name="email" type="email" required placeholder="Email Address" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleChange} />
+                <div className="flex flex-col md:flex-row gap-10 md:gap-10">
+                    <div className="flex flex-col w-full text-start mt-2">
+                      <label className="text-white font-semibold mb-2">Name</label>
+                      <input name="fullName" type="text" required placeholder="Full Name" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleChange} />
+                    </div>
+
+                    <div className="flex flex-col w-full text-start mt-2">
+                      <label className="text-white font-semibold mb-2">Email</label>
+                      <input name="email" type="email" required placeholder="Email Address" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleChange} />
+                    </div>
                   </div>
 
                   <div className="flex flex-col md:flex-row gap-8 md:gap-10">
-                    <input name="phone" type="tel" placeholder="Phone Number" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleChange} />
-                    <input name="company" type="text" required placeholder="Company Name" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleChange} />
-                  </div>
-                  
-                  <div className="flex flex-col md:flex-row gap-8 md:gap-10">
-                    <select name="industry" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleChange}>
-                      <option value="">Select Industry</option>
-                      <option value="Corporate">Corporate</option>
-                      <option value="Education">Education</option>
-                      <option value="Government">Government</option>
-                      <option value="Healthcare">Healthcare</option>
-                      <option value="Other">Other</option>
-                    </select>
+                    <div className="flex flex-col w-full text-start mt-2">
+                      <label className="text-white font-semibold mb-2">Phone Number</label>
+                      <input name="phone" type="tel" placeholder="+260" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleChange} />
+                    </div>
                     
-                    <select name="size" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleChange}>
-                      <option value="">Company Size</option>
-                      <option value="1–10">1–10</option>
-                      <option value="11–50">11–50</option>
-                      <option value="51–200">51–200</option>
-                      <option value="201–500">201–500</option>
-                      <option value="500+">500+</option>
-                    </select>
+                    <div className="flex flex-col w-full text-start mt-2">
+                      <label className="text-white font-semibold mb-2">Company Name</label>
+                      <input name="company" type="text" required placeholder="e.g Gradle Holdings" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleChange} />
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col md:flex-row gap-8 md:gap-10">
+                    <div className="flex flex-col w-full text-start mt-2">
+                      <label className="text-white font-semibold mb-2">Industry</label>
+                      <select name="industry" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleChange}>
+                        <option value="">Select Industry</option>
+                        <option value="Corporate">Corporate</option>
+                        <option value="Education">Education</option>
+                        <option value="Government">Government</option>
+                        <option value="Healthcare">Healthcare</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </div>
+                    
+                    <div className="flex flex-col w-full text-start mt-2">
+                      <label className="text-white font-semibold mb-2">Estimated Monthly Volume</label>
+                      <select name="volume" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleChange}>
+                        <option value="Under 1,000">Under 1,000 pages</option>
+                        <option value="1,000–10,000">1,000–10,000 pages</option>
+                        <option value="10,000–50,000">10,000–50,000 pages</option>
+                        <option value="50,000+">50,000+ pages</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
 
@@ -128,35 +146,11 @@ export default function ContactModal() {
 
                 <textarea
                   name="message"
-                  rows={4}
-                  placeholder="How can we help you?"
+                  rows={5}
+                  placeholder="How can we help you? (Optional)"
                   className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   onChange={handleChange}
                 />
-
-                <div className="flex flex-col md:flex-row gap-10 pb-5">
-                  <select name="volume" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleChange}>
-                    <option value="">Estimated Monthly Volume</option>
-                    <option value="Under 1,000">Under 1,000 pages</option>
-                    <option value="1,000–10,000">1,000–10,000 pages</option>
-                    <option value="10,000–50,000">10,000–50,000 pages</option>
-                    <option value="50,000+">50,000+ pages</option>
-                  </select>
-                  
-                  <select name="bestTime" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleChange}>
-                    <option value="">Best Time to Contact</option>
-                    <option value="Morning">Morning</option>
-                    <option value="Afternoon">Afternoon</option>
-                    <option value="Evening">Evening</option>
-                  </select>
-
-                  <select name="bestTime" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleChange}>
-                    <option value="">Preferred Contact Method</option>
-                    <option value="Email">Email</option>
-                    <option value="Phone">Phone</option>
-                    <option value="WhatsApp">WhatsApp</option>
-                  </select>
-                </div>
 
                 <div className="flex-center py-5">
                   <button type="submit" className="bg-green-600 text-white px-6 py-3 rounded-xl hover:bg-green-700 transition w-fit">

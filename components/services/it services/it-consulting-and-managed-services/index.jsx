@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Briefcase, ShieldCheck, UserCheck, Globe, ServerCog, Headset } from "lucide-react";
 import '@/components/services/style.scss'
 import MovingTextEffect from "@/components/moving text";
+import ContactModal from "../contact us";
 
 export default function ITConsultingPage() {
   return (
@@ -16,12 +17,12 @@ export default function ITConsultingPage() {
       />
 
       {/* Our Services Section */}
-      <div className="py-16 px-8">
+      <div className="py-16 px-3 md:px-8">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="text-3xl font-semibold text-center text-[#807045]"
+          className="text-3xl font-bold text-center text-[#807045]"
         >
           Our IT Consulting & Managed Services
         </motion.h2>
@@ -65,7 +66,7 @@ export default function ITConsultingPage() {
               transition={{ delay: 0.3 + index * 0.2 }}
               className="bg-[#F8F6F0] rounded-2xl p-8 shadow-lg hover:shadow-2xl transform hover:translate-y-[-5px] cursor-pointer"
             >
-              <div className="flex items-center space-x-4">
+              <div className="flex flex-col md:flex-row gap-2 md:gap-0 items-center md:space-x-4">
                 {service.icon}
                 <h3 className="text-2xl font-semibold text-[#807045]">{service.title}</h3>
               </div>
@@ -76,7 +77,7 @@ export default function ITConsultingPage() {
       </div>
 
       {/* Our Process Section */}
-      <div className="bg-[#807045] text-white py-16 px-8">
+      <div className="bg-[#807045] text-white py-16 px-3 md:px-8">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -107,7 +108,7 @@ export default function ITConsultingPage() {
       </div>
 
       {/* Why Choose Us Section */}
-      <div className="py-16 px-8">
+      <div className="py-16 px-3 md:px-8">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -143,18 +144,12 @@ export default function ITConsultingPage() {
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="text-3xl font-semibold"
+          className="text-3xl font-semibold mb-5"
         >
           Ready to Optimize Your IT Strategy?
         </motion.h2>
-        <motion.button
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
-          className="mt-6 px-8 py-3 bg-white text-[#807045] rounded-lg hover:bg-[#4b4228] hover:text-white transition-colors"
-        >
-          Get a Free IT Consultation
-        </motion.button>
+        
+        <ContactModal />
       </div>
     </div>
   );

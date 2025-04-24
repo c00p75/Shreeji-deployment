@@ -20,7 +20,7 @@ export default function PrintingPage() {
 
       {/* Features Section */}
       <div className="relative py-20 px-3 md:px-8 max-w-7xl mx-auto">
-        <h2 className="text-3xl font-bold md:font-semibold text-[#807045] text-center mb-12">Why Choose Our Printing & Scanning Solutions?</h2>
+        <h2 className="text-3xl font-bold text-[#807045] text-center mb-12">Why Choose Our Printing & Scanning Solutions?</h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
           {[
             {
@@ -65,7 +65,7 @@ export default function PrintingPage() {
                     transition={{ delay: 0.3 + index * 0.2 }}
                     className="backdrop-blur-lg bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all"
                   >
-                    <div className="flex items-center space-x-4">
+                    <div className="flex flex-col md:flex-row gap-2 md:gap-0 items-center md:space-x-4">
                       {feature.icon}
                       <h3 className="text-2xl font-semibold text-[#807045]">{feature.title}</h3>
                     </div>
@@ -82,7 +82,7 @@ export default function PrintingPage() {
                   transition={{ delay: 0.3 + index * 0.2 }}
                   className="backdrop-blur-lg bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all"
                 >
-                  <div className="flex items-center space-x-4">
+                  <div className="flex flex-col md:flex-row gap-2 md:gap-0 items-center md:space-x-4">
                     {feature.icon}
                     <h3 className="text-2xl font-semibold text-[#807045]">{feature.title}</h3>
                   </div>
@@ -97,7 +97,7 @@ export default function PrintingPage() {
       {/* Industry Use Cases */}
       <div className="py-16 bg-white">
         <div className="max-w-6xl mx-auto px-3 md:px-6">
-          <h2 className="text-3xl font-semibold text-[#807045] text-center mb-8">Who Benefits from Our Solutions?</h2>
+          <h2 className="text-3xl font-bold text-[#807045] text-center mb-8">Who Benefits from Our Solutions?</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               {
@@ -123,7 +123,7 @@ export default function PrintingPage() {
                 transition={{ delay: 0.3 + index * 0.2 }}
                 className="p-6 bg-[#f5f3ee] rounded-xl shadow-md transform hover:scale-105 transition-all"
               >
-                <div className="flex items-center space-x-4">
+                <div className="flex flex-col md:flex-row gap-2 md:gap-0 items-center md:space-x-4">
                   {useCase.icon}
                   <h3 className="text-xl font-semibold text-[#807045]">{useCase.title}</h3>
                 </div>
@@ -136,7 +136,7 @@ export default function PrintingPage() {
 
       {/* FAQ Section */}
       <div className="py-16 px-3 md:px-6 max-w-6xl mx-auto">
-        <h2 className="text-3xl font-semibold text-[#807045] text-center mb-8">Frequently Asked Questions</h2>
+        <h2 className="text-3xl font-bold text-[#807045] text-center mb-8">Frequently Asked Questions</h2>
         <div className="space-y-6">
           {[
             {
@@ -159,7 +159,7 @@ export default function PrintingPage() {
               transition={{ delay: 0.3 + index * 0.2 }}
               className="p-6 bg-white rounded-lg shadow-md"
             >
-              <div className="flex items-center space-x-4">
+              <div className="flex flex-col md:flex-row gap-2 md:gap-0 items-center md:space-x-4">
                 <HelpCircle size={30} className="text-[#807045]" />
                 <h3 className="text-lg font-semibold">{faq.question}</h3>
               </div>

@@ -117,7 +117,7 @@ export default function ContactModal() {
                   </div>
                 </div>
 
-                <div className="flex flex-col md:flex-row gap-8 md:gap-10 pt-5">
+                <div className="flex flex-col md:flex-row gap-8 md:gap-10 py-5">
                   <div className="flex flex-col w-full text-start mt-2">
                     <label className="text-white font-semibold mb-2">Type of Project</label>
                     <input name="project" type="text" placeholder="e.g. 'High-rise construction', 'Bridge installation'" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleChange} />
@@ -139,30 +139,13 @@ export default function ContactModal() {
                   </div>
                 </div>
 
-                <div className="flex flex-col md:flex-row gap-10 pb-5">
-                  <div className="flex flex-col w-full text-start mt-2">
-                    <label className="text-white font-semibold mb-2">Load Type & Estimated Weight</label>
-                    <input name="project" type="text" placeholder="e.g, Steel beams, aprx. 20 tons" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleChange} />
-                  </div>                  
-                  
-                  <div className="flex flex-col w-full text-start mt-2">
-                    <label className="text-white font-semibold mb-2">Best Time to Contact</label>
-                    <select name="bestTime" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleChange}>
-                      <option value="Morning">Morning</option>
-                      <option value="Afternoon">Afternoon</option>
-                      <option value="Evening">Evening</option>
-                    </select>
-                  </div> 
-
-                  <div className="flex flex-col w-full text-start mt-2">
-                    <label className="text-white font-semibold mb-2">Preferred Contact Method</label>
-                    <select name="bestTime" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleChange}>
-                      <option value="Email">Email</option>
-                      <option value="Phone">Phone</option>
-                      <option value="WhatsApp">WhatsApp</option>
-                    </select>
-                  </div>
-                </div>
+                <textarea
+                  name="message"
+                  rows={5}
+                  placeholder="How can we help you? (Optional)"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  onChange={handleChange}
+                />
 
                 <div className="flex-center py-5">
                   <button type="submit" className="bg-green-600 text-white px-6 py-3 rounded-xl hover:bg-green-700 transition w-fit">

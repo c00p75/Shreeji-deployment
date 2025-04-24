@@ -109,7 +109,7 @@ const RequestQuoteModal = ({ product, isOpen, onClose }) => {
               </div> 
               {product['brand logo'] && (
                 <div className='absolute inset-0 w-full h-full flex-center mb-5'>
-                  <Image src={product['brand logo']} quality={100} alt={product['name']} className='w-auto h-[95%] z-[1] object-contain opacity-10' />
+                  <Image src={product['brand logo']} quality={100} alt={product['name']} className='w-auto h-[95%] z-[1] object-contain opacity-5' />
                 </div>
               )}           
             </div>

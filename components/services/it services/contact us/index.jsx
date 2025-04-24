@@ -66,12 +66,12 @@ export default function ContactModal() {
               </button>
 
               <h2 className="md:px-10 text-4xl md:text-6xl font-extrabold bg-gradient-to-r from-[white] to-[whitesmoke] bg-clip-text text-transparent text-center mt-10 mb-14">
-                Tell Us About Your Business Needs
+                Get Tailored IT Solutions
               </h2>
 
               <form onSubmit={handleSubmit} className="space-y-6 flex flex-col">
                 <div className="flex flex-col gap-10 md:gap-4">
-                <div className="flex flex-col md:flex-row gap-10 md:gap-10">
+                  <div className="flex flex-col md:flex-row gap-10 md:gap-10">
                     <div className="flex flex-col w-full text-start mt-2">
                       <label className="text-white font-semibold mb-2">Name</label>
                       <input name="fullName" type="text" required placeholder="Full Name" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleChange} />
@@ -126,12 +126,10 @@ export default function ContactModal() {
                   <legend className="font-semibold text-3xl pt-10">Services of Interest</legend>
                   <div className="flex md:justify-center flex-wrap md:space-x-5 gap-5 py-5">
                     {[
-                      "SIM Registration & Management",
-                      "Mobile Money Services",
-                      "Quality Assurance",
-                      "Customer Support Services",
-                      "Back Office Support",
-                      "Risk & Compliance Management"
+                      "Hardware & Infrastructure",
+                      "System & Platform Development",
+                      "IT Consulting & Managed Services",
+                      "Not sure yet – please advise",
                     ].map((solution) => (
                       <label key={solution} className="flex items-center w-fit">
                         <input
@@ -149,7 +147,7 @@ export default function ContactModal() {
                 <textarea
                   name="message"
                   rows={5}
-                  placeholder="How can we help you? (Optional)"
+                  placeholder="Brief Description of Your Needs (Optional)"
                   className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   onChange={handleChange}
                 />

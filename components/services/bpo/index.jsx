@@ -75,7 +75,7 @@ export default function BPOPage() {
                 transition={{ delay: 0.3 + index * 0.2 }}
                 className="bg-white py-8 px-3 md:px-8 rounded-xl shadow-lg hover:shadow-2xl hover:scale-105 transform transition-all"
               >
-                <div className="flex items-center space-x-4">
+                <div className="flex flex-col md:flex-row gap-2 md:gap-0 items-center space-x-4">
                   {service.icon}
                   <h3 className="text-2xl font-semibold text-[#807045]">{service.title}</h3>
                 </div>
@@ -134,7 +134,7 @@ export default function BPOPage() {
               transition={{ delay: 0.3 + index * 0.2 }}
               className="bg-white py-8 px-3 md:px-8 rounded-xl shadow-lg hover:scale-105 transform transition-all"
             >
-              <div className="flex items-center justify-center md:text-start space-x-4">
+              <div className="flex flex-col md:flex-row gap-2 md:gap-0 items-center justify-center md:text-start space-x-4">
                 {benefit.icon}
                 <h3 className="text-xl font-semibold text-[#807045]">{benefit.title}</h3>
               </div>
@@ -145,7 +145,7 @@ export default function BPOPage() {
       </div>
 
       {/* Client Testimonials Section */}
-      <div className="py-20 px-8 bg-[#f5f5f5] text-center">
+      <div className="py-20 px-8 bg-[#f5f5f5] text-center hidden">
         <h2 className="text-3xl font-semibold text-[#807045]">What Our Clients Say</h2>
         <div className="mt-10">
           <blockquote className="text-lg font-semibold text-gray-700 max-w-2xl mx-auto">

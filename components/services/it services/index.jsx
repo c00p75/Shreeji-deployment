@@ -8,27 +8,28 @@ import '@/components/services/style.scss'
 import Link from "next/link";
 import Image from "next/image";
 import MovingTextEffect from "@/components/moving text";
+import ContactModal from "./contact us";
 
 const itSolutions = [
   {
     title: "Hardware & Infrastructure",
     link: "it-solutions/hardware-and-infrastructure",
     description:
-      "We provide a complete range of hardware solutions, from supplying computers, mobile devices, and networking equipment to setting up your server infrastructure. Our team ensures smooth installation and setup of your IT infrastructure, along with ongoing maintenance and support. We specialize in custom-built hardware solutions such as biometric scanners, internet kiosks, and multi-function printers tailored to your business needs. We offer 24/7 monitoring and support services to ensure your systems are always operating at peak performance.",
+      "We deliver end-to-end hardware solutions—from supplying computers and networking gear to setting up servers and custom devices like biometric scanners and kiosks. Our team handles installation, maintenance, and 24/7 support to keep your systems running smoothly.",
     icon: <Server size={40} className="text-[#807045]" />,
   },
   {
     title: "System & Platform Development",
     link: "it-solutions/system-and-platform-development",
     description:
-      "We specialize in developing custom systems and platforms designed to solve specific business challenges. Our expertise includes developing mobile apps, document management systems, and data capture platforms for real-time reporting and analytics. Whether it's building enterprise-level applications or integrating existing software into your infrastructure, we focus on delivering scalable, secure, and efficient solutions. Our team works with you every step of the way to ensure your platform aligns with your business objectives and enhances operational efficiency.",
+      "We build custom platforms to solve real business challenges—from mobile apps to data-driven reporting tools. Whether you're integrating systems or launching enterprise apps, our scalable and secure solutions are tailored to your goals and workflows.",
     icon: <Monitor size={40} className="text-[#807045]" />,
   },
   {
     title: "IT Consulting & Managed Services",
     link: "it-solutions/it-consulting-and-managed-services",
     description:
-      "Our IT consulting services help businesses optimize their IT strategies, improve infrastructure, and address technical challenges. We provide expert advice on system integration, network design, cloud services, and cybersecurity. Our managed services offering includes proactive monitoring, security patching, troubleshooting, and IT support, ensuring your business stays up-to-date and secure. We also provide disaster recovery planning, backup solutions, and business continuity services to minimize downtime and safeguard your data.",
+      "We help businesses optimize IT strategies and infrastructure through expert consulting, system integration, cloud services, and cybersecurity. Our managed services include 24/7 support, proactive monitoring, and disaster recovery to keep your operations secure and resilient.",
     icon: <Shield size={40} className="text-[#807045]" />,
   },
 ];
@@ -36,7 +37,7 @@ const itSolutions = [
 export default function ITSolutionsPage() {
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-gradient-to-br from-white to-[#f9f6e6] min-h-screen">
       {/* Hero Section */}
       <MovingTextEffect
         title="Our IT Solutions"
@@ -63,21 +64,20 @@ export default function ITSolutionsPage() {
       </div> */}
 
       {/* Introduction Section */}
-      <div className="max-w-6xl mx-auto py-16 px-6 text-center">
+      <div className="max-w-6xl mx-auto pt-16 px-6 text-center">
         <p className="text-lg text-gray-600">
           At Shreeji Investments Limited, we understand that IT is the backbone of modern businesses. We offer a full suite of IT services designed to support businesses of all sizes. From providing state-of-the-art hardware and infrastructure to developing custom systems and platforms, our team is dedicated to delivering innovative, efficient, and secure solutions to meet your unique needs.
         </p>
-      </div>
-
+      </div>  
       {/* IT Solutions List */}
-      <div className="max-w-7xl mx-auto py-16 px-6 grid md:grid-cols-3 gap-8">
+      <div className="max-w-7xl mx-auto py-16 px-3 md:px-6 grid md:grid-cols-3 gap-8">
         {itSolutions.map((solution, index) => (
           <Link href={solution.link} key={index}>
             <motion.div              
-              className="bg-gray-100 rounded-2xl p-6 shadow-lg"
+              className="bg-white rounded-2xl p-6 shadow-lg"
               whileHover={{ scale: 1.05 }}
             >
-              <div className="flex items-center gap-4">
+              <div className="flex flex-col md:flex-row gap-2 md:gap-4 items-center">
                 {solution.icon}
                 <h2 className="text-2xl font-semibold text-[#807045]">{solution.title}</h2>
               </div>
@@ -86,15 +86,16 @@ export default function ITSolutionsPage() {
               >     
                 {solution.description}         
               </motion.p>
+              <div className="text-[#807045] mt-6 inline-block">Explore →</div> 
             </motion.div>
           </Link>
         ))}
       </div>
 
       {/* Additional Section - Benefits of Our IT Solutions */}
-      <div className="bg-gray-50 py-16 px-6">
+      <div className="py-16 px-3 md:px-6">
         <div className="max-w-6xl mx-auto text-center">
-          <h2 className="text-3xl font-semibold text-[#807045]">Why Choose Our IT Solutions?</h2>
+          <h2 className="text-3xl font-bold text-[#807045]">Why Choose Our IT Solutions?</h2>
           <p className="mt-4 text-lg text-gray-600">
             Our IT solutions go beyond just providing products and services. We focus on delivering long-term value to your business through:
           </p>
@@ -127,13 +128,13 @@ export default function ITSolutionsPage() {
         </div>
       </div>
 
-      {/* Footer Section */}
-      <div className="bg-[#807045] text-white py-8">
-        <div className="max-w-6xl mx-auto text-center">
-          <p className="text-lg">
-            For more information, contact us at <strong>sales@shreeji.co.zm</strong> or call <strong>+260 211 257141</strong>
-          </p>
-        </div>
+      {/* Call to Action */}
+      <div className="text-center py-16 bg-[#807045] text-white shadow-inner px-5 md:px-0">
+        <h2 className="text-3xl font-semibold mb-6">Get Started Today</h2>
+        <p className="text-lg max-w-2xl mx-auto mb-8">
+          Your business deserves IT solutions that evolve with your needs. From infrastructure to custom platforms, our team is here to help you scale, streamline, and succeed.
+        </p>        
+        <ContactModal />
       </div>
     </div>
   );

@@ -11,6 +11,7 @@ import sample1 from "@/public/backgrounds/hero-print.png";
 import sample2 from "@/public/backgrounds/hero-print.png";
 import sample3 from "@/public/backgrounds/hero-print.png";
 import MovingTextEffect from '@/components/moving text';
+import ContactModal from '../contact us';
 
 export default function PrintingPage() {
   return (
@@ -23,7 +24,7 @@ export default function PrintingPage() {
       />
 
       {/* About the Service */}
-      <section className="py-16 px-8">
+      <section className="py-16 px-5 md:px-8">
         <div className="max-w-6xl mx-auto text-center">
           <motion.h2 
             initial={{ opacity: 0, y: -20 }} 
@@ -53,7 +54,7 @@ export default function PrintingPage() {
       </section>
 
       {/* Service Highlights */}
-      <section className="bg-[#f8f8f8] py-16 px-8">
+      <section className="bg-[#f9f6e6] py-16 px-3 md:px-8">
         <div className="max-w-6xl mx-auto text-center">
           <motion.h3 
             initial={{ opacity: 0, y: -20 }} 
@@ -90,7 +91,7 @@ export default function PrintingPage() {
       </section>
 
       {/* Showcase Works Section */}
-      <section className="py-16 px-8 bg-[#f8f8f8]">
+      <section className="py-16 px-3 md:px-8 bg-[#f9f6e6]">
         <div className="max-w-6xl mx-auto text-center">
           <motion.h3 
             initial={{ opacity: 0, y: -20 }} 
@@ -124,7 +125,7 @@ export default function PrintingPage() {
       </section>
 
       {/* Service Features */}
-      <section className="py-16 px-8">
+      <section className="py-16 px-3 md:px-8">
         <div className="max-w-6xl mx-auto text-center">
           <motion.h3 
             initial={{ opacity: 0, y: -20 }} 
@@ -158,7 +159,7 @@ export default function PrintingPage() {
       </section>
 
       {/* Client Testimonials */}
-      <section className="py-16 px-8 bg-[#f8f8f8]">
+      <section className="py-16 px-8 bg-[#f9f6e6]">
         <div className="max-w-6xl mx-auto text-center">
           <motion.h3 
             initial={{ opacity: 0, y: -20 }} 
@@ -196,9 +197,8 @@ export default function PrintingPage() {
             <p className="text-lg mb-8">
               Ready to optimize your business's printing operations? Contact us today for a personalized consultation and discover how we can help streamline your printing processes.
             </p>
-            <button className="px-8 py-3 bg-white text-[#807045] font-semibold rounded-full shadow-md hover:bg-[#f0ebd5] transition-all">
-              Contact us
-            </button>
+            
+            <ContactModal />
           </div>
         </div>        
     </div>
