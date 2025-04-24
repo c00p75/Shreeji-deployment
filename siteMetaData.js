@@ -1,5 +1,5 @@
 const siteMetadata = {
-  title: "Shreeji Investment Ltd",
+  title: "Shreeji Investment Ltd | ICT, Printing, and Advertising Solutions in Zambia",
   author: "Shreeji Investments Limited",
   headerTitle: "hreeji Investment Ltd",
   description: `Shreeji Investments Limited is a leading Zambian company providing ICT solutions, large format printing, system development, and BPO services since 1998.`,
