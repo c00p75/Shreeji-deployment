@@ -40,7 +40,7 @@ const RequestQuoteModal = ({ product, isOpen, onClose }) => {
 
     if (body) { body.classList.remove('overflow-hidden') }
 
-    if(nav){ nav.style.zIndex = '5'}
+    if(nav){ nav.style.zIndex = '10'}
   }
  
 
