@@ -21,7 +21,7 @@ export default function SkyliftServicesPage() {
 
       {/* Skylift Services Overview */}
       <div className="max-w-6xl mx-auto py-20 px-3 md:px-8">
-        <h2 className="text-4xl font-bold text-[#807045] mb-8 text-center">Skylift Solutions</h2>
+        <h2 className="text-4xl font-bold text-[#807045] mb-14 text-center">Why Choose Skylift Services?</h2>        
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
           {[
             {
@@ -158,19 +158,6 @@ export default function SkyliftServicesPage() {
               <p className="mt-4 text-gray-600">{industry.description}</p>
             </motion.div>
           ))}
-        </div>
-      </div>
-
-      {/* Why Choose Us Section */}
-      <div className="light-bg-gradient py-20 px-8">
-        <h2 className="text-4xl font-bold text-[#807045] mb-12 text-center">Why Choose Skylift Services?</h2>
-        <div className="text-center max-w-3xl mx-auto">
-          <p className="text-lg text-gray-600 mb-6">
-            Skylift Services provides dependable boom lift access for small to mid-scale projects. Whether you need to work at height for installations or maintenance, we ensure a safe and efficient setup tailored to your site.
-          </p>
-          <p className="text-lg text-gray-600">
-            Our equipment is well-maintained, and our team is responsive and professional, making us a reliable partner for your elevated work needs.
-          </p>
         </div>
       </div>
 
