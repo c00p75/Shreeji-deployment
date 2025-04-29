@@ -291,7 +291,7 @@
   overflow: hidden;
   display: block;
   line-height: 1.2;
-
+  font-weight: 600 !important;
   @media (width <= 768px) {
     font-weight: 900 !important;
   }
