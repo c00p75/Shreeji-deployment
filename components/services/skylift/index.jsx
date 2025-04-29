@@ -1,19 +1,21 @@
 'use client'
 
 import { motion } from "framer-motion";
-import { Truck, Loader, Server, ArrowUpRight, Building, HardHat, Factory, Eclipse, Construction } from "lucide-react";
+import { Truck, Loader, Server, ArrowUpRight, Building, HardHat, Factory, Eclipse, Construction, Building2 } from "lucide-react";
 import ContactModal from "./contact us";
 import '@/components/services/style.scss';
 import MovingTextEffect from "@/components/moving text";
+import skylift1 from "@/public/elements/SEPL-TZ-50-range.jpg";
+import skylift2 from "@/public/elements/skylift-2.jpg";
+import Image from "next/image";
 
 export default function SkyliftServicesPage() {
   return (
     <div className="skylift-services-page bg-gradient-to-br from-[#fffdf5] to-[#f9f6e6] text-[#2a2a2a]">
-
       {/* Hero Section */}
       <MovingTextEffect
         title="Skylift Services"
-        subtitle="Comprehensive lifting and material handling solutions for large-scale industrial, construction, and infrastructure projects. We offer top-tier cranes, equipment, and a highly trained team to elevate your operations."
+        subtitle="We provide safe, flexible access to elevated work areas for maintenance, construction, installations, and more. Ideal for reaching heights up to 55 ft with precise horizontal outreach."
         image=""
       />
 
@@ -23,19 +25,19 @@ export default function SkyliftServicesPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
           {[
             {
-              icon: <Truck size={50} className="text-[#807045]" />,
-              title: "Heavy Lifting Solutions",
-              description: "With our fleet of powerful cranes and lifting equipment, we can safely and efficiently lift and move heavy materials, maximizing operational uptime and safety."
+              icon: <Building2 size={50} className="text-[#807045]" />,
+              title: "Aerial Access Services",
+              description: "We provide elevated access using our Genie TZ-50 boom lift, allowing safe and stable work at heights for tasks such as repairs, painting, lighting installation, and more."
             },
             {
               icon: <Loader size={50} className="text-[#807045]" />,
-              title: "Material Handling Services",
-              description: "Our expert team provides tailored material handling services, ensuring efficient movement and safe delivery of materials across your construction or industrial sites."
+              title: "Compact & Versatile Reach",
+              description: "Our skylift features a working height of 55 ft and horizontal outreach of nearly 30 ft, making it suitable for tight access areas and elevated jobs that require precise positioning."
             },
             {
               icon: <Server size={50} className="text-[#807045]" />,
-              title: "Site Consultation & Planning",
-              description: "Our team offers comprehensive site consultations and planning services to ensure that every lifting operation is optimized for safety and efficiency, minimizing delays and risks."
+              title: "Site Setup & Safety Planning",
+              description: "We assess each site to ensure proper placement and operation of the boom lift. Our team prioritizes safety and efficiency, coordinating with your staff as needed."
             }
           ].map((service, index) => (
             <motion.div
@@ -54,28 +56,55 @@ export default function SkyliftServicesPage() {
           ))}
         </div>
       </div>
+      
+      <div className="bg-white py-16 px-4 md:px-20" id="specifications">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-4xl font-semibold text-[#807045] mb-10 text-center">Genie TZ™-50 Specifications</h2>
+          <Image
+                src={skylift1}
+                alt="Shreeji"
+                quality={100}
+                className="w-full h-auto mb-10 lg:mb-5"
+              />
+          <div className="flex flex-col lg:flex-row lg:gap-10 items-stretch">
+            {/* Model: TZ-50 */}
+            <div className="flex-1 bg-[#f9f6e6] shadow-md">
+              <ul className="text-gray-700">
+                <li className="p-3 even:bg-[#a49261] even:text-white"><strong>Working Height Max:</strong> 55 ft 6 in (16.92 m)</li>
+                <li className="p-3 even:bg-[#a49261] even:text-white"><strong>Platform Height:</strong> 49 ft 6 in (15.09 m)</li>
+                <li className="p-3 even:bg-[#a49261] even:text-white"><strong>Horizontal Reach:</strong> 29 ft 2 in (8.89 m)</li>
+                <li className="p-3 even:bg-[#a49261] even:text-white"><strong>Clear Out Reach:</strong> 23 ft 1 in (7.04 m)</li>
+                <li className="p-3 even:bg-[#a49261] even:text-white"><strong>Up-and-Over Clearance:</strong> 22 ft (6.71 m)</li>
+                <li className="p-3 even:bg-[#a49261] even:text-white"><strong>Platform Size (L × W):</strong> 2'2.8" × 3'8" (0.68 m × 1.12 m)</li>
+                <li className="p-3 even:bg-[#a49261] even:text-white"><strong>Stowed Height:</strong> 6 ft 10 in (2.08 m)</li>
+                <li className="p-3 even:bg-[#a49261] even:text-white"><strong>Stowed Dimensions (L × W):</strong> 23 ft 6 in × 5 ft 6 in (7.16 m × 1.68 m)</li>
+                <li className="p-3 even:bg-[#a49261] even:text-white"><strong>Outrigger Footprint:</strong> 14 ft 4 in × 14 ft 4 in (4.37 m × 4.37 m)</li>                
+              </ul>
+            </div>
 
-      <div className="light-bg-gradient py-20 px-8 relative">
-        <h2 className="text-4xl font-bold text-[#807045] mb-12 text-center">Advanced Skylift Technology</h2>
-        <div className="flex flex-col md:flex-row items-center space-y-12 md:space-y-0 justify-between">
-          <div className="flex-1 text-center md:text-left">
+            
+            <div className="flex-1 bg-[#f9f6e6] shadow-md">
+              <ul className="text-gray-700">                
+                <li className="p-3 even:bg-[#f9f6e6] odd:bg-[#a49261] lg:odd:bg-[#f9f6e6] lg:even:bg-[#a49261] odd:text-white lg:odd:text-gray-700 lg:even:text-white"><strong>Lift Capacity (Standard):</strong> 500 lb (227 kg)</li>
+                <li className="p-3 even:bg-[#f9f6e6] odd:bg-[#a49261] lg:odd:bg-[#f9f6e6] lg:even:bg-[#a49261] odd:text-white lg:odd:text-gray-700 lg:even:text-white"><strong>Rotating Platform Capacity:</strong> 500 lb (227 kg)</li>
+                <li className="p-3 even:bg-[#f9f6e6] odd:bg-[#a49261] lg:odd:bg-[#f9f6e6] lg:even:bg-[#a49261] odd:text-white lg:odd:text-gray-700 lg:even:text-white"><strong>Platform Rotation:</strong> 160° Hydraulic</li>
+                <li className="p-3 even:bg-[#f9f6e6] odd:bg-[#a49261] lg:odd:bg-[#f9f6e6] lg:even:bg-[#a49261] odd:text-white lg:odd:text-gray-700 lg:even:text-white"><strong>Turntable Rotation:</strong> 359°</li>
+                <li className="p-3 even:bg-[#f9f6e6] odd:bg-[#a49261] lg:odd:bg-[#f9f6e6] lg:even:bg-[#a49261] odd:text-white lg:odd:text-gray-700 lg:even:text-white"><strong>Towing Speed:</strong> 60 mph (97 km/h)</li>
+                <li className="p-3 even:bg-[#f9f6e6] odd:bg-[#a49261] lg:odd:bg-[#f9f6e6] lg:even:bg-[#a49261] odd:text-white lg:odd:text-gray-700 lg:even:text-white"><strong>Power Source:</strong> 24V (4 × 6V 225Ah)</li>
+                <li className="p-3 even:bg-[#f9f6e6] odd:bg-[#a49261] lg:odd:bg-[#f9f6e6] lg:even:bg-[#a49261] odd:text-white lg:odd:text-gray-700 lg:even:text-white"><strong>Weight:</strong> 4,400 lb (1,996 kg)</li>
+                <li className="p-3 even:bg-[#f9f6e6] odd:bg-[#a49261] lg:odd:bg-[#f9f6e6] lg:even:bg-[#a49261] odd:text-white lg:odd:text-gray-700 lg:even:text-white"><strong>Sound Level:</strong> &lt; 70 dBA</li>
+                <li className="p-3 even:bg-[#f9f6e6] odd:bg-[#a49261] lg:odd:bg-[#f9f6e6] lg:even:bg-[#a49261] odd:text-white lg:odd:text-gray-700 lg:even:text-white"><strong>Vibration:</strong> &lt; 2.5 m/s²</li>
+              </ul>
+            </div>
+          </div>
+          <div className="mt-24">
+            <h2 className="text-4xl font-semibold text-[#807045] text-center">Safety Standards</h2>
             <div className="text-center max-w-4xl mx-auto">
-              <h3 className="text-4xl font-semibold text-[#807045]">State-of-the-Art Equipment</h3>
-              <p className="mt-4 text-gray-600 px-3 md:px-0">
-                Our fleet of cutting-edge cranes and lifting equipment is constantly updated to ensure that we provide the most efficient and reliable service. Our technology is rigorously tested to meet the highest standards of safety and performance.
+              <p className="text-lg text-gray-600 mb-6">
+                Our operators are trained in using the Genie TZ-50 for safe access, and we follow site-specific safety protocols for setup and operation. Regular inspections and pre-operation checks ensure reliable performance. We also work closely with your team to identify any access challenges and mitigate risk.
               </p>
             </div>
           </div>
-        </div>
-
-        <h2 className="text-4xl font-semibold text-[#807045] mt-16 mb-5 text-center">Safety Standards</h2>
-        <div className="text-center max-w-4xl mx-auto">
-          <p className="text-lg text-gray-600 mb-6">
-            At Skylift Services, safety is our number one priority. Our team follows strict safety protocols and utilizes the latest safety equipment to ensure that all operations are carried out with the highest standards of safety and performance.
-          </p>
-          <p className="text-lg text-gray-600">
-            All our equipment undergoes regular safety inspections, and our operators are highly trained in both safety procedures and operational efficiency. You can trust Skylift Services to provide a safe working environment at every stage of your project.
-          </p>
         </div>
       </div>
 
@@ -137,10 +166,10 @@ export default function SkyliftServicesPage() {
         <h2 className="text-4xl font-bold text-[#807045] mb-12 text-center">Why Choose Skylift Services?</h2>
         <div className="text-center max-w-3xl mx-auto">
           <p className="text-lg text-gray-600 mb-6">
-            Skylift Services stands out in the industry for several reasons. Our fleet of modern equipment, highly skilled operators, and commitment to safety ensure that we deliver superior lifting solutions for every project. Whether you're working on a construction site or an infrastructure project, Skylift Services has the expertise to meet your needs.
+            Skylift Services provides dependable boom lift access for small to mid-scale projects. Whether you need to work at height for installations or maintenance, we ensure a safe and efficient setup tailored to your site.
           </p>
           <p className="text-lg text-gray-600">
-            We also pride ourselves on providing unparalleled customer service, ensuring that each project runs smoothly and efficiently from start to finish.
+            Our equipment is well-maintained, and our team is responsive and professional, making us a reliable partner for your elevated work needs.
           </p>
         </div>
       </div>

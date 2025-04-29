@@ -73,10 +73,10 @@ const Navbar = () => {
             'title': 'SIM Registration & Management',
             'link': '/services/bpo/sim-registration-and-management'
           },
-          {
-            'title': 'Mobile Money Services',
-            'link': '/services/bpo/mobile-money-services'
-          },
+          // {
+          //   'title': 'Mobile Money Services',
+          //   'link': '/services/bpo/mobile-money-services'
+          // },
           {
             'title': 'Quality Assurance',
             'link': '/services/bpo/quality-assurance'

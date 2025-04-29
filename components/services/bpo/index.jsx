@@ -41,26 +41,30 @@ export default function BPOPage() {
               description: "We partner with telecom providers to handle SIM registration and verification, reducing wait times and improving customer satisfaction. We offer quick, compliant, and secure registration solutions for businesses across sectors.",
               link: '/services/bpo/sim-registration-and-management'
             },
-            {
-              icon: <Phone size={50} className="text-[#807045]" />,
-              title: "Mobile Money Services",
-              description: "Our mobile money operations ensure secure transactions, account management, and customer support with seamless mobile banking services. Whether you’re a financial institution or mobile network provider, we handle everything from onboarding to transactions.",            
-              link: '/services/bpo/mobile-money-services'},
+            // {
+            //   icon: <Phone size={50} className="text-[#807045]" />,
+            //   title: "Mobile Money Services",
+            //   description: "Our mobile money operations ensure secure transactions, account management, and customer support with seamless mobile banking services. Whether you’re a financial institution or mobile network provider, we handle everything from onboarding to transactions.",            
+            //   link: '/services/bpo/mobile-money-services'
+            // },
             {
               icon: <Clipboard size={50} className="text-[#807045]" />,
               title: "Quality Assurance",
               description: "We conduct rigorous quality control and assurance checks, ensuring the highest standards across all outsourced services. Our team is dedicated to meeting and exceeding your quality expectations.",
-              link: '/services/bpo/quality-assurance'},
+              link: '/services/bpo/quality-assurance'
+            },
             {
               icon: <Users size={50} className="text-[#807045]" />,
               title: "Customer Support Services",
               description: "Enhance customer experience with 24/7 support services including call center operations, chat support, and helpdesk solutions. Our multi-channel approach guarantees rapid, efficient resolution of customer issues.",
-              link: '/services/bpo/customer-support-services'},
+              link: '/services/bpo/customer-support-services'
+            },
             {
               icon: <CheckCircle size={50} className="text-[#807045]" />,
               title: "Back Office Support",
               description: "We handle back-office functions such as data entry, document processing, and administrative tasks, allowing your team to focus on strategic goals. Our back-office services are designed to ensure your operations run smoothly and efficiently.",
-              link: '/services/bpo/back-office-support'},
+              link: '/services/bpo/back-office-support'
+            },
             {
               icon: <ShieldCheck size={50} className="text-[#807045]" />,
               title: "Risk & Compliance Management",
@@ -73,14 +77,17 @@ export default function BPOPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 + index * 0.2 }}
-                className="bg-white py-8 px-3 md:px-8 rounded-xl shadow-lg hover:shadow-2xl hover:scale-105 transform transition-all"
+                className="flex flex-col justify-between h-full bg-white py-8 px-3 md:px-8 rounded-xl shadow-lg hover:shadow-2xl hover:scale-105 transform transition-all md:min-h-[26rem]"
               >
-                <div className="flex flex-col md:flex-row gap-2 md:gap-0 items-center space-x-4">
-                  {service.icon}
-                  <h3 className="text-2xl font-semibold text-[#807045]">{service.title}</h3>
+                <div className="flex flex-col">
+                  <div className="flex flex-col md:flex-row gap-2 md:gap-0 items-center space-x-4">
+                    {service.icon}
+                    <h3 className="text-2xl font-semibold text-[#807045]">{service.title}</h3>
+                  </div>
+                  <p className="mt-4 text-gray-700">{service.description}</p>
                 </div>
-                <p className="mt-4 text-gray-700">{service.description}</p>
-                <div className="text-[#807045] mt-6 inline-block">Explore {service.title} →</div>
+                
+                <div className="text-[#807045] inline-block">Explore {service.title} →</div>
               </motion.div>
             </Link>
           ))}
