@@ -147,10 +147,56 @@ const Navbar = () => {
 
           {/*Navbar Links */}
           <ul id="navbar-links" className={`flex space-x-6 pl-1 py-5 rounded-lg ${isMobileMenuOpen ? 'mobile-menu-open': 'mobile-menu-closed'}`}>
-            <li><Link href="/" className={`${pathname === "/" ? "active-link" : ""}`} onClick={() => setIsMobileMenuOpen(false)}>Home</Link></li>
-            <li><Link href="/about-us" className={`${pathname === "/about-us" ? "active-link" : ""}`} onClick={() => setIsMobileMenuOpen(false)}>About Us</Link></li>
+            <li><Link href="/" className={`${pathname === "/" ? "active-link" : ""}`} onClick={() => setIsMobileMenuOpen(false)}>Home</Link></li>            
 
-            {/* Desktop Mega Menu Trigger */}        
+            {/* Mege Menus Start */}
+
+            {/* Desktop Mega Menu Trigger */}   
+            <li className="group flex gap-1">
+              <Link href="/products" className={`${pathname === "/products" ? "active-link" : ""}`}>Products</Link>
+              <button onMouseEnter={() => setIsProductMenuOpen(true)} onMouseLeave={() => setIsProductMenuOpen(false)} className="focus:outline-none">
+                <ChevronDown size={24} />
+              </button>
+
+              {/* Mega Menu */}
+              {isProductMenuOpen && (
+                <div className=" pt-5 absolute left-0 top-10" onMouseEnter={() => setIsProductMenuOpen(true)} onMouseLeave={() => setIsProductMenuOpen(false)}>
+                  <div className="mega-menu">
+                    {productCategories && productCategories.map(({ category, subcategories }, index) => (
+                      <div>                        
+                        <Link href={`/products/${encodeURIComponent(category)}`} className="font-medium cursor-pointer relative">
+                          <h4 className="font-bold text-lg">{category}</h4>
+                          <span className="absolute mt-1 h-[2px] w-full bg-[#dbd4c0] rounded-full" />
+                        </Link>                       
+
+                        {subcategories[0] ? (
+                          <ul className="mt-5 space-y-2">
+                            {subcategories.map((sub, subIndex) => (
+                              <li key={subIndex}>
+                                <Link
+                                  href={`/products/${encodeURIComponent(category)}/${encodeURIComponent(sub)}`}
+                                  className={`font-medium cursor-pointer ${pathname === `/products/${encodeURIComponent(category)}/${encodeURIComponent(sub)}` ? "mega-menu-active-link  " : ""}`}
+                                >
+                                    {sub}
+                                </Link>
+                              </li>                            
+                            ))}                          
+                          </ul>
+                          ) : (
+                            <ul className="mt-5 space-y-2">
+                              <li>
+                                <Link className={`font-medium cursor-pointer ${pathname === `/products/${encodeURIComponent(category)}` ? "mega-menu-active-link  " : ""}`} href={`/products/${encodeURIComponent(category)}`}>{category}</Link>
+                              </li>                      
+                          </ul>
+                          )
+                        }                        
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </li>
+
             <li className="group flex items-center">
               <Link
                 href="/services"
@@ -201,85 +247,9 @@ const Navbar = () => {
                 </div>
               )}
             </li>
-            <li className="group flex gap-1">
-              <Link href="/products" className={`${pathname === "/products" ? "active-link" : ""}`}>Products</Link>
-              <button onMouseEnter={() => setIsProductMenuOpen(true)} onMouseLeave={() => setIsProductMenuOpen(false)} className="focus:outline-none">
-                <ChevronDown size={24} />
-              </button>
 
-              {/* Mega Menu */}
-              {isProductMenuOpen && (
-                <div className=" pt-5 absolute left-0 top-10" onMouseEnter={() => setIsProductMenuOpen(true)} onMouseLeave={() => setIsProductMenuOpen(false)}>
-                  <div className="mega-menu">
-                    {productCategories && productCategories.map(({ category, subcategories }, index) => (
-                      <div>                        
-                        <Link href={`/products/${encodeURIComponent(category)}`} className="font-medium cursor-pointer relative">
-                          <h4 className="font-bold text-lg">{category}</h4>
-                          <span className="absolute mt-1 h-[2px] w-full bg-[#dbd4c0] rounded-full" />
-                        </Link>                       
-
-                        {subcategories[0] ? (
-                          <ul className="mt-5 space-y-2">
-                            {subcategories.map((sub, subIndex) => (
-                              <li key={subIndex}>
-                                <Link
-                                  href={`/products/${encodeURIComponent(category)}/${encodeURIComponent(sub)}`}
-                                  className={`font-medium cursor-pointer ${pathname === `/products/${encodeURIComponent(category)}/${encodeURIComponent(sub)}` ? "mega-menu-active-link  " : ""}`}
-                                >
-                                    {sub}
-                                </Link>
-                              </li>                            
-                            ))}                          
-                          </ul>
-                          ) : (
-                            <ul className="mt-5 space-y-2">
-                              <li>
-                                <Link className={`font-medium cursor-pointer ${pathname === `/products/${encodeURIComponent(category)}` ? "mega-menu-active-link  " : ""}`} href={`/products/${encodeURIComponent(category)}`}>{category}</Link>
-                              </li>                      
-                          </ul>
-                          )
-                        }                        
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </li>
-
-            {/* Mobile Mega Menu */}
-            <li tabIndex={0} className="lg:hidden mobile-link collapse collapse-plus">
-              <input type="checkbox" className="peer" />
-              <div className="collapse-title" />                
-              <Link onClick={() => setIsMobileMenuOpen(false)} href="/services" className={`absolute z-[2] top-4 left-4 ${ pathname == "/services" ? "active-link" : ""}`}>
-                Services
-              </Link>
-              <div
-                className="collapse-content"
-              >
-                {links.services.map((service, index) => (
-                  <div key={service}>
-                    <Link href={service['link']} className="relative" onClick={() => setIsMobileMenuOpen(false)}>
-                      <h4 className="font-bold text-lg">{service['name']}</h4>
-                      <span className="absolute mt-1 h-[2px] w-full bg-[#dbd4c0] rounded-full" />
-                    </Link>
-
-                    <ul className="mt-5 space-y-2">
-                      {service['sub-links'].map((link, index) => (
-                        <li key={index}>
-                          <Link
-                            href={link['link']}
-                            className={`${pathname === link['link'] ? "mega-menu-active-link  " : ""}`}
-                            onClick={() => setIsMobileMenuOpen(false)}
-                          >
-                            {link['title']}
-                          </Link>
-                        </li>
-                      ))}                        
-                    </ul>
-                  </div>
-                ))}                                 
-              </div>
-            </li>
+            {/* Mobile Mega Menu Products */}
+            
             <li tabIndex={1} className="lg:hidden mobile-link collapse collapse-plus">
               <input type="checkbox" className="peer" />
               <div className="collapse-title" />
@@ -324,6 +294,45 @@ const Navbar = () => {
                   ))}                              
               </div>
             </li>
+
+            {/* Mobile Mega Menu Serices */}
+            <li tabIndex={0} className="lg:hidden mobile-link collapse collapse-plus">
+              <input type="checkbox" className="peer" />
+              <div className="collapse-title" />                
+              <Link onClick={() => setIsMobileMenuOpen(false)} href="/services" className={`absolute z-[2] top-4 left-4 ${ pathname == "/services" ? "active-link" : ""}`}>
+                Services
+              </Link>
+              <div
+                className="collapse-content"
+              >
+                {links.services.map((service, index) => (
+                  <div key={service}>
+                    <Link href={service['link']} className="relative" onClick={() => setIsMobileMenuOpen(false)}>
+                      <h4 className="font-bold text-lg">{service['name']}</h4>
+                      <span className="absolute mt-1 h-[2px] w-full bg-[#dbd4c0] rounded-full" />
+                    </Link>
+
+                    <ul className="mt-5 space-y-2">
+                      {service['sub-links'].map((link, index) => (
+                        <li key={index}>
+                          <Link
+                            href={link['link']}
+                            className={`${pathname === link['link'] ? "mega-menu-active-link  " : ""}`}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                          >
+                            {link['title']}
+                          </Link>
+                        </li>
+                      ))}                        
+                    </ul>
+                  </div>
+                ))}                                 
+              </div>
+            </li>
+            
+            {/* Mege Menus End */}
+
+            <li><Link href="/about-us" className={`${pathname === "/about-us" ? "active-link" : ""}`} onClick={() => setIsMobileMenuOpen(false)}>About Us</Link></li>
 
             <li>
               <Link href="/collaborations" className={`${pathname === "/collaborations" ? "active-link" : ""}`} onClick={() => setIsMobileMenuOpen(false)}>Collaborations</Link>
