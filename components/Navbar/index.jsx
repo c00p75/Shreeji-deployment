@@ -153,8 +153,10 @@ const Navbar = () => {
 
             {/* Desktop Mega Menu Trigger */}   
             <li className="group flex gap-1">
-              <Link href="/products" className={`${pathname === "/products" ? "active-link" : ""}`}>Products</Link>
-              <button onMouseEnter={() => setIsProductMenuOpen(true)} onMouseLeave={() => setIsProductMenuOpen(false)} className="focus:outline-none">
+              <Link href="/products" className={`${pathname === "/products" ? "active-link" : ""}`} onMouseEnter={() => setIsProductMenuOpen(true)} onMouseLeave={() => setIsProductMenuOpen(false)}>
+                Products
+              </Link>
+              <button onMouseEnter={() => setIsProductMenuOpen(true)} onMouseLeave={() => setIsProductMenuOpen(false)} className="focus:outline-none -ml-5 pl-5">
                 <ChevronDown size={24} />
               </button>
 
@@ -205,12 +207,13 @@ const Navbar = () => {
                     ? "active-link"
                     : ""
                 }`}
+                onMouseEnter={() => setIsServiceMenuOpen(true)} onMouseLeave={() => setIsServiceMenuOpen(false)}
               >
                 Services
               </Link>
               <button
                 onMouseEnter={() => setIsServiceMenuOpen(true)} onMouseLeave={() => setIsServiceMenuOpen(false)}
-                className="mt-[1px] focus:outline-none"
+                className="mt-[1px] focus:outline-none -ml-5 pl-5"
               >
                 <ChevronDown size={24} />
               </button>
