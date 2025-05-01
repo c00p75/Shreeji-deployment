@@ -17,24 +17,6 @@ export default function QualityAssurancePage() {
         image=""
       />
 
-      {/* <div className="relative py-32 px-6 text-center bg-[#f5f5f5]">
-        <motion.h1 
-          initial={{ opacity: 0, y: -50 }} 
-          animate={{ opacity: 1, y: 0 }} 
-          className="text-5xl font-extrabold text-[#807045] drop-shadow-md"
-        >
-          Quality Assurance Services
-        </motion.h1>
-        <motion.p 
-          initial={{ opacity: 0, y: 20 }} 
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mt-4 text-lg max-w-3xl mx-auto opacity-80"
-        >
-          Ensuring the highest standards of performance, reliability, and security for your products and services through comprehensive quality assurance processes.
-        </motion.p>
-      </div> */}
-
       {/* What is Quality Assurance? */}
       <div className="py-20 px-8 max-w-7xl mx-auto text-center">
         <h2 className="text-3xl font-bold text-[#807045]">What is Quality Assurance?</h2>
@@ -98,7 +80,7 @@ export default function QualityAssurancePage() {
       </div>
 
       {/* Why Quality Assurance Matters */}
-      <div className="py-20 px-3 md:px-8 bg-[#f5f5f5] text-center">
+      <div className="py-20 px-3 md:px-8 bg-[#fbfbfb] text-center">
         <h2 className="text-3xl font-bold text-[#807045]">Why Quality Assurance Matters</h2>
         <p className="mt-6 text-lg max-w-4xl mx-auto text-gray-700">
           Implementing a robust QA strategy ensures your products are free from defects, comply with industry regulations, and deliver a consistent user experience. The benefits of our Quality Assurance services include:

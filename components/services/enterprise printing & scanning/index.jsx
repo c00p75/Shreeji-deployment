@@ -27,13 +27,13 @@ export default function PrintingPage() {
               icon: <Printer size={50} className="text-[#807045]" />,
               title: "High-Speed Printing",
               description: "Experience enterprise-grade printing with precision, efficiency, and reduced operational costs.",
-              link: '/services/enterprise-printing-and-Scanning/printing'
+              link: '/services/enterprise-printing-and-scanning/printing'
             },
             {
               icon: <Scan size={50} className="text-[#807045]" />,
               title: "Smart Document Scanning",
               description: "OCR-powered scanning for seamless digitization, searchable documents, and automated workflows.",
-              link: '/services/enterprise-printing-and-Scanning/scanning'
+              link: '/services/enterprise-printing-and-scanning/scanning'
             },
             {
               icon: <FileText size={50} className="text-[#807045]" />,

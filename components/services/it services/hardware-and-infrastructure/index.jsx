@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from "framer-motion";
-import { Server, HardDrive, Cpu } from "lucide-react";
+import { Server, HardDrive, Cpu, ShieldCheck, Expand } from "lucide-react";
 import '@/components/services/style.scss'
 import MovingTextEffect from "@/components/moving text";
 import './style.scss';
@@ -9,7 +9,7 @@ import ContactModal from "../contact us";
 
 export default function HardwareInfrastructurePage() {
   return (
-    <div className="hardware-infrastructure-page min-h-screen bg-gradient-to-br from-[#F9F9F9] to-[#E0E0E0]">
+    <div className="hardware-infrastructure-page min-h-screen bg-white">
       {/* Hero Section */}
       <MovingTextEffect
         title="Hardware & Infrastructure Solutions"
@@ -38,7 +38,7 @@ export default function HardwareInfrastructurePage() {
       </div>
 
       {/* Key Offerings Section */}
-      <div className="bg-[#f1f1f1] py-16 px-3 md:px-8">
+      <div className="bg-[#f9f6e6] py-16 px-3 md:px-8">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -126,7 +126,7 @@ export default function HardwareInfrastructurePage() {
       </div>
 
       {/* Why Choose Us Section */}
-      <div className="bg-[#F1F1F1] py-16 px-3 md:px-8">
+      <div className="bg-[#f9f6e6] py-16 px-3 md:px-8">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -142,8 +142,11 @@ export default function HardwareInfrastructurePage() {
             transition={{ delay: 0.4 }}
             className="bg-white p-8 rounded-xl shadow-lg"
           >
-            <h3 className="text-xl font-semibold text-[#584d2a]">Proven Expertise</h3>
-            <p className="mt-4 text-gray-600">
+            <div className="flex flex-col md:flex-row items-center gap-3">
+              <ShieldCheck size={50} className="text-[#807045]" />
+              <h3 className="text-2xl font-semibold text-[#584d2a]">Proven Expertise</h3>
+            </div>
+            <p className="mt-4 text-gray-600">              
               Our team has years of experience in providing robust hardware and infrastructure solutions that drive businesses forward.
             </p>
           </motion.div>
@@ -154,7 +157,11 @@ export default function HardwareInfrastructurePage() {
             transition={{ delay: 0.6 }}
             className="bg-white p-8 rounded-xl shadow-lg"
           >
-            <h3 className="text-xl font-semibold text-[#584d2a]">Scalable Solutions</h3>
+            <div className="flex flex-col md:flex-row items-center gap-3">
+              <Expand size={50} className="text-[#807045]" />
+              <h3 className="text-2xl font-semibold text-[#584d2a]">Scalable Solutions</h3>
+            </div>
+            
             <p className="mt-4 text-gray-600">
               Whether you're a small startup or an enterprise, our solutions are scalable to meet your evolving business needs.
             </p>

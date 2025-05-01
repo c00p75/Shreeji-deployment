@@ -9,7 +9,7 @@ import ContactModal from "./contact us";
 
 export default function BPOPage() {
   return (
-    <div className="bpo-page min-h-screen bg-gradient-to-br from-white to-[#f0f0f0] text-[#403d2a]">
+    <div className="bpo-page min-h-screen bg-white text-[#403d2a]">
 
       {/* Hero Section */}
       <MovingTextEffect
@@ -31,7 +31,7 @@ export default function BPOPage() {
       </div>
 
       {/* Our BPO Services */}
-      <div className="relative py-20 px-3 md:px-8 max-w-7xl mx-auto">
+      <div className="relative py-20 px-3 md:px-8 bg-[#f9f6e6] mx-auto">
         <h2 className="text-3xl font-semibold text-[#807045] text-center mb-12">Our BPO Services</h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
           {[
@@ -77,7 +77,7 @@ export default function BPOPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 + index * 0.2 }}
-                className="flex flex-col justify-between h-full bg-white py-8 px-3 md:px-8 rounded-xl shadow-lg hover:shadow-2xl hover:scale-105 transform transition-all md:min-h-[26rem]"
+                className="flex flex-col justify-between h-full bg-white py-8 px-3 md:px-8 rounded-xl shadow-lg hover:shadow-2xl hover:scale-105 transform transition-all md:min-h-[23rem]"
               >
                 <div className="flex flex-col">
                   <div className="flex flex-col md:flex-row gap-2 md:gap-0 items-center space-x-4">

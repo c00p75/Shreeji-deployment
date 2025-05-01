@@ -1,21 +1,27 @@
-import { useState } from "react";
+'use client'
+
+import { useRef, useState } from "react";
 import { X } from "lucide-react";
 import "./style.scss"
+import emailjs from '@emailjs/browser';
 
 export default function ContactModal() {
+  const form = useRef();
+
   const [open, setOpen] = useState(false);
+  const [submitted, setSubmitted] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
-    phone: "",
-    company: "",
-    industry: "",
-    size: "",
-    solutions: [],
-    volume: "",
-    message: "",
-    contactMethod: "Email",
-    bestTime: "",
+    email_2: "george.m@balloinnovations.com",    // Shreeji team email
+    phone: "null",
+    company: "null",
+    industry: "null",
+    size: "null",
+    solutions: ['Back Office Support'],
+    volume: "N/A",
+    message: "null",
   });
 
   const handleChange = (e) => {
@@ -33,11 +39,56 @@ export default function ContactModal() {
     }));
   };
 
+  const sendEmail = async() => {
+    const emailParams = {
+      name: formData.fullName,
+      email: formData.email,
+      email_2: formData.email_2,
+      phone: formData.phone,
+      company: formData.company,
+      industry: formData.industry,
+      size: formData.size,
+      volume: formData.volume,
+      solutions: formData.solutions.join(', '),
+      message: formData.message,      
+    }
+
+
+    await emailjs
+      .send('service_rvtatdj', 'template_qsqeewk', emailParams, {
+        publicKey: 'j3E2XBrXnLlcLJ96U',
+      })
+      .then(
+        async() => {
+          console.log(emailParams)
+          await emailjs      
+            .send('service_rvtatdj', 'template_mkclybe', emailParams, {
+              publicKey: 'j3E2XBrXnLlcLJ96U',
+            })
+            .then(
+              () => {
+                console.log(emailParams)
+                console.log('SUCCESS!');
+              },
+              (error) => {
+                console.log('FAILED...', error.text);
+              },
+            );
+
+          setSubmitting(false)
+          setSubmitted(true)
+          setTimeout(() => { setOpen(false) }, 3000);
+        },
+        (error) => {
+          console.log('FAILED...', error.text);
+        },
+      );      
+  };
+
   const handleSubmit = (e) => {
+    setSubmitting(true)
     e.preventDefault();
-    console.log(formData);
-    // TODO: Add your form submission logic here (e.g. API call)
-    setOpen(false); // close modal after submission
+    sendEmail()
   };
 
   return (
@@ -69,8 +120,8 @@ export default function ContactModal() {
                 Need Back Office Help? We’re Here for You
               </h2>
 
-              <form onSubmit={handleSubmit} className="space-y-6 flex flex-col">
-                <div className="flex flex-col gap-10 md:gap-4">
+              <form ref={form} onSubmit={handleSubmit} className="space-y-6 flex flex-col">
+                <div className="flex flex-col gap-10 md:gap-4 pb-5">
                   <div className="flex flex-col md:flex-row gap-10 md:gap-10">
                     <div className="flex flex-col w-full text-start mt-2">
                       <label className="text-white font-semibold mb-2">Name</label>
@@ -86,12 +137,12 @@ export default function ContactModal() {
                   <div className="flex flex-col md:flex-row gap-8 md:gap-10">
                     <div className="flex flex-col w-full text-start mt-2">
                       <label className="text-white font-semibold mb-2">Phone Number</label>
-                      <input name="phone" type="tel" placeholder="+260" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleChange} />
+                      <input name="phone" type="tel" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleChange} />
                     </div>
                     
                     <div className="flex flex-col w-full text-start mt-2">
                       <label className="text-white font-semibold mb-2">Company Name</label>
-                      <input name="company" type="text" required placeholder="e.g Gradle Holdings" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleChange} />
+                      <input name="company" type="text" placeholder="e.g Gradle Holdings" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleChange} />
                     </div>
                   </div>
 
@@ -122,29 +173,6 @@ export default function ContactModal() {
                   
                 </div>
 
-                <fieldset className="space-y-2 flex-center text-white">
-                  <legend className="font-semibold text-3xl pt-10">Services of Interest</legend>
-                  <div className="flex md:justify-center flex-wrap md:space-x-5 gap-5 py-5">
-                    {[
-                      "Data Entry & Management",
-                      "Document Management",
-                      "Invoice Processing",
-                      "Human Resources Support",
-                      "Other",
-                    ].map((solution) => (
-                      <label key={solution} className="flex items-center w-fit">
-                        <input
-                          type="checkbox"
-                          value={solution}
-                          onChange={handleCheckbox}
-                          className="mr-2 w-6 h-6"
-                        />
-                        {solution}
-                      </label>
-                    ))}
-                  </div>
-                </fieldset>
-
                 <textarea
                   name="message"
                   rows={5}
@@ -154,8 +182,10 @@ export default function ContactModal() {
                 />
 
                 <div className="flex-center py-5">
-                  <button type="submit" className="bg-green-600 text-white px-6 py-3 rounded-xl hover:bg-green-700 transition w-fit">
-                    Submit
+                  <button type="submit" disabled={submitted} className={`text-white font-semibold px-6 py-3 rounded-xl transition w-fit ${submitted ? 'bg-black scale-150 transition-all ease-in-out shadow-2xl shadow-[var(--shreeji-primary)]' : submitting ? 'bg-gray-600' : 'bg-green-600 hover:bg-green-700'}`}>
+                    {!submitted && !submitting && ("Submit")}
+                    {submitted && !submitting && ("Sent ✔")} 
+                    {!submitted && submitting && ("Submitting...")} 
                   </button>
                 </div>
               </form>

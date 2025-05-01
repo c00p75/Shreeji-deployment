@@ -14,13 +14,14 @@ export default function ContactModal() {
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
-    phone: "",
-    company: "",
-    industry: "",
-    size: "",
+    email_2: "george.m@balloinnovations.com",    // Shreeji team email
+    phone: "null",
+    company: "null",
+    industry: "null",
+    size: "null",
     solutions: ['IT services'],
-    volume: "",
-    message: "",
+    volume: "N/A",
+    message: "null",
   });
 
   const handleChange = (e) => {
@@ -41,11 +42,13 @@ export default function ContactModal() {
   const sendEmail = async() => {
     const emailParams = {
       name: formData.fullName,
-      email: formData.email,
+      email: formData.email,      
+      email_2: formData.email_2,
       phone: formData.phone,
       company: formData.company,
       industry: formData.industry,
       size: formData.size,
+      volume: formData.volume,
       solutions: formData.solutions.join(', '),
       message: formData.message,      
     }

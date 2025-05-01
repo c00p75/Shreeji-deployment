@@ -217,5 +217,5 @@ a:hover {cursor: pointer;}
 }
 
 .light-bg-gradient {
-  background: radial-gradient(white 50%, rgb(249, 248, 248)) !important;
+  background: radial-gradient(white 50%, #f9f8f8) !important;
 }

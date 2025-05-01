@@ -24,24 +24,24 @@ const OurSolutions = () => {
                 />
               </div>
 
-              <h3 className="font-bold text-2xl">Computer Connections</h3>
+              <h3 className="font-bold text-2xl">Shreeji Computer IT</h3>
             </div>
 
             <div>
               <p>
-                Our Computer Connections division specialises in supplying,
+                Our ICT division specialises in supplying,
                 supporting, and customising IT equipment to meet your business's
                 specific requirements.
               </p>
             </div>
           </Link>
 
-          <Link href="/services/enterprise-printing-and-Scanning" className="flex flex-col gap-3 service-hover">
+          <Link href="/services/enterprise-printing-and-scanning" className="flex flex-col gap-3 service-hover">
             <div className="flex gap-5 items-center">
               <div className="solution-card-img-container px-1 py-2 rounded-[10px] text-black">
                 <Printer strokeWidth={1.1} className="w-10 h-10" />
               </div>
-              <h3 className="font-bold text-2xl">Print Advertising</h3>
+              <h3 className="font-bold text-2xl">Shreeji Print Advertising</h3>
             </div>
 
             <div>
@@ -75,7 +75,7 @@ const OurSolutions = () => {
           <Link href="/services/bpo" className="flex flex-col gap-3 service-hover service-hover-3">
             <div className="flex flex-row-reverse md:flex-row gap-5 items-center justify-end">
               <h3 className="font-bold text-2xl">
-                Business Process Outsourcing
+                Shreeji Business Process Outsourcing
               </h3>
               <div className="solution-card-img-container px-1 py-2 rounded-[10px]">
                 <Image
@@ -98,7 +98,7 @@ const OurSolutions = () => {
 
           <Link href="/services/skylift" className="flex flex-col gap-3 service-hover service-hover-4">
             <div className="flex flex-row-reverse md:flex-row gap-5 items-center justify-end">
-              <h3 className="font-bold text-2xl">Skylift Services</h3>
+              <h3 className="font-bold text-2xl">Shreeji Skylift Services</h3>
               <div className="solution-card-img-container px-1 py-2 rounded-[10px]">
                 <Image
                   src={factory}

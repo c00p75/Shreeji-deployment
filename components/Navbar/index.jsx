@@ -41,15 +41,15 @@ const Navbar = () => {
       },
       {
         'name': 'Enterprise-Level Printing & Scanning',
-        'link': '/services/enterprise-printing-and-Scanning',
+        'link': '/services/enterprise-printing-and-scanning',
         'sub-links': [
           {
             'title': 'Printing',
-            'link': '/services/enterprise-printing-and-Scanning/printing'
+            'link': '/services/enterprise-printing-and-scanning/printing'
           },
           {
             'title': 'Document Scanning',
-            'link': '/services/enterprise-printing-and-Scanning/scanning'
+            'link': '/services/enterprise-printing-and-scanning/scanning'
           },
         ]
       },

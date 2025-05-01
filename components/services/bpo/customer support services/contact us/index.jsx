@@ -1,21 +1,27 @@
-import { useState } from "react";
+'use client'
+
+import { useRef, useState } from "react";
 import { X } from "lucide-react";
 import "./style.scss"
+import emailjs from '@emailjs/browser';
 
 export default function ContactModal() {
+  const form = useRef();
+
   const [open, setOpen] = useState(false);
+  const [submitted, setSubmitted] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
-    phone: "",
-    company: "",
-    industry: "",
-    size: "",
-    solutions: [],
-    volume: "",
-    message: "",
-    contactMethod: "Email",
-    bestTime: "",
+    email_2: "george.m@balloinnovations.com",    // Shreeji team email
+    phone: "null",
+    company: "null",
+    industry: "null",
+    size: "null",
+    solutions: ['Customer Support Services'],
+    volume: "N/A",
+    message: "null",
   });
 
   const handleChange = (e) => {
@@ -33,11 +39,56 @@ export default function ContactModal() {
     }));
   };
 
+  const sendEmail = async() => {
+    const emailParams = {
+      name: formData.fullName,
+      email: formData.email,
+      email_2: formData.email_2,
+      phone: formData.phone,
+      company: formData.company,
+      industry: formData.industry,
+      size: formData.size,
+      volume: formData.volume,
+      solutions: formData.solutions.join(', '),
+      message: formData.message,      
+    }
+
+
+    await emailjs
+      .send('service_rvtatdj', 'template_qsqeewk', emailParams, {
+        publicKey: 'j3E2XBrXnLlcLJ96U',
+      })
+      .then(
+        async() => {
+          console.log(emailParams)
+          await emailjs      
+            .send('service_rvtatdj', 'template_mkclybe', emailParams, {
+              publicKey: 'j3E2XBrXnLlcLJ96U',
+            })
+            .then(
+              () => {
+                console.log(emailParams)
+                console.log('SUCCESS!');
+              },
+              (error) => {
+                console.log('FAILED...', error.text);
+              },
+            );
+
+          setSubmitting(false)
+          setSubmitted(true)
+          setTimeout(() => { setOpen(false) }, 3000);
+        },
+        (error) => {
+          console.log('FAILED...', error.text);
+        },
+      );      
+  };
+
   const handleSubmit = (e) => {
+    setSubmitting(true)
     e.preventDefault();
-    console.log(formData);
-    // TODO: Add your form submission logic here (e.g. API call)
-    setOpen(false); // close modal after submission
+    sendEmail()
   };
 
   return (
@@ -69,7 +120,7 @@ export default function ContactModal() {
                 Need Back Office Help? We’re Here for You
               </h2>
 
-              <form onSubmit={handleSubmit} className="space-y-6 flex flex-col">
+              <form ref={form} onSubmit={handleSubmit} className="space-y-6 flex flex-col">
                 <div className="flex flex-col gap-10 md:gap-4">
                   <div className="flex flex-col md:flex-row gap-10 md:gap-10">
                     <div className="flex flex-col w-full text-start mt-2">
@@ -155,8 +206,10 @@ export default function ContactModal() {
                 />
 
                 <div className="flex-center py-5">
-                  <button type="submit" className="bg-green-600 text-white px-6 py-3 rounded-xl hover:bg-green-700 transition w-fit">
-                    Submit
+                  <button type="submit" disabled={submitted} className={`text-white font-semibold px-6 py-3 rounded-xl transition w-fit ${submitted ? 'bg-black scale-150 transition-all ease-in-out shadow-2xl shadow-[var(--shreeji-primary)]' : submitting ? 'bg-gray-600' : 'bg-green-600 hover:bg-green-700'}`}>
+                    {!submitted && !submitting && ("Submit")}
+                    {submitted && !submitting && ("Sent ✔")} 
+                    {!submitted && submitting && ("Submitting...")} 
                   </button>
                 </div>
               </form>
