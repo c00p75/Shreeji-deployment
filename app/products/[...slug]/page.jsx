@@ -1,4 +1,4 @@
-import { getProductByName, randomProduct, subcategoryExists } from "@/app/data/productsData";
+import { getProductByName, randomProduct, subcategoryExists } from "@/data/productsData";
 import ProductDetails from "@/components/products/product details";
 import SideGrid from "@/components/products/side grid";
 import "@/components/products/style.scss";

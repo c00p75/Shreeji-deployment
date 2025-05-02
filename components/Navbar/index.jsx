@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {allProducts} from "@/app/data/productsData";
+import {allProducts} from "@/data/productsData";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";

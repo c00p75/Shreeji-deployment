@@ -1,11 +1,13 @@
 'use state'
 import { motion, AnimatePresence } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useState, useRef } from 'react';
 import ProductImage from '../product details/product image';
 import "./style.scss";
 import { X } from 'lucide-react';
 import checkmark from "@/public/elements/checkmark.png";
 import Image from "next/image";
+import emailjs from '@emailjs/browser';
+import { emailJsVariables, salesTeamEmail } from '@/utils/email-handler';
 
 const backdropVariants = {
   hidden: { opacity: 0 },
@@ -18,7 +20,10 @@ const modalVariants = {
 };
 
 const RequestQuoteModal = ({ product, isOpen, onClose }) => {
+  const form = useRef();
   const [submited, setSubmited] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [submitionFailed, setSubmitionFailed] = useState(false)
   const body = document.querySelector('body')
   const nav = document.querySelector('#website-navigation')
   const footer = document.querySelector('.footer-section')
@@ -45,16 +50,14 @@ const RequestQuoteModal = ({ product, isOpen, onClose }) => {
  
 
   const [formData, setFormData] = useState({
-    name: '',
+    fullName: '',
     email: '',
+    email_2: salesTeamEmail,    // Shreeji team email
     phone: '',
-    companyName: '',
-    projectType: '',
-    description: '',
+    company: '',
     quantity: '',
-    deadline: '',
-    budget: '',
-    file: null,
+    productName: product['name'],
+    productId: ''
   });
 
   const handleChange = (e) => {
@@ -68,10 +71,56 @@ const RequestQuoteModal = ({ product, isOpen, onClose }) => {
     }
   };
 
+  const sendEmail = async() => {
+    const emailParams = {      
+      name: formData.fullName || "not provided",
+      email: formData.email,
+      email_2: formData.email_2,
+      phone: formData.phone || "not provided",
+      company: formData.company || "not provided",
+      quantity: formData.quantity || "not provided",
+      productName: formData.productName,
+      productId: formData.productId || "N/A",
+    }
+
+
+    await emailjs
+      .send(emailJsVariables.ballo_service_id, emailJsVariables.quote_request_template_id, emailParams, {
+        publicKey: emailJsVariables.ballo_public_key,
+      })
+      .then(
+        async() => {
+          await emailjs      
+            .send(emailJsVariables.shreeji_service_id, emailJsVariables.request_recieved_template_id, emailParams, {
+              publicKey: emailJsVariables.shreeji_public_key,
+            })
+            .then(
+              () => {
+                console.log('SUCCESS!');
+              },
+              (error) => {
+                console.log('FAILED...', error.text);
+              },
+            );
+          
+          setSubmited(true); 
+          setSubmitting(false)         
+        },
+        (error) => {
+          setSubmitting(false)  
+          setSubmitionFailed(true);
+          console.log('FAILED...', error.text);
+        },
+      );      
+  };
+  
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formData);
-    setSubmited(true)
+    if(!submitting && product['name']){
+      setSubmitting(true);
+      sendEmail();
+    }
   };
 
   return (
@@ -109,7 +158,7 @@ const RequestQuoteModal = ({ product, isOpen, onClose }) => {
               </div> 
               {product['brand logo'] && (
                 <div className='absolute inset-0 w-full h-full flex-center mb-5'>
-                  <Image src={product['brand logo']} quality={100} alt={product['name']} className='w-auto h-[95%] z-[1] object-contain opacity-5' />
+                  <Image src={product['brand logo']} quality={100} alt={product['name']} className='w-auto h-[95%] z-[1] object-contain opacity-[0.1] drop-shadow-2xl' />
                 </div>
               )}           
             </div>
@@ -117,11 +166,11 @@ const RequestQuoteModal = ({ product, isOpen, onClose }) => {
               <h2 className="text-3xl font-semibold text-center mb-6">
                 Request a Quote for <span className="font-bold bg-gradient-to-r from-[#807045] to-[#544829] bg-clip-text text-transparent">{product['name']}</span>
               </h2>
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <InputField name="name" label="Name" type="text" value={formData.name} onChange={handleChange} required />
+              <form ref={form} onSubmit={handleSubmit} className="space-y-5">
+                <InputField name="fullName" label="Name" type="text" value={formData.fullName} onChange={handleChange} required />
                 <InputField name="email" label="Email Address" type="email" value={formData.email} onChange={handleChange} required />
                 <InputField name="phone" label="Phone Number" type="tel" value={formData.phone} onChange={handleChange} />
-                <InputField name="companyName" label="Company Name" type="text" value={formData.companyName} onChange={handleChange} />
+                <InputField name="company" label="Company Name" type="text" value={formData.company} onChange={handleChange} />
 
                 {/* <div>
                   <label className="block text-sm font-medium mb-1">Project Type / Service Needed</label>
@@ -152,7 +201,7 @@ const RequestQuoteModal = ({ product, isOpen, onClose }) => {
                   />
                 </div> */}
 
-                <InputField name="quantity" label="Quantity / Volume" type="number" value={formData.quantity} onChange={handleChange} required />
+                <InputField name="quantity" label="Quantity / Volume" type="number" value={formData.quantity} onChange={handleChange} />
                 {/* <InputField name="deadline" label="Deadline / Timeframe" type="date" value={formData.deadline} onChange={handleChange} /> */}
 
                 {/* <div>
@@ -190,9 +239,9 @@ const RequestQuoteModal = ({ product, isOpen, onClose }) => {
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 bg-[#544829] text-white rounded-md hover:bg-green-700 transition"
+                    className={`px-4 py-2  ${submitting ? 'bg-gray-600' : 'bg-[#544829] hover:bg-green-700'} text-white rounded-md transition`}
                   >
-                    Submit
+                    {submitionFailed ? 'Try again' : submitting ? 'Sending..' : 'Submit'}
                   </button>
                 </div>
               </form>
@@ -204,7 +253,7 @@ const RequestQuoteModal = ({ product, isOpen, onClose }) => {
                   className="absolute z-10 top-[-100vh] md:top-0 left-0 w-full h-[200vh] md:h-full backdrop-blur-md bg-white/20 rounded-xl shadow-2xl flex items-center flex-col md:flex-row overflow-hidden"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <div className='flex-1 flex-center' />
+                  <div className='flex-1 flex-center cursor-pointer h-full' onClick={() => setSubmited(false)} />
 
                   <div className='flex-1 bg-green-50 h-full flex-center submited-container p-5 md:p-0 text-center'>
                     <Image

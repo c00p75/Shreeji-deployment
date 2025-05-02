@@ -2,7 +2,7 @@
 
 import { ChevronDown, CircleDot } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import {allProducts} from "@/app/data/productsData";
+import {allProducts} from "@/data/productsData";
 import Link from "next/link";
 
 const Categories = () => {

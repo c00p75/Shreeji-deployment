@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { X } from "lucide-react";
 import "./style.scss"
 import emailjs from '@emailjs/browser';
+import { emailJsVariables, salesTeamEmail } from "@/utils/email-handler";
 
 export default function ContactModal() {
   const form = useRef();
@@ -14,14 +15,14 @@ export default function ContactModal() {
     const [formData, setFormData] = useState({
       fullName: "",
       email: "",
-      email_2: "george.m@balloinnovations.com",    // Shreeji team email
-      phone: "null",
-      company: "null",
-      industry: "null",
-      size: "null",
+      email_2: salesTeamEmail,    // Shreeji team email
+      phone: "",
+      company: "",
+      industry: "",
+      size: "",
       solutions: ['Quality Assurance Services'],
       volume: "N/A",
-      message: "null",
+      message: "",
     });
   
     const handleChange = (e) => {
@@ -41,29 +42,29 @@ export default function ContactModal() {
   
     const sendEmail = async() => {
       const emailParams = {
-        name: formData.fullName,
+        name: formData.fullName || "not provided",
         email: formData.email,
         email_2: formData.email_2,
-        phone: formData.phone,
-        company: formData.company,
-        industry: formData.industry,
-        size: formData.size,
+        phone: formData.phone || "not provided",
+        company: formData.company || "not provided",
+        industry: formData.industry || "not provided",
+        size: formData.size || "not provided",
         volume: formData.volume,
         solutions: formData.solutions.join(', '),
-        message: formData.message,      
+        message: formData.message || "not provided",      
       }
   
   
       await emailjs
-        .send('service_rvtatdj', 'template_qsqeewk', emailParams, {
-          publicKey: 'j3E2XBrXnLlcLJ96U',
+        .send(emailJsVariables.ballo_service_id, emailJsVariables.service_inquiry_template_id, emailParams, {
+          publicKey: emailJsVariables.ballo_public_key,
         })
         .then(
           async() => {
             console.log(emailParams)
             await emailjs      
-              .send('service_rvtatdj', 'template_mkclybe', emailParams, {
-                publicKey: 'j3E2XBrXnLlcLJ96U',
+              .send(emailJsVariables.ballo_service_id, emailJsVariables.quote_request_template_id, emailParams, {
+                publicKey: emailJsVariables.ballo_public_key,
               })
               .then(
                 () => {

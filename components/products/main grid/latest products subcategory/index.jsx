@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react'
 import { ChevronLeft, ChevronRight, Triangle } from "lucide-react";
-import { filterProducts } from '@/app/data/productsData';
+import { filterProducts } from '@/data/productsData';
 import ProductPreview from '../../ProductPreview';
 
 const LatestProductsBySubCategory = ({subcategory, count, heading}) => {  

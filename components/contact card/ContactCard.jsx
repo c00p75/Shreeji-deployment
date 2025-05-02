@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import emailjs from '@emailjs/browser';
 import thumbsUp from "@/public/elements/thumbs up.png";
 import Image from "next/image";
+import { emailJsVariables, salesTeamEmail } from "@/utils/email-handler";
 
 
 const steps = [
@@ -31,13 +32,13 @@ const ContactCard = () => {
   const [submitting, setSubmitting] = useState(false)
   const [deliveryConfirmed, setDeliveryConfirmed] = useState(false)
   const [formData, setFormData] = useState({
-    fullName: "null",
+    fullName: "",
     email: "",
-    email_2: "george.m@balloinnovations.com",    // Shreeji team email
-    phone: "null",
-    company: "null",
-    industry: "null",
-    size: "null",
+    email_2: salesTeamEmail,    // Shreeji team email
+    phone: "",
+    company: "",
+    industry: "",
+    size: "",
     solutions: "",
     volume: "N/A",
     message: "",
@@ -91,23 +92,34 @@ const ContactCard = () => {
       name: formData.fullName,
       email: formData.email,
       email_2: formData.email_2,
-      phone: formData.phone,
-      company: formData.company,
-      industry: formData.industry,
-      size: formData.size,
+      phone: formData.phone || "not provided",
+      company: formData.company || "not provided",
+      industry: formData.industry || "not provided",
+      size: formData.size || "not provided",
       volume: formData.volume,
       solutions: formData.solutions,
-      message: formData.message,      
+      message: formData.message || "not provided",      
     }
 
 
     await emailjs
-      .send('service_rvtatdj', 'template_qsqeewk', emailParams, {
-        publicKey: 'j3E2XBrXnLlcLJ96U',
+      .send(emailJsVariables.ballo_service_id, emailJsVariables.service_inquiry_template_id, emailParams, {
+        publicKey: emailJsVariables.ballo_public_key,
       })
       .then(
         async() => {
-          console.log(emailParams)
+          await emailjs      
+            .send(emailJsVariables.shreeji_service_id, emailJsVariables.request_recieved_template_id, emailParams, {
+              publicKey: emailJsVariables.shreeji_public_key,
+            })
+            .then(
+              () => {
+                console.log('SUCCESS!');
+              },
+              (error) => {
+                console.log('FAILED...', error.text);
+              },
+            );
           setMinimize(true); 
           setDisplayForm(false);
           setSubmitted(false);
@@ -128,7 +140,6 @@ const ContactCard = () => {
     if(currentStep == 2 && !submitted && isValidEmail(formData.email)){
       setSubmitted(true)
       setSubmitting(true)
-      console.log(formData, submitted)
       sendEmail()      
     }
   };

@@ -1,5 +1,5 @@
 import React from 'react'
-import {getProductByName, randomProduct} from '@/app/data/productsData'
+import {getProductByName, randomProduct} from '@/data/productsData'
 import Featured from './featured'
 import LatestProductsByCategory from './latest products category'
 import PromotionBanner from './promotion banner'

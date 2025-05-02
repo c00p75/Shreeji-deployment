@@ -3,7 +3,7 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import './style.scss';
-import { filterProducts } from '@/app/data/productsData';
+import { filterProducts } from '@/data/productsData';
 import ProductPreview from '../../ProductPreview';
 
 const ProductList = ({filterBy, filter}) => {

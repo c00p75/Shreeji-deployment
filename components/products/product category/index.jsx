@@ -4,7 +4,7 @@ import Image from 'next/image';
 import React, { useEffect, useRef, useState } from 'react'
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight, Triangle } from "lucide-react";
-import { filterProducts } from '@/app/data/productsData';
+import { filterProducts } from '@/data/productsData';
 
 const productCategory = ({category, count, heading}) => {
   
