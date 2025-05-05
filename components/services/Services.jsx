@@ -10,7 +10,7 @@ import MovingTextEffect from "../moving text";
 export const services = [
   {
     title: "Enterprise Printing & Scanning",
-    link: "/services/enterprise-printing-and-Scanning",
+    link: "/services/enterprise-printing-and-scanning",
     icon: <Printer size={40} />, 
     description:
       "Our high-speed smart scanners and enterprise printers ensure cost-effective, large-scale document management and printing solutions with OCR conversions.",
