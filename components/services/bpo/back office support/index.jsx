@@ -21,7 +21,7 @@ export default function BackOfficeSupportPage() {
       <div className="pt-20 pb-10 px-8 max-w-7xl mx-auto text-center">
         <h2 className="text-3xl font-bold text-[#807045]">Our Back Office Support Services</h2>
         <p className="mt-6 text-lg max-w-4xl mx-auto text-gray-700">
-          At <strong>Company Name</strong>, we handle the crucial behind-the-scenes tasks so you can focus on your core business operations. Our back office support services are designed to improve your overall productivity, reduce operational costs, and enhance workflow efficiency. We provide tailored solutions to meet the specific needs of your business.
+          At <strong>Shreeji Investments Ltd</strong>, we handle the crucial behind-the-scenes tasks so you can focus on your core business operations. Our back office support services are designed to improve your overall productivity, reduce operational costs, and enhance workflow efficiency. We provide tailored solutions to meet the specific needs of your business.
         </p>
       </div>
 

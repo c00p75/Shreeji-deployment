@@ -38,7 +38,7 @@ export default function RiskCompliancePage() {
       <div className="pt-14 md:pt-20 pb-10 px-8 max-w-7xl mx-auto text-center">
         <h2 className="text-3xl font-bold text-[#807045]">Our Risk & Compliance Management Services</h2>
         <p className="mt-6 text-lg max-w-4xl mx-auto text-gray-700">
-          At <strong>Company Name</strong>, we prioritize the identification, mitigation, and management of risks while ensuring your business adheres to industry regulations and best practices. Our holistic approach to risk and compliance management will help safeguard your business's assets, reputation, and sustainability.
+          At <strong>Shreeji Investments Ltd</strong>, we prioritize the identification, mitigation, and management of risks while ensuring your business adheres to industry regulations and best practices. Our holistic approach to risk and compliance management will help safeguard your business's assets, reputation, and sustainability.
         </p>
       </div>
 

@@ -21,7 +21,7 @@ export default function CustomerSupportPage() {
       <div className="pt-20 pb-10 px-8 max-w-7xl mx-auto text-center">
         <h2 className="text-3xl font-bold text-[#807045]">Our Customer Support Services</h2>
         <p className="mt-6 text-lg max-w-4xl mx-auto text-gray-700">
-          At <strong>Company Name</strong>, we understand the importance of customer satisfaction. Our comprehensive customer support services are designed to provide timely, effective solutions across various communication channels. Whether it's through phone, email, chat, or social media, we ensure your customers receive seamless support at all times.
+          At <strong>Shreeji Investments Ltd</strong>, we understand the importance of customer satisfaction. Our comprehensive customer support services are designed to provide timely, effective solutions across various communication channels. Whether it's through phone, email, chat, or social media, we ensure your customers receive seamless support at all times.
         </p>
       </div>
 
