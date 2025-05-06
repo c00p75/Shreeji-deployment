@@ -4590,13 +4590,19 @@ export const filterProducts =
     let products = allProducts
     .filter(product => product[filterBy] === filter)
     .sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded))
-    
+  
+  if(count == 1){ 
+    let bannerItem = [products[Math.floor(Math.random() * products.length)]];
+    console.log('banner item', bannerItem)
+    return bannerItem
+   } 
   if(count){ return products.slice(0, count); } 
 
   return products  
 };
 
 export const randomProduct = (filterBy, filter, count) => {
+  console.log(filterBy, filter, count)
   if(filterBy, filter) {
     let filteredProductsArr = filterProducts(filterBy, filter, count)
     let index = Math.floor(Math.random() * filteredProductsArr.length)
