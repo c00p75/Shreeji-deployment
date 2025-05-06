@@ -10,7 +10,7 @@ const PrimaryPromotionalBanner = ({promoProduct}) => {
           <h2 className="text-4xl font-bold md:font-extralight [text-shadow:2px_2px_4px_rgba(0,0,0,0.3)] md:line-clamp-2">{promoProduct['tagline']}</h2>
           <div className='flex md:hidden relative flex-1'>
             {promoProduct.images.length > 1 ? 
-              (<Image src={promoProduct.images[1]} className="object-cover overflow-visible scale-x-[-1] z-0 w-full h-auto -mt-5 product-shadow" />):
+              (<Image src={promoProduct.images[1]} className="object-cover overflow-visible z-0 w-full h-auto -mt-5 product-shadow" />):
               (<Image src={promoProduct.images[0]} className="object-cover overflow-visible z-0 w-[100%] h-auto -mt-5 product-shadow" />)      
             }
           </div>  
@@ -29,7 +29,7 @@ const PrimaryPromotionalBanner = ({promoProduct}) => {
 
         <div className='hidden md:flex relative flex-1'>
           {promoProduct.images.length > 1 ? 
-            (<Image src={promoProduct.images[1]} className="object-cover overflow-visible scale-x-[-1] z-0 h-[80%] w-auto absolute top-[50%] left-[35%] -translate-x-1/2 -translate-y-1/2 product-shadow" />):
+            (<Image src={promoProduct.images[1]} className="object-cover overflow-visible z-0 h-[80%] w-auto absolute top-[50%] left-[35%] -translate-x-1/2 -translate-y-1/2 product-shadow" />):
             (<Image src={promoProduct.images[0]} className="object-cover overflow-visible z-0 h-[52%] w-auto absolute top-[45%] -right-[15%] -translate-x-1/2 -translate-y-1/2 product-shadow" />)      
           }
         </div>   
