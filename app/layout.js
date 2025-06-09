@@ -3,7 +3,7 @@ import Navbar from "@/components/Navbar";
 import ContactCard from "@/components/contact card/ContactCard";
 import Footer from "@/components/footer";
 import siteMetadata from "@/siteMetaData";
-
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 export const metadata = {
   metadataBase: new URL(siteMetadata.siteUrl),
@@ -44,9 +44,8 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body
-        className="antialiased light-theme"
-      >
+      <GoogleAnalytics gaId="G-1W93H38B5W" />
+      <body className="antialiased light-theme">
         <Navbar />
         <main className="text-lg text-center md:text-start">{children}</main>
         <ContactCard />
