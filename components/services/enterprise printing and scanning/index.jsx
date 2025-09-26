@@ -18,6 +18,10 @@ export default function PrintingPage() {
         image=""
       />
 
+      <div className="absolute top-0 left-0 w-screen h-screen z-[0] p-0 m-0">
+        <video src="/videos/printing.mp4" autoPlay loop muted playsInline className="w-full h-full object-none" />
+      </div>
+
       {/* Features Section */}
       <div className="relative py-20 px-3 md:px-8 max-w-7xl mx-auto">
         <h2 className="text-3xl font-bold text-[#807045] text-center mb-12">Why Choose Our Printing & Scanning Solutions?</h2>
