@@ -138,7 +138,7 @@ const Navbar = () => {
 
   return (
     <header id="website-navigation">
-      <nav className={`fixed z-50 w-full transition-all duration-300 ${isScrolled ? "scrolled-nav bg-opacity-100 text-[var(--primary)]" : "bg-white/0"} ${pathname.includes("/products") ? 'scrolled-nav bg-opacity-100 text-[var(--primary)]' : ''}`}>
+      <nav className={`fixed z-50 w-full transition-all duration-300 ${isScrolled || pathname.includes('/services/enterprise-printing-and-scanning/printing/') ? "scrolled-nav bg-opacity-100 text-[var(--primary)]" : "bg-white/0"} ${pathname.includes("/products") ? 'scrolled-nav bg-opacity-100 text-[var(--primary)]' : ''}`}>
         <div className="container mx-auto flex items-center p-2">
           <Link href="/" className="text-lg font-bold">
             <Image src={logo} alt="Logo" quality={100} className="logo-light h-10 md:h-16 w-auto nav-logo" />

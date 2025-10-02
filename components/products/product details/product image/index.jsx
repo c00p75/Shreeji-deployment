@@ -13,7 +13,7 @@ const ProductImage = ({images, name, product}) => {
         {images.map((img, index) => (
           <Image
             src={img}
-            key={index}
+            key={`img-${index}`}
             alt={name}            
             className={`absolute w-full h-auto z-[1] mt-4 cursor-pointer transition-all duration-150 object-contain opacity-0 product-shadow ${img == activeImage && 'active-image'}`}
           />
@@ -24,7 +24,7 @@ const ProductImage = ({images, name, product}) => {
         {images.map((img, index) => (
           <Image
             src={img}
-            key={index}
+            key={`thumb-${index}`}
             alt={name}            
             className={`w-20 h-20 z-[1] relative mt-4 cursor-pointer transition-all duration-100 object-contain ${img == activeImage && 'active-image-select'}`}
             onClick={() => setActiveImage(img)}

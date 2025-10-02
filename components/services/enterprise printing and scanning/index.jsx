@@ -8,6 +8,7 @@ import MovingTextEffect from "@/components/moving text";
 import ContactModal from "./contact us";
 
 export default function PrintingPage() {
+
   return (
     <div className="enterprise-printing min-h-screen bg-gradient-to-br from-[#ffffff] to-[#eae7df] text-[#403d2a]">
       
@@ -17,10 +18,6 @@ export default function PrintingPage() {
         subtitle="Transform your document management with cutting-edge printing and scanning solutions designed for efficiency, security, and cost savings."
         image=""
       />
-
-      <div className="absolute top-0 left-0 w-screen h-screen z-[0] p-0 m-0">
-        <video src="/videos/printing.mp4" autoPlay loop muted playsInline className="w-full h-full object-none" />
-      </div>
 
       {/* Features Section */}
       <div className="relative py-20 px-3 md:px-8 max-w-7xl mx-auto">
@@ -97,6 +94,7 @@ export default function PrintingPage() {
           })}
         </div>
       </div>
+
 
       {/* Industry Use Cases */}
       <div className="py-16 bg-white">

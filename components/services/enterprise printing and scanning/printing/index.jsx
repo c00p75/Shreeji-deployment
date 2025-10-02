@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion';
-import { Printer } from 'lucide-react';
+import { Printer, Package, Home, Sun } from 'lucide-react';
 import '@/components/services/style.scss'
 import zicta from "@/public/elements/zicta.jpg";
 import mtn from "@/public/elements/mtn.jpg";
@@ -12,8 +12,57 @@ import sample2 from "@/public/backgrounds/hero-print.png";
 import sample3 from "@/public/backgrounds/hero-print.png";
 import MovingTextEffect from '@/components/moving text';
 import ContactModal from '../contact us';
+import Link from 'next/link';
+import { useState } from 'react';
+import { slugify, products as printingProducts } from '@/data/printingProducts';
 
 export default function PrintingPage() {
+  // Product categories data structure
+  const productCategories = {
+    indoor: {
+      name: "Indoor",
+      icon: <Home size={24} className="text-[#807045]" />,
+      subCategories: [
+        "Banner Stands",
+        "Floor Stands & Free Stands", 
+        "Brochure Stands",
+        "Picture Frames & Shutter Frames",
+        "Point of Sale Tables & Counters",
+        "Light Boxes & Illuminated Displays",
+        "Wall & Hanging Displays",
+        "Accessories & Equipment"
+      ]
+    },
+    outdoor: {
+      name: "Outdoor",
+      icon: <Sun size={24} className="text-[#807045]" />,
+      subCategories: [
+        "Gazebos & Tents",
+        "Flags & Flying Banners",
+        "Pavement & Forecourt Signs",
+        "Outdoor Banner Frames & Wall Systems",
+        "Event & Queue Management Systems",
+        "Outdoor Brochure & Literature Holders",
+        "Illuminated & Solar Displays",
+        "Accessories & Hardware"
+      ]
+    }
+  };
+
+  // Use shared printing products dataset for details route parity
+  const products = printingProducts;
+
+
+  // State management for tabs
+  const [activeMainTab, setActiveMainTab] = useState('indoor');
+  const [activeSubTab, setActiveSubTab] = useState(0);
+
+  // Get current products based on selected sub-category
+  const getCurrentProducts = () => {
+    const currentSubCategory = productCategories[activeMainTab].subCategories[activeSubTab];
+    return products[currentSubCategory] || [];
+  };
+
   return (
     <div className="enterprise-level-printing-page bg-white text-gray-800">
       {/* Hero Section */}
@@ -23,6 +72,10 @@ export default function PrintingPage() {
         image=""
       />
 
+<div className="absolute top-0 left-0 w-screen h-screen z-[0] p-0 m-0">
+        <video src="/videos/printing.mp4" autoPlay loop muted playsInline className="w-full h-full object-none" />
+      </div>
+
       {/* About the Service */}
       <section className="py-16 px-5 md:px-8">
         <div className="max-w-6xl mx-auto text-center">
@@ -30,7 +83,7 @@ export default function PrintingPage() {
             initial={{ opacity: 0, y: -20 }} 
             animate={{ opacity: 1, y: 0 }} 
             transition={{ delay: 0.3 }}
-            className="text-4xl font-semibold mb-6"
+            className="text-4xl font-semibold mb-6 text-[#807045]"
           >
             Streamlined Enterprise Printing Solutions
           </motion.h2>
@@ -38,18 +91,103 @@ export default function PrintingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="text-lg text-gray-700 mb-8"
+            className="text-lg text-gray-700 mb-16"
           >
-            At Shreeji Investments, we specialize in providing scalable, high-speed printing solutions designed to meet the growing needs of your enterprise. Our state-of-the-art enterprise-level printers are built for durability, speed, and precision, delivering results that consistently exceed expectations.
+            Whether you’re exhibiting at a trade show, setting up an in-store promotion, or enhancing your corporate reception area, your brand deserves to stand out. We specialize in premium indoor branding and display solutions, offering a full range of custom-printed banners, stands, counters, frames, and illuminated displays that combine durability, portability, and visual impact.
           </motion.p>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="text-lg text-gray-700 mb-8"
-          >
-            Whether you're printing high volumes of marketing materials, internal documents, or other business-critical materials, our printing solutions are designed to save you time, reduce costs, and improve operational efficiency.
-          </motion.p>
+        </div>
+
+      {/* Product Categories */}
+        <div className="max-w-7xl mx-auto px-3 md:px-8">
+          
+          {/* Main Tabs */}
+          <div className="flex justify-center mb-8">
+            <div className="bg-gray-100 rounded-lg p-1 flex">
+              {Object.entries(productCategories).map(([key, category]) => (
+                <button
+                  key={key}
+                  onClick={() => {
+                    setActiveMainTab(key);
+                    setActiveSubTab(0); // Reset to first sub-tab when switching main tabs
+                  }}
+                  className={`flex items-center gap-2 px-6 py-3 rounded-md transition-all duration-300 ${
+                    activeMainTab === key
+                      ? 'bg-white text-[#807045] shadow-md'
+                      : 'text-gray-600 hover:text-[#807045]'
+                  }`}
+                >
+                  {category.icon}
+                  <span className="font-semibold">{category.name}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Sub Tabs */}
+          <div className="mb-8">
+            <div className="flex flex-wrap justify-center gap-2">
+              {productCategories[activeMainTab].subCategories.map((subCategory, index) => (
+                <button
+                  key={index}
+                  onClick={() => setActiveSubTab(index)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                    activeSubTab === index
+                      ? 'bg-[#807045] text-white shadow-md'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-[#807045]'
+                  }`}
+                >
+                  {subCategory}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Products Grid */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {getCurrentProducts().map((product) => (
+              <motion.div
+                key={product.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="bg-white rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 overflow-hidden"
+              >
+                <Link href={`/services/enterprise-printing-and-scanning/printing/${slugify(product.name)}`}>
+                  <div className="aspect-square bg-gray-100 flex items-center justify-center relative overflow-hidden">
+                    <Image 
+                      src={(product.images && product.images[0]) || product.image} 
+                      alt={product.name}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                      className="object-contain p-4"
+                    />
+                </div>
+                </Link>
+                <div className="p-4">
+                  <h3 className="text-lg font-semibold text-[#807045] mb-2">{product.name}</h3>
+                  {/* <p className="text-gray-600 text-sm mb-3">{product.description}</p> */}
+                  <div className="flex justify-between items-center">
+                    <span className="text-[#807045] font-bold">{product.price}</span>
+                    {/* <Link 
+                      href={`/services/enterprise-printing-and-scanning/printing/${slugify(product.name)}`}
+                      className="bg-[#807045] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#6b5d3a] transition-colors"
+                    >
+                      View Details
+                    </Link> */}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* No products message */}
+          {getCurrentProducts().length === 0 && (
+            <div className="text-center py-12">
+              <Package size={60} className="text-gray-400 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-gray-600 mb-2">Products Coming Soon</h3>
+              <p className="text-gray-500">We're working on adding products for this category. Check back soon!</p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -90,42 +228,8 @@ export default function PrintingPage() {
         </div>
       </section>
 
-      {/* Showcase Works Section */}
-      <section className="py-16 px-3 md:px-8 bg-[#f9f6e6]">
-        <div className="max-w-6xl mx-auto text-center">
-          <motion.h3 
-            initial={{ opacity: 0, y: -20 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            transition={{ delay: 0.5 }}
-            className="text-3xl font-semibold mb-6"
-          >
-            Our Work Samples
-          </motion.h3>
-          <p className="text-lg text-gray-700 mb-8">
-            We take pride in delivering exceptional printing solutions that meet industry standards. Explore some of our latest work below.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="bg-white p-6 rounded-lg shadow-xl transform">
-              <Image src={sample1} alt="Sample Work 1" className="w-full h-64 object-cover rounded-lg" />
-              <h4 className="text-2xl font-semibold mt-4 text-[#807045]">Corporate Brochure</h4>
-              <p className="text-gray-700 mt-2">High-quality, full-color brochures designed to represent your brand professionally.</p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-xl transform">
-              <Image src={sample2} alt="Sample Work 2" className="w-full h-64 object-cover rounded-lg" />
-              <h4 className="text-2xl font-semibold mt-4 text-[#807045]">Annual Reports</h4>
-              <p className="text-gray-700 mt-2">Detailed, structured, and elegantly printed reports for corporate stakeholders.</p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-xl transform">
-              <Image src={sample3} alt="Sample Work 3" className="w-full h-64 object-cover rounded-lg" />
-              <h4 className="text-2xl font-semibold mt-4 text-[#807045]">Marketing Materials</h4>
-              <p className="text-gray-700 mt-2">Eye-catching posters, flyers, and promotional materials that make an impact.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Service Features */}
-      <section className="py-16 px-3 md:px-8">
+      {/* <section className="py-16 px-3 md:px-8">
         <div className="max-w-6xl mx-auto text-center">
           <motion.h3 
             initial={{ opacity: 0, y: -20 }} 
@@ -156,10 +260,10 @@ export default function PrintingPage() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Client Testimonials */}
-      <section className="py-16 px-8 bg-[#f9f6e6]">
+      {/* <section className="py-16 px-8 bg-[#f9f6e6]">
         <div className="max-w-6xl mx-auto text-center">
           <motion.h3 
             initial={{ opacity: 0, y: -20 }} 
@@ -181,7 +285,7 @@ export default function PrintingPage() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Contact Section */}
         <div className="bg-[#807045] text-white py-16 px-8">

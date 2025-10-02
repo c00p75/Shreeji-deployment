@@ -1,6 +1,6 @@
-'use state'
+"use client"
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import ProductImage from '../product details/product image';
 import "./style.scss";
 import { X } from 'lucide-react';
@@ -19,15 +19,39 @@ const modalVariants = {
   visible: { opacity: 1, scale: 1 },
 };
 
-const RequestQuoteModal = ({ product, isOpen, onClose }) => {
+const RequestQuoteModal = ({ product, isOpen, onClose, initialValues = {} }) => {
   const form = useRef();
   const [submited, setSubmited] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [submitionFailed, setSubmitionFailed] = useState(false)
-  const body = document.querySelector('body')
-  const nav = document.querySelector('#website-navigation')
-  const footer = document.querySelector('.footer-section')
-  const contactCard = document.querySelector('.contact-card-container')
+  let body, nav, footer, contactCard;
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    body = document.querySelector('body');
+    nav = document.querySelector('#website-navigation');
+    footer = document.querySelector('.footer-section');
+    contactCard = document.querySelector('.contact-card-container');
+
+    if (isOpen) {
+      if (footer) footer.style.zIndex = '0';
+      if (contactCard) contactCard.style.zIndex = '0';
+      if (body) body.classList.add('overflow-hidden');
+      if (nav) nav.style.zIndex = '-1';
+    } else {
+      if (footer) footer.style.zIndex = '2';
+      if (contactCard) contactCard.style.zIndex = '5';
+      if (body) body.classList.remove('overflow-hidden');
+      if (nav) nav.style.zIndex = '10';
+    }
+
+    return () => {
+      // Ensure cleanup on unmount
+      if (footer) footer.style.zIndex = '2';
+      if (contactCard) contactCard.style.zIndex = '5';
+      if (body) body.classList.remove('overflow-hidden');
+      if (nav) nav.style.zIndex = '10';
+    };
+  }, [isOpen]);
   
   if(isOpen) {    
     if (footer) { footer.style.zIndex = '0' }
@@ -55,7 +79,10 @@ const RequestQuoteModal = ({ product, isOpen, onClose }) => {
     email_2: salesTeamEmail,    // Shreeji team email
     phone: '',
     company: '',
-    quantity: '',
+    quantity: initialValues.quantity || '',
+    size: initialValues.size || '',
+    option: initialValues.option || '',
+    message: initialValues.message || '',
     productName: product['name'],
     productId: ''
   });
@@ -79,6 +106,9 @@ const RequestQuoteModal = ({ product, isOpen, onClose }) => {
       phone: formData.phone || "not provided",
       company: formData.company || "not provided",
       quantity: formData.quantity || "not provided",
+      size: formData.size || "not provided",
+      option: formData.option || "not provided",
+      message: formData.message || "not provided",
       productName: formData.productName,
       productId: formData.productId || "N/A",
     }
@@ -201,7 +231,20 @@ const RequestQuoteModal = ({ product, isOpen, onClose }) => {
                   />
                 </div> */}
 
+                <InputField name="size" label="Selected Size" type="text" value={formData.size} onChange={handleChange} />
+                <InputField name="option" label="Selected Option" type="text" value={formData.option} onChange={handleChange} />
                 <InputField name="quantity" label="Quantity / Volume" type="number" value={formData.quantity} onChange={handleChange} />
+                <div>
+                  <label className="block text-sm font-medium mb-1">Message (optional)</label>
+                  <textarea
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    rows="4"
+                    className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500"
+                    placeholder="Any additional details"
+                  />
+                </div>
                 {/* <InputField name="deadline" label="Deadline / Timeframe" type="date" value={formData.deadline} onChange={handleChange} /> */}
 
                 {/* <div>
