@@ -44,28 +44,79 @@ export const products = {
       // price: 'From R250',
       images: [
         'https://www.idealdisplays.co.za/wp-content/uploads/2013/05/Banner-Stand-Indoor-Front-Back-1-e1747921600362.png',
-        'https://www.idealdisplays.co.za/wp-content/uploads/2013/05/Banner-Stand-Indoor-Front-Back.png',
-        'https://www.idealdisplays.co.za/wp-content/uploads/2019/05/Banner-Plus.png'
+        'https://www.idealdisplays.co.za/wp-content/uploads/2013/05/Banner-Stand-Indoor-Side-e1646055021980.png',
       ],
       sizes: ['850 x 2000mm', '1000 x 2000mm'],
     },
     {
       id: 2,
-      name: 'Roll-Up Banner',
-      description: 'Professional roll-up banner display',
+      name: 'Banner Plus',
+      description: "Banner Plus system include a sturdy aluminium base, two side poles and top extrusion to hold a single PVC banner with double sided print – fully collapsible and compact. Banner Plus custom sizes are available on request. Standard size available includes:850mm x 2000mm",
       // price: 'From R129',
       images: [
         'https://www.idealdisplays.co.za/wp-content/uploads/2019/05/Banner-Plus.png'
       ],
+      sizes: ['850mm x 2000mm'],
     },
     {
       id: 3,
-      name: 'Tension Banner',
-      description: 'Modern tension banner system',
+      name: 'Banner Plus 1',
+      description: 'Banner Plus 1 system include a sturdy aluminium base, two side poles and top extrusion to hold two PVC banners with print – fully collapsible and compact. Banner Plus 1 custom sizes are available on request. Standard size available includes: 850mm x 2000mm',
       // price: 'From R199',
       images: [
-        'https://www.idealdisplays.co.za/wp-content/uploads/2019/05/Banner-Plus.png'
+        'https://www.idealdisplays.co.za/wp-content/uploads/2019/05/Banner-Plus-1.png'
       ],
+      sizes: ['850mm x 2000mm'],
+    },
+    {
+      id: 4,
+      name: 'Harpoon Banner 1',
+      description: 'Banner Plus 1 system include a sturdy aluminium base, two side poles and top extrusion to hold two PVC banners with print – fully collapsible and compact. Banner Plus 1 custom sizes are available on request. Standard size available includes: 850mm x 2000mm',
+      // price: 'From R199',
+      images: [
+        'https://www.idealdisplays.co.za/wp-content/uploads/2019/05/Harpoon-Banner-1.png'
+      ],
+      sizes: ['850mm x 2000mm'],
+    },
+    {
+      id: 3,
+      name: 'Banner Plus 1',
+      description: 'Banner Plus 1 system include a sturdy aluminium base, two side poles and top extrusion to hold two PVC banners with print – fully collapsible and compact. Banner Plus 1 custom sizes are available on request. Standard size available includes: 850mm x 2000mm',
+      // price: 'From R199',
+      images: [
+        'https://www.idealdisplays.co.za/wp-content/uploads/2019/05/Banner-Plus-1.png'
+      ],
+      sizes: ['850mm x 2000mm'],
+    },
+    {
+      id: 3,
+      name: 'Banner Plus 1',
+      description: 'Banner Plus 1 system include a sturdy aluminium base, two side poles and top extrusion to hold two PVC banners with print – fully collapsible and compact. Banner Plus 1 custom sizes are available on request. Standard size available includes: 850mm x 2000mm',
+      // price: 'From R199',
+      images: [
+        'https://www.idealdisplays.co.za/wp-content/uploads/2019/05/Banner-Plus-1.png'
+      ],
+      sizes: ['850mm x 2000mm'],
+    },
+    {
+      id: 3,
+      name: 'Banner Plus 1',
+      description: 'Banner Plus 1 system include a sturdy aluminium base, two side poles and top extrusion to hold two PVC banners with print – fully collapsible and compact. Banner Plus 1 custom sizes are available on request. Standard size available includes: 850mm x 2000mm',
+      // price: 'From R199',
+      images: [
+        'https://www.idealdisplays.co.za/wp-content/uploads/2019/05/Banner-Plus-1.png'
+      ],
+      sizes: ['850mm x 2000mm'],
+    },
+    {
+      id: 3,
+      name: 'Banner Plus 1',
+      description: 'Banner Plus 1 system include a sturdy aluminium base, two side poles and top extrusion to hold two PVC banners with print – fully collapsible and compact. Banner Plus 1 custom sizes are available on request. Standard size available includes: 850mm x 2000mm',
+      // price: 'From R199',
+      images: [
+        'https://www.idealdisplays.co.za/wp-content/uploads/2019/05/Banner-Plus-1.png'
+      ],
+      sizes: ['850mm x 2000mm'],
     },
   ],
   'Floor Stands & Free Stands': [
