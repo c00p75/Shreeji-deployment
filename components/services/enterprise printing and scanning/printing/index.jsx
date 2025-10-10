@@ -26,25 +26,40 @@ export default function PrintingPage() {
         "Banner Stands",
         "Floor Stands & Free Stands", 
         "Brochure Stands",
-        "Picture Frames & Shutter Frames",
+        "Fabric Stretch Frame",
         "Point of Sale Tables & Counters",
         "Light Boxes & Illuminated Displays",
         "Wall & Hanging Displays",
-        "Accessories & Equipment"
+        "Accessories & Equipment",
+        "Flag Indoor Options",
+        "Floating Display System",
+        "Hanging Extrusions",
+        "Ideal Applicator",
+        "Ideal Media Roll Dispenser",
+        "Ideal Vinyl Weeding Machine & Take-up System",
+        "Picture Frames & Shutter Frame",
+        "Table Cloth"
       ]
     },
     outdoor: {
       name: "Outdoor",
       icon: <Sun size={24} className="text-[#807045]" />,
       subCategories: [
-        "Gazebos & Tents",
+        "Gazebos",
         "Flags & Flying Banners",
-        "Pavement & Forecourt Signs",
+        "A Frames",
         "Outdoor Banner Frames & Wall Systems",
-        "Event & Queue Management Systems",
-        "Outdoor Brochure & Literature Holders",
-        "Illuminated & Solar Displays",
-        "Accessories & Hardware"
+        "BackPack",
+        "Billboards",
+        "Bunting",
+        "Car Options",
+        "Director Chair Options",
+        "Floor Stand Outdoor",
+        "Star Tents",
+        "Umbrella",
+        "Magnetic Decals",,
+        "Selfie Frame",
+        "Windsock"
       ]
     }
   };
