@@ -15,6 +15,7 @@ import ContactModal from '../contact us';
 import Link from 'next/link';
 import { useState } from 'react';
 import { slugify, products as printingProducts } from '@/data/printingProducts';
+import "./style.scss";
 
 export default function PrintingPage() {
   // Product categories data structure
@@ -92,8 +93,8 @@ export default function PrintingPage() {
       </div>
 
       {/* About the Service */}
-      <section className="py-16 px-5 md:px-8">
-        <div className="max-w-6xl mx-auto text-center">
+      <section className="py-16 md:px-8">
+        <div className="max-w-6xl mx-auto text-center px-5 md:px-0">
           <motion.h2 
             initial={{ opacity: 0, y: -20 }} 
             animate={{ opacity: 1, y: 0 }} 
@@ -116,7 +117,7 @@ export default function PrintingPage() {
         <div className="max-w-7xl mx-auto px-3 md:px-8">
           
           {/* Main Tabs */}
-          <div className="flex justify-center mb-8">
+          <div className="flex justify-center mb-2 md:mb-8">
             <div className="bg-gray-100 rounded-lg p-1 flex">
               {Object.entries(productCategories).map(([key, category]) => (
                 <button
@@ -140,7 +141,7 @@ export default function PrintingPage() {
 
           {/* Sub Tabs */}
           <div className="mb-8">
-            <div className="flex flex-wrap justify-center gap-2">
+            <div className="flex flex-wrap justify-center gap-2 sub-tabs-container">
               {productCategories[activeMainTab].subCategories.map((subCategory, index) => (
                 <button
                   key={index}
