@@ -318,7 +318,7 @@ nav {
       display: flex;
       flex-direction: column;
       padding-inline: 1rem !important;
-      // gap: 1.5rem;
+      visibility: visible !important;
     }
 
     div:first-child h4{
