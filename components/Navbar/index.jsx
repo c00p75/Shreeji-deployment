@@ -154,7 +154,7 @@ const Navbar = () => {
             <Image src={logo2} alt="Logo" quality={100} className="logo-dark absolute top-[0.5rem] h-10 md:h-16 w-auto nav-logo" />
           </Link>
 
-          {/*Navbar Links */}
+          {/* Navbar Links */}
           <ul id="navbar-links" className={`flex space-x-6 pl-1 py-5 rounded-lg ${isMobileMenuOpen ? 'mobile-menu-open': 'mobile-menu-closed'}`}>
             <li><Link href="/" className={`${pathname === "/" ? "active-link" : ""}`} onClick={() => setIsMobileMenuOpen(false)}>Home</Link></li>            
 
