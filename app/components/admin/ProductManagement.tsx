@@ -14,6 +14,7 @@ import api from '@/app/lib/admin/api'
 import { processProductImages } from '@/app/lib/admin/image-mapping'
 import EditProductModal from './EditProductModal'
 import AddProductModal from './AddProductModal'
+import ViewProductModal from './ViewProductModal'
 
 interface Product {
   id: number
@@ -51,7 +52,9 @@ export default function ProductManagement() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
+  const [viewingProduct, setViewingProduct] = useState<Product | null>(null)
   const [showEditModal, setShowEditModal] = useState(false)
+  const [showViewModal, setShowViewModal] = useState(false)
   const [showAddModal, setShowAddModal] = useState(false)
 
   const fetchProducts = async () => {
@@ -204,6 +207,11 @@ export default function ProductManagement() {
     setShowEditModal(true)
   }
 
+  const handleViewProduct = (product: Product) => {
+    setViewingProduct(product)
+    setShowViewModal(true)
+  }
+
   const handleSaveProduct = async (updatedProduct: Product) => {
     try {
       if (!updatedProduct.documentId) {
@@ -242,10 +250,8 @@ export default function ProductManagement() {
       const response = await api.updateProduct(updatedProduct.documentId, productData)
       console.log('Update response:', response)
       
-      // Update the local state
-      setProducts(prev => prev.map(p => 
-        p.id === updatedProduct.id ? updatedProduct : p
-      ))
+      // Refresh products list to get latest data
+      await fetchProducts()
       
       console.log('Product updated successfully')
     } catch (error: any) {
@@ -271,6 +277,18 @@ export default function ProductManagement() {
   const handleCloseEditModal = () => {
     setShowEditModal(false)
     setEditingProduct(null)
+  }
+
+  const handleCloseViewModal = () => {
+    setShowViewModal(false)
+    setViewingProduct(null)
+  }
+
+  const handleEditFromView = (product: Product) => {
+    setShowViewModal(false)
+    setViewingProduct(null)
+    setEditingProduct(product)
+    setShowEditModal(true)
   }
 
   if (loading) {
@@ -425,11 +443,11 @@ export default function ProductManagement() {
         {viewMode === 'grid' ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} onDelete={handleDelete} onToggleActive={toggleActive} onEdit={handleEditProduct} />
+              <ProductCard key={product.id} product={product} onDelete={handleDelete} onToggleActive={toggleActive} onEdit={handleEditProduct} onView={handleViewProduct} />
             ))}
           </div>
         ) : (
-          <ProductTable products={filteredProducts} onDelete={handleDelete} onToggleActive={toggleActive} onEdit={handleEditProduct} />
+          <ProductTable products={filteredProducts} onDelete={handleDelete} onToggleActive={toggleActive} onEdit={handleEditProduct} onView={handleViewProduct} />
         )}
 
         {filteredProducts.length === 0 && (
@@ -455,6 +473,14 @@ export default function ProductManagement() {
         }}
       />
 
+      {/* View Product Modal */}
+      <ViewProductModal
+        isOpen={showViewModal}
+        onClose={handleCloseViewModal}
+        product={viewingProduct}
+        onEdit={handleEditFromView}
+      />
+
       {/* Edit Product Modal */}
       <EditProductModal
         isOpen={showEditModal}
@@ -466,11 +492,12 @@ export default function ProductManagement() {
   )
 }
 
-function ProductCard({ product, onDelete, onToggleActive, onEdit }: { 
+function ProductCard({ product, onDelete, onToggleActive, onEdit, onView }: { 
   product: Product, 
   onDelete: (id: number) => void, 
   onToggleActive: (id: number) => void,
-  onEdit: (product: Product) => void
+  onEdit: (product: Product) => void,
+  onView: (product: Product) => void
 }) {
   // Get the main image or fallback
   const mainImage = product.images && product.images.length > 0 
@@ -507,7 +534,10 @@ function ProductCard({ product, onDelete, onToggleActive, onEdit }: {
           </div>
         </div>
         <div className="flex space-x-2">
-          <button className="flex items-center justify-center btn-secondary text-sm py-2">
+          <button 
+            className="flex items-center justify-center btn-secondary text-sm py-2"
+            onClick={() => onView(product)}
+          >
             <EyeIcon className="w-4 h-4 mr-1" />
             View
           </button>
@@ -530,11 +560,12 @@ function ProductCard({ product, onDelete, onToggleActive, onEdit }: {
   )
 }
 
-function ProductTable({ products, onDelete, onToggleActive, onEdit }: { 
+function ProductTable({ products, onDelete, onToggleActive, onEdit, onView }: { 
   products: Product[], 
   onDelete: (id: number) => void, 
   onToggleActive: (id: number) => void,
-  onEdit: (product: Product) => void
+  onEdit: (product: Product) => void,
+  onView: (product: Product) => void
 }) {
   return (
     <div className="card overflow-hidden">
@@ -596,12 +627,17 @@ function ProductTable({ products, onDelete, onToggleActive, onEdit }: {
                 </td>
                 <td className="table-cell">
                   <div className="flex space-x-2">
-                    <button className="text-primary-600 hover:text-primary-900">
+                    <button 
+                      className="text-primary-600 hover:text-primary-900"
+                      onClick={() => onView(product)}
+                      title="View Product"
+                    >
                       <EyeIcon className="w-4 h-4" />
                     </button>
                     <button 
                       className="text-gray-600 hover:text-gray-900"
                       onClick={() => onEdit(product)}
+                      title="Edit Product"
                     >
                       <PencilIcon className="w-4 h-4" />
                     </button>

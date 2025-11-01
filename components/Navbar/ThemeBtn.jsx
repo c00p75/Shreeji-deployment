@@ -26,6 +26,7 @@ const ThemeBtn = ({isScrolled}) => {
           className="input"
           checked={theme === "dark-theme"}
           type="checkbox"
+          readOnly
         />
         <svg
           viewBox="0 0 24 24"

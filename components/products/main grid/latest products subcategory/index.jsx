@@ -2,11 +2,25 @@
 
 import React, { useEffect, useRef, useState } from 'react'
 import { ChevronLeft, ChevronRight, Triangle } from "lucide-react";
-import { filterProducts } from '@/data/productsData';
+import { filterProducts } from '@/app/lib/client/products';
 import ProductPreview from '../../ProductPreview';
 
-const LatestProductsBySubCategory = ({subcategory, count, heading}) => {  
-  let latestProducts = filterProducts('subcategory', subcategory, count)
+const LatestProductsBySubCategory = ({subcategory, count, heading}) => {
+  const [latestProducts, setLatestProducts] = useState([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const products = await filterProducts('subcategory', subcategory, count);
+        setLatestProducts(products || []);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+        setLatestProducts([]);
+      }
+    };
+    
+    fetchProducts();
+  }, [subcategory, count]);
 
 
   const scrollRef = useRef(null);
@@ -41,7 +55,7 @@ const LatestProductsBySubCategory = ({subcategory, count, heading}) => {
       </div>
       <div ref={scrollRef} className='flex overflow-x-auto overflow-visible scroll-container pt-10 gap-14'>
         {latestProducts.map((product, index) => (
-          <ProductPreview product={product} index={index} additionalClass={'min-w-[20rem] first:ml-20'} />  
+          <ProductPreview key={product.id || product.documentId || index} product={product} index={index} additionalClass={'min-w-[20rem] first:ml-20'} />  
         ))}
       </div>
     </div> 

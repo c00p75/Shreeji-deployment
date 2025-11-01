@@ -3,6 +3,10 @@ import Link from 'next/link'
 import React from 'react'
 
 const PrimaryPromotionalBanner = ({promoProduct}) => {
+  if (!promoProduct || !promoProduct.images || promoProduct.images.length === 0) {
+    return null;
+  }
+
   return (
     <div className="bg-[var(--shreeji-primary)] h-fit relative">
       <div className='flex'>
@@ -10,8 +14,8 @@ const PrimaryPromotionalBanner = ({promoProduct}) => {
           <h2 className="text-4xl font-bold md:font-extralight [text-shadow:2px_2px_4px_rgba(0,0,0,0.3)] md:line-clamp-2">{promoProduct['tagline']}</h2>
           <div className='flex md:hidden relative flex-1'>
             {promoProduct.images.length > 1 ? 
-              (<Image src={promoProduct.images[1]} className="object-cover overflow-visible z-0 w-full h-auto -mt-5 product-shadow" />):
-              (<Image src={promoProduct.images[0]} className="object-cover overflow-visible z-0 w-[100%] h-auto -mt-5 product-shadow" />)      
+              (<Image src={promoProduct.images[1]} alt={promoProduct.name} width={600} height={400} className="object-cover overflow-visible z-0 w-full h-auto -mt-5 product-shadow" unoptimized={typeof promoProduct.images[1] === 'string' && promoProduct.images[1].startsWith('http')} />):
+              (<Image src={promoProduct.images[0]} alt={promoProduct.name} width={600} height={400} className="object-cover overflow-visible z-0 w-[100%] h-auto -mt-5 product-shadow" unoptimized={typeof promoProduct.images[0] === 'string' && promoProduct.images[0].startsWith('http')} />)      
             }
           </div>  
           <h2 className="text-xl md:text-4xl font-extralight md:font-bold [text-shadow:2px_2px_4px_rgba(0,0,0,0.3)] md:line-clamp-3">{promoProduct['description']}</h2>
@@ -29,8 +33,8 @@ const PrimaryPromotionalBanner = ({promoProduct}) => {
 
         <div className='hidden md:flex relative flex-1'>
           {promoProduct.images.length > 1 ? 
-            (<Image src={promoProduct.images[1]} className="object-cover overflow-visible z-0 h-[80%] w-auto absolute top-[50%] left-[35%] -translate-x-1/2 -translate-y-1/2 product-shadow" />):
-            (<Image src={promoProduct.images[0]} className="object-cover overflow-visible z-0 h-[52%] w-auto absolute top-[45%] -right-[15%] -translate-x-1/2 -translate-y-1/2 product-shadow" />)      
+            (<Image src={promoProduct.images[1]} alt={promoProduct.name} width={600} height={400} className="object-cover overflow-visible z-0 h-[80%] w-auto absolute top-[50%] left-[35%] -translate-x-1/2 -translate-y-1/2 product-shadow" unoptimized={typeof promoProduct.images[1] === 'string' && promoProduct.images[1].startsWith('http')} />):
+            (<Image src={promoProduct.images[0]} alt={promoProduct.name} width={600} height={400} className="object-cover overflow-visible z-0 h-[52%] w-auto absolute top-[45%] -right-[15%] -translate-x-1/2 -translate-y-1/2 product-shadow" unoptimized={typeof promoProduct.images[0] === 'string' && promoProduct.images[0].startsWith('http')} />)      
           }
         </div>   
       </div> 

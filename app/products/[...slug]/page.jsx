@@ -1,4 +1,4 @@
-import { getProductByName, randomProduct, subcategoryExists } from "@/data/productsData";
+import { getProductByName, getProductBySlug, randomProduct, subcategoryExists } from "@/app/lib/client/products";
 import ProductDetails from "@/components/products/product details";
 import SideGrid from "@/components/products/side grid";
 import "@/components/products/style.scss";
@@ -16,7 +16,7 @@ const ProductPage = async ({ params }) => {
   product = product || "";
 
   // Product
-  let productDetails;
+  let productDetails = null;
   let productName;
 
   // Sub category
@@ -29,13 +29,15 @@ const ProductPage = async ({ params }) => {
     productName = decodeURIComponent(product);
     categoryName = decodeURIComponent(category)
     subcategoryName = decodeURIComponent(subcategory)
-    productDetails = getProductByName(productName);
+    // Try to get by slug first, then by name
+    productDetails = await getProductBySlug(productName) || await getProductByName(productName);
   } else if (subcategory) {
     categoryName = decodeURIComponent(category)
     subcategoryName = decodeURIComponent(subcategory)
-    if(!subcategoryExists(subcategoryName)){
+    const exists = await subcategoryExists(subcategoryName);
+    if(!exists){
       productName = subcategory;
-      productDetails = getProductByName(subcategoryName);
+      productDetails = await getProductBySlug(subcategoryName) || await getProductByName(subcategoryName);
     };
   } else if (category) {
     categoryName = decodeURIComponent(category)
@@ -55,10 +57,10 @@ const ProductPage = async ({ params }) => {
             <ProductDetails product={productDetails} />
           </>
         ) : subcategory ? (
-          subcategoryExists(subcategory) ? (
+          (await subcategoryExists(subcategoryName)) ? (
             <>
               <Breadcrumbs breadcrumbs={[categoryName, subcategoryName]} />
-              <PrimaryPromotionalBanner promoProduct={randomProduct('subcategory', subcategoryName, 1)} />
+              <PrimaryPromotionalBanner promoProduct={await randomProduct('subcategory', subcategoryName, 1)} />
               <ProductList filterBy="subcategory" filter={subcategoryName} />
             </>
           ) : (
@@ -70,7 +72,7 @@ const ProductPage = async ({ params }) => {
         ) : (
           <>
             <Breadcrumbs breadcrumbs={[categoryName]} />
-            <PrimaryPromotionalBanner promoProduct={randomProduct('category', categoryName, 1)} />
+            <PrimaryPromotionalBanner promoProduct={await randomProduct('category', categoryName, 1)} />
             <ProductList filterBy="category" filter={categoryName} />
           </>
         )}

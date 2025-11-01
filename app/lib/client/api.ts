@@ -103,6 +103,54 @@ class ClientApiClient {
       method: 'DELETE',
     });
   }
+
+  // Products API - Public access (only published products)
+  async getProducts(params?: {
+    pagination?: { page: number; pageSize: number };
+    filters?: Record<string, any>;
+    sort?: string;
+    populate?: string[];
+  }) {
+    const searchParams = new URLSearchParams();
+    
+    if (params?.pagination) {
+      searchParams.append('pagination[page]', params.pagination.page.toString());
+      searchParams.append('pagination[pageSize]', params.pagination.pageSize.toString());
+    }
+    
+    if (params?.filters) {
+      Object.entries(params.filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+          searchParams.append(`filters[${key}][$eq]`, value.toString());
+        }
+      });
+    }
+    
+    if (params?.sort) {
+      searchParams.append('sort', params.sort);
+    }
+
+    if (params?.populate) {
+      params.populate.forEach(field => {
+        searchParams.append('populate', field);
+      });
+    }
+
+    // Only fetch published products (default Strapi behavior, no publicationState=preview)
+    const queryString = searchParams.toString();
+    const endpoint = `/products${queryString ? `?${queryString}` : ''}`;
+    
+    return this.request<{ data: any[]; meta: any }>(endpoint);
+  }
+
+  async getProduct(slug: string) {
+    // Get product by slug
+    return this.request<{ data: any }>(`/products?filters[slug][$eq]=${encodeURIComponent(slug)}&populate=*`);
+  }
+
+  async getProductById(id: string | number) {
+    return this.request<{ data: any }>(`/products/${id}?populate=*`);
+  }
 }
 
 export const clientApi = new ClientApiClient();

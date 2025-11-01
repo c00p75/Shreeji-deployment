@@ -36,7 +36,15 @@ const ProductDetails = ({product}) => {
     <div className="pl-5 md:pl-10 pr-5 text-black h-full pt-5 product-details">
       {product['brand logo'] && (
         <div className='w-full h-fit flex-center mb-5'>
-          <Image src={product['brand logo']} quality={100} alt={product['name']} className='w-auto h-16 z-[1] object-cover' />
+          <Image 
+            src={product['brand logo']} 
+            quality={100} 
+            alt={product['name']} 
+            width={150}
+            height={64}
+            className='w-auto h-16 z-[1] object-cover' 
+            unoptimized={typeof product['brand logo'] === 'string' && product['brand logo'].startsWith('http')}
+          />
         </div>
       )}
       {product['name'] && <h1 className="text-6xl font-bold text-center pb-5 bg-gradient-to-r from-[#807045] to-[#544829] bg-clip-text text-transparent">{product['name']}</h1>}

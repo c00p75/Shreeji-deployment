@@ -3,24 +3,36 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import './style.scss';
-import { filterProducts } from '@/data/productsData';
+import { filterProducts } from '@/app/lib/client/products';
 import ProductPreview from '../../ProductPreview';
 
 const Featured = ({category, count}) => {
   const [slides, setSlides] = useState([]);
+  const [featuredProducts, setFeaturedProducts] = useState([]);
   const scrollRef = useRef(null);
   const scrollRef2 = useRef(null);
-  const featuredProducts = filterProducts('category', category, count)
   
   useEffect(() => {
-    // Split products into groups of 6 (2 rows x 3 columns)
-    const groupedSlides = [];
-    for (let i = 0; i < featuredProducts.length; i += 6) {
-      groupedSlides.push(featuredProducts.slice(i, i + 6));
-    }
-    setSlides(groupedSlides);
+    const fetchProducts = async () => {
+      try {
+        const products = await filterProducts('category', category, count);
+        setFeaturedProducts(products || []);
+        
+        // Split products into groups of 6 (2 rows x 3 columns)
+        const groupedSlides = [];
+        for (let i = 0; i < products.length; i += 6) {
+          groupedSlides.push(products.slice(i, i + 6));
+        }
+        setSlides(groupedSlides);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+        setFeaturedProducts([]);
+        setSlides([]);
+      }
+    };
 
-  }, []);
+    fetchProducts();
+  }, [category, count]);
 
   const scroll = (direction) => {
     if (scrollRef.current) {
@@ -59,8 +71,8 @@ const Featured = ({category, count}) => {
         <div className="hidden md:flex w-full">
           {slides.map((slide, index) => (
             <div key={index} className="slide min-w-full grid grid-cols-3 grid-rows-2 gap-10 p-5">
-              {slide.map((product, index) => (
-                <ProductPreview product={product} index={index} />  
+              {slide.map((product, productIndex) => (
+                <ProductPreview key={product.id || product.documentId || productIndex} product={product} index={productIndex} />  
               ))}
             </div>
           ))}
@@ -69,7 +81,7 @@ const Featured = ({category, count}) => {
 
       <div ref={scrollRef2} className='flex md:hidden overflow-x-auto overflow-visible scroll-container pt-10 gap-14'>
         {featuredProducts.map((product, index) => (
-          <ProductPreview product={product} index={index} additionalClass={'min-w-[20rem] first:ml-20'} />  
+          <ProductPreview key={product.id || product.documentId || index} product={product} index={index} additionalClass={'min-w-[20rem] first:ml-20'} />  
         ))}
       </div>
     </div>

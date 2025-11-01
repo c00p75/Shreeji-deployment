@@ -2,7 +2,7 @@
 
 import { ChevronDown, CircleDot } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import {allProducts} from "@/data/productsData";
+import { getAllProductsList } from "@/app/lib/client/products";
 import Link from "next/link";
 
 const Categories = () => {
@@ -10,22 +10,35 @@ const Categories = () => {
   const [openCategory, setOpenCategory] = useState(null); // Add state for toggling
 
   useEffect(() => {
-    // Group categories with their subcategories
-    const categoryMap = allProducts.reduce((acc, product) => {
-      if (!acc[product.category]) {
-        acc[product.category] = new Set();
+    const fetchCategories = async () => {
+      try {
+        const allProducts = await getAllProductsList();
+        
+        // Group categories with their subcategories
+        const categoryMap = allProducts.reduce((acc, product) => {
+          if (!acc[product.category]) {
+            acc[product.category] = new Set();
+          }
+          if (product.subcategory) {
+            acc[product.category].add(product.subcategory);
+          }
+          return acc;
+        }, {});
+
+        // Convert sets to arrays
+        const structuredCategories = Object.entries(categoryMap).map(([category, subcategories]) => ({
+          category,
+          subcategories: [...subcategories],
+        }));
+
+        setCategories(structuredCategories);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+        setCategories([]);
       }
-      acc[product.category].add(product.subcategory);
-      return acc;
-    }, {});
+    };
 
-    // Convert sets to arrays
-    const structuredCategories = Object.entries(categoryMap).map(([category, subcategories]) => ({
-      category,
-      subcategories: [...subcategories],
-    }));
-
-    setCategories(structuredCategories);
+    fetchCategories();
   }, []);
 
   return (
