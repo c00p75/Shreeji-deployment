@@ -1,7 +1,5 @@
 import "./globals.css";
-import Navbar from "@/components/Navbar";
-import ContactCard from "@/components/contact card/ContactCard";
-import Footer from "@/components/footer";
+import ConditionalLayout from "@/components/ConditionalLayout";
 import siteMetadata from "@/siteMetaData";
 import { GoogleAnalytics } from "@next/third-parties/google";
 
@@ -46,10 +44,9 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <GoogleAnalytics gaId="G-1W93H38B5W" />
       <body className="antialiased light-theme">
-        <Navbar />
-        <main className="text-lg text-center md:text-start">{children}</main>
-        <ContactCard />
-        <Footer />
+        <ConditionalLayout>
+          {children}
+        </ConditionalLayout>
       </body>
     </html>
   );

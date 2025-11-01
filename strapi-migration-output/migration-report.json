@@ -1,0 +1,48 @@
+{
+  "migrationDate": "2025-10-14T12:09:46.608Z",
+  "sourceFile": "productsData.js",
+  "totalProducts": 57,
+  "totalCategories": 7,
+  "totalSubcategories": 13,
+  "totalBrands": 13,
+  "categories": [
+    "Computers",
+    "Power Solutions",
+    "Monitors",
+    "Interactive Displays",
+    "Components",
+    "Networking",
+    "Accessories"
+  ],
+  "subcategories": [
+    "All in One",
+    "Desktops",
+    "Laptops",
+    "UPS",
+    "",
+    "Cases",
+    "Processors",
+    "Graphics Cards",
+    "Server Hard Drives",
+    "Consumer Storage",
+    "Switches",
+    "Routers",
+    "Access Points"
+  ],
+  "brands": [
+    "HP",
+    "Lenovo",
+    "APC",
+    "Dell",
+    "Asus",
+    "LG",
+    "",
+    "Huawei",
+    "ADATA",
+    "ASUS",
+    "AMD",
+    "Seagate",
+    "TP-Link"
+  ],
+  "productsWithImages": 57
+}

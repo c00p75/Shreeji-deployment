@@ -1,0 +1,128 @@
+{
+  "kind": "collectionType",
+  "collectionName": "products",
+  "info": {
+    "singularName": "product",
+    "pluralName": "products",
+    "displayName": "Product",
+    "description": "Enhanced product with inventory management"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name",
+      "required": true
+    },
+    "sku": {
+      "type": "string",
+      "unique": true,
+      "required": true
+    },
+    "category": {
+      "type": "string",
+      "required": true
+    },
+    "subcategory": {
+      "type": "string"
+    },
+    "brand": {
+      "type": "string"
+    },
+    "tagline": {
+      "type": "string"
+    },
+    "description": {
+      "type": "richText"
+    },
+    "price": {
+      "type": "decimal",
+      "required": true
+    },
+    "discountedPrice": {
+      "type": "decimal"
+    },
+    "costPrice": {
+      "type": "decimal"
+    },
+    "taxRate": {
+      "type": "decimal",
+      "default": 0
+    },
+    "specs": {
+      "type": "json"
+    },
+    "specialFeature": {
+      "type": "json"
+    },
+    "images": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "dateAdded": {
+      "type": "date"
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true
+    },
+    "isDigital": {
+      "type": "boolean",
+      "default": false
+    },
+    "stockQuantity": {
+      "type": "integer",
+      "required": true,
+      "default": 0
+    },
+    "minStockLevel": {
+      "type": "integer",
+      "default": 5
+    },
+    "maxStockLevel": {
+      "type": "integer",
+      "default": 100
+    },
+    "stockStatus": {
+      "type": "enumeration",
+      "enum": ["in-stock", "low-stock", "out-of-stock", "discontinued"],
+      "default": "in-stock"
+    },
+    "weight": {
+      "type": "decimal",
+      "default": 0
+    },
+    "dimensions": {
+      "type": "json"
+    },
+    "orderItems": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::order-item.order-item",
+      "mappedBy": "product"
+    },
+    "reviews": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::review.review",
+      "mappedBy": "product"
+    },
+    "averageRating": {
+      "type": "decimal",
+      "default": 0
+    },
+    "reviewCount": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

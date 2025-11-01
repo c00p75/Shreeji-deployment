@@ -1,0 +1,280 @@
+{
+  "generatedAt": "2025-10-14T12:00:37.280Z",
+  "totalProducts": 57,
+  "mappings": {
+    "HP Envy MOVE": [
+      "@/public/products/hp-envy-move-all-in-one-24.png",
+      "@/public/products/hp-envy-move-all-in-one-24_2.png",
+      "@/public/products/hp-envy-move-all-in-one-24_3.png"
+    ],
+    "HP EliteOne": [
+      "@/public/products/HP EliteOne 870 G9 All-in-One_2.png",
+      "@/public/products/HP EliteOne 870 G9 All-in-One.png",
+      "@/public/products/HP EliteOne 870 G9 All-in-One_3.png"
+    ],
+    "Lenovo YOGA AIO": [
+      "@/public/products/Yoga AIO 9i (32″ Intel) All In One.png",
+      "@/public/products/Yoga AIO 9i (32″ Intel) All In One_2.png",
+      "@/public/products/Yoga AIO 9i (32″ Intel) All In One_3.png"
+    ],
+    "HP ProTower 290": [
+      "@/public/products/HP ProTower 290.png",
+      "@/public/products/HP ProTower 290_2.png",
+      "@/public/products/HP ProTower 290_3.png"
+    ],
+    "HP Proliant ML110 Desktop Server": [
+      "@/public/products/HP Proliant ML110 Desktop Server (1).png",
+      "@/public/products/HP Proliant ML110 Desktop Server (2).png",
+      "@/public/products/HP Proliant ML110 Desktop Server (3).png"
+    ],
+    "Lenovo Legion Tower 5": [
+      "@/public/products/Lenovo Legion Tower_1.png",
+      "@/public/products/Lenovo Legion Tower_2.png",
+      "@/public/products/Lenovo Legion Tower_3.png"
+    ],
+    "Lenovo V15": [
+      "@/public/products/Lenovo V15_1.png",
+      "@/public/products/Lenovo V15_2.png",
+      "@/public/products/Lenovo V15_3.png"
+    ],
+    "HP Envy x360": [
+      "@/public/products/HP Envy x360_1.png",
+      "@/public/products/HP Envy x360_2.png",
+      "@/public/products/HP Envy x360_3.png"
+    ],
+    "APC UPS (500Va-40KVa)": [
+      "@/public/products/APC UPS (500Va-40KVa)_1.png",
+      "@/public/products/APC UPS (500Va-40KVa)_2.png"
+    ],
+    "HP ProDesk 600 G2 Micro Tower": [
+      "@/public/products/HP ProDesk 600 G2 Micro Tower_2.png",
+      "@/public/products/HP ProDesk 600 G2 Micro Tower_1.png",
+      "@/public/products/HP ProDesk 600 G2 Micro Tower_3.png"
+    ],
+    "HP EliteDesk 800 G4 Mini PC": [
+      "@/public/products/HP EliteDesk 800 G4 Mini PC_1.png",
+      "@/public/products/HP EliteDesk 800 G4 Mini PC_2.png",
+      "@/public/products/HP EliteDesk 800 G4 Mini PC_3.png"
+    ],
+    "Dell OptiPlex 7020 Mini Desktop": [
+      "@/public/products/Dell OptiPlex 7020 Mini Desktop_1.png",
+      "@/public/products/Dell OptiPlex 7020 Mini Desktop_2.png",
+      "@/public/products/Dell OptiPlex 7020 Mini Desktop_3.png"
+    ],
+    "Asus Mini PC PN41": [
+      "@/public/products/Asus Mini PC PN41_1.png",
+      "@/public/products/Asus Mini PC PN41_2.png",
+      "@/public/products/Asus Mini PC PN41_3.png"
+    ],
+    "Lenovo IdeaPad 1": [
+      "@/public/products/Lenovo IdeaPad 1 (1).png",
+      "@/public/products/Lenovo IdeaPad 1 (2).png",
+      "@/public/products/Lenovo IdeaPad 1 (3).png"
+    ],
+    "Lenovo IdeaPad Slim 3": [
+      "@/public/products/Lenovo IdeaPad 3_1.png",
+      "@/public/products/Lenovo IdeaPad 3_2.png",
+      "@/public/products/Lenovo IdeaPad 3_3.png"
+    ],
+    "Lenovo IdeaPad 5": [
+      "@/public/products/Lenovo IdeaPad 5_1.png",
+      "@/public/products/Lenovo IdeaPad 5_2.png",
+      "@/public/products/Lenovo IdeaPad 5_3.png"
+    ],
+    "Lenovo IdeaPad Duet": [
+      "@/public/products/Lenovo IdeaPad Duet (1).png",
+      "@/public/products/Lenovo IdeaPad Duet (2).png",
+      "@/public/products/Lenovo IdeaPad Duet (3).png"
+    ],
+    "Lenovo ThinkPad": [
+      "@/public/products/HP Envy x360 14-fa0008na.png"
+    ],
+    "HP ProBook 430 G7": [
+      "@/public/products/HP ProBook 430 g7 13 (1).png",
+      "@/public/products/HP ProBook 430 g7 13 (2).png"
+    ],
+    "HP ProBook 465 G7": [
+      "@/public/products/HP ProBook 465 G7 (1).png",
+      "@/public/products/HP ProBook 465 G7 (2).png",
+      "@/public/products/HP ProBook 465 G7 (3).png"
+    ],
+    "HP EliteBook 660 G11": [
+      "@/public/products/HP EliteBook 660 G11 (1).png",
+      "@/public/products/HP EliteBook 660 G11 (2).png"
+    ],
+    "HP Elite Dragonfly G3": [
+      "@/public/products/HP Elite Dragonfly G3 (1).png",
+      "@/public/products/HP Elite Dragonfly G3 (2).png"
+    ],
+    "HP Envy x360 14": [
+      "@/public/products/HP Envy x360 14 (1).png",
+      "@/public/products/HP Envy x360 14 (2).png",
+      "@/public/products/HP Envy x360 14 (3).png"
+    ],
+    "Dell Latitude 3450": [
+      "@/public/products/Dell Latitude 3450 (1).png",
+      "@/public/products/Dell Latitude 3450 (2).png",
+      "@/public/products/Dell Latitude 3450 (3).png"
+    ],
+    "Dell Latitude 3540": [
+      "@/public/products/Dell Latitude 3540 (1).png",
+      "@/public/products/Dell Latitude 3540 (2).png",
+      "@/public/products/Dell Latitude 3540 (3).png"
+    ],
+    "Dell Latitude 3550": [
+      "@/public/products/Dell Latitude 3550 (1).png",
+      "@/public/products/Dell Latitude 3550 (1).png",
+      "@/public/products/Dell Latitude 3550 (1).png"
+    ],
+    "Dell Latitude 5440": [
+      "@/public/products/Dell Latitude 5440 (1).png",
+      "@/public/products/Dell Latitude 5440 (2).png"
+    ],
+    "Dell Latitude 5450": [
+      "@/public/products/Dell Latitude 5450 (1).png",
+      "@/public/products/Dell Latitude 5450 (2).png",
+      "@/public/products/Dell Latitude 5450 (3).png"
+    ],
+    "Dell Latitude 5550": [
+      "@/public/products/Dell Latitude 5550 (1).png",
+      "@/public/products/Dell Latitude 5550 (2).png",
+      "@/public/products/Dell Latitude 5550 (3).png"
+    ],
+    "Dell Latitude 7450": [
+      "@/public/products/Dell Latitude 7450 (1).png",
+      "@/public/products/Dell Latitude 7450 (2).png",
+      "@/public/products/Dell Latitude 7450 (3).png"
+    ],
+    "Dell Inspiron 7640": [
+      "@/public/products/Dell Inspiron 7640 (1).png",
+      "@/public/products/Dell Inspiron 7640 (2).png",
+      "@/public/products/Dell Inspiron 7640 (3).png"
+    ],
+    "Dell Inspiron 5530 Gaming Laptop": [
+      "@/public/products/Dell Inspiron 5530 Gaming Laptop (1).png",
+      "@/public/products/Dell Inspiron 5530 Gaming Laptop (2).png",
+      "@/public/products/Dell Inspiron 5530 Gaming Laptop (3).png"
+    ],
+    "Dell Precision 3590": [
+      "@/public/products/Dell Precision 3590 (1).png",
+      "@/public/products/Dell Precision 3590 (2).png",
+      "@/public/products/Dell Precision 3590 (3).png"
+    ],
+    "Dell Precision 3591": [
+      "@/public/products/Dell Precision 3591 (1).png",
+      "@/public/products/Dell Precision 3591 (2).png",
+      "@/public/products/Dell Precision 3591 (3).png"
+    ],
+    "Dell Vostro 3440": [
+      "@/public/products/dell vostro 3440 (1).png",
+      "@/public/products/dell vostro 3440 (2).png",
+      "@/public/products/dell vostro 3440 (3).png"
+    ],
+    "LG 27UL500-W": [
+      "@/public/products/LG 27UL500-W (1).png",
+      "@/public/products/LG 27UL500-W (2).png",
+      "@/public/products/LG 27UL500-W (3).png"
+    ],
+    "LG 27QN880-B": [
+      "@/public/products/LG 27QN880-B.png",
+      "@/public/products/LG 27QN880-B 1.png",
+      "@/public/products/LG 27QN880-B 1.1.png"
+    ],
+    "LG 29WQ500-B": [
+      "@/public/products/LG 29WQ500-B.png",
+      "@/public/products/LG 29WQ500-B 1.1.png",
+      "@/public/products/LG 29WQ500-B 1.png"
+    ],
+    "LG 32GP850-B": [
+      "@/public/products/LG 32GP850-B.png",
+      "@/public/products/LG 32GP850-B 1.png",
+      "@/public/products/LG 32GP850-B 1.1.png"
+    ],
+    "LG 55UL3J-M": [
+      "@/public/products/LG 55UL3J-M.png",
+      "@/public/products/LG 55UL3J-M 1.png",
+      "@/public/products/LG 55UL3J-M 1.1.png"
+    ],
+    "LG 65EP5G-B": [
+      "@/public/products/LG 65EP5G-B.png",
+      "@/public/products/LG 65EP5G-B 1.png",
+      "@/public/products/LG 65EP5G-B 1.1.png"
+    ],
+    "Asus ZenScreen MB16AC": [
+      "@/public/products/Asus_ZenScreen_MB16AC_1.png",
+      "@/public/products/Asus ZenScreen MB16AC_2.png",
+      "@/public/products/Asus_ZenScreen_MB16AC_3.png"
+    ],
+    "Asus ZenScreen MB16QHG": [
+      "@/public/products/Asus ZenScreen MB16QHG.png",
+      "@/public/products/Asus ZenScreen MB16QHG_2.png",
+      "@/public/products/Asus ZenScreen MB16QHG_3.png"
+    ],
+    "Dell SE2422H": [
+      "@/public/products/Dell SE2422H (1).png",
+      "@/public/products/Dell SE2422H (2).png",
+      "@/public/products/Dell SE2422H (3).png"
+    ],
+    "Huawei IdeaHub S2 65\\": [
+      "@/public/products/Huawei IdeaHub S2 65 Interactive Display1.1.png",
+      "@/public/products/Huawei IdeaHub S2 65 Interactive Display.png",
+      "@/public/products/Huawei IdeaHub S2 65 Interactive Display1.png"
+    ],
+    "Huawei IdeaHub S2 75\\": [
+      "@/public/products/Huawei IdeaHub S2 75 Interactive Display1.png",
+      "@/public/products/Huawei IdeaHub S2 75 Interactive Display.png"
+    ],
+    "Huawei IdeaHub S2 86\\": [
+      "@/public/products/Huawei IdeaHub S2 86 Interactive Display.png",
+      "@/public/products/Huawei IdeaHub S2 86 Interactive Display1.1.png",
+      "@/public/products/Huawei IdeaHub S2 86 Interactive Display1.png"
+    ],
+    "ADATA XPG INVADER Mid-Tower Gaming Case": [
+      "@/public/products/ADATA XPG INVADER Mid-Tower Gaming Case (3).png",
+      "@/public/products/ADATA XPG INVADER Mid-Tower Gaming Case (2).png",
+      "@/public/products/ADATA XPG INVADER Mid-Tower Gaming Case (1).png"
+    ],
+    "ASUS A21 Micro-ATX Chassis": [
+      "@/public/products/ASUS A21 Micro-ATX Chassis (1).png",
+      "@/public/products/ASUS A21 Micro-ATX Chassis (2).png",
+      "@/public/products/ASUS A21 Micro-ATX Chassis (3).png"
+    ],
+    "AMD Ryzen 3 1200": [
+      "@/public/products/AMD Ryzen 3 1200 (1).png",
+      "@/public/products/AMD Ryzen 3 1200 (2).png"
+    ],
+    "ASUS Dual GeForce GTX 1650 V2 OC Edition 4GB GDDR6": [
+      "@/public/products/ASUS Dual GeForce GTX 1650 (1).png",
+      "@/public/products/ASUS Dual GeForce GTX 1650 (2).png"
+    ],
+    "Dell 8TB 7.2K RPM NLSAS 12Gbps 3.5in Hot-Plug Hard Drive": [
+      "@/public/products/Dell 8TB 7.2K RPM NLSAS 12Gbps 3.5in Hot-Plug Hard Drive (1).png",
+      "@/public/products/Dell 8TB 7.2K RPM NLSAS 12Gbps 3.5in Hot-Plug Hard Drive (2).png"
+    ],
+    "Seagate SATA HDD": [
+      "@/public/products/Seagate SATA HDD (1).png",
+      "@/public/products/Seagate SATA HDD (2).png",
+      "@/public/products/Seagate SATA HDD (3).png"
+    ],
+    "TP-LINK 24-Port Gigabit Easy Smart Switch": [
+      "@/public/products/TP-LINK 24-Port Gigabit Easy Smart Switch (1).png",
+      "@/public/products/TP-LINK 24-Port Gigabit Easy Smart Switch (2).png",
+      "@/public/products/TP-LINK 24-Port Gigabit Easy Smart Switch (3).png"
+    ],
+    "ASUS AX1800 Dual Band WiFi 6 Router": [
+      "@/public/products/ASUS AX1800 (3).png",
+      "@/public/products/ASUS AX1800 (2).png",
+      "@/public/products/ASUS AX1800 (1).png"
+    ],
+    "TP-LINK AX3000 Ceiling Mount Dual-Band Wi-Fi 6 Access Point": [
+      "@/public/products/TP-LINK AX3000 (2).png",
+      "@/public/products/TP-LINK AX3000 (3).png",
+      "@/public/products/TP-LINK AX3000 (1).png"
+    ],
+    "TP-LINK AX5400 Whole Home Mesh Wi-Fi 6 System": [
+      "@/public/products/TP-LINK AX5400 (3).png",
+      "@/public/products/TP-LINK AX5400 (2).png",
+      "@/public/products/TP-LINK AX5400 (1).png"
+    ]
+  }
+}

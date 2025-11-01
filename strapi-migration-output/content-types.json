@@ -1,0 +1,63 @@
+{
+  "product": {
+    "kind": "collectionType",
+    "collectionName": "products",
+    "info": {
+      "singularName": "product",
+      "pluralName": "products",
+      "displayName": "Product",
+      "description": "Products migrated from productsData.js"
+    },
+    "options": {
+      "draftAndPublish": true
+    },
+    "attributes": {
+      "name": {
+        "type": "string",
+        "required": true,
+        "unique": true
+      },
+      "slug": {
+        "type": "string",
+        "required": true,
+        "unique": true
+      },
+      "category": {
+        "type": "string",
+        "required": true
+      },
+      "subcategory": {
+        "type": "string"
+      },
+      "brand": {
+        "type": "string"
+      },
+      "tagline": {
+        "type": "string"
+      },
+      "description": {
+        "type": "text"
+      },
+      "price": {
+        "type": "string",
+        "required": true
+      },
+      "discountedPrice": {
+        "type": "string"
+      },
+      "specs": {
+        "type": "json"
+      },
+      "images": {
+        "type": "json"
+      },
+      "dateAdded": {
+        "type": "date"
+      },
+      "isActive": {
+        "type": "boolean",
+        "default": true
+      }
+    }
+  }
+}

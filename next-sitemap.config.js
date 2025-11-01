@@ -7,6 +7,7 @@ module.exports = {
       {
         userAgent: '*',
         allow: '/',
+        disallow: ['/admin', '/portal'],
       },
     ],
     additionalSitemaps: [

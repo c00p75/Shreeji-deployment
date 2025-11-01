@@ -1,0 +1,103 @@
+{
+  "kind": "collectionType",
+  "collectionName": "customers",
+  "info": {
+    "singularName": "customer",
+    "pluralName": "customers",
+    "displayName": "Customer",
+    "description": "Customer accounts and profiles"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "email": {
+      "type": "email",
+      "required": true,
+      "unique": true
+    },
+    "firstName": {
+      "type": "string",
+      "required": true
+    },
+    "lastName": {
+      "type": "string",
+      "required": true
+    },
+    "phone": {
+      "type": "string"
+    },
+    "dateOfBirth": {
+      "type": "date"
+    },
+    "gender": {
+      "type": "enumeration",
+      "enum": ["male", "female", "other", "prefer-not-to-say"]
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true
+    },
+    "isVerified": {
+      "type": "boolean",
+      "default": false
+    },
+    "customerType": {
+      "type": "enumeration",
+      "enum": ["individual", "business"],
+      "default": "individual"
+    },
+    "companyName": {
+      "type": "string"
+    },
+    "taxId": {
+      "type": "string"
+    },
+    "totalOrders": {
+      "type": "integer",
+      "default": 0
+    },
+    "totalSpent": {
+      "type": "decimal",
+      "default": 0
+    },
+    "loyaltyPoints": {
+      "type": "integer",
+      "default": 0
+    },
+    "lastOrderDate": {
+      "type": "datetime"
+    },
+    "preferredLanguage": {
+      "type": "string",
+      "default": "en"
+    },
+    "marketingConsent": {
+      "type": "boolean",
+      "default": false
+    },
+    "addresses": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::address.address",
+      "mappedBy": "customer"
+    },
+    "orders": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::order.order",
+      "mappedBy": "customer"
+    },
+    "reviews": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::review.review",
+      "mappedBy": "customer"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}

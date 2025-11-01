@@ -1,0 +1,2093 @@
+[
+  {
+    "id": 1,
+    "name": "HP Envy MOVE",
+    "slug": "hp-envy-move",
+    "category": "Computers",
+    "subcategory": "All in One",
+    "brand": "HP",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {
+      "processor": "Intel Core i5/i7/i9",
+      "display": "23.8-inch FHD Touchscreen",
+      "RAM": "8GB/16GB DDR4",
+      "storage": "256GB/512GB SSD"
+    },
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/hp-envy-move-all-in-one-24.png",
+        "alt": "HP Envy MOVE",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/hp-envy-move-all-in-one-24_2.png",
+        "alt": "HP Envy MOVE",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/hp-envy-move-all-in-one-24_3.png",
+        "alt": "HP Envy MOVE",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 2,
+    "name": "HP EliteOne",
+    "slug": "hp-eliteone",
+    "category": "Computers",
+    "subcategory": "All in One",
+    "brand": "HP",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {
+      "processor": "Intel Core i5/i7",
+      "display": "23.8-inch/27-inch FHD Touchscreen",
+      "RAM": "8GB/16GB DDR4",
+      "storage": "256GB/512GB SSD"
+    },
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/HP EliteOne 870 G9 All-in-One_2.png",
+        "alt": "HP EliteOne",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/HP EliteOne 870 G9 All-in-One.png",
+        "alt": "HP EliteOne",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/HP EliteOne 870 G9 All-in-One_3.png",
+        "alt": "HP EliteOne",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 3,
+    "name": "Lenovo YOGA AIO",
+    "slug": "lenovo-yoga-aio",
+    "category": "Computers",
+    "subcategory": "All in One",
+    "brand": "Lenovo",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {
+      "processor": "AMD Ryzen 7/Intel Core i7",
+      "display": "27-inch 4K UHD Touchscreen",
+      "RAM": "16GB/32GB DDR4",
+      "storage": "512GB/1TB SSD"
+    },
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/Yoga AIO 9i (32″ Intel) All In One.png",
+        "alt": "Lenovo YOGA AIO",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/Yoga AIO 9i (32″ Intel) All In One_2.png",
+        "alt": "Lenovo YOGA AIO",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/Yoga AIO 9i (32″ Intel) All In One_3.png",
+        "alt": "Lenovo YOGA AIO",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 4,
+    "name": "HP ProTower 290",
+    "slug": "hp-protower-290",
+    "category": "Computers",
+    "subcategory": "Desktops",
+    "brand": "HP",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {
+      "processor": "Intel Core i3/i5/i7",
+      "RAM": "8GB/16GB DDR4",
+      "storage": "256GB/512GB SSD + 1TB HDD"
+    },
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/HP ProTower 290.png",
+        "alt": "HP ProTower 290",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/HP ProTower 290_2.png",
+        "alt": "HP ProTower 290",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/HP ProTower 290_3.png",
+        "alt": "HP ProTower 290",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 5,
+    "name": "HP Proliant ML110 Desktop Server",
+    "slug": "hp-proliant-ml110-desktop-server",
+    "category": "Computers",
+    "subcategory": "Desktops",
+    "brand": "HP",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {
+      "processor": "Intel Xeon E-2224 2 GHz",
+      "RAM": "16GB/32GB DDR4",
+      "storage": "1TB HDD (Expandable)"
+    },
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/HP Proliant ML110 Desktop Server (1).png",
+        "alt": "HP Proliant ML110 Desktop Server",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/HP Proliant ML110 Desktop Server (2).png",
+        "alt": "HP Proliant ML110 Desktop Server",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/HP Proliant ML110 Desktop Server (3).png",
+        "alt": "HP Proliant ML110 Desktop Server",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 6,
+    "name": "Lenovo Legion Tower 5",
+    "slug": "lenovo-legion-tower-5",
+    "category": "Computers",
+    "subcategory": "Desktops",
+    "brand": "Lenovo",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {
+      "processor": "Intel Core i7/i9 or AMD Ryzen 7/9",
+      "RAM": "16GB/32GB DDR5",
+      "storage": "512GB SSD + 2TB HDD"
+    },
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/Lenovo Legion Tower_1.png",
+        "alt": "Lenovo Legion Tower 5",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/Lenovo Legion Tower_2.png",
+        "alt": "Lenovo Legion Tower 5",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/Lenovo Legion Tower_3.png",
+        "alt": "Lenovo Legion Tower 5",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 7,
+    "name": "Lenovo V15",
+    "slug": "lenovo-v15",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "brand": "Lenovo",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {
+      "processor": "Intel Core i3/i5",
+      "display": "15.6-inch HD/FHD",
+      "RAM": "8GB DDR4",
+      "storage": "256GB/512GB SSD"
+    },
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/Lenovo V15_1.png",
+        "alt": "Lenovo V15",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/Lenovo V15_2.png",
+        "alt": "Lenovo V15",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/Lenovo V15_3.png",
+        "alt": "Lenovo V15",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 8,
+    "name": "HP Envy x360",
+    "slug": "hp-envy-x360",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "brand": "HP",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {
+      "processor": "Intel Core i5/i7 or AMD Ryzen 5/7 (up to 5.1 GHz max boost clock, 16 MB L3 cache, 8 cores, 16 threads)",
+      "display": "13.3-inch/15.6-inch FHD Touchscreen",
+      "RAM": "8GB/16GB DDR4",
+      "storage": "512GB SSD"
+    },
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/HP Envy x360_1.png",
+        "alt": "HP Envy x360",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/HP Envy x360_2.png",
+        "alt": "HP Envy x360",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/HP Envy x360_3.png",
+        "alt": "HP Envy x360",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 9,
+    "name": "APC UPS (500Va-40KVa)",
+    "slug": "apc-ups-500va-40kva",
+    "category": "Power Solutions",
+    "subcategory": "UPS",
+    "brand": "APC",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {},
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/APC UPS (500Va-40KVa)_1.png",
+        "alt": "APC UPS (500Va-40KVa)",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/APC UPS (500Va-40KVa)_2.png",
+        "alt": "APC UPS (500Va-40KVa)",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 10,
+    "name": "HP ProDesk 600 G2 Micro Tower",
+    "slug": "hp-prodesk-600-g2-micro-tower",
+    "category": "Computers",
+    "subcategory": "Desktops",
+    "brand": "HP",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {
+      "processor": "Intel Core i5-6500T",
+      "RAM": "8GB DDR4",
+      "storage": "256GB SSD"
+    },
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/HP ProDesk 600 G2 Micro Tower_2.png",
+        "alt": "HP ProDesk 600 G2 Micro Tower",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/HP ProDesk 600 G2 Micro Tower_1.png",
+        "alt": "HP ProDesk 600 G2 Micro Tower",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/HP ProDesk 600 G2 Micro Tower_3.png",
+        "alt": "HP ProDesk 600 G2 Micro Tower",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 11,
+    "name": "HP EliteDesk 800 G4 Mini PC",
+    "slug": "hp-elitedesk-800-g4-mini-pc",
+    "category": "Computers",
+    "subcategory": "Desktops",
+    "brand": "HP",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {
+      "processor": "intel Core i7-8700 (3.2 GHz Base Frequency, Max Turbo Boost 4.6 GHz, 12 MB Cache, 6 Cores)",
+      "RAM": "16GB DDR4",
+      "storage": "512GB SSD"
+    },
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/HP EliteDesk 800 G4 Mini PC_1.png",
+        "alt": "HP EliteDesk 800 G4 Mini PC",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/HP EliteDesk 800 G4 Mini PC_2.png",
+        "alt": "HP EliteDesk 800 G4 Mini PC",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/HP EliteDesk 800 G4 Mini PC_3.png",
+        "alt": "HP EliteDesk 800 G4 Mini PC",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 12,
+    "name": "Dell OptiPlex 7020 Mini Desktop",
+    "slug": "dell-optiplex-7020-mini-desktop",
+    "category": "Computers",
+    "subcategory": "Desktops",
+    "brand": "Dell",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {
+      "processor": "Intel Core i5-14500 2.60GHz (upto 5 GHz, 24MB Cache, 14-Core, 20 - Threads, 6)",
+      "RAM": "8GB DDR3",
+      "storage": "500GB HDD"
+    },
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/Dell OptiPlex 7020 Mini Desktop_1.png",
+        "alt": "Dell OptiPlex 7020 Mini Desktop",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/Dell OptiPlex 7020 Mini Desktop_2.png",
+        "alt": "Dell OptiPlex 7020 Mini Desktop",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/Dell OptiPlex 7020 Mini Desktop_3.png",
+        "alt": "Dell OptiPlex 7020 Mini Desktop",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 13,
+    "name": "Asus Mini PC PN41",
+    "slug": "asus-mini-pc-pn41",
+    "category": "Computers",
+    "subcategory": "Desktops",
+    "brand": "Asus",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {
+      "processor": "Intel Celeron N4500",
+      "RAM": "4GB LPDDR4",
+      "storage": "128GB eMMC"
+    },
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/Asus Mini PC PN41_1.png",
+        "alt": "Asus Mini PC PN41",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/Asus Mini PC PN41_2.png",
+        "alt": "Asus Mini PC PN41",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/Asus Mini PC PN41_3.png",
+        "alt": "Asus Mini PC PN41",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 14,
+    "name": "Lenovo IdeaPad 1",
+    "slug": "lenovo-ideapad-1",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "brand": "Lenovo",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {
+      "processor": "Intel Celeron N4020",
+      "display": "14-inch HD (1366x768)",
+      "RAM": "4GB /8GB DDR4",
+      "storage": "256GB/500GB SSD"
+    },
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/Lenovo IdeaPad 1 (1).png",
+        "alt": "Lenovo IdeaPad 1",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/Lenovo IdeaPad 1 (2).png",
+        "alt": "Lenovo IdeaPad 1",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/Lenovo IdeaPad 1 (3).png",
+        "alt": "Lenovo IdeaPad 1",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 15,
+    "name": "Lenovo IdeaPad Slim 3",
+    "slug": "lenovo-ideapad-slim-3",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "brand": "Lenovo",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {
+      "processor": "AMD Ryzen 3 3250U",
+      "display": "15.6-inch HD (1366x768)",
+      "RAM": "4GB DDR4",
+      "storage": "128GB SSD"
+    },
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/Lenovo IdeaPad 3_1.png",
+        "alt": "Lenovo IdeaPad Slim 3",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/Lenovo IdeaPad 3_2.png",
+        "alt": "Lenovo IdeaPad Slim 3",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/Lenovo IdeaPad 3_3.png",
+        "alt": "Lenovo IdeaPad Slim 3",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 16,
+    "name": "Lenovo IdeaPad 5",
+    "slug": "lenovo-ideapad-5",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "brand": "Lenovo",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {
+      "processor": "Intel Core i5-1135G7",
+      "display": "14-inch Full HD (1920x1080)",
+      "RAM": "8GB DDR4",
+      "storage": "512GB SSD"
+    },
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/Lenovo IdeaPad 5_1.png",
+        "alt": "Lenovo IdeaPad 5",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/Lenovo IdeaPad 5_2.png",
+        "alt": "Lenovo IdeaPad 5",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/Lenovo IdeaPad 5_3.png",
+        "alt": "Lenovo IdeaPad 5",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 17,
+    "name": "Lenovo IdeaPad Duet",
+    "slug": "lenovo-ideapad-duet",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "brand": "Lenovo",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {
+      "processor": "MediaTek Helio P60T",
+      "display": "10.1-inch Full HD (1920x1200) Touchscreen",
+      "RAM": "4GB LPDDR4X",
+      "storage": "64GB eMMC"
+    },
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/Lenovo IdeaPad Duet (1).png",
+        "alt": "Lenovo IdeaPad Duet",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/Lenovo IdeaPad Duet (2).png",
+        "alt": "Lenovo IdeaPad Duet",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/Lenovo IdeaPad Duet (3).png",
+        "alt": "Lenovo IdeaPad Duet",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 18,
+    "name": "Lenovo ThinkPad",
+    "slug": "lenovo-thinkpad",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "brand": "Lenovo",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {
+      "processor": "Intel Core i7-1185G7",
+      "display": "14-inch Full HD (1920x1080)",
+      "RAM": "16GB DDR4",
+      "storage": "1TB SSD"
+    },
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/HP Envy x360 14-fa0008na.png",
+        "alt": "Lenovo ThinkPad",
+        "isMain": true
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 19,
+    "name": "HP ProBook 430 G7",
+    "slug": "hp-probook-430-g7",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "brand": "HP",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {
+      "processor": "Intel Core i5-10210U",
+      "display": "13.3-inch Full HD (1920x1080)",
+      "RAM": "8GB DDR4",
+      "storage": "256GB SSD"
+    },
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/HP ProBook 430 g7 13 (1).png",
+        "alt": "HP ProBook 430 G7",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/HP ProBook 430 g7 13 (2).png",
+        "alt": "HP ProBook 430 G7",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 20,
+    "name": "HP ProBook 465 G7",
+    "slug": "hp-probook-465-g7",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "brand": "HP",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {
+      "processor": "AMD Ryzen 5 3450U",
+      "display": "15.6-inch Full HD (1920x1080)",
+      "RAM": "8GB DDR4",
+      "storage": "256GB SSD"
+    },
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/HP ProBook 465 G7 (1).png",
+        "alt": "HP ProBook 465 G7",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/HP ProBook 465 G7 (2).png",
+        "alt": "HP ProBook 465 G7",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/HP ProBook 465 G7 (3).png",
+        "alt": "HP ProBook 465 G7",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 21,
+    "name": "HP EliteBook 660 G11",
+    "slug": "hp-elitebook-660-g11",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "brand": "HP",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {
+      "processor": "Intel Core Ultra 5 125U",
+      "display": "16-inch Full HD+ (1920x1200) with 16:10 aspect ratio",
+      "RAM": "16GB DDR5",
+      "storage": "512GB SSD"
+    },
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/HP EliteBook 660 G11 (1).png",
+        "alt": "HP EliteBook 660 G11",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/HP EliteBook 660 G11 (2).png",
+        "alt": "HP EliteBook 660 G11",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 22,
+    "name": "HP Elite Dragonfly G3",
+    "slug": "hp-elite-dragonfly-g3",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "brand": "HP",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {
+      "processor": "Intel Core i5-1255U",
+      "display": "13.5-inch Full HD (1920x1080) touchscreen",
+      "RAM": "8GB DDR4",
+      "storage": "256GB SSD"
+    },
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/HP Elite Dragonfly G3 (1).png",
+        "alt": "HP Elite Dragonfly G3",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/HP Elite Dragonfly G3 (2).png",
+        "alt": "HP Elite Dragonfly G3",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 23,
+    "name": "HP Envy x360 14",
+    "slug": "hp-envy-x360-14",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "brand": "HP",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {
+      "processor": "Intel Core i7-1255U",
+      "display": "14-inch Full HD (1920x1080) touchscreen, 360-degree hinge",
+      "RAM": "16GB DDR4",
+      "storage": "512GB SSD"
+    },
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/HP Envy x360 14 (1).png",
+        "alt": "HP Envy x360 14",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/HP Envy x360 14 (2).png",
+        "alt": "HP Envy x360 14",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/HP Envy x360 14 (3).png",
+        "alt": "HP Envy x360 14",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 24,
+    "name": "Dell Latitude 3450",
+    "slug": "dell-latitude-3450",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "brand": "Dell",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {
+      "processor": "Intel Core i3/i5/i7 (5th Gen)",
+      "display": "14-inch HD (1366x768) or Full HD (1920x1080)",
+      "RAM": "Up to 16GB DDR3L",
+      "storage": "Up to 1TB HDD or 256GB SSD"
+    },
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/Dell Latitude 3450 (1).png",
+        "alt": "Dell Latitude 3450",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/Dell Latitude 3450 (2).png",
+        "alt": "Dell Latitude 3450",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/Dell Latitude 3450 (3).png",
+        "alt": "Dell Latitude 3450",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 25,
+    "name": "Dell Latitude 3540",
+    "slug": "dell-latitude-3540",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "brand": "Dell",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {
+      "processor": "Intel Core i5/i7 (4th Gen)",
+      "display": "14-inch HD (1366x768) or Full HD (1920x1080)",
+      "RAM": "Up to 16GB DDR3L",
+      "storage": "Up to 1TB HDD or 256GB SSD"
+    },
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/Dell Latitude 3540 (1).png",
+        "alt": "Dell Latitude 3540",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/Dell Latitude 3540 (2).png",
+        "alt": "Dell Latitude 3540",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/Dell Latitude 3540 (3).png",
+        "alt": "Dell Latitude 3540",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 26,
+    "name": "Dell Latitude 3550",
+    "slug": "dell-latitude-3550",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "brand": "Dell",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {
+      "processor": "Intel Core i5/i7 (5th Gen)",
+      "display": "15.6-inch HD (1366x768) or Full HD (1920x1080)",
+      "RAM": "Up to 16GB DDR3L",
+      "storage": "Up to 1TB HDD or 256GB SSD"
+    },
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/Dell Latitude 3550 (1).png",
+        "alt": "Dell Latitude 3550",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/Dell Latitude 3550 (1).png",
+        "alt": "Dell Latitude 3550",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/Dell Latitude 3550 (1).png",
+        "alt": "Dell Latitude 3550",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 27,
+    "name": "Dell Latitude 5440",
+    "slug": "dell-latitude-5440",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "brand": "Dell",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {
+      "processor": "Intel Core i5/i7 (5th Gen)",
+      "display": "14-inch HD (1366x768) or Full HD (1920x1080)",
+      "RAM": "Up to 16GB DDR3L",
+      "storage": "Up to 1TB HDD or 256GB SSD"
+    },
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/Dell Latitude 5440 (1).png",
+        "alt": "Dell Latitude 5440",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/Dell Latitude 5440 (2).png",
+        "alt": "Dell Latitude 5440",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 28,
+    "name": "Dell Latitude 5450",
+    "slug": "dell-latitude-5450",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "brand": "Dell",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {
+      "processor": "Intel Core i5/i7 (5th Gen)",
+      "display": "14-inch HD (1366x768) or Full HD (1920x1080)",
+      "RAM": "Up to 16GB DDR3L",
+      "storage": "Up to 1TB HDD or 256GB SSD"
+    },
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/Dell Latitude 5450 (1).png",
+        "alt": "Dell Latitude 5450",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/Dell Latitude 5450 (2).png",
+        "alt": "Dell Latitude 5450",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/Dell Latitude 5450 (3).png",
+        "alt": "Dell Latitude 5450",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 29,
+    "name": "Dell Latitude 5550",
+    "slug": "dell-latitude-5550",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "brand": "Dell",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {
+      "processor": "Intel Core i5/i7 (5th Gen)",
+      "display": "15.6-inch HD (1366x768) or Full HD (1920x1080)",
+      "RAM": "Up to 16GB DDR3L",
+      "storage": "Up to 1TB HDD or 256GB SSD"
+    },
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/Dell Latitude 5550 (1).png",
+        "alt": "Dell Latitude 5550",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/Dell Latitude 5550 (2).png",
+        "alt": "Dell Latitude 5550",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/Dell Latitude 5550 (3).png",
+        "alt": "Dell Latitude 5550",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 30,
+    "name": "Dell Latitude 7450",
+    "slug": "dell-latitude-7450",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "brand": "Dell",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {
+      "processor": "Intel Core Ultra i5-1255U",
+      "display": "14-inch FHD+ (1920x1200) IPS, Anti-Glare, 250 nits",
+      "RAM": "16GB LPDDR5x",
+      "storage": "512GB SSD"
+    },
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/Dell Latitude 7450 (1).png",
+        "alt": "Dell Latitude 7450",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/Dell Latitude 7450 (2).png",
+        "alt": "Dell Latitude 7450",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/Dell Latitude 7450 (3).png",
+        "alt": "Dell Latitude 7450",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 31,
+    "name": "Dell Inspiron 7640",
+    "slug": "dell-inspiron-7640",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "brand": "Dell",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {
+      "processor": "Intel Core i7-1365U",
+      "display": "16-inch, Touch, FHD+ (1920x1200) display",
+      "RAM": "16GB LPDDR5",
+      "storage": "256GB SSD"
+    },
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/Dell Inspiron 7640 (1).png",
+        "alt": "Dell Inspiron 7640",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/Dell Inspiron 7640 (2).png",
+        "alt": "Dell Inspiron 7640",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/Dell Inspiron 7640 (3).png",
+        "alt": "Dell Inspiron 7640",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 32,
+    "name": "Dell Inspiron 5530 Gaming Laptop",
+    "slug": "dell-inspiron-5530-gaming-laptop",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "brand": "Dell",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {
+      "processor": "13th Gen Intel® Core™ i5-13450HX (20 MB cache, 10 cores, up to 4.60 GHz Turbo)",
+      "RAM": "8GB DDR5, 1x8GB, 4800MT/s",
+      "storage": "512 GB, M.2, PCIe NVMe, SSD"
+    },
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/Dell Inspiron 5530 Gaming Laptop (1).png",
+        "alt": "Dell Inspiron 5530 Gaming Laptop",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/Dell Inspiron 5530 Gaming Laptop (2).png",
+        "alt": "Dell Inspiron 5530 Gaming Laptop",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/Dell Inspiron 5530 Gaming Laptop (3).png",
+        "alt": "Dell Inspiron 5530 Gaming Laptop",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 33,
+    "name": "Dell Precision 3590",
+    "slug": "dell-precision-3590",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "brand": "Dell",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {
+      "processor": "Intel Core Ultra 7 155H vPro® Essentials (24 MB cache, 16 cores, 22 threads, up to 4.8 GHz, 45W)",
+      "display": "15.6-inch FHD (1920x1080), 60Hz, 250 nits, Non-Touch",
+      "RAM": "Up to 32GB DDR5, 5600 MT/s, non-ECC",
+      "storage": "Up to 1TB SSD"
+    },
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/Dell Precision 3590 (1).png",
+        "alt": "Dell Precision 3590",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/Dell Precision 3590 (2).png",
+        "alt": "Dell Precision 3590",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/Dell Precision 3590 (3).png",
+        "alt": "Dell Precision 3590",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 34,
+    "name": "Dell Precision 3591",
+    "slug": "dell-precision-3591",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "brand": "Dell",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {
+      "processor": "Intel Core Ultra 7 165H vPro® Enterprise (24MB cache, 16 cores, 22 threads, up to 5.0 GHz Turbo, 45W)",
+      "display": "15.6-inch FHD (1920x1080), 60Hz, 250 nits, Non-Touch",
+      "RAM": "Up to 32GB DDR5, 5600 MT/s, non-ECC",
+      "storage": "Up to 1TB SSD"
+    },
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/Dell Precision 3591 (1).png",
+        "alt": "Dell Precision 3591",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/Dell Precision 3591 (2).png",
+        "alt": "Dell Precision 3591",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/Dell Precision 3591 (3).png",
+        "alt": "Dell Precision 3591",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 35,
+    "name": "Dell Vostro 3440",
+    "slug": "dell-vostro-3440",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "brand": "Dell",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {
+      "processor": "13th Gen Intel® Core™ i3-1305U (5 cores, up to 4.5 GHz Turbo)",
+      "display": "14-inch HD (1366x768), Anti-Glare, 250 nits",
+      "RAM": "8 GB DDR4",
+      "storage": "512GB SSD"
+    },
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/dell vostro 3440 (1).png",
+        "alt": "Dell Vostro 3440",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/dell vostro 3440 (2).png",
+        "alt": "Dell Vostro 3440",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/dell vostro 3440 (3).png",
+        "alt": "Dell Vostro 3440",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 36,
+    "name": "LG 27UL500-W",
+    "slug": "lg-27ul500-w",
+    "category": "Monitors",
+    "subcategory": "",
+    "brand": "LG",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {},
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/LG 27UL500-W (1).png",
+        "alt": "LG 27UL500-W",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/LG 27UL500-W (2).png",
+        "alt": "LG 27UL500-W",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/LG 27UL500-W (3).png",
+        "alt": "LG 27UL500-W",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 37,
+    "name": "LG 27QN880-B",
+    "slug": "lg-27qn880-b",
+    "category": "Monitors",
+    "subcategory": "",
+    "brand": "LG",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {},
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/LG 27QN880-B.png",
+        "alt": "LG 27QN880-B",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/LG 27QN880-B 1.png",
+        "alt": "LG 27QN880-B",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/LG 27QN880-B 1.1.png",
+        "alt": "LG 27QN880-B",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 38,
+    "name": "LG 29WQ500-B",
+    "slug": "lg-29wq500-b",
+    "category": "Monitors",
+    "subcategory": "",
+    "brand": "LG",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {},
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/LG 29WQ500-B.png",
+        "alt": "LG 29WQ500-B",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/LG 29WQ500-B 1.1.png",
+        "alt": "LG 29WQ500-B",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/LG 29WQ500-B 1.png",
+        "alt": "LG 29WQ500-B",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 39,
+    "name": "LG 32GP850-B",
+    "slug": "lg-32gp850-b",
+    "category": "Monitors",
+    "subcategory": "",
+    "brand": "LG",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {},
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/LG 32GP850-B.png",
+        "alt": "LG 32GP850-B",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/LG 32GP850-B 1.png",
+        "alt": "LG 32GP850-B",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/LG 32GP850-B 1.1.png",
+        "alt": "LG 32GP850-B",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 40,
+    "name": "LG 55UL3J-M",
+    "slug": "lg-55ul3j-m",
+    "category": "Monitors",
+    "subcategory": "",
+    "brand": "LG",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {},
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/LG 55UL3J-M.png",
+        "alt": "LG 55UL3J-M",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/LG 55UL3J-M 1.png",
+        "alt": "LG 55UL3J-M",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/LG 55UL3J-M 1.1.png",
+        "alt": "LG 55UL3J-M",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 41,
+    "name": "LG 65EP5G-B",
+    "slug": "lg-65ep5g-b",
+    "category": "Monitors",
+    "subcategory": "",
+    "brand": "LG",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {},
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/LG 65EP5G-B.png",
+        "alt": "LG 65EP5G-B",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/LG 65EP5G-B 1.png",
+        "alt": "LG 65EP5G-B",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/LG 65EP5G-B 1.1.png",
+        "alt": "LG 65EP5G-B",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 42,
+    "name": "Asus ZenScreen MB16AC",
+    "slug": "asus-zenscreen-mb16ac",
+    "category": "Monitors",
+    "subcategory": "",
+    "brand": "Asus",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {},
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/Asus_ZenScreen_MB16AC_1.png",
+        "alt": "Asus ZenScreen MB16AC",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/Asus ZenScreen MB16AC_2.png",
+        "alt": "Asus ZenScreen MB16AC",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/Asus_ZenScreen_MB16AC_3.png",
+        "alt": "Asus ZenScreen MB16AC",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 43,
+    "name": "Asus ZenScreen MB16QHG",
+    "slug": "asus-zenscreen-mb16qhg",
+    "category": "Monitors",
+    "subcategory": "",
+    "brand": "Asus",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {},
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/Asus ZenScreen MB16QHG.png",
+        "alt": "Asus ZenScreen MB16QHG",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/Asus ZenScreen MB16QHG_2.png",
+        "alt": "Asus ZenScreen MB16QHG",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/Asus ZenScreen MB16QHG_3.png",
+        "alt": "Asus ZenScreen MB16QHG",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 44,
+    "name": "Dell SE2422H",
+    "slug": "dell-se2422h",
+    "category": "Monitors",
+    "subcategory": "",
+    "brand": "Dell",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {},
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/Dell SE2422H (1).png",
+        "alt": "Dell SE2422H",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/Dell SE2422H (2).png",
+        "alt": "Dell SE2422H",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/Dell SE2422H (3).png",
+        "alt": "Dell SE2422H",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 45,
+    "name": "Huawei IdeaHub S2 65\\",
+    "slug": "huawei-ideahub-s2-65",
+    "category": "Interactive Displays",
+    "subcategory": "",
+    "brand": "",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {},
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/Huawei IdeaHub S2 65 Interactive Display1.1.png",
+        "alt": "Huawei IdeaHub S2 65\\",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/Huawei IdeaHub S2 65 Interactive Display.png",
+        "alt": "Huawei IdeaHub S2 65\\",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/Huawei IdeaHub S2 65 Interactive Display1.png",
+        "alt": "Huawei IdeaHub S2 65\\",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 46,
+    "name": "Huawei IdeaHub S2 75\\",
+    "slug": "huawei-ideahub-s2-75",
+    "category": "Interactive Displays",
+    "subcategory": "",
+    "brand": "",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {},
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/Huawei IdeaHub S2 75 Interactive Display1.png",
+        "alt": "Huawei IdeaHub S2 75\\",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/Huawei IdeaHub S2 75 Interactive Display.png",
+        "alt": "Huawei IdeaHub S2 75\\",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 47,
+    "name": "Huawei IdeaHub S2 86\\",
+    "slug": "huawei-ideahub-s2-86",
+    "category": "Interactive Displays",
+    "subcategory": "",
+    "brand": "Huawei",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {},
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/Huawei IdeaHub S2 86 Interactive Display.png",
+        "alt": "Huawei IdeaHub S2 86\\",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/Huawei IdeaHub S2 86 Interactive Display1.1.png",
+        "alt": "Huawei IdeaHub S2 86\\",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/Huawei IdeaHub S2 86 Interactive Display1.png",
+        "alt": "Huawei IdeaHub S2 86\\",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 48,
+    "name": "ADATA XPG INVADER Mid-Tower Gaming Case",
+    "slug": "adata-xpg-invader-mid-tower-gaming-case",
+    "category": "Components",
+    "subcategory": "Cases",
+    "brand": "ADATA",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {},
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/ADATA XPG INVADER Mid-Tower Gaming Case (3).png",
+        "alt": "ADATA XPG INVADER Mid-Tower Gaming Case",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/ADATA XPG INVADER Mid-Tower Gaming Case (2).png",
+        "alt": "ADATA XPG INVADER Mid-Tower Gaming Case",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/ADATA XPG INVADER Mid-Tower Gaming Case (1).png",
+        "alt": "ADATA XPG INVADER Mid-Tower Gaming Case",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 49,
+    "name": "ASUS A21 Micro-ATX Chassis",
+    "slug": "asus-a21-micro-atx-chassis",
+    "category": "Components",
+    "subcategory": "Cases",
+    "brand": "ASUS",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {},
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/ASUS A21 Micro-ATX Chassis (1).png",
+        "alt": "ASUS A21 Micro-ATX Chassis",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/ASUS A21 Micro-ATX Chassis (2).png",
+        "alt": "ASUS A21 Micro-ATX Chassis",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/ASUS A21 Micro-ATX Chassis (3).png",
+        "alt": "ASUS A21 Micro-ATX Chassis",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 50,
+    "name": "AMD Ryzen 3 1200",
+    "slug": "amd-ryzen-3-1200",
+    "category": "Components",
+    "subcategory": "Processors",
+    "brand": "AMD",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {},
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/AMD Ryzen 3 1200 (1).png",
+        "alt": "AMD Ryzen 3 1200",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/AMD Ryzen 3 1200 (2).png",
+        "alt": "AMD Ryzen 3 1200",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 51,
+    "name": "ASUS Dual GeForce GTX 1650 V2 OC Edition 4GB GDDR6",
+    "slug": "asus-dual-geforce-gtx-1650-v2-oc-edition-4gb-gddr6",
+    "category": "Components",
+    "subcategory": "Graphics Cards",
+    "brand": "ASUS",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {},
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/ASUS Dual GeForce GTX 1650 (1).png",
+        "alt": "ASUS Dual GeForce GTX 1650 V2 OC Edition 4GB GDDR6",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/ASUS Dual GeForce GTX 1650 (2).png",
+        "alt": "ASUS Dual GeForce GTX 1650 V2 OC Edition 4GB GDDR6",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 52,
+    "name": "Dell 8TB 7.2K RPM NLSAS 12Gbps 3.5in Hot-Plug Hard Drive",
+    "slug": "dell-8tb-72k-rpm-nlsas-12gbps-35in-hot-plug-hard-drive",
+    "category": "Components",
+    "subcategory": "Server Hard Drives",
+    "brand": "Dell",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {},
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/Dell 8TB 7.2K RPM NLSAS 12Gbps 3.5in Hot-Plug Hard Drive (1).png",
+        "alt": "Dell 8TB 7.2K RPM NLSAS 12Gbps 3.5in Hot-Plug Hard Drive",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/Dell 8TB 7.2K RPM NLSAS 12Gbps 3.5in Hot-Plug Hard Drive (2).png",
+        "alt": "Dell 8TB 7.2K RPM NLSAS 12Gbps 3.5in Hot-Plug Hard Drive",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 53,
+    "name": "Seagate SATA HDD",
+    "slug": "seagate-sata-hdd",
+    "category": "Components",
+    "subcategory": "Consumer Storage",
+    "brand": "Seagate",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {},
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/Seagate SATA HDD (1).png",
+        "alt": "Seagate SATA HDD",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/Seagate SATA HDD (2).png",
+        "alt": "Seagate SATA HDD",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/Seagate SATA HDD (3).png",
+        "alt": "Seagate SATA HDD",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 54,
+    "name": "TP-LINK 24-Port Gigabit Easy Smart Switch",
+    "slug": "tp-link-24-port-gigabit-easy-smart-switch",
+    "category": "Networking",
+    "subcategory": "Switches",
+    "brand": "TP-Link",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {},
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/TP-LINK 24-Port Gigabit Easy Smart Switch (1).png",
+        "alt": "TP-LINK 24-Port Gigabit Easy Smart Switch",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/TP-LINK 24-Port Gigabit Easy Smart Switch (2).png",
+        "alt": "TP-LINK 24-Port Gigabit Easy Smart Switch",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/TP-LINK 24-Port Gigabit Easy Smart Switch (3).png",
+        "alt": "TP-LINK 24-Port Gigabit Easy Smart Switch",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 55,
+    "name": "ASUS AX1800 Dual Band WiFi 6 Router",
+    "slug": "asus-ax1800-dual-band-wifi-6-router",
+    "category": "Networking",
+    "subcategory": "Routers",
+    "brand": "ASUS",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {},
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/ASUS AX1800 (3).png",
+        "alt": "ASUS AX1800 Dual Band WiFi 6 Router",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/ASUS AX1800 (2).png",
+        "alt": "ASUS AX1800 Dual Band WiFi 6 Router",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/ASUS AX1800 (1).png",
+        "alt": "ASUS AX1800 Dual Band WiFi 6 Router",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 56,
+    "name": "TP-LINK AX3000 Ceiling Mount Dual-Band Wi-Fi 6 Access Point",
+    "slug": "tp-link-ax3000-ceiling-mount-dual-band-wi-fi-6-access-point",
+    "category": "Accessories",
+    "subcategory": "Access Points",
+    "brand": "TP-Link",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {},
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/TP-LINK AX3000 (2).png",
+        "alt": "TP-LINK AX3000 Ceiling Mount Dual-Band Wi-Fi 6 Access Point",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/TP-LINK AX3000 (3).png",
+        "alt": "TP-LINK AX3000 Ceiling Mount Dual-Band Wi-Fi 6 Access Point",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/TP-LINK AX3000 (1).png",
+        "alt": "TP-LINK AX3000 Ceiling Mount Dual-Band Wi-Fi 6 Access Point",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  },
+  {
+    "id": 57,
+    "name": "TP-LINK AX5400 Whole Home Mesh Wi-Fi 6 System",
+    "slug": "tp-link-ax5400-whole-home-mesh-wi-fi-6-system",
+    "category": "Accessories",
+    "subcategory": "Access Points",
+    "brand": "TP-Link",
+    "tagline": null,
+    "description": null,
+    "price": "",
+    "discountedPrice": null,
+    "specs": {},
+    "images": [
+      {
+        "id": 1,
+        "url": "/public/products/TP-LINK AX5400 (3).png",
+        "alt": "TP-LINK AX5400 Whole Home Mesh Wi-Fi 6 System",
+        "isMain": true
+      },
+      {
+        "id": 2,
+        "url": "/public/products/TP-LINK AX5400 (2).png",
+        "alt": "TP-LINK AX5400 Whole Home Mesh Wi-Fi 6 System",
+        "isMain": false
+      },
+      {
+        "id": 3,
+        "url": "/public/products/TP-LINK AX5400 (1).png",
+        "alt": "TP-LINK AX5400 Whole Home Mesh Wi-Fi 6 System",
+        "isMain": false
+      }
+    ],
+    "dateAdded": "2025-10-14",
+    "isActive": true
+  }
+]

@@ -1,0 +1,22 @@
+{
+  "Strapi API Endpoints Available": {
+    "GET /api/products": "Get all products",
+    "GET /api/products/:id": "Get single product",
+    "POST /api/products": "Create product",
+    "PUT /api/products/:id": "Update product",
+    "DELETE /api/products/:id": "Delete product"
+  },
+  "Example API calls": [
+    "curl -X GET http://localhost:1337/api/products",
+    "curl -X GET \"http://localhost:1337/api/products?filters[category][$eq]=Computers\"",
+    "curl -X GET \"http://localhost:1337/api/products?filters[brand][$eq]=HP\"",
+    "curl -X GET \"http://localhost:1337/api/products?filters[subcategory][$eq]=All in One\""
+  ],
+  "Features": [
+    "✅ Multiple images per product",
+    "✅ Local image mapping",
+    "✅ Complete product information",
+    "✅ Category and subcategory filtering",
+    "✅ Brand filtering"
+  ]
+}

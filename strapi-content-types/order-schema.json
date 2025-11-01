@@ -1,0 +1,108 @@
+{
+  "kind": "collectionType",
+  "collectionName": "orders",
+  "info": {
+    "singularName": "order",
+    "pluralName": "orders",
+    "displayName": "Order",
+    "description": "Customer orders with tracking"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "orderNumber": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["pending", "confirmed", "processing", "shipped", "delivered", "cancelled", "refunded"],
+      "default": "pending"
+    },
+    "paymentStatus": {
+      "type": "enumeration",
+      "enum": ["pending", "paid", "failed", "refunded", "partially-refunded"],
+      "default": "pending"
+    },
+    "subtotal": {
+      "type": "decimal",
+      "required": true
+    },
+    "taxAmount": {
+      "type": "decimal",
+      "default": 0
+    },
+    "shippingAmount": {
+      "type": "decimal",
+      "default": 0
+    },
+    "discountAmount": {
+      "type": "decimal",
+      "default": 0
+    },
+    "totalAmount": {
+      "type": "decimal",
+      "required": true
+    },
+    "currency": {
+      "type": "string",
+      "default": "USD"
+    },
+    "notes": {
+      "type": "text"
+    },
+    "internalNotes": {
+      "type": "text"
+    },
+    "shippingMethod": {
+      "type": "string"
+    },
+    "trackingNumber": {
+      "type": "string"
+    },
+    "estimatedDelivery": {
+      "type": "datetime"
+    },
+    "shippedAt": {
+      "type": "datetime"
+    },
+    "deliveredAt": {
+      "type": "datetime"
+    },
+    "customer": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::customer.customer",
+      "inversedBy": "orders"
+    },
+    "orderItems": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::order-item.order-item",
+      "mappedBy": "order"
+    },
+    "payments": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::payment.payment",
+      "mappedBy": "order"
+    },
+    "shippingAddress": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::address.address"
+    },
+    "billingAddress": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::address.address"
+    },
+    "coupon": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::coupon.coupon"
+    }
+  }
+}

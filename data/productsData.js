@@ -8,8 +8,7 @@ export const allProducts = [
     "images": [
       productImages.hpEnvyMoveAllInOne24,
       productImages.hpEnvyMoveAllInOne24_2,
-      productImages.hpEnvyMoveAllInOne24_3,
-      
+      productImages.hpEnvyMoveAllInOne24_3,      
     ],
     "brand": "HP",
     "brand logo": brandLogo.HP,

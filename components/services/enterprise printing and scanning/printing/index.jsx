@@ -114,8 +114,7 @@ export default function PrintingPage() {
         </div>
 
       {/* Product Categories */}
-        <div className="max-w-7xl mx-auto px-3 md:px-8">
-          
+        <div className="max-w-7xl mx-auto px-3 md:px-8">          
           {/* Main Tabs */}
           <div className="flex justify-center mb-2 md:mb-8">
             <div className="bg-gray-100 rounded-lg p-1 flex">
