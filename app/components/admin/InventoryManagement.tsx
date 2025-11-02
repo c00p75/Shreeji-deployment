@@ -17,13 +17,13 @@ import Layout from './Layout'
 
 interface Product {
   id: number;
-  documentId: string;
+  documentId?: string;
   name: string;
-  brand: string;
-  category: string;
+  brand?: string | null;
+  category?: string | null;
   price: string;
   images: Array<{ url: string; alt: string; isMain?: boolean }>;
-  SKU: string;
+  SKU?: string | null;
   stockQuantity: number;
   minStockLevel: number;
   maxStockLevel: number;
@@ -36,6 +36,7 @@ interface Product {
     height: number;
     unit: string;
   };
+  subcategory?: string | null;
 }
 
 export default function InventoryManagement() {
@@ -71,28 +72,32 @@ export default function InventoryManagement() {
       const response = await api.getProducts({ pagination: { page: 1, pageSize: 100 } });
       
       // Transform Strapi data to match our interface
-      const transformedProducts: Product[] = response.data?.map((product: any) => {
+      const transformedProducts: Product[] = (response.data || []).map((product: any) => {
+        // Handle Strapi v4+ structure where attributes are nested
+        const productData = product.attributes || product;
+        
         // Use enhanced image processing that prioritizes local images
-        const images = processProductImages(product);
+        const images = processProductImages(productData);
 
         return {
-          id: product.id,
-          documentId: product.documentId,
-          name: product.name,
-          brand: product.brand,
-          category: product.category,
-          price: product.price,
+          id: product.id || productData.id,
+          documentId: product.documentId || productData.documentId,
+          name: productData.name || '',
+          brand: productData.brand || null,
+          category: productData.category || null,
+          price: productData.price || '',
           images: images,
-          SKU: product.SKU,
-          stockQuantity: product.stockQuantity || 0,
-          minStockLevel: product.minStockLevel || 0,
-          maxStockLevel: product.maxStockLevel || 0,
-          stockStatus: product.stockStatus || 'in-stock',
-          costPrice: product.costPrice || 0,
-          weight: product.weight || 0,
-          Dimensions: product.Dimensions || { length: 0, width: 0, height: 0, unit: 'cm' }
+          SKU: productData.SKU || productData.sku || null,
+          stockQuantity: productData.stockQuantity || 0,
+          minStockLevel: productData.minStockLevel || 0,
+          maxStockLevel: productData.maxStockLevel || 0,
+          stockStatus: productData.stockStatus || 'in-stock',
+          costPrice: productData.costPrice || 0,
+          weight: productData.weight || 0,
+          Dimensions: productData.Dimensions || productData.dimensions || { length: 0, width: 0, height: 0, unit: 'cm' },
+          subcategory: productData.subcategory || null
         };
-      }) || [];
+      }).filter((p: Product) => p.name); // Filter out products without a name
       
       setProducts(transformedProducts);
     } catch (error) {
@@ -127,10 +132,10 @@ export default function InventoryManagement() {
 
     if (searchTerm) {
       filtered = filtered.filter(product =>
-        product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.SKU.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.category.toLowerCase().includes(searchTerm.toLowerCase())
+        product.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.SKU?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.brand?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.category?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -364,7 +369,7 @@ export default function InventoryManagement() {
                       </div>
                     </div>
                   </td>
-                  <td className="table-cell font-mono text-sm">{product.SKU}</td>
+                  <td className="table-cell font-mono text-sm">{product.SKU || 'N/A'}</td>
                   <td className="table-cell">
                     <div className="flex items-center">
                       <div className="w-16 bg-gray-200 rounded-full h-2 mr-3">
