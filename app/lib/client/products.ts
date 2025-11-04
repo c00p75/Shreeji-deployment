@@ -48,15 +48,48 @@ function transformProduct(strapiProduct: any): any {
     ? new Date(productData.createdAt).toISOString().split('T')[0] // YYYY-MM-DD format
     : new Date().toISOString().split('T')[0];
 
-  return {
-    id: productId,
-    documentId: strapiProduct.documentId || productData.documentId,
-    name: productData.name || '',
-    category: productData.category || '',
-    subcategory: productData.subcategory || '',
-    images: imageUrls, // Array of image URLs for compatibility
-    brand: productData.brand || '',
-    'brand logo': null, // Not in Strapi, can be added later
+      // Extract brand information from relation
+      let brandName = '';
+      let brandLogo: string | null = null;
+      
+      if (productData.brand) {
+        // Handle Strapi v4+ structure where brand is a relation
+        const brandData = productData.brand.data || productData.brand;
+        const brandAttributes = brandData?.attributes || brandData || {};
+        
+        brandName = brandAttributes.name || brandData?.name || '';
+        
+        // Get logo from media or logoUrl
+        if (brandAttributes.logo?.data) {
+          const logoData = brandAttributes.logo.data.attributes || brandAttributes.logo.data;
+          const logoUrl = logoData.url || logoData.formats?.thumbnail?.url || null;
+          // Ensure absolute URL for Strapi media
+          if (logoUrl && !logoUrl.startsWith('http') && !logoUrl.startsWith('//')) {
+            const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
+            const baseUrl = strapiUrl.replace(/\/api\/?$/, '');
+            brandLogo = baseUrl + (logoUrl.startsWith('/') ? logoUrl : '/' + logoUrl);
+          } else {
+            brandLogo = logoUrl;
+          }
+        } else if (brandAttributes.logoUrl) {
+          brandLogo = brandAttributes.logoUrl;
+        }
+        
+        // If logo is a string URL directly
+        if (!brandLogo && typeof brandAttributes.logo === 'string') {
+          brandLogo = brandAttributes.logo;
+        }
+      }
+
+      return {
+        id: productId,
+        documentId: strapiProduct.documentId || productData.documentId,
+        name: productData.name || '',
+        category: productData.category || '',
+        subcategory: productData.subcategory || '',
+        images: imageUrls, // Array of image URLs for compatibility
+        brand: brandName,
+        'brand logo': brandLogo,
     price: productData.price || '',
     'discounted price': productData.discountedPrice || '',
     tagline: productData.tagline || '',
@@ -84,7 +117,7 @@ let productsCache: any[] | null = null;
 let productsCacheTimestamp: number = 0;
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
-// Get all products (with caching)
+// Get all products (with caching and pagination)
 async function getAllProducts(forceRefresh = false): Promise<any[]> {
   const now = Date.now();
   
@@ -94,12 +127,38 @@ async function getAllProducts(forceRefresh = false): Promise<any[]> {
   }
 
   try {
-    const response = await clientApi.getProducts({
-      pagination: { page: 1, pageSize: 1000 }, // Get all products
-      sort: 'createdAt:desc',
-    });
+    let allProducts: any[] = [];
+    let page = 1;
+    const pageSize = 100; // Strapi default max is usually 100
+    let hasMore = true;
 
-    const transformed = transformProducts(response.data || []);
+    // Fetch all pages of products
+    while (hasMore) {
+      const response = await clientApi.getProducts({
+        pagination: { page, pageSize },
+        sort: 'createdAt:desc',
+      });
+
+      const products = response.data || [];
+      allProducts = [...allProducts, ...products];
+
+      // Check if there are more pages
+      const total = response.meta?.pagination?.total || 0;
+      const pageCount = response.meta?.pagination?.pageCount || 1;
+      hasMore = page < pageCount;
+
+      console.log(`Fetched page ${page}/${pageCount}: ${products.length} products (total: ${allProducts.length}/${total})`);
+
+      if (hasMore) {
+        page++;
+      }
+    }
+
+    console.log(`Total products fetched: ${allProducts.length}`);
+
+    const transformed = transformProducts(allProducts);
+    console.log(`Total products after transformation: ${transformed.length}`);
+    
     productsCache = transformed;
     productsCacheTimestamp = now;
     return transformed;
@@ -107,6 +166,7 @@ async function getAllProducts(forceRefresh = false): Promise<any[]> {
     console.error('Error fetching products from Strapi:', error);
     // Return cached products if available, even if expired
     if (productsCache) {
+      console.log('Returning cached products due to error');
       return productsCache;
     }
     return [];
@@ -122,10 +182,19 @@ export async function filterProducts(
   try {
     const allProducts = await getAllProducts();
     
+    console.log(`Filtering products by ${filterBy}="${filter}" from ${allProducts.length} total products`);
+    
     let filtered = allProducts.filter(product => {
       const value = product[filterBy];
-      return value && value.toLowerCase() === filter.toLowerCase();
+      const matches = value && value.toLowerCase() === filter.toLowerCase();
+      if (!matches && value) {
+        // Debug: log products that don't match (for troubleshooting)
+        console.log(`Product "${product.name}" has ${filterBy}="${value}" (expected "${filter}")`);
+      }
+      return matches;
     });
+
+    console.log(`Found ${filtered.length} products matching ${filterBy}="${filter}"`);
 
     // Sort by date-added (newest first)
     filtered = filtered.sort((a, b) => {

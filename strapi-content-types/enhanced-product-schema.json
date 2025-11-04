@@ -34,7 +34,10 @@
       "type": "string"
     },
     "brand": {
-      "type": "string"
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::brand.brand",
+      "inversedBy": "products"
     },
     "tagline": {
       "type": "string"

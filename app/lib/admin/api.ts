@@ -132,36 +132,62 @@ class ApiClient {
       searchParams.append('pagination[pageSize]', params.pagination.pageSize.toString());
     }
     
-    if (params?.filters) {
-      Object.entries(params.filters).forEach(([key, value]) => {
-        searchParams.append(`filters[${key}][$eq]`, value);
-      });
-    }
-    
-    if (params?.sort) {
-      searchParams.append('sort', params.sort);
-    }
+        if (params?.filters) {
+          Object.entries(params.filters).forEach(([key, value]) => {
+            if (value !== undefined && value !== null && value !== '') {
+              if (key === 'brand' && typeof value === 'object' && (value as any).id) {
+                // Handle brand relation filter
+                searchParams.append(`filters[brand][id][$eq]`, (value as any).id.toString());
+              } else {
+                searchParams.append(`filters[${key}][$eq]`, value.toString());
+              }
+            }
+          });
+        }
+        
+        if (params?.sort) {
+          searchParams.append('sort', params.sort);
+        }
 
-    if (params?.populate) {
-      params.populate.forEach(field => {
-        searchParams.append('populate', field);
-      });
-    }
+        if (params?.populate) {
+          params.populate.forEach(field => {
+            searchParams.append('populate', field);
+          });
+        } else {
+          // Default populate everything - Strapi will populate all relations including nested ones
+          searchParams.append('populate', '*');
+        }
 
-    // Include draft products for admin dashboard (show all products regardless of publication status)
-    searchParams.append('publicationState', 'preview');
+        // Include draft products for admin dashboard (show all products regardless of publication status)
+        searchParams.append('publicationState', 'preview');
+        searchParams.append('sort', 'createdAt:desc');
 
-    const queryString = searchParams.toString();
-    const endpoint = `/products${queryString ? `?${queryString}` : ''}`;
-    
-    return this.request<{ data: any[]; meta: any }>(endpoint);
-  }
+        const queryString = searchParams.toString();
+        const endpoint = `/products${queryString ? `?${queryString}` : ''}`;
+        
+        return this.request<{ data: any[]; meta: any }>(endpoint);
+      }
 
   async getProduct(id: string) {
     return this.request<{ data: any }>(`/products/${id}`);
   }
 
   async createProduct(data: any) {
+    // Handle brand: convert string to ID if needed (backward compatibility)
+    if (data.brand && typeof data.brand === 'string') {
+      // Try to find brand by name
+      const brands = await this.getBrands({ populate: [] });
+      const matchingBrand = brands.data.find((b: any) => 
+        (b.attributes?.name || b.name)?.toLowerCase() === data.brand.toLowerCase()
+      );
+      if (matchingBrand) {
+        data.brand = matchingBrand.id || matchingBrand.documentId;
+      } else {
+        // If brand doesn't exist, set to null (brand is optional)
+        data.brand = null;
+      }
+    }
+    
     return this.request('/products', {
       method: 'POST',
       body: JSON.stringify({ data }),
@@ -169,6 +195,21 @@ class ApiClient {
   }
 
   async updateProduct(id: string, productData: any) {
+    // Handle brand: convert string to ID if needed (backward compatibility)
+    if (productData.brand && typeof productData.brand === 'string') {
+      // Try to find brand by name
+      const brands = await this.getBrands({ populate: [] });
+      const matchingBrand = brands.data.find((b: any) => 
+        (b.attributes?.name || b.name)?.toLowerCase() === productData.brand.toLowerCase()
+      );
+      if (matchingBrand) {
+        productData.brand = matchingBrand.id || matchingBrand.documentId;
+      } else {
+        // If brand doesn't exist, set to null (brand is optional)
+        productData.brand = null;
+      }
+    }
+    
     return this.request<{ data: any }>(`/products/${id}`, {
       method: 'PUT',
       body: JSON.stringify({ data: productData }),
@@ -177,6 +218,67 @@ class ApiClient {
 
   async deleteProduct(id: string) {
     return this.request(`/products/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // Brand API methods
+  async getBrands(params?: {
+    pagination?: { page: number; pageSize: number };
+    populate?: string[];
+  }) {
+    const searchParams = new URLSearchParams();
+    
+    if (params?.pagination) {
+      searchParams.append('pagination[page]', params.pagination.page.toString());
+      searchParams.append('pagination[pageSize]', params.pagination.pageSize.toString());
+    }
+    
+    if (params?.populate) {
+      params.populate.forEach(field => {
+        searchParams.append('populate', field);
+      });
+    } else {
+      // Default populate logo
+      searchParams.append('populate', 'logo');
+    }
+
+    const queryString = searchParams.toString();
+    const endpoint = `/brands${queryString ? `?${queryString}` : ''}`;
+    
+    return this.request<{ data: any[]; meta: any }>(endpoint);
+  }
+
+  async getBrand(id: string | number) {
+    return this.request<{ data: any }>(`/brands/${id}?populate=logo`);
+  }
+
+  async createBrand(data: { name: string; logo?: number; logoUrl?: string; description?: string; website?: string }) {
+    return this.request('/brands', {
+      method: 'POST',
+      body: JSON.stringify({ data }),
+    });
+  }
+
+  async updateBrand(id: string | number, data: { name?: string; logo?: number | null; logoUrl?: string; description?: string; website?: string }) {
+    return this.request(`/brands/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify({ data }),
+    });
+  }
+
+  async deleteBrand(id: string | number) {
+    // Check if brand is used by any products
+    const products = await this.getProducts({
+      filters: { brand: { id: { $eq: id } } },
+      pagination: { page: 1, pageSize: 1 }
+    });
+    
+    if (products.data && products.data.length > 0) {
+      throw new Error('Cannot delete brand: It is being used by one or more products');
+    }
+    
+    return this.request(`/brands/${id}`, {
       method: 'DELETE',
     });
   }

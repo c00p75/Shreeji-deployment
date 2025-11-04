@@ -130,27 +130,30 @@ class ClientApiClient {
       searchParams.append('sort', params.sort);
     }
 
-    if (params?.populate) {
-      params.populate.forEach(field => {
-        searchParams.append('populate', field);
-      });
-    }
+        if (params?.populate) {
+          params.populate.forEach(field => {
+            searchParams.append('populate', field);
+          });
+        } else {
+          // Default populate everything - Strapi will populate all relations including nested ones
+          searchParams.append('populate', '*');
+        }
 
-    // Only fetch published products (default Strapi behavior, no publicationState=preview)
-    const queryString = searchParams.toString();
-    const endpoint = `/products${queryString ? `?${queryString}` : ''}`;
-    
-    return this.request<{ data: any[]; meta: any }>(endpoint);
-  }
+        // Only fetch published products (default Strapi behavior, no publicationState=preview)
+        const queryString = searchParams.toString();
+        const endpoint = `/products${queryString ? `?${queryString}` : ''}`;
+        
+        return this.request<{ data: any[]; meta: any }>(endpoint);
+      }
 
-  async getProduct(slug: string) {
-    // Get product by slug
-    return this.request<{ data: any }>(`/products?filters[slug][$eq]=${encodeURIComponent(slug)}&populate=*`);
-  }
+      async getProduct(slug: string) {
+        // Get product by slug with brand and logo populated
+        return this.request<{ data: any }>(`/products?filters[slug][$eq]=${encodeURIComponent(slug)}&populate[brand][populate][0]=logo&populate=images`);
+      }
 
-  async getProductById(id: string | number) {
-    return this.request<{ data: any }>(`/products/${id}?populate=*`);
-  }
+      async getProductById(id: string | number) {
+        return this.request<{ data: any }>(`/products/${id}?populate[brand][populate][0]=logo&populate=images`);
+      }
 }
 
 export const clientApi = new ClientApiClient();
