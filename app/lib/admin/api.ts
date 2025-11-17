@@ -174,17 +174,74 @@ class ApiClient {
 
   async createProduct(data: any) {
     // Handle brand: convert string to ID if needed (backward compatibility)
+    // If brand is already a number, it's already an ID, so skip conversion
     if (data.brand && typeof data.brand === 'string') {
-      // Try to find brand by name
-      const brands = await this.getBrands({ populate: [] });
-      const matchingBrand = brands.data.find((b: any) => 
-        (b.attributes?.name || b.name)?.toLowerCase() === data.brand.toLowerCase()
-      );
-      if (matchingBrand) {
-        data.brand = matchingBrand.id || matchingBrand.documentId;
+      // Check if it's a numeric string (already an ID)
+      if (!isNaN(Number(data.brand))) {
+        data.brand = Number(data.brand);
       } else {
-        // If brand doesn't exist, set to null (brand is optional)
-        data.brand = null;
+        // It's a brand name string, try to convert to ID
+        try {
+          // Try to find brand by name
+          const brands = await this.getBrands({ populate: [] });
+          const matchingBrand = brands.data.find((b: any) => 
+            (b.attributes?.name || b.name)?.toLowerCase() === data.brand.toLowerCase()
+          );
+          if (matchingBrand) {
+            data.brand = matchingBrand.id || matchingBrand.documentId;
+          } else {
+            // If brand doesn't exist, set to null (brand is optional)
+            data.brand = null;
+          }
+        } catch (error: any) {
+          // If brands endpoint doesn't exist (404) or other error, set to null
+          console.warn('Could not fetch brands for conversion. Setting brand to null:', error);
+          data.brand = null;
+        }
+      }
+    }
+
+    // Handle category: convert string to ID if needed (backward compatibility)
+    if (data.category && typeof data.category === 'string') {
+      if (!isNaN(Number(data.category))) {
+        data.category = Number(data.category);
+      } else {
+        try {
+          const categories = await this.getCategories({ populate: [] });
+          const matchingCategory = categories.data.find((c: any) => 
+            (c.attributes?.name || c.name)?.toLowerCase() === data.category.toLowerCase()
+          );
+          if (matchingCategory) {
+            data.category = matchingCategory.id || matchingCategory.documentId;
+          } else {
+            data.category = null;
+          }
+        } catch (error: any) {
+          console.warn('Could not fetch categories for conversion. Setting category to null:', error);
+          data.category = null;
+        }
+      }
+    }
+
+    // Handle subcategory: convert string to ID if needed (backward compatibility)
+    if (data.subcategory && typeof data.subcategory === 'string') {
+      if (!isNaN(Number(data.subcategory))) {
+        data.subcategory = Number(data.subcategory);
+      } else {
+        try {
+          const subcategories = await this.getSubcategories({ populate: [] });
+          const matchingSubcategory = subcategories.data.find((s: any) => 
+            (s.attributes?.name || s.name)?.toLowerCase() === data.subcategory.toLowerCase()
+          );
+          if (matchingSubcategory) {
+            data.subcategory = matchingSubcategory.id || matchingSubcategory.documentId;
+          } else {
+            data.subcategory = null;
+          }
+        } catch (error: any) {
+          console.warn('Could not fetch subcategories for conversion. Setting subcategory to null:', error);
+          data.subcategory = null;
+        }
       }
     }
     
@@ -196,17 +253,74 @@ class ApiClient {
 
   async updateProduct(id: string, productData: any) {
     // Handle brand: convert string to ID if needed (backward compatibility)
+    // If brand is already a number, it's already an ID, so skip conversion
     if (productData.brand && typeof productData.brand === 'string') {
-      // Try to find brand by name
-      const brands = await this.getBrands({ populate: [] });
-      const matchingBrand = brands.data.find((b: any) => 
-        (b.attributes?.name || b.name)?.toLowerCase() === productData.brand.toLowerCase()
-      );
-      if (matchingBrand) {
-        productData.brand = matchingBrand.id || matchingBrand.documentId;
+      // Check if it's a numeric string (already an ID)
+      if (!isNaN(Number(productData.brand))) {
+        productData.brand = Number(productData.brand);
       } else {
-        // If brand doesn't exist, set to null (brand is optional)
-        productData.brand = null;
+        // It's a brand name string, try to convert to ID
+        try {
+          // Try to find brand by name
+          const brands = await this.getBrands({ populate: [] });
+          const matchingBrand = brands.data.find((b: any) => 
+            (b.attributes?.name || b.name)?.toLowerCase() === productData.brand.toLowerCase()
+          );
+          if (matchingBrand) {
+            productData.brand = matchingBrand.id || matchingBrand.documentId;
+          } else {
+            // If brand doesn't exist, set to null (brand is optional)
+            productData.brand = null;
+          }
+        } catch (error: any) {
+          // If brands endpoint doesn't exist (404) or other error, set to null
+          console.warn('Could not fetch brands for conversion. Setting brand to null:', error);
+          productData.brand = null;
+        }
+      }
+    }
+
+    // Handle category: convert string to ID if needed (backward compatibility)
+    if (productData.category && typeof productData.category === 'string') {
+      if (!isNaN(Number(productData.category))) {
+        productData.category = Number(productData.category);
+      } else {
+        try {
+          const categories = await this.getCategories({ populate: [] });
+          const matchingCategory = categories.data.find((c: any) => 
+            (c.attributes?.name || c.name)?.toLowerCase() === productData.category.toLowerCase()
+          );
+          if (matchingCategory) {
+            productData.category = matchingCategory.id || matchingCategory.documentId;
+          } else {
+            productData.category = null;
+          }
+        } catch (error: any) {
+          console.warn('Could not fetch categories for conversion. Setting category to null:', error);
+          productData.category = null;
+        }
+      }
+    }
+
+    // Handle subcategory: convert string to ID if needed (backward compatibility)
+    if (productData.subcategory && typeof productData.subcategory === 'string') {
+      if (!isNaN(Number(productData.subcategory))) {
+        productData.subcategory = Number(productData.subcategory);
+      } else {
+        try {
+          const subcategories = await this.getSubcategories({ populate: [] });
+          const matchingSubcategory = subcategories.data.find((s: any) => 
+            (s.attributes?.name || s.name)?.toLowerCase() === productData.subcategory.toLowerCase()
+          );
+          if (matchingSubcategory) {
+            productData.subcategory = matchingSubcategory.id || matchingSubcategory.documentId;
+          } else {
+            productData.subcategory = null;
+          }
+        } catch (error: any) {
+          console.warn('Could not fetch subcategories for conversion. Setting subcategory to null:', error);
+          productData.subcategory = null;
+        }
       }
     }
     
@@ -279,6 +393,134 @@ class ApiClient {
     }
     
     return this.request(`/brands/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // Category API methods
+  async getCategories(params?: {
+    pagination?: { page: number; pageSize: number };
+    populate?: string[];
+  }) {
+    const searchParams = new URLSearchParams();
+    
+    if (params?.pagination) {
+      searchParams.append('pagination[page]', params.pagination.page.toString());
+      searchParams.append('pagination[pageSize]', params.pagination.pageSize.toString());
+    }
+    
+    if (params?.populate) {
+      params.populate.forEach(field => {
+        searchParams.append('populate', field);
+      });
+    }
+
+    const queryString = searchParams.toString();
+    const endpoint = `/categories${queryString ? `?${queryString}` : ''}`;
+    
+    return this.request<{ data: any[]; meta: any }>(endpoint);
+  }
+
+  async getCategory(id: string | number) {
+    return this.request<{ data: any }>(`/categories/${id}`);
+  }
+
+  async createCategory(data: { name: string; slug?: string }) {
+    return this.request('/categories', {
+      method: 'POST',
+      body: JSON.stringify({ data }),
+    });
+  }
+
+  async updateCategory(id: string | number, data: { name?: string; slug?: string }) {
+    return this.request(`/categories/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify({ data }),
+    });
+  }
+
+  async deleteCategory(id: string | number) {
+    // Check if category is used by any subcategories
+    try {
+      const subcategories = await this.getSubcategories({ category: typeof id === 'string' ? Number(id) : id });
+      if (subcategories.data && subcategories.data.length > 0) {
+        throw new Error('Cannot delete category: It is being used by one or more subcategories');
+      }
+    } catch (error: any) {
+      // If error is about subcategories existing, rethrow it
+      if (error.message?.includes('subcategories')) {
+        throw error;
+      }
+      // Otherwise, continue with deletion (endpoint might not exist yet)
+    }
+    
+    return this.request(`/categories/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // Subcategory API methods
+  async getSubcategories(params?: {
+    category?: number;
+    pagination?: { page: number; pageSize: number };
+    populate?: string[];
+  }) {
+    const searchParams = new URLSearchParams();
+    
+    if (params?.category) {
+      searchParams.append('filters[category][id][$eq]', params.category.toString());
+    }
+    
+    if (params?.pagination) {
+      searchParams.append('pagination[page]', params.pagination.page.toString());
+      searchParams.append('pagination[pageSize]', params.pagination.pageSize.toString());
+    }
+    
+    if (params?.populate) {
+      params.populate.forEach(field => {
+        searchParams.append('populate', field);
+      });
+    } else {
+      // Default populate category
+      searchParams.append('populate', 'category');
+    }
+
+    const queryString = searchParams.toString();
+    const endpoint = `/subcategories${queryString ? `?${queryString}` : ''}`;
+    
+    return this.request<{ data: any[]; meta: any }>(endpoint);
+  }
+
+  async getSubcategory(id: string | number) {
+    return this.request<{ data: any }>(`/subcategories/${id}?populate=category`);
+  }
+
+  async createSubcategory(data: { name: string; category: number; slug?: string }) {
+    return this.request('/subcategories', {
+      method: 'POST',
+      body: JSON.stringify({ data }),
+    });
+  }
+
+  async updateSubcategory(id: string | number, data: { name?: string; category?: number; slug?: string }) {
+    return this.request(`/subcategories/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify({ data }),
+    });
+  }
+
+  async deleteSubcategory(id: string | number) {
+    // Check if subcategory is used by any products
+    const products = await this.getProducts({
+      filters: { subcategory: { id: { $eq: id } } },
+      pagination: { page: 1, pageSize: 1 }
+    });
+    
+    if (products.data && products.data.length > 0) {
+      throw new Error('Cannot delete subcategory: It is being used by one or more products');
+    }
+    
+    return this.request(`/subcategories/${id}`, {
       method: 'DELETE',
     });
   }

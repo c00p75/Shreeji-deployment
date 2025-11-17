@@ -220,28 +220,39 @@ export default function ProductManagement() {
       }
 
       // Prepare the data for Strapi - only include fields that have values
+      // Convert price strings to numbers (remove currency symbols and commas)
+      const priceValue = typeof updatedProduct.price === 'string' 
+        ? parseFloat(updatedProduct.price.replace(/[^0-9.]/g, '')) || 0
+        : updatedProduct.price || 0;
+      
+      const discountedPriceValue = updatedProduct.discountedPrice
+        ? (typeof updatedProduct.discountedPrice === 'string'
+          ? parseFloat(updatedProduct.discountedPrice.replace(/[^0-9.]/g, '')) || null
+          : updatedProduct.discountedPrice)
+        : null;
+
       const productData = {
         name: updatedProduct.name,
         slug: updatedProduct.slug,
         category: updatedProduct.category,
-        subcategory: updatedProduct.subcategory || null,
+        subcategory: updatedProduct.subcategory && updatedProduct.subcategory.trim() !== '' ? updatedProduct.subcategory : null,
         brand: updatedProduct.brand,
-        price: updatedProduct.price,
-        discountedPrice: updatedProduct.discountedPrice || null,
+        price: priceValue,
+        discountedPrice: discountedPriceValue,
         tagline: updatedProduct.tagline || null,
         description: updatedProduct.description || null,
         specs: updatedProduct.specs || null,
         images: updatedProduct.images || null,
         isActive: updatedProduct.isActive,
         // Provide default values for required fields
-        SKU: updatedProduct.SKU || `SKU-${Date.now()}`,
+        sku: updatedProduct.SKU || `SKU-${Date.now()}`,
         stockQuantity: updatedProduct.stockQuantity || 0,
         ...(updatedProduct.minStockLevel !== undefined && updatedProduct.minStockLevel !== null && { minStockLevel: updatedProduct.minStockLevel }),
         ...(updatedProduct.maxStockLevel !== undefined && updatedProduct.maxStockLevel !== null && { maxStockLevel: updatedProduct.maxStockLevel }),
         ...(updatedProduct.stockStatus && { stockStatus: updatedProduct.stockStatus }),
         ...(updatedProduct.costPrice !== undefined && updatedProduct.costPrice !== null && { costPrice: updatedProduct.costPrice }),
         ...(updatedProduct.weight !== undefined && updatedProduct.weight !== null && { weight: updatedProduct.weight }),
-        ...(updatedProduct.Dimensions && { Dimensions: updatedProduct.Dimensions }),
+        ...(updatedProduct.Dimensions && { dimensions: updatedProduct.Dimensions }),
       }
 
       console.log('Updating product with data:', productData)

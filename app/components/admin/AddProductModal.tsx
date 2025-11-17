@@ -18,9 +18,9 @@ interface Product {
   documentId?: string;
   name: string;
   slug: string;
-  category: string;
-    subcategory?: string;
-    brand?: string | number; // Can be brand ID (number) or legacy string
+  category: string | number; // Can be category ID (number) or legacy string
+  subcategory?: string | number; // Can be subcategory ID (number) or legacy string
+  brand?: string | number; // Can be brand ID (number) or legacy string
   price: string;
   discountedPrice?: string;
   costPrice?: number;
@@ -85,27 +85,33 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [mainImageIndex, setMainImageIndex] = useState<number>(0);
   
-  // Modal states for adding new category/brand
+  // Modal states for adding/editing category/brand/subcategory
   const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
+  const [showEditCategoryModal, setShowEditCategoryModal] = useState(false);
+  const [showAddSubcategoryModal, setShowAddSubcategoryModal] = useState(false);
+  const [showEditSubcategoryModal, setShowEditSubcategoryModal] = useState(false);
   const [showAddBrandModal, setShowAddBrandModal] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState('');
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [newSubcategoryName, setNewSubcategoryName] = useState('');
+  const [editingSubcategory, setEditingSubcategory] = useState<Subcategory | null>(null);
   const [newBrandName, setNewBrandName] = useState('');
 
-  // Categories and brands as state so they can be updated
-  const [categories, setCategories] = useState<string[]>([
-    'Computers', 'Power Solutions', 'Monitors', 'Interactive Displays',
-    'Components', 'Networking', 'Accessories'
-  ]);
+  // Category and Subcategory interfaces
+  interface Category {
+    id: number | string;
+    documentId?: string;
+    name: string;
+    slug?: string;
+  }
 
-  const subcategories = {
-    'Computers': ['All in One', 'Desktops', 'Laptops'],
-    'Power Solutions': ['UPS'],
-    'Monitors': [''],
-    'Interactive Displays': [''],
-    'Components': ['Cases', 'Processors', 'Graphics Cards', 'Server Hard Drives', 'Consumer Storage'],
-    'Networking': ['Switches', 'Routers', 'Access Points'],
-    'Accessories': ['']
-  };
+  interface Subcategory {
+    id: number | string;
+    documentId?: string;
+    name: string;
+    slug?: string;
+    category: number | Category;
+  }
 
   // Brands fetched from API with logo support
   interface Brand {
@@ -116,6 +122,11 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
     logoUrl?: string | null;
   }
 
+  // Categories and subcategories fetched from API
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
+  const [loadingCategories, setLoadingCategories] = useState(false);
+  const [loadingSubcategories, setLoadingSubcategories] = useState(false);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [loadingBrands, setLoadingBrands] = useState(false);
 
@@ -200,12 +211,24 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
     }));
   };
 
-  // Handle category selection - check if "Add new" was selected
+  // Handle category selection - check if "Add new" or "Edit" was selected
   const handleCategoryChange = (value: string) => {
     if (value === '__add_new__') {
       setShowAddCategoryModal(true);
+    } else if (value.startsWith('__edit__')) {
+      const categoryId = value.replace('__edit__', '');
+      const category = categories.find(c => c.id.toString() === categoryId);
+      if (category) {
+        setEditingCategory(category);
+        setNewCategoryName(category.name);
+        setShowEditCategoryModal(true);
+      }
     } else {
-      handleInputChange('category', value);
+      // Convert to number if it's a numeric string (category ID)
+      const categoryId = value && !isNaN(Number(value)) ? Number(value) : value;
+      handleInputChange('category', categoryId);
+      // Clear subcategory when category changes
+      handleInputChange('subcategory', '');
     }
   };
 
@@ -219,34 +242,135 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
   };
 
   // Add new category
-  const handleAddCategory = () => {
+  const handleAddCategory = async () => {
     const trimmedName = newCategoryName.trim();
     
     // Validation
     if (!trimmedName) {
+      setErrors(prev => ({ ...prev, newCategory: 'Category name is required' }));
       return;
     }
     
     // Check for duplicates (case-insensitive)
-    if (categories.some(cat => cat.toLowerCase() === trimmedName.toLowerCase())) {
+    if (categories.some(cat => cat.name.toLowerCase() === trimmedName.toLowerCase())) {
       setErrors(prev => ({ ...prev, newCategory: 'Category already exists' }));
       return;
     }
+
+    try {
+      const response = await api.createCategory({ name: trimmedName }) as { data: any };
+      const createdCategory = response.data;
+      const categoryDataAttr = createdCategory.attributes || createdCategory;
+
+      const newCategory: Category = {
+        id: createdCategory.id || createdCategory.documentId,
+        documentId: createdCategory.documentId,
+        name: categoryDataAttr.name || trimmedName,
+        slug: categoryDataAttr.slug || null
+      };
+
+      setCategories(prev => [...prev, newCategory]);
+      
+      // Select the new category (use ID)
+      handleInputChange('category', newCategory.id.toString());
+      
+      // Reset and close modal
+      setNewCategoryName('');
+      setShowAddCategoryModal(false);
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors.newCategory;
+        return newErrors;
+      });
+    } catch (error: any) {
+      console.error('Error creating category:', error);
+      setErrors(prev => ({ 
+        ...prev, 
+        newCategory: error.message || 'Failed to create category. Please try again.' 
+      }));
+    }
+  };
+
+  // Update category
+  const handleUpdateCategory = async () => {
+    if (!editingCategory) return;
     
-    // Add to categories array
-    setCategories(prev => [...prev, trimmedName]);
+    const trimmedName = newCategoryName.trim();
     
-    // Select the new category
-    handleInputChange('category', trimmedName);
+    if (!trimmedName) {
+      setErrors(prev => ({ ...prev, newCategory: 'Category name is required' }));
+      return;
+    }
     
-    // Reset and close modal
-    setNewCategoryName('');
-    setShowAddCategoryModal(false);
-    setErrors(prev => {
-      const newErrors = { ...prev };
-      delete newErrors.newCategory;
-      return newErrors;
-    });
+    // Check for duplicates (excluding current category)
+    if (categories.some(cat => cat.id !== editingCategory.id && cat.name.toLowerCase() === trimmedName.toLowerCase())) {
+      setErrors(prev => ({ ...prev, newCategory: 'Category name already exists' }));
+      return;
+    }
+
+    try {
+      const response = await api.updateCategory(editingCategory.id, { name: trimmedName }) as { data: any };
+      const updatedCategory = response.data;
+      const categoryDataAttr = updatedCategory.attributes || updatedCategory;
+
+      const updated: Category = {
+        id: updatedCategory.id || updatedCategory.documentId,
+        documentId: updatedCategory.documentId,
+        name: categoryDataAttr.name || trimmedName,
+        slug: categoryDataAttr.slug || null
+      };
+
+      setCategories(prev => prev.map(cat => cat.id === editingCategory.id ? updated : cat));
+      
+      // Update formData if this category is selected
+      if (formData.category === editingCategory.id || formData.category === editingCategory.id.toString()) {
+        handleInputChange('category', updated.id.toString());
+      }
+      
+      // Reset and close modal
+      setNewCategoryName('');
+      setEditingCategory(null);
+      setShowEditCategoryModal(false);
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors.newCategory;
+        return newErrors;
+      });
+    } catch (error: any) {
+      console.error('Error updating category:', error);
+      setErrors(prev => ({ 
+        ...prev, 
+        newCategory: error.message || 'Failed to update category. Please try again.' 
+      }));
+    }
+  };
+
+  // Delete category
+  const handleDeleteCategory = async (categoryId: number | string) => {
+    if (!confirm('Are you sure you want to delete this category? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      await api.deleteCategory(categoryId);
+      setCategories(prev => prev.filter(cat => cat.id !== categoryId));
+      
+      // Clear category selection if deleted category was selected
+      if (formData.category === categoryId || formData.category === categoryId.toString()) {
+        handleInputChange('category', '');
+        handleInputChange('subcategory', '');
+      }
+      
+      // Close modal if editing
+      if (editingCategory && editingCategory.id === categoryId) {
+        setShowEditCategoryModal(false);
+        setEditingCategory(null);
+        setNewCategoryName('');
+      }
+    } catch (error: any) {
+      console.error('Error deleting category:', error);
+      alert(error.message || 'Failed to delete category. It may be in use by subcategories.');
+    }
   };
 
   // Add new brand
@@ -337,6 +461,199 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
     }
   };
 
+  // Handle subcategory selection
+  const handleSubcategoryChange = (value: string) => {
+    if (value === '__add_new__') {
+      if (!formData.category) {
+        setErrors(prev => ({ ...prev, subcategory: 'Please select a category first' }));
+        return;
+      }
+      setShowAddSubcategoryModal(true);
+    } else if (value.startsWith('__edit__')) {
+      const subcategoryId = value.replace('__edit__', '');
+      const subcategory = subcategories.find(s => s.id.toString() === subcategoryId);
+      if (subcategory) {
+        setEditingSubcategory(subcategory);
+        setNewSubcategoryName(subcategory.name);
+        setShowEditSubcategoryModal(true);
+      }
+    } else {
+      // Convert to number if it's a numeric string (subcategory ID)
+      const subcategoryId = value && !isNaN(Number(value)) ? Number(value) : value;
+      handleInputChange('subcategory', subcategoryId);
+    }
+  };
+
+  // Add new subcategory
+  const handleAddSubcategory = async () => {
+    const trimmedName = newSubcategoryName.trim();
+    
+    if (!trimmedName) {
+      setErrors(prev => ({ ...prev, newSubcategory: 'Subcategory name is required' }));
+      return;
+    }
+
+    const categoryId = formData.category;
+    if (!categoryId) {
+      setErrors(prev => ({ ...prev, newSubcategory: 'Please select a category first' }));
+      return;
+    }
+
+    // Extract category ID
+    const categoryIdNum = typeof categoryId === 'string' && !isNaN(Number(categoryId))
+      ? Number(categoryId)
+      : categoryId;
+
+    if (typeof categoryIdNum !== 'number') {
+      setErrors(prev => ({ ...prev, newSubcategory: 'Invalid category selected' }));
+      return;
+    }
+
+    // Check for duplicates (case-insensitive, within same category)
+    if (subcategories.some(sub => 
+      sub.name.toLowerCase() === trimmedName.toLowerCase() && 
+      (typeof sub.category === 'number' ? sub.category : (sub.category as Category).id) === categoryIdNum
+    )) {
+      setErrors(prev => ({ ...prev, newSubcategory: 'Subcategory already exists in this category' }));
+      return;
+    }
+
+    try {
+      const response = await api.createSubcategory({ 
+        name: trimmedName,
+        category: categoryIdNum
+      }) as { data: any };
+      const createdSubcategory = response.data;
+      const subcategoryDataAttr = createdSubcategory.attributes || createdSubcategory;
+
+      const newSubcategory: Subcategory = {
+        id: createdSubcategory.id || createdSubcategory.documentId,
+        documentId: createdSubcategory.documentId,
+        name: subcategoryDataAttr.name || trimmedName,
+        slug: subcategoryDataAttr.slug || null,
+        category: categoryIdNum
+      };
+
+      setSubcategories(prev => [...prev, newSubcategory]);
+      
+      // Select the new subcategory (use ID)
+      handleInputChange('subcategory', newSubcategory.id.toString());
+      
+      // Reset and close modal
+      setNewSubcategoryName('');
+      setShowAddSubcategoryModal(false);
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors.newSubcategory;
+        return newErrors;
+      });
+    } catch (error: any) {
+      console.error('Error creating subcategory:', error);
+      setErrors(prev => ({ 
+        ...prev, 
+        newSubcategory: error.message || 'Failed to create subcategory. Please try again.' 
+      }));
+    }
+  };
+
+  // Update subcategory
+  const handleUpdateSubcategory = async () => {
+    if (!editingSubcategory) return;
+    
+    const trimmedName = newSubcategoryName.trim();
+    
+    if (!trimmedName) {
+      setErrors(prev => ({ ...prev, newSubcategory: 'Subcategory name is required' }));
+      return;
+    }
+
+    const categoryId = formData.category;
+    const categoryIdNum = typeof categoryId === 'string' && !isNaN(Number(categoryId))
+      ? Number(categoryId)
+      : categoryId;
+
+    if (typeof categoryIdNum !== 'number') {
+      setErrors(prev => ({ ...prev, newSubcategory: 'Invalid category selected' }));
+      return;
+    }
+
+    // Check for duplicates (excluding current subcategory)
+    if (subcategories.some(sub => 
+      sub.id !== editingSubcategory.id &&
+      sub.name.toLowerCase() === trimmedName.toLowerCase() &&
+      (typeof sub.category === 'number' ? sub.category : (sub.category as Category).id) === categoryIdNum
+    )) {
+      setErrors(prev => ({ ...prev, newSubcategory: 'Subcategory name already exists in this category' }));
+      return;
+    }
+
+    try {
+      const response = await api.updateSubcategory(editingSubcategory.id, { 
+        name: trimmedName,
+        category: categoryIdNum
+      }) as { data: any };
+      const updatedSubcategory = response.data;
+      const subcategoryDataAttr = updatedSubcategory.attributes || updatedSubcategory;
+
+      const updated: Subcategory = {
+        id: updatedSubcategory.id || updatedSubcategory.documentId,
+        documentId: updatedSubcategory.documentId,
+        name: subcategoryDataAttr.name || trimmedName,
+        slug: subcategoryDataAttr.slug || null,
+        category: categoryIdNum
+      };
+
+      setSubcategories(prev => prev.map(sub => sub.id === editingSubcategory.id ? updated : sub));
+      
+      // Update formData if this subcategory is selected
+      if (formData.subcategory === editingSubcategory.id || formData.subcategory === editingSubcategory.id.toString()) {
+        handleInputChange('subcategory', updated.id.toString());
+      }
+      
+      // Reset and close modal
+      setNewSubcategoryName('');
+      setEditingSubcategory(null);
+      setShowEditSubcategoryModal(false);
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors.newSubcategory;
+        return newErrors;
+      });
+    } catch (error: any) {
+      console.error('Error updating subcategory:', error);
+      setErrors(prev => ({ 
+        ...prev, 
+        newSubcategory: error.message || 'Failed to update subcategory. Please try again.' 
+      }));
+    }
+  };
+
+  // Delete subcategory
+  const handleDeleteSubcategory = async (subcategoryId: number | string) => {
+    if (!confirm('Are you sure you want to delete this subcategory? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      await api.deleteSubcategory(subcategoryId);
+      setSubcategories(prev => prev.filter(sub => sub.id !== subcategoryId));
+      
+      // Clear subcategory selection if deleted subcategory was selected
+      if (formData.subcategory === subcategoryId || formData.subcategory === subcategoryId.toString()) {
+        handleInputChange('subcategory', '');
+      }
+      
+      // Close modal if editing
+      if (editingSubcategory && editingSubcategory.id === subcategoryId) {
+        setShowEditSubcategoryModal(false);
+        setEditingSubcategory(null);
+        setNewSubcategoryName('');
+      }
+    } catch (error: any) {
+      console.error('Error deleting subcategory:', error);
+      alert(error.message || 'Failed to delete subcategory. It may be in use by products.');
+    }
+  };
 
   const handleSaveDraft = async () => {
     // Save as draft (isActive: false, publishedAt: null in Strapi)
@@ -645,6 +962,83 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
     }
   }, [isOpen]);
 
+  // Fetch categories from API on component mount
+  useEffect(() => {
+    const fetchCategories = async () => {
+      setLoadingCategories(true);
+      try {
+        const response = await api.getCategories({ populate: [] });
+        const categoriesData = response.data.map((category: any) => {
+          const categoryData = category.attributes || category;
+          return {
+            id: category.id || category.documentId,
+            documentId: category.documentId,
+            name: categoryData.name || '',
+            slug: categoryData.slug || null
+          };
+        });
+        setCategories(categoriesData);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+        setCategories([]);
+      } finally {
+        setLoadingCategories(false);
+      }
+    };
+
+    if (isOpen) {
+      fetchCategories();
+    }
+  }, [isOpen]);
+
+  // Fetch subcategories when category changes
+  useEffect(() => {
+    const fetchSubcategories = async () => {
+      const categoryId = formData.category;
+      
+      // If category is a string (legacy) or empty, don't fetch
+      if (!categoryId || typeof categoryId === 'string') {
+        setSubcategories([]);
+        return;
+      }
+
+      // Extract category ID if it's a number string
+      const categoryIdNum = typeof categoryId === 'string' && !isNaN(Number(categoryId)) 
+        ? Number(categoryId) 
+        : categoryId;
+
+      setLoadingSubcategories(true);
+      try {
+        const response = await api.getSubcategories({ 
+          category: typeof categoryIdNum === 'number' ? categoryIdNum : undefined,
+          populate: ['category']
+        });
+        const subcategoriesData = response.data.map((subcategory: any) => {
+          const subcategoryData = subcategory.attributes || subcategory;
+          return {
+            id: subcategory.id || subcategory.documentId,
+            documentId: subcategory.documentId,
+            name: subcategoryData.name || '',
+            slug: subcategoryData.slug || null,
+            category: subcategoryData.category?.data?.id || subcategoryData.category?.id || subcategoryData.category
+          };
+        });
+        setSubcategories(subcategoriesData);
+      } catch (error) {
+        console.error('Error fetching subcategories:', error);
+        setSubcategories([]);
+      } finally {
+        setLoadingSubcategories(false);
+      }
+    };
+
+    if (isOpen && formData.category) {
+      fetchSubcategories();
+    } else {
+      setSubcategories([]);
+    }
+  }, [isOpen, formData.category]);
+
   // Update main image index when images change
   // This must be before any early returns to follow Rules of Hooks
   useEffect(() => {
@@ -834,17 +1228,31 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
                       {/* Product Category */}
                   <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">Product Category *</label>
+                    {loadingCategories ? (
+                      <div className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-500">
+                        Loading categories...
+                      </div>
+                    ) : (
                     <select
-                      value={formData.category}
+                      value={formData.category ? (typeof formData.category === 'number' ? formData.category.toString() : formData.category) : ''}
                       onChange={(e) => handleCategoryChange(e.target.value)}
                           className={`w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 4 5%22><path fill=%22%23666%22 d=%22M2 0L0 2h4zm0 5L0 3h4z%22/></svg>')] bg-no-repeat bg-right bg-[length:12px] pr-10 ${errors.category ? 'border-red-500' : ''}`}
                     >
                       <option value="">Select category</option>
                       {categories.map(category => (
-                        <option key={category} value={category}>{category}</option>
+                        <option key={category.id} value={category.id.toString()}>{category.name}</option>
                       ))}
                       <option value="__add_new__" className="text-primary-600 font-medium">+ Add new category</option>
+                      {categories.length > 0 && (
+                        <>
+                          <option disabled>──────────</option>
+                          {categories.map(category => (
+                            <option key={`edit-${category.id}`} value={`__edit__${category.id}`} className="text-gray-600">✏️ Edit: {category.name}</option>
+                          ))}
+                        </>
+                      )}
                     </select>
+                    )}
                     {errors.category && <p className="mt-1 text-sm text-red-600">{errors.category}</p>}
                     {errors.newCategory && <p className="mt-1 text-sm text-red-600">{errors.newCategory}</p>}
                   </div>
@@ -853,16 +1261,33 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
                       {formData.category && (
                   <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">Subcategory</label>
+                    {loadingSubcategories ? (
+                      <div className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-500">
+                        Loading subcategories...
+                      </div>
+                    ) : (
                     <select
-                      value={formData.subcategory}
-                      onChange={(e) => handleInputChange('subcategory', e.target.value)}
-                            className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 4 5%22><path fill=%22%23666%22 d=%22M2 0L0 2h4zm0 5L0 3h4z%22/></svg>')] bg-no-repeat bg-right bg-[length:12px] pr-10"
+                      value={formData.subcategory ? (typeof formData.subcategory === 'number' ? formData.subcategory.toString() : formData.subcategory) : ''}
+                      onChange={(e) => handleSubcategoryChange(e.target.value)}
+                            className={`w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 4 5%22><path fill=%22%23666%22 d=%22M2 0L0 2h4zm0 5L0 3h4z%22/></svg>')] bg-no-repeat bg-right bg-[length:12px] pr-10 ${errors.subcategory ? 'border-red-500' : ''}`}
                     >
                       <option value="">Select subcategory</option>
-                            {subcategories[formData.category as keyof typeof subcategories]?.map(subcategory => (
-                        <option key={subcategory} value={subcategory}>{subcategory || 'None'}</option>
+                      {subcategories.map(subcategory => (
+                        <option key={subcategory.id} value={subcategory.id.toString()}>{subcategory.name}</option>
                       ))}
+                      <option value="__add_new__" className="text-primary-600 font-medium">+ Add new subcategory</option>
+                      {subcategories.length > 0 && (
+                        <>
+                          <option disabled>──────────</option>
+                          {subcategories.map(subcategory => (
+                            <option key={`edit-${subcategory.id}`} value={`__edit__${subcategory.id}`} className="text-gray-600">✏️ Edit: {subcategory.name}</option>
+                          ))}
+                        </>
+                      )}
                     </select>
+                    )}
+                    {errors.subcategory && <p className="mt-1 text-sm text-red-600">{errors.subcategory}</p>}
+                    {errors.newSubcategory && <p className="mt-1 text-sm text-red-600">{errors.newSubcategory}</p>}
                   </div>
                       )}
 
@@ -1163,6 +1588,335 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
                 </div>
               </div>
                   </div>
+      )}
+
+      {/* Edit Category Modal */}
+      {showEditCategoryModal && editingCategory && (
+        <div className="fixed inset-0 z-[60] overflow-y-auto">
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={() => {
+            setShowEditCategoryModal(false);
+            setEditingCategory(null);
+            setNewCategoryName('');
+            setErrors(prev => {
+              const newErrors = { ...prev };
+              delete newErrors.newCategory;
+              return newErrors;
+            });
+          }}></div>
+          <div className="flex items-center justify-center min-h-screen px-4 py-4">
+            <div className="relative bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all w-full max-w-md">
+              <div className="bg-white px-4 pt-5 pb-4 sm:p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-bold text-gray-900">Edit Category</h3>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowEditCategoryModal(false);
+                      setEditingCategory(null);
+                      setNewCategoryName('');
+                      setErrors(prev => {
+                        const newErrors = { ...prev };
+                        delete newErrors.newCategory;
+                        return newErrors;
+                      });
+                    }}
+                    className="text-gray-400 hover:text-gray-500"
+                  >
+                    <XMarkIcon className="h-6 w-6" />
+                  </button>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Category Name *</label>
+                  <input
+                    type="text"
+                    value={newCategoryName}
+                    onChange={(e) => {
+                      setNewCategoryName(e.target.value);
+                      if (errors.newCategory) {
+                        setErrors(prev => {
+                          const newErrors = { ...prev };
+                          delete newErrors.newCategory;
+                          return newErrors;
+                        });
+                      }
+                    }}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleUpdateCategory();
+                      }
+                    }}
+                    className={`w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.newCategory ? 'border-red-500' : ''}`}
+                    placeholder="Enter category name"
+                    autoFocus
+                  />
+                  {errors.newCategory && <p className="mt-1 text-sm text-red-600">{errors.newCategory}</p>}
+                </div>
+              </div>
+              <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteCategory(editingCategory.id)}
+                    className="inline-flex justify-center rounded-md border border-red-300 shadow-sm px-4 py-2 bg-red-50 text-base font-medium text-red-700 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:text-sm"
+                  >
+                    <TrashIcon className="h-4 w-4 mr-2" />
+                    Delete
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleUpdateCategory}
+                    className="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary-500 text-base font-medium text-white hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:text-sm"
+                  >
+                    Update
+                  </button>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowEditCategoryModal(false);
+                    setEditingCategory(null);
+                    setNewCategoryName('');
+                    setErrors(prev => {
+                      const newErrors = { ...prev };
+                      delete newErrors.newCategory;
+                      return newErrors;
+                    });
+                  }}
+                  className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add New Subcategory Modal */}
+      {showAddSubcategoryModal && (
+        <div className="fixed inset-0 z-[60] overflow-y-auto">
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={() => {
+            setShowAddSubcategoryModal(false);
+            setNewSubcategoryName('');
+            setErrors(prev => {
+              const newErrors = { ...prev };
+              delete newErrors.newSubcategory;
+              return newErrors;
+            });
+          }}></div>
+          <div className="flex items-center justify-center min-h-screen px-4 py-4">
+            <div className="relative bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all w-full max-w-md">
+              <div className="bg-white px-4 pt-5 pb-4 sm:p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-bold text-gray-900">Add New Subcategory</h3>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowAddSubcategoryModal(false);
+                      setNewSubcategoryName('');
+                      setErrors(prev => {
+                        const newErrors = { ...prev };
+                        delete newErrors.newSubcategory;
+                        return newErrors;
+                      });
+                    }}
+                    className="text-gray-400 hover:text-gray-500"
+                  >
+                    <XMarkIcon className="h-6 w-6" />
+                  </button>
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                    <select
+                      value={formData.category || ''}
+                      disabled
+                      className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-100 text-gray-600 cursor-not-allowed"
+                    >
+                      <option value="">
+                        {categories.find(c => c.id.toString() === formData.category?.toString())?.name || 'No category selected'}
+                      </option>
+                    </select>
+                    {!formData.category && (
+                      <p className="mt-1 text-sm text-red-600">Please select a category first</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Subcategory Name *</label>
+                    <input
+                      type="text"
+                      value={newSubcategoryName}
+                      onChange={(e) => {
+                        setNewSubcategoryName(e.target.value);
+                        if (errors.newSubcategory) {
+                          setErrors(prev => {
+                            const newErrors = { ...prev };
+                            delete newErrors.newSubcategory;
+                            return newErrors;
+                          });
+                        }
+                      }}
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          handleAddSubcategory();
+                        }
+                      }}
+                      className={`w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.newSubcategory ? 'border-red-500' : ''}`}
+                      placeholder="Enter subcategory name"
+                      autoFocus
+                      disabled={!formData.category}
+                    />
+                    {errors.newSubcategory && <p className="mt-1 text-sm text-red-600">{errors.newSubcategory}</p>}
+                  </div>
+                </div>
+              </div>
+              <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <button
+                  type="button"
+                  onClick={handleAddSubcategory}
+                  disabled={!formData.category}
+                  className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary-500 text-base font-medium text-white hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Add Subcategory
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowAddSubcategoryModal(false);
+                    setNewSubcategoryName('');
+                    setErrors(prev => {
+                      const newErrors = { ...prev };
+                      delete newErrors.newSubcategory;
+                      return newErrors;
+                    });
+                  }}
+                  className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Subcategory Modal */}
+      {showEditSubcategoryModal && editingSubcategory && (
+        <div className="fixed inset-0 z-[60] overflow-y-auto">
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={() => {
+            setShowEditSubcategoryModal(false);
+            setEditingSubcategory(null);
+            setNewSubcategoryName('');
+            setErrors(prev => {
+              const newErrors = { ...prev };
+              delete newErrors.newSubcategory;
+              return newErrors;
+            });
+          }}></div>
+          <div className="flex items-center justify-center min-h-screen px-4 py-4">
+            <div className="relative bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all w-full max-w-md">
+              <div className="bg-white px-4 pt-5 pb-4 sm:p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-bold text-gray-900">Edit Subcategory</h3>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowEditSubcategoryModal(false);
+                      setEditingSubcategory(null);
+                      setNewSubcategoryName('');
+                      setErrors(prev => {
+                        const newErrors = { ...prev };
+                        delete newErrors.newSubcategory;
+                        return newErrors;
+                      });
+                    }}
+                    className="text-gray-400 hover:text-gray-500"
+                  >
+                    <XMarkIcon className="h-6 w-6" />
+                  </button>
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                    <select
+                      value={formData.category || ''}
+                      disabled
+                      className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-100 text-gray-600 cursor-not-allowed"
+                    >
+                      <option value="">
+                        {categories.find(c => c.id.toString() === formData.category?.toString())?.name || 'No category selected'}
+                      </option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Subcategory Name *</label>
+                    <input
+                      type="text"
+                      value={newSubcategoryName}
+                      onChange={(e) => {
+                        setNewSubcategoryName(e.target.value);
+                        if (errors.newSubcategory) {
+                          setErrors(prev => {
+                            const newErrors = { ...prev };
+                            delete newErrors.newSubcategory;
+                            return newErrors;
+                          });
+                        }
+                      }}
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          handleUpdateSubcategory();
+                        }
+                      }}
+                      className={`w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.newSubcategory ? 'border-red-500' : ''}`}
+                      placeholder="Enter subcategory name"
+                      autoFocus
+                    />
+                    {errors.newSubcategory && <p className="mt-1 text-sm text-red-600">{errors.newSubcategory}</p>}
+                  </div>
+                </div>
+              </div>
+              <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteSubcategory(editingSubcategory.id)}
+                    className="inline-flex justify-center rounded-md border border-red-300 shadow-sm px-4 py-2 bg-red-50 text-base font-medium text-red-700 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:text-sm"
+                  >
+                    <TrashIcon className="h-4 w-4 mr-2" />
+                    Delete
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleUpdateSubcategory}
+                    className="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary-500 text-base font-medium text-white hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:text-sm"
+                  >
+                    Update
+                  </button>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowEditSubcategoryModal(false);
+                    setEditingSubcategory(null);
+                    setNewSubcategoryName('');
+                    setErrors(prev => {
+                      const newErrors = { ...prev };
+                      delete newErrors.newSubcategory;
+                      return newErrors;
+                    });
+                  }}
+                  className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Add New Brand Modal */}
