@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { useCart } from '@/app/contexts/CartContext'
 import { currencyFormatter } from './currency-formatter'
@@ -28,15 +29,34 @@ export default function CheckoutCartItems() {
 
   return (
     <div className='mt-4 space-y-4'>
-      {cart.items.map((item) => (
-        <div
-          key={item.id}
-          className='flex flex-col gap-4 rounded-xl border border-gray-200 p-4 sm:flex-row sm:items-center sm:justify-between'
-        >
-          <div className='flex-1'>
-            <p className='text-lg font-semibold text-gray-900'>{item.productSnapshot.name}</p>
-            <p className='text-sm text-gray-500'>SKU: {item.productSnapshot.sku}</p>
-          </div>
+      {cart.items.map((item) => {
+        const productImages = item.productSnapshot.images || []
+        const mainImage = productImages.find((img) => img.isMain) || productImages[0]
+        const imageUrl = mainImage?.url
+
+        return (
+          <div
+            key={item.id}
+            className='flex flex-col gap-4 rounded-xl border border-gray-200 p-4 sm:flex-row sm:items-center sm:justify-between'
+          >
+            <div className='flex flex-1 items-center gap-4'>
+              {imageUrl && (
+                <div className='relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100'>
+                  <Image
+                    src={imageUrl}
+                    alt={mainImage?.alt || item.productSnapshot.name || 'Product image'}
+                    fill
+                    className='object-cover'
+                    unoptimized={imageUrl.startsWith('http')}
+                    sizes='64px'
+                  />
+                </div>
+              )}
+              <div className='flex-1'>
+                <p className='text-lg font-semibold text-gray-900'>{item.productSnapshot.name}</p>
+                <p className='text-sm text-gray-500'>SKU: {item.productSnapshot.sku}</p>
+              </div>
+            </div>
           <div className='flex items-center gap-3'>
             <label htmlFor={`qty-${item.id}`} className='text-sm text-gray-500'>
               Qty
@@ -61,7 +81,8 @@ export default function CheckoutCartItems() {
             </button>
           </div>
         </div>
-      ))}
+        )
+      })}
     </div>
   )
 }

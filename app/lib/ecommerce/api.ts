@@ -1,3 +1,10 @@
+export interface ProductImage {
+  id?: number;
+  url: string;
+  alt?: string;
+  isMain?: boolean;
+}
+
 export interface CartItemSnapshot {
   id: number;
   name: string;
@@ -7,6 +14,7 @@ export interface CartItemSnapshot {
   discountedPrice?: number | null;
   taxRate?: number | null;
   isDigital: boolean;
+  images?: ProductImage[];
 }
 
 export interface CartItem {

@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { ShoppingBag } from 'lucide-react'
 import { useCart } from '@/app/contexts/CartContext'
 import { currencyFormatter } from './currency-formatter'
@@ -41,13 +42,28 @@ export default function OrderSummarySection() {
           const discount = originalPrice - discountedPrice
           const discountPercent = discount > 0 ? Math.round((discount / originalPrice) * 100) : 0
 
+          // Get the main image or first available image
+          const productImages = item.productSnapshot.images || []
+          const mainImage = productImages.find((img) => img.isMain) || productImages[0]
+          const imageUrl = mainImage?.url
+
           return (
             <div key={item.id} className='flex gap-4 rounded-lg border border-gray-200 bg-white p-4'>
               <div className='relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100'>
-                {/* Placeholder for product image */}
-                <div className='flex h-full w-full items-center justify-center bg-gray-200 text-xs text-gray-400'>
-                  Image
-                </div>
+                {imageUrl ? (
+                  <Image
+                    src={imageUrl}
+                    alt={mainImage?.alt || item.productSnapshot.name || 'Product image'}
+                    fill
+                    className='object-cover'
+                    unoptimized={imageUrl.startsWith('http')}
+                    sizes='80px'
+                  />
+                ) : (
+                  <div className='flex h-full w-full items-center justify-center bg-gray-200 text-xs text-gray-400'>
+                    No Image
+                  </div>
+                )}
               </div>
 
               <div className='flex-1'>
