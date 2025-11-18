@@ -8,9 +8,15 @@ import ProductImage from './product image';
 import SpecialFeaturBudge from './special feature badge';
 import RequestQuoteModal from '../request quote';
 import { useState } from 'react';
+import { useCart } from '@/app/contexts/CartContext';
 
 const ProductDetails = ({product}) => {  
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [quantity, setQuantity] = useState(1)
+  const [addingToCart, setAddingToCart] = useState(false)
+  const [cartMessage, setCartMessage] = useState('')
+  const [cartError, setCartError] = useState('')
+  const { addItem } = useCart()
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
 
@@ -107,6 +113,47 @@ const ProductDetails = ({product}) => {
               </ul>
             </div>
           )}
+
+          <div className='mt-10 rounded-2xl border border-[#e8d9c2] bg-white/80 p-6 shadow-sm'>
+            <p className='text-xl font-semibold text-[#544829]'>Ready to purchase?</p>
+            <p className='text-sm text-gray-500 mb-4'>Add this product to your cart and complete checkout when you&apos;re ready.</p>
+            <div className='flex flex-col gap-3 md:flex-row md:items-center'>
+              <label className='text-sm font-medium text-gray-600' htmlFor='quantity'>Quantity</label>
+              <input
+                id='quantity'
+                type='number'
+                min={1}
+                value={quantity}
+                onChange={(e) => setQuantity(Math.max(1, Number(e.target.value)))}
+                className='w-24 rounded-md border border-gray-300 px-3 py-2 text-center focus:border-[var(--shreeji-primary)] focus:outline-none'
+              />
+              <button
+                type='button'
+                onClick={async () => {
+                  if (!product?.id) {
+                    return
+                  }
+                  setAddingToCart(true)
+                  setCartMessage('')
+                  setCartError('')
+                  try {
+                    await addItem(product.id, quantity)
+                    setCartMessage('Added to cart! Continue shopping or proceed to checkout.')
+                  } catch (err) {
+                    setCartError(err instanceof Error ? err.message : 'Unable to add to cart')
+                  } finally {
+                    setAddingToCart(false)
+                  }
+                }}
+                className='flex-1 rounded-full bg-[var(--shreeji-primary)] px-6 py-3 text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70'
+                disabled={addingToCart || !product?.id}
+              >
+                {addingToCart ? 'Adding...' : 'Add to Cart'}
+              </button>
+            </div>
+            {cartMessage && <p className='mt-3 text-sm text-green-600'>{cartMessage}</p>}
+            {cartError && <p className='mt-3 text-sm text-red-600'>{cartError}</p>}
+          </div>
         </div>
       </div>
 

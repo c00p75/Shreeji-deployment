@@ -10,6 +10,7 @@ import logo2 from "@/public/logos/Shreeji Logos w2.png";
 import "./style.scss";
 import ThemeBtn from "./ThemeBtn";
 import { ChevronDown } from "lucide-react";
+import CartButton from "./CartButton";
 
 const Navbar = () => {
   const pathname = usePathname();
@@ -104,6 +105,13 @@ const Navbar = () => {
   
   useEffect(() => {
     if (typeof window === "undefined") return;
+    
+    // Always set scrolled to true on checkout page
+    if (pathname === "/checkout") {
+      setIsScrolled(true);
+      return;
+    }
+    
     if (window.innerWidth < 1024) {
       setIsScrolled(true);
     }
@@ -366,7 +374,10 @@ const Navbar = () => {
             </li>
           </ul>
 
-          <ThemeBtn isScrolled={isScrolled} />
+          <div className="ml-2 flex items-center gap-3">
+            <CartButton />
+            <ThemeBtn isScrolled={isScrolled} />
+          </div>
           
           {/* Mobile Menu Button */}
           <button className="fixed right-5 lg:hidden focus:outline-none" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>

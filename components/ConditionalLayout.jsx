@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation'
 import Navbar from "@/components/Navbar"
 import ContactCard from "@/components/contact card/ContactCard"
 import Footer from "@/components/footer"
+import { CartProvider } from '@/app/contexts/CartContext'
 
 export default function ConditionalLayout({ children }) {
   const pathname = usePathname()
@@ -17,12 +18,12 @@ export default function ConditionalLayout({ children }) {
 
   // Main site layout
   return (
-    <>
+    <CartProvider>
       <Navbar />
       <main className="text-lg text-center md:text-start">{children}</main>
       <ContactCard />
       <Footer />
-    </>
+    </CartProvider>
   )
 }
 
