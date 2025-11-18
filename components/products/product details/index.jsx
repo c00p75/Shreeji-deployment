@@ -130,23 +130,26 @@ const ProductDetails = ({product}) => {
               <button
                 type='button'
                 onClick={async () => {
-                  if (!product?.id) {
+                  const productIdentifier = product?.documentId ?? product?.id
+                  if (!productIdentifier) {
+                    setCartError('Product identifier is missing')
                     return
                   }
                   setAddingToCart(true)
                   setCartMessage('')
                   setCartError('')
                   try {
-                    await addItem(product.id, quantity)
+                    await addItem(productIdentifier, quantity)
                     setCartMessage('Added to cart! Continue shopping or proceed to checkout.')
                   } catch (err) {
-                    setCartError(err instanceof Error ? err.message : 'Unable to add to cart')
+                    console.error('Add to cart error:', err)
+                    setCartError(err instanceof Error ? err.message : 'Unable to add to cart. Please check if the backend is running.')
                   } finally {
                     setAddingToCart(false)
                   }
                 }}
                 className='flex-1 rounded-full bg-[var(--shreeji-primary)] px-6 py-3 text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70'
-                disabled={addingToCart || !product?.id}
+                disabled={addingToCart || !(product?.documentId || product?.id)}
               >
                 {addingToCart ? 'Adding...' : 'Add to Cart'}
               </button>

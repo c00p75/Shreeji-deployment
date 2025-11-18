@@ -31,7 +31,7 @@ interface CartContextValue {
   updating: boolean
   error: string | null
   isCheckingOut: boolean
-  addItem: (productId: number, quantity?: number) => Promise<void>
+  addItem: (productId: number | string, quantity?: number) => Promise<void>
   updateItem: (itemId: string, quantity: number) => Promise<void>
   removeItem: (itemId: string) => Promise<void>
   clearCart: () => Promise<void>
@@ -108,7 +108,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [ensureCartExists])
 
   const addItem = useCallback(
-    async (productId: number, quantity = 1) => {
+    async (productId: number | string, quantity = 1) => {
       setUpdating(true)
       setError(null)
       try {
