@@ -1,0 +1,1739 @@
+[
+  {
+    "name": "HP Envy MOVE",
+    "category": "Computers",
+    "subcategory": "All in One",
+    "images": [
+      "/products/hpEnvyMoveAllInOne24.png",
+      "/products/hpEnvyMoveAllInOne24_2.png",
+      "/products/hpEnvyMoveAllInOne24_3.png"
+    ],
+    "brand": "HP",
+    "brand logo": "/logos/HP.png",
+    "specs": {
+      "processor": "Intel Core i5/i7/i9",
+      "display": "23.8-inch FHD Touchscreen",
+      "RAM": "8GB/16GB DDR4",
+      "storage": "256GB/512GB SSD",
+      "battery": "Built-in, portable design"
+    },
+    "date-added": "2025-3-6",
+    "tagline": "Power, Performance, Portability.",
+    "description": "Perfect for professionals who need power on the go.",
+    "price": "K30,000",
+    "discounted price": "K25,000",
+    "special feature": {
+      "stat": "8",
+      "stat text size": 8,
+      "symbol": "+",
+      "feature": "Hours Battery Charge"
+    }
+  },
+  {
+    "name": "HP EliteOne",
+    "category": "Computers",
+    "subcategory": "All in One",
+    "images": [
+      "/products/HPEliteOne870G9AllInOne_2.png",
+      "/products/HPEliteOne870G9AllInOne.png",
+      "/products/HPEliteOne870G9AllInOne_3.png"
+    ],
+    "brand": "HP",
+    "brand logo": "/logos/HP.png",
+    "specs": {
+      "processor": "Intel Core i5/i7",
+      "display": "23.8-inch/27-inch FHD Touchscreen",
+      "RAM": "8GB/16GB DDR4",
+      "storage": "256GB/512GB SSD"
+    },
+    "date-added": "2025-3-6",
+    "tagline": "A premium All in One for business and home.",
+    "description": "Designed for productivity and style.",
+    "price": "K35,000",
+    "discounted price": "K30,000",
+    "special feature": {
+      "stat": "8",
+      "symbol": "+",
+      "stat text size": 8,
+      "feature": "Hours Battery Charge"
+    }
+  },
+  {
+    "name": "Lenovo YOGA AIO",
+    "category": "Computers",
+    "subcategory": "All in One",
+    "images": [
+      "/products/YogaAIO9i.png",
+      "/products/YogaAIO9i_2.png",
+      "/products/YogaAIO9i_3.png"
+    ],
+    "brand": "Lenovo",
+    "brand logo": "/logos/Lenovo.png",
+    "specs": {
+      "processor": "AMD Ryzen 7/Intel Core i7",
+      "display": "27-inch 4K UHD Touchscreen",
+      "RAM": "16GB/32GB DDR4",
+      "storage": "512GB/1TB SSD",
+      "Graphics": "Integrated Intel® Iris® Xe Graphics, NVIDIA® GeForce RTX™ 4050 6GB GDDR6"
+    },
+    "date-added": "2025-3-6",
+    "tagline": "Flexibility meets performance.",
+    "description": "A stylish and powerful all in one for creatives and professionals.",
+    "price": "K40,000",
+    "discounted price": "K35,000",
+    "special feature": {
+      "stat": "8",
+      "symbol": "+",
+      "stat text size": 8,
+      "feature": "Hours Battery Charge"
+    }
+  },
+  {
+    "name": "HP ProTower 290",
+    "category": "Computers",
+    "subcategory": "Desktops",
+    "images": [
+      "/products/HPProTower290.png",
+      "/products/HPProTower290_2.png",
+      "/products/HPProTower290_3.png"
+    ],
+    "brand": "HP",
+    "brand logo": "/logos/HP.png",
+    "specs": {
+      "processor": "Intel Core i3/i5/i7",
+      "RAM": "8GB/16GB DDR4",
+      "storage": "256GB/512GB SSD + 1TB HDD"
+    },
+    "date-added": "2025-3-6",
+    "tagline": "Affordable performance for everyday business.",
+    "description": "A reliable desktop solution for offices and home users.",
+    "price": "K20,000",
+    "discounted price": "K18,000",
+    "special feature": {
+      "stat": "i7",
+      "stat text size": 6,
+      "feature": "intel core"
+    }
+  },
+  {
+    "name": "HP Proliant ML110 Desktop Server",
+    "category": "Computers",
+    "subcategory": "Desktops",
+    "images": [
+      "/products/HPProliantML110DesktopServer1.png",
+      "/products/HPProliantML110DesktopServer2.png",
+      "/products/HPProliantML110DesktopServer3.png"
+    ],
+    "brand": "HP",
+    "brand logo": "/logos/HP.png",
+    "specs": {
+      "processor": "Intel Xeon E-2224 2 GHz",
+      "RAM": "16GB/32GB DDR4",
+      "storage": "1TB HDD (Expandable)",
+      "Height": "18.2\"",
+      "Width": "7.7\"",
+      "More Features": [
+        "VGA/Display Port",
+        "Energy Star",
+        "USB 3.2 Gen1 Compliant",
+        "USB 2.0 Compliant"
+      ]
+    },
+    "date-added": "2025-3-6",
+    "tagline": "A powerful entry-level server.",
+    "description": "Provide enhanced single processor and storage flexibility in a 4.5U 1P tower optimized server with optional rackable chassis, outstanding compute performance, security, reliability, and expandability at an affordable price.",
+    "price": "K50,000",
+    "discounted price": "K45,000",
+    "special feature": {
+      "stat": "10",
+      "stat text size": 7,
+      "symbol": "Gen"
+    }
+  },
+  {
+    "name": "Lenovo Legion Tower 5",
+    "category": "Computers",
+    "subcategory": "Desktops",
+    "images": [
+      "/products/LenovoLegionTower1.png",
+      "/products/LenovoLegionTower2.png",
+      "/products/LenovoLegionTower3.png"
+    ],
+    "brand": "Lenovo",
+    "brand logo": "/logos/Lenovo.png",
+    "specs": {
+      "processor": "Intel Core i7/i9 or AMD Ryzen 7/9",
+      "RAM": "16GB/32GB DDR5",
+      "Desktop Class": "Gaming",
+      "storage": "512GB SSD + 2TB HDD",
+      "graphics": "NVIDIA RTX 4060/4070",
+      "More Features": [
+        "RGB lighting & glass side panel",
+        "Extreme air cooling & added vents for long sessions"
+      ]
+    },
+    "date-added": "2025-3-6",
+    "tagline": "Unleash your gaming potential.",
+    "description": "Gaming desktop that powers through 4K games in style, rocking an easily upgradable case with slick, customizable RGB lighting.",
+    "price": "K60,000",
+    "discounted price": "K55,000"
+  },
+  {
+    "name": "Lenovo V15",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "images": [
+      "/products/LenovoV15_1.png",
+      "/products/LenovoV15_2.png",
+      "/products/LenovoV15_3.png"
+    ],
+    "brand": "Lenovo",
+    "brand logo": "/logos/Lenovo.png",
+    "specs": {
+      "display": "15.6-inch HD/FHD",
+      "processor": "Intel Core i3/i5",
+      "RAM": "8GB DDR4",
+      "storage": "256GB/512GB SSD",
+      "Display": "15.6\" FHD (1920x1080) IPS 300nits Anti-glare",
+      "Graphic Card": "Integrated Intel Iris Xe Graphics",
+      "Battery": "Integrated 38Wh"
+    },
+    "date-added": "2025-3-6",
+    "tagline": "Business-ready performance at an affordable price.",
+    "description": "A budget-friendly laptop for everyday productivity.",
+    "price": "K18,000",
+    "discounted price": "K16,000",
+    "special feature": {
+      "stat": "8",
+      "symbol": "+",
+      "feature": "Hours Battery Charge"
+    }
+  },
+  {
+    "name": "HP Envy x360",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "images": [
+      "/products/HPEnvyx360_1.png",
+      "/products/HPEnvyx360_2.png",
+      "/products/HPEnvyx360_3.png"
+    ],
+    "brand": "HP",
+    "brand logo": "/logos/HP.png",
+    "specs": {
+      "display": "13.3-inch/15.6-inch FHD Touchscreen",
+      "processor": "Intel Core i5/i7 or AMD Ryzen 5/7 (up to 5.1 GHz max boost clock, 16 MB L3 cache, 8 cores, 16 threads)",
+      "RAM": "8GB/16GB DDR4",
+      "storage": "512GB SSD",
+      "battery": "Up to 10 hours",
+      "Memory Note": "Transfer rates up to 6400 MT/s"
+    },
+    "date-added": "2025-3-6",
+    "tagline": "Convertible. Powerful. Stylish.",
+    "description": "A sleek, 2-in-1 laptop perfect for work and play. Designed to elevate your productivity and far faster.",
+    "price": "K35,000",
+    "discounted price": "K32,000",
+    "special feature": {
+      "stat": "8",
+      "symbol": "+",
+      "feature": "Hours Battery Charge"
+    }
+  },
+  {
+    "name": "APC UPS (500Va-40KVa)",
+    "category": "Power Solutions",
+    "subcategory": "UPS",
+    "images": [
+      "/products/APCUPS_1.png",
+      "/products/APCUPS_2.png"
+    ],
+    "brand": "APC",
+    "brand logo": "/logos/APC.png",
+    "specs": {
+      "capacity": "500VA - 40KVA",
+      "type": "Line Interactive / Online Double Conversion",
+      "features": "Battery Backup, Surge Protection, AVR",
+      "Battery Characteristics": "Spill-proof, Maintenance-free",
+      "Typical Battery Recharge Time": "10 Hour",
+      "Form Factor": "Tower"
+    },
+    "date-added": "2025-3-6",
+    "tagline": "Reliable power backup for every need.",
+    "description": "A wide range of UPS solutions to protect your critical equipment from power outages.",
+    "price": "Contact for pricing",
+    "discounted price": "Varies by model",
+    "special feature": {
+      "stat": "2",
+      "symbol": "Yr",
+      "feature": "Warranty"
+    }
+  },
+  {
+    "name": "HP ProDesk 600 G2 Micro Tower",
+    "category": "Computers",
+    "subcategory": "Desktops",
+    "images": [
+      "/products/HPProDesk600G2MicroTower_1.png",
+      "/products/HPProDesk600G2MicroTower_2.png",
+      "/products/HPProDesk600G2MicroTower_3.png"
+    ],
+    "brand": "HP",
+    "brand logo": "/logos/HP.png",
+    "specs": {
+      "processor": "Intel Core i5-6500T",
+      "RAM": "8GB DDR4",
+      "storage": "256GB SSD",
+      "ports": "USB 3.0, VGA, DisplayPort",
+      "operating-system": "Windows 10 Pro"
+    },
+    "date-added": "2025-3-6",
+    "tagline": "Compact Design with Robust Performance.",
+    "description": "Ideal for businesses requiring a space-saving solution without compromising on performance.",
+    "price": "K14,000",
+    "discounted price": "K11,500"
+  },
+  {
+    "name": "HP EliteDesk 800 G4 Mini PC",
+    "category": "Computers",
+    "subcategory": "Desktops",
+    "images": [
+      "/products/HPEliteDesk800G4MiniPC_1.png",
+      "/products/HPEliteDesk800G4MiniPC_2.png",
+      "/products/HPEliteDesk800G4MiniPC_3.png"
+    ],
+    "brand": "HP",
+    "brand logo": "/logos/HP.png",
+    "specs": {
+      "processor": "intel Core i7-8700 (3.2 GHz Base Frequency, Max Turbo Boost 4.6 GHz, 12 MB Cache, 6 Cores)",
+      "RAM": "16GB DDR4",
+      "storage": "512GB SSD",
+      "ports": "USB 3.1, DisplayPort, VGA",
+      "operating-system": "Windows 10 Pro"
+    },
+    "date-added": "2025-3-6",
+    "tagline": "High Performance in a Miniature Form Factor.",
+    "description": "Focus on what matters with the whisper quiet and ultrasmall HP EliteDesk 800 G4 Mini PC. Perfect for environments where space is limited but high performance is essential.",
+    "price": "K16,000",
+    "discounted price": "K13,500"
+  },
+  {
+    "name": "Dell OptiPlex 7020 Mini Desktop",
+    "category": "Computers",
+    "subcategory": "Desktops",
+    "images": [
+      "/products/DellOptiPlex7020MiniDesktop_1.png",
+      "/products/DellOptiPlex7020MiniDesktop_2.png",
+      "/products/DellOptiPlex7020MiniDesktop_3.png"
+    ],
+    "brand": "Dell",
+    "brand logo": "/logos/Dell.png",
+    "specs": {
+      "processor": "Intel Core i5-14500 2.60GHz (upto 5 GHz, 24MB Cache, 14-Core, 20 - Threads, 6)",
+      "RAM": "8GB DDR3",
+      "storage": "500GB HDD",
+      "Graphics": "Intel UHD 770",
+      "ports": "USB 3.0, DisplayPort, VGA",
+      "operating-system": "Windows 10 Pro"
+    },
+    "date-added": "2025-3-6",
+    "tagline": "Reliable Performance for Everyday Business Tasks.",
+    "description": "A trusted solution for businesses requiring consistent and dependable desktop performance.",
+    "price": "K12,000",
+    "discounted price": "K10,500",
+    "special feature": {
+      "stat": "i5",
+      "stat text size": 8,
+      "feature": "intel"
+    }
+  },
+  {
+    "name": "Asus Mini PC PN41",
+    "category": "Computers",
+    "subcategory": "Desktops",
+    "images": [
+      "/products/AsusMiniPCPN41_1.png",
+      "/products/AsusMiniPCPN41_2.png",
+      "/products/AsusMiniPCPN41_3.png"
+    ],
+    "brand": "Asus",
+    "brand logo": "/logos/Asus.png",
+    "specs": {
+      "processor": "Intel Celeron N4500",
+      "RAM": "4GB LPDDR4",
+      "storage": "128GB eMMC",
+      "ports": "USB 3.2, HDMI, Ethernet",
+      "operating-system": "Windows 11 Home"
+    },
+    "date-added": "2025-3-6",
+    "tagline": "Ultra-Compact Design with Essential Features.",
+    "description": "Ultracompact computer with 11th Gen Intel Celeron or Pentium mobile processor. Ideal for basic computing tasks in environments where space is at a premium.",
+    "price": "K8,000",
+    "discounted price": "K7,000"
+  },
+  {
+    "name": "Lenovo IdeaPad 1",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "images": [
+      "/products/LenovoIdeaPad1_1.png",
+      "/products/LenovoIdeaPad1_2.png",
+      "/products/LenovoIdeaPad1_3.png"
+    ],
+    "brand": "Lenovo",
+    "brand logo": "/logos/Lenovo.png",
+    "specs": {
+      "processor": "Intel Celeron N4020",
+      "RAM": "4GB /8GB DDR4",
+      "storage": "256GB/500GB SSD",
+      "Graphics": "Integrated Intel UHD Graphics 600",
+      "display": "14-inch HD (1366x768)",
+      "ports": "USB 3.1, HDMI",
+      "operating-system": "Windows 10 Home"
+    },
+    "date-added": "2025-3-6",
+    "tagline": "Compact and Lightweight for On-the-Go Computing.",
+    "description": "Perfect for basic tasks like browsing and document editing.",
+    "price": "K5,000",
+    "discounted price": "K4,500",
+    "special feature": {
+      "stat": "8",
+      "stat text size": 8,
+      "symbol": "+",
+      "feature": "Hours Battery Charge"
+    }
+  },
+  {
+    "name": "Lenovo IdeaPad Slim 3",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "images": [
+      "/products/LenovoIdeaPad3_1.png",
+      "/products/LenovoIdeaPad3_2.png",
+      "/products/LenovoIdeaPad3_3.png"
+    ],
+    "brand": "Lenovo",
+    "brand logo": "/logos/Lenovo.png",
+    "specs": {
+      "processor": "AMD Ryzen 3 3250U",
+      "RAM": "4GB DDR4",
+      "storage": "128GB SSD",
+      "display": "15.6-inch HD (1366x768)",
+      "ports": "USB 3.2, HDMI, Ethernet",
+      "operating-system": "Windows 10 Home"
+    },
+    "date-added": "2025-3-6",
+    "tagline": "Balanced Performance for Daily Computing.",
+    "description": "Make a statement wherever you go with the IdeaPad Slim 3 Gen 8 laptop, built for lightness and thinness, measuring up to 10% slimmer than the previous generation.",
+    "price": "K6,500",
+    "discounted price": "K6,000"
+  },
+  {
+    "name": "Lenovo IdeaPad 5",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "images": [
+      "/products/LenovoIdeaPad5_1.png",
+      "/products/LenovoIdeaPad5_2.png",
+      "/products/LenovoIdeaPad5_3.png"
+    ],
+    "brand": "Lenovo",
+    "brand logo": "/logos/Lenovo.png",
+    "specs": {
+      "processor": "Intel Core i5-1135G7",
+      "RAM": "8GB DDR4",
+      "storage": "512GB SSD",
+      "display": "14-inch Full HD (1920x1080)",
+      "ports": "USB 3.2, Thunderbolt 4, HDMI",
+      "operating-system": "Windows 10 Pro"
+    },
+    "date-added": "2025-3-6",
+    "tagline": "Enhanced Performance for Demanding Tasks.",
+    "description": "Designed for users requiring higher performance for applications and multitasking.",
+    "price": "K12,000",
+    "discounted price": "K11,500"
+  },
+  {
+    "name": "Lenovo IdeaPad Duet",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "images": [
+      "/products/LenovoIdeaPadDuet_1.png",
+      "/products/LenovoIdeaPadDuet_2.png",
+      "/products/LenovoIdeaPadDuet_3.png"
+    ],
+    "brand": "Lenovo",
+    "brand logo": "/logos/Lenovo.png",
+    "specs": {
+      "processor": "MediaTek Helio P60T",
+      "RAM": "4GB LPDDR4X",
+      "storage": "64GB eMMC",
+      "display": "10.1-inch Full HD (1920x1200) Touchscreen",
+      "ports": "USB-C, Keyboard Dock",
+      "operating-system": "Chrome OS"
+    },
+    "date-added": "2025-3-6",
+    "tagline": "Versatile 2-in-1 Chromebook for Flexibility.",
+    "description": "Combines the portability of a tablet with the functionality of a laptop.",
+    "price": "K5,500",
+    "discounted price": "K5,000",
+    "special feature": {
+      "stat": "10",
+      "stat text size": 5,
+      "symbol": "+",
+      "feature": "Hours Battery Charge"
+    }
+  },
+  {
+    "name": "Lenovo ThinkPad",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "images": [
+      "/products/HPEnvyMOVE.png"
+    ],
+    "brand": "Lenovo",
+    "brand logo": "/logos/Lenovo.png",
+    "specs": {
+      "processor": "Intel Core i7-1185G7",
+      "RAM": "16GB DDR4",
+      "storage": "1TB SSD",
+      "display": "14-inch Full HD (1920x1080)",
+      "ports": "USB 3.2, Thunderbolt 4, HDMI, Ethernet",
+      "operating-system": "Windows 10 Pro"
+    },
+    "date-added": "2025-3-6",
+    "tagline": "Business-Class Performance and Durability.",
+    "description": "Built to withstand rigorous use while delivering top-tier performance.",
+    "price": "K18,000",
+    "discounted price": "K17,500"
+  },
+  {
+    "name": "HP ProBook 430 G7",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "images": [
+      "/products/HP_ProBook_430_g7_13_1.png",
+      "/products/HP_ProBook_430_g7_13_2.png"
+    ],
+    "brand": "HP",
+    "brand logo": "/logos/HP.png",
+    "specs": {
+      "processor": "Intel Core i5-10210U",
+      "RAM": "8GB DDR4",
+      "storage": "256GB SSD",
+      "display": "13.3-inch Full HD (1920x1080)",
+      "ports": "USB 3.1, HDMI, Ethernet",
+      "operating-system": "Windows 10 Pro"
+    },
+    "date-added": "2025-3-6",
+    "tagline": "Compact Design with Professional Features.",
+    "description": "Ideal for professionals needing portability without sacrificing performance.",
+    "price": "K9,500",
+    "discounted price": "K9,000",
+    "special feature": {
+      "stat": "8",
+      "stat text size": 8,
+      "symbol": "+",
+      "feature": "Hours Battery Charge"
+    }
+  },
+  {
+    "name": "HP ProBook 465 G7",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "images": [
+      "/products/HP_ProBook_465_g7_1.png",
+      "/products/HP_ProBook_465_g7_2.png",
+      "/products/HP_ProBook_465_g7_3.png"
+    ],
+    "brand": "HP",
+    "brand logo": "/logos/HP.png",
+    "specs": {
+      "processor": "AMD Ryzen 5 3450U",
+      "RAM": "8GB DDR4",
+      "storage": "256GB SSD",
+      "display": "15.6-inch Full HD (1920x1080)",
+      "ports": "USB 3.1, HDMI, Ethernet",
+      "operating-system": "Windows 10 Pro"
+    },
+    "date-added": "2025-3-6",
+    "tagline": "Business-Class Performance and Durability.",
+    "description": "Provides commercial-grade performance and durability for everyday business tasks.",
+    "price": "K10,500",
+    "discounted price": "K10,000",
+    "special feature": {
+      "stat": "8",
+      "stat text size": 8,
+      "symbol": "+",
+      "feature": "Hours Battery Charge"
+    }
+  },
+  {
+    "name": "HP EliteBook 660 G11",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "images": [
+      "/products/HP_ProBook_660_g11_1.png",
+      "/products/HP_ProBook_660_g11_2.png"
+    ],
+    "brand": "HP",
+    "brand logo": "/logos/HP.png",
+    "specs": {
+      "processor": "Intel Core Ultra 5 125U",
+      "RAM": "16GB DDR5",
+      "storage": "512GB SSD",
+      "display": "16-inch Full HD+ (1920x1200) with 16:10 aspect ratio",
+      "ports": "USB 3.2, Thunderbolt 4, HDMI, Ethernet",
+      "operating-system": "Windows 11 Pro"
+    },
+    "date-added": "2025-3-6",
+    "tagline": "AI-Enhanced Performance for Modern Workflows.",
+    "description": "Equipped with the latest processors and collaboration features for a seamless work experience.",
+    "price": "K13,500",
+    "discounted price": "K13,000",
+    "special feature": {
+      "stat": "8",
+      "stat text size": 8,
+      "symbol": "+",
+      "feature": "Hours Battery Charge"
+    }
+  },
+  {
+    "name": "HP Elite Dragonfly G3",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "images": [
+      "/products/HP_Elite_Dragonfly_G3_1.png",
+      "/products/HP_Elite_Dragonfly_G3_2.png"
+    ],
+    "brand": "HP",
+    "brand logo": "/logos/HP.png",
+    "specs": {
+      "processor": "Intel Core i5-1255U",
+      "RAM": "8GB DDR4",
+      "storage": "256GB SSD",
+      "display": "13.5-inch Full HD (1920x1080) touchscreen",
+      "ports": "USB-C Thunderbolt 4, USB-A 3.2, HDMI 2.0, RJ-45",
+      "operating-system": "Windows 11 Pro"
+    },
+    "date-added": "2025-3-6",
+    "tagline": "Premium Business Laptop with Convertible Design.",
+    "description": "Combines luxury design with business-class performance and versatility.",
+    "price": "K20,000",
+    "discounted price": "K18,500",
+    "special feature": {
+      "stat": "8",
+      "stat text size": 8,
+      "symbol": "+",
+      "feature": "Hours Battery Charge"
+    }
+  },
+  {
+    "name": "HP Envy x360 14",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "images": [
+      "/products/HP_Envy_x360_14_1.png",
+      "/products/HP_Envy_x360_14_2.png",
+      "/products/HP_Envy_x360_14_3.png"
+    ],
+    "brand": "HP",
+    "brand logo": "/logos/HP.png",
+    "specs": {
+      "processor": "Intel Core i7-1255U",
+      "RAM": "16GB DDR4",
+      "storage": "512GB SSD",
+      "display": "14-inch Full HD (1920x1080) touchscreen, 360-degree hinge",
+      "ports": "USB-C, USB-A, HDMI, microSD card reader",
+      "operating-system": "Windows 11 Home"
+    },
+    "date-added": "2025-3-6",
+    "tagline": "Versatile 2-in-1 Laptop with Foldable Design.",
+    "description": "Offers flexibility with its foldable design, suitable for work and play.",
+    "price": "K15,000",
+    "discounted price": "K14,500",
+    "special feature": {
+      "stat": "8",
+      "stat text size": 8,
+      "symbol": "+",
+      "feature": "Hours Battery Charge"
+    }
+  },
+  {
+    "name": "Dell Latitude 3450",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "images": [
+      "/products/Dell_Latitude_3450_1.png",
+      "/products/Dell_Latitude_3450_2.png",
+      "/products/Dell_Latitude_3450_3.png"
+    ],
+    "brand": "Dell",
+    "brand logo": "/logos/Dell.png",
+    "specs": {
+      "processor": "Intel Core i3/i5/i7 (5th Gen)",
+      "RAM": "Up to 16GB DDR3L",
+      "storage": "Up to 1TB HDD or 256GB SSD",
+      "display": "14-inch HD (1366x768) or Full HD (1920x1080)",
+      "ports": "USB 3.0, HDMI, Ethernet, SD card reader",
+      "operating-system": "Windows 7/8/10 Pro"
+    },
+    "date-added": "2025-3-6",
+    "tagline": "Affordable Performance for Everyday Tasks.",
+    "description": "A budget-friendly laptop suitable for basic computing needs.",
+    "price": "K6,500",
+    "discounted price": "K6,000",
+    "special feature": {
+      "stat": "8",
+      "stat text size": 8,
+      "symbol": "+",
+      "feature": "Hours Battery Charge"
+    }
+  },
+  {
+    "name": "Dell Latitude 3540",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "images": [
+      "/products/Dell_Latitude_3540_1.png",
+      "/products/Dell_Latitude_3540_2.png",
+      "/products/Dell_Latitude_3540_3.png"
+    ],
+    "brand": "Dell",
+    "brand logo": "/logos/Dell.png",
+    "specs": {
+      "processor": "Intel Core i5/i7 (4th Gen)",
+      "RAM": "Up to 16GB DDR3L",
+      "storage": "Up to 1TB HDD or 256GB SSD",
+      "display": "14-inch HD (1366x768) or Full HD (1920x1080)",
+      "ports": "USB 3.0, HDMI, Ethernet, SD card reader",
+      "operating-system": "Windows 7/8/10 Pro"
+    },
+    "date-added": "2025-3-6",
+    "tagline": "Reliable Performance for Business Professionals.",
+    "description": "Designed for professionals seeking a balance between performance and affordability.",
+    "price": "K7,000",
+    "discounted price": "K6,500",
+    "special feature": {
+      "stat": "8",
+      "stat text size": 8,
+      "symbol": "+",
+      "feature": "Hours Battery Charge"
+    }
+  },
+  {
+    "name": "Dell Latitude 3550",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "images": [
+      "/products/Dell_Latitude_3550_1.png",
+      "/products/Dell_Latitude_3550_2.png",
+      "/products/Dell_Latitude_3550_3.png"
+    ],
+    "brand": "Dell",
+    "brand logo": "/logos/Dell.png",
+    "specs": {
+      "processor": "Intel Core i5/i7 (5th Gen)",
+      "RAM": "Up to 16GB DDR3L",
+      "storage": "Up to 1TB HDD or 256GB SSD",
+      "display": "15.6-inch HD (1366x768) or Full HD (1920x1080)",
+      "ports": "USB 3.0, HDMI, Ethernet, SD card reader",
+      "operating-system": "Windows 7/8/10 Pro"
+    },
+    "date-added": "2025-3-6",
+    "tagline": "Enhanced Performance for Demanding Applications.",
+    "description": "Offers improved performance for users requiring more computing power.",
+    "price": "K7,500",
+    "discounted price": "K7,000",
+    "special feature": {
+      "stat": "8",
+      "stat text size": 8,
+      "symbol": "+",
+      "feature": "Hours Battery Charge"
+    }
+  },
+  {
+    "name": "Dell Latitude 5440",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "images": [
+      "/products/Dell_Latitude_5440_1.png",
+      "/products/Dell_Latitude_5440_2.png",
+      "/products/Dell_Latitude_5440_3.png"
+    ],
+    "brand": "Dell",
+    "brand logo": "/logos/Dell.png",
+    "specs": {
+      "processor": "Intel Core i5/i7 (5th Gen)",
+      "RAM": "Up to 16GB DDR3L",
+      "storage": "Up to 1TB HDD or 256GB SSD",
+      "display": "14-inch HD (1366x768) or Full HD (1920x1080)",
+      "ports": "USB 3.0, HDMI, Ethernet, SD card reader",
+      "operating-system": "Windows 7/8/10 Pro"
+    },
+    "date-added": "2025-3-6",
+    "tagline": "Business-Class Performance with Enhanced Security.",
+    "description": "Tailored for business users requiring reliable performance and security features.",
+    "price": "K8,000",
+    "discounted price": "K7,500",
+    "special feature": {
+      "stat": "8",
+      "stat text size": 8,
+      "symbol": "+",
+      "feature": "Hours Battery Charge"
+    }
+  },
+  {
+    "name": "Dell Latitude 5450",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "images": [
+      "/products/Dell_Latitude_5450_1.png",
+      "/products/Dell_Latitude_5450_2.png",
+      "/products/Dell_Latitude_5450_3.png"
+    ],
+    "brand": "Dell",
+    "brand logo": "/logos/Dell.png",
+    "specs": {
+      "processor": "Intel Core i5/i7 (5th Gen)",
+      "RAM": "Up to 16GB DDR3L",
+      "storage": "Up to 1TB HDD or 256GB SSD",
+      "display": "14-inch HD (1366x768) or Full HD (1920x1080)",
+      "ports": "USB 3.0, HDMI, Ethernet, SD card reader",
+      "operating-system": "Windows 7/8/10 Pro"
+    },
+    "date-added": "2025-3-6",
+    "tagline": "Enhanced Performance with Business Features.",
+    "description": "Provides improved performance and additional features for business users.",
+    "price": "K8,500",
+    "discounted price": "K8,000",
+    "special feature": {
+      "stat": "8",
+      "stat text size": 8,
+      "symbol": "+",
+      "feature": "Hours Battery Charge"
+    }
+  },
+  {
+    "name": "Dell Latitude 5550",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "images": [
+      "/products/Dell_Latitude_5550_1.png",
+      "/products/Dell_Latitude_5550_2.png",
+      "/products/Dell_Latitude_5550_3.png"
+    ],
+    "brand": "Dell",
+    "brand logo": "/logos/Dell.png",
+    "specs": {
+      "processor": "Intel Core i5/i7 (5th Gen)",
+      "RAM": "Up to 16GB DDR3L",
+      "storage": "Up to 1TB HDD or 256GB SSD",
+      "display": "15.6-inch HD (1366x768) or Full HD (1920x1080)",
+      "ports": "USB 3.0, HDMI, Ethernet, SD card reader",
+      "operating-system": "Windows 7/8/10 Pro"
+    },
+    "date-added": "2025-3-6",
+    "tagline": "Larger Display with Robust Performance.",
+    "description": "Offers a larger display and robust performance for users needing more screen space.",
+    "price": "K9,000",
+    "discounted price": "K8,500",
+    "special feature": {
+      "stat": "8",
+      "stat text size": 8,
+      "symbol": "+",
+      "feature": "Hours Battery Charge"
+    }
+  },
+  {
+    "name": "Dell Latitude 7450",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "images": [
+      "/products/Dell_Latitude_7450_1.png",
+      "/products/Dell_Latitude_7450_2.png",
+      "/products/Dell_Latitude_7450_3.png"
+    ],
+    "brand": "Dell",
+    "brand logo": "/logos/Dell.png",
+    "specs": {
+      "processor": "Intel Core Ultra i5-1255U",
+      "RAM": "16GB LPDDR5x",
+      "storage": "512GB SSD",
+      "display": "14-inch FHD+ (1920x1200) IPS, Anti-Glare, 250 nits",
+      "ports": "2 x USB-A 3.2 Gen 1, 2 x Thunderbolt 4 with DisplayPort, HDMI 2.1, Universal audio port, Nano SIM slot (optional), Wedge-shaped lock slot, Smart card reader (optional)",
+      "operating-system": "Windows 11 Pro"
+    },
+    "date-added": "2025-3-6",
+    "tagline": "Ultralight Business Laptop with High-End Performance.",
+    "description": "Designed for professionals seeking a lightweight yet powerful device for business tasks.",
+    "price": "K12,000",
+    "discounted price": "K11,500",
+    "special feature": {
+      "stat": "8",
+      "stat text size": 8,
+      "symbol": "+",
+      "feature": "Hours Battery Charge"
+    }
+  },
+  {
+    "name": "Dell Inspiron 7640",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "images": [
+      "/products/Dell_Inspiron_7640_1.png",
+      "/products/Dell_Inspiron_7640_2.png",
+      "/products/Dell_Inspiron_7640_3.png"
+    ],
+    "brand": "Dell",
+    "brand logo": "/logos/Dell.png",
+    "specs": {
+      "processor": "Intel Core i7-1365U",
+      "RAM": "16GB LPDDR5",
+      "storage": "256GB SSD",
+      "display": "16-inch, Touch, FHD+ (1920x1200) display",
+      "ports": "2 x USB-A 3.2 Gen 1, Thunderbolt 4, HDMI 1.4, Universal audio jack",
+      "operating-system": "Windows 11 Pro",
+      "Battery Life": "Up to 15 hours, 36 minutes",
+      "Slots": "1 SD-card slot"
+    },
+    "date-added": "2025-3-6",
+    "tagline": "Powerful Performance in a Sleek Design.",
+    "description": "Ideal for professionals seeking a balance between performance and portability.",
+    "price": "K9,500",
+    "discounted price": "K9,000",
+    "special feature": {
+      "stat": "15",
+      "stat text size": 5,
+      "symbol": "+",
+      "feature": "Hours Battery Charge"
+    }
+  },
+  {
+    "name": "Dell Inspiron 5530 Gaming Laptop",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "images": [
+      "/products/Dell_Inspiron_5530_Gaming_Laptop_1.png",
+      "/products/Dell_Inspiron_5530_Gaming_Laptop_2.png",
+      "/products/Dell_Inspiron_5530_Gaming_Laptop_3.png"
+    ],
+    "brand": "Dell",
+    "brand logo": "/logos/Dell.png",
+    "specs": {
+      "processor": "13th Gen Intel® Core™ i5-13450HX (20 MB cache, 10 cores, up to 4.60 GHz Turbo)",
+      "Graphics": "NVIDIA® GeForce RTX™ 3050, 6 GB GDDR6",
+      "RAM": "8GB DDR5, 1x8GB, 4800MT/s",
+      "storage": "512 GB, M.2, PCIe NVMe, SSD",
+      "display": "15.6\", FHD 1920x1080, 120Hz",
+      "ports": "2 x USB-A 3.2 Gen 1, Thunderbolt 4, HDMI 2.1, RJ-45, Universal audio jack",
+      "operating-system": "Windows 11 Pro",
+      "Primary Battery": "3 Cell, 56 Wh, integrated",
+      "Battery Life": "Up to 6 hours, 31 minutes"
+    },
+    "date-added": "2025-3-6",
+    "tagline": "High-Performance Gaming Laptop.",
+    "description": "Designed for gamers seeking high frame rates and immersive experiences.",
+    "price": "K15,000",
+    "discounted price": "K14,500",
+    "special feature": {
+      "stat": "6",
+      "stat text size": 8,
+      "symbol": "+",
+      "feature": "Hours Battery Charge"
+    }
+  },
+  {
+    "name": "Dell Precision 3590",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "images": [
+      "/products/Dell_Precision_3590_1.png",
+      "/products/Dell_Precision_3590_2.png",
+      "/products/Dell_Precision_3590_3.png"
+    ],
+    "brand": "Dell",
+    "brand logo": "/logos/Dell.png",
+    "specs": {
+      "processor": "Intel Core Ultra 7 155H vPro® Essentials (24 MB cache, 16 cores, 22 threads, up to 4.8 GHz, 45W)",
+      "RAM": "Up to 32GB DDR5, 5600 MT/s, non-ECC",
+      "storage": "Up to 1TB SSD",
+      "display": "15.6-inch FHD (1920x1080), 60Hz, 250 nits, Non-Touch",
+      "ports": "USB-A 3.2 Gen 1, Thunderbolt 4, HDMI 2.1, RJ-45, Universal audio jack",
+      "operating-system": "Windows 11 Pro"
+    },
+    "date-added": "2025-3-6",
+    "tagline": "Reliable Workstation for Entry-Level Design and Creative Applications.",
+    "description": "The Dell Precision 3590 offers intelligently optimized performance for light design and creative tasks, featuring the latest Intel Core Ultra processors with AI Boost.",
+    "price": "K9,500",
+    "discounted price": "K9,000"
+  },
+  {
+    "name": "Dell Precision 3591",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "images": [
+      "/products/Dell_Precision_3591_1.png",
+      "/products/Dell_Precision_3591_2.png",
+      "/products/Dell_Precision_3591_3.png"
+    ],
+    "brand": "Dell",
+    "brand logo": "/logos/Dell.png",
+    "specs": {
+      "processor": "Intel Core Ultra 7 165H vPro® Enterprise (24MB cache, 16 cores, 22 threads, up to 5.0 GHz Turbo, 45W)",
+      "RAM": "Up to 32GB DDR5, 5600 MT/s, non-ECC",
+      "storage": "Up to 1TB SSD",
+      "display": "15.6-inch FHD (1920x1080), 60Hz, 250 nits, Non-Touch",
+      "ports": "USB-A 3.2 Gen 1, Thunderbolt 4, HDMI 2.1, RJ-45, Universal audio jack",
+      "operating-system": "Windows 11 Pro"
+    },
+    "date-added": "2025-3-6",
+    "tagline": "High-Performance Workstation for Demanding Applications.",
+    "description": "The Dell Precision 3591 is a powerful entry-level workstation designed for design and creative applications, featuring Intel Core Ultra processors with AI Boost and optional NVIDIA RTX Ada professional graphics.",
+    "price": "K10,500",
+    "discounted price": "K10,000"
+  },
+  {
+    "name": "Dell Vostro 3440",
+    "category": "Computers",
+    "subcategory": "Laptops",
+    "images": [
+      "/products/dell_vostro_3440_1.png",
+      "/products/dell_vostro_3440_2.png",
+      "/products/dell_vostro_3440_3.png"
+    ],
+    "brand": "Dell",
+    "brand logo": "/logos/Dell.png",
+    "specs": {
+      "processor": "13th Gen Intel® Core™ i3-1305U (5 cores, up to 4.5 GHz Turbo)",
+      "RAM": "8 GB DDR4",
+      "storage": "512GB SSD",
+      "Graphics": "Intel® UHD Graphics",
+      "display": "14-inch HD (1366x768), Anti-Glare, 250 nits",
+      "ports": "1 x USB-A 3.2, 1 x USB-C 3.2, 1 x HDMI 1.4, 1 x RJ-45, Universal audio jack, 1 x SD card reader",
+      "operating-system": "Windows 10 Home"
+    },
+    "date-added": "2025-3-6",
+    "tagline": "Compact and Efficient for Everyday Work.",
+    "description": "Ideal for professionals looking for a portable laptop with efficient performance for business tasks.",
+    "price": "K7,000",
+    "discounted price": "K6,500"
+  },
+  {
+    "name": "LG 27UL500-W",
+    "category": "Monitors",
+    "images": [
+      "/products/LG_27UL500_W_1.png",
+      "/products/LG_27UL500_W_2.png",
+      "/products/LG_27UL500_W_3.png"
+    ],
+    "brand": "LG",
+    "brand logo": "/logos/LG.png",
+    "specs": {
+      "size": "27 inches",
+      "resolution": "4K UHD (3840x2160)",
+      "panel-type": "IPS",
+      "refresh-rate": "60Hz",
+      "response-time": "5ms",
+      "color-gamut": "sRGB 98%",
+      "hdr": "HDR10",
+      "vesa-mount": "Yes",
+      "ports": [
+        "HDMI",
+        "DisplayPort"
+      ]
+    },
+    "date-added": "2025-03-06",
+    "tagline": "Stunning 4K clarity with versatile connectivity.",
+    "description": "The LG 27UL500-W offers a sharp 4K resolution with accurate color reproduction, making it ideal for both work and entertainment. Its VESA mount compatibility allows for flexible installation options.",
+    "price": "K5,500",
+    "discounted-price": "K5,000",
+    "special feature": {
+      "stat": "4K",
+      "stat text size": 4,
+      "feature": "Display"
+    }
+  },
+  {
+    "name": "LG 27QN880-B",
+    "category": "Monitors",
+    "images": [
+      "/products/LG_27QN880_B_1.png",
+      "/products/LG_27QN880_B_2.png",
+      "/products/LG_27QN880_B_3.png"
+    ],
+    "brand": "LG",
+    "brand logo": "/logos/LG.png",
+    "specs": {
+      "size": "27 inches",
+      "resolution": "QHD (2560x1440)",
+      "panel-type": "IPS",
+      "refresh-rate": "75Hz",
+      "response-time": "5ms",
+      "color-gamut": "sRGB 99%",
+      "hdr": "HDR10",
+      "vesa-mount": "Yes",
+      "ports": [
+        "USB Type-C",
+        "HDMI",
+        "DisplayPort"
+      ]
+    },
+    "date-added": "2025-03-06",
+    "tagline": "Ergonomic design with comprehensive connectivity.",
+    "description": "The LG 27QN880-B features an ergonomic stand with multiple adjustments and a USB Type-C port for convenient connectivity, catering to professionals seeking comfort and versatility.",
+    "price": "K6,500",
+    "discounted-price": "K6,000",
+    "special feature": {
+      "stat": "8",
+      "stat text size": 8,
+      "symbol": "+",
+      "feature": "Hours Battery Charge"
+    }
+  },
+  {
+    "name": "LG 29WQ500-B",
+    "category": "Monitors",
+    "images": [
+      "/products/LG_29WQ500_B_1.png",
+      "/products/LG_29WQ500_B_2.png",
+      "/products/LG_29WQ500_B_3.png"
+    ],
+    "brand": "LG",
+    "brand logo": "/logos/LG.png",
+    "specs": {
+      "size": "29 inches",
+      "resolution": "FHD (2560x1080)",
+      "panel-type": "IPS",
+      "refresh-rate": "75Hz",
+      "response-time": "5ms",
+      "color-gamut": "sRGB 99%",
+      "hdr": "HDR10",
+      "vesa-mount": "Yes",
+      "ports": [
+        "HDMI",
+        "DisplayPort"
+      ]
+    },
+    "date-added": "2025-03-06",
+    "tagline": "Wide-screen productivity with immersive visuals.",
+    "description": "The LG 29WQ500-B ultrawide monitor enhances productivity with its expansive screen, providing clear and vibrant visuals suitable for multitasking and entertainment.",
+    "price": "K4,500",
+    "discounted-price": "K4,000",
+    "special feature": {
+      "stat": "4K",
+      "stat text size": 6,
+      "feature": "display"
+    }
+  },
+  {
+    "name": "LG 32GP850-B",
+    "category": "Monitors",
+    "images": [
+      "/products/LG_32GP850_B_1.png",
+      "/products/LG_32GP850_B_2.png",
+      "/products/LG_32GP850_B_3.png"
+    ],
+    "brand": "LG",
+    "brand logo": "/logos/LG.png",
+    "specs": {
+      "size": "32 inches",
+      "resolution": "QHD (2560x1440)",
+      "panel-type": "Nano IPS",
+      "refresh-rate": "165Hz",
+      "response-time": "1ms",
+      "color-gamut": "sRGB 98%",
+      "hdr": "HDR10",
+      "vesa-mount": "Yes",
+      "ports": [
+        "HDMI",
+        "DisplayPort"
+      ]
+    },
+    "date-added": "2025-03-06",
+    "tagline": "High-speed gaming monitor with vibrant visuals.",
+    "description": "The LG 32GP850-B offers a fast refresh rate and response time, ensuring smooth gameplay. Its Nano IPS panel delivers rich colors, and it's VESA mount compatible for flexible setup.",
+    "price": "K7,500",
+    "discounted-price": "K7,000",
+    "special feature": {
+      "stat": "4K",
+      "stat text size": 4,
+      "feature": "Display"
+    }
+  },
+  {
+    "name": "LG 55UL3J-M",
+    "category": "Monitors",
+    "images": [
+      "/products/LG_55UL3J_M_1.png",
+      "/products/LG_55UL3J_M_2.png",
+      "/products/LG_55UL3J_M_3.png"
+    ],
+    "brand": "LG",
+    "brand logo": "/logos/LG.png",
+    "specs": {
+      "size": "55 inches",
+      "resolution": "4K UHD (3840x2160)",
+      "panel-type": "IPS",
+      "refresh-rate": "60Hz",
+      "response-time": "8ms",
+      "color-gamut": "sRGB 99%",
+      "hdr": "HDR10",
+      "vesa-mount": "Yes",
+      "ports": [
+        "HDMI",
+        "DisplayPort",
+        "USB"
+      ]
+    },
+    "date-added": "2025-03-06",
+    "tagline": "Professional display with extended duty cycle.",
+    "description": "Designed for continuous operation, the LG 55UL3J-M features a 16-hour duty cycle, making it suitable for business environments requiring prolonged display usage.",
+    "price": "K12,000",
+    "discounted-price": "K11,500",
+    "special feature": {
+      "stat": "4K",
+      "stat text size": 4,
+      "feature": "Display"
+    }
+  },
+  {
+    "name": "LG 65EP5G-B",
+    "category": "Monitors",
+    "images": [
+      "/products/LG_65EP5G_B_1.png",
+      "/products/LG_65EP5G_B_2.png",
+      "/products/LG_65EP5G_B_3.png"
+    ],
+    "brand": "LG",
+    "brand logo": "/logos/LG.png",
+    "specs": {
+      "size": "65 inches",
+      "resolution": "UHD (3840x2160)",
+      "panel-type": "OLED",
+      "refresh-rate": "120Hz",
+      "response-time": "1ms",
+      "color-gamut": "P3 98.5%",
+      "hdr": "HDR10, Dolby Vision",
+      "vesa-mount": "Yes",
+      "ports": [
+        "HDMI",
+        "DisplayPort",
+        "USB-C"
+      ]
+    },
+    "date-added": "2025-03-06",
+    "tagline": "Premium OLED display for professional applications.",
+    "description": "The LG 65EP5G-B offers exceptional color accuracy and contrast with OLED technology, suitable for professional use with its 24/7 operation capability and advanced connectivity options.",
+    "price": "K20,000",
+    "discounted-price": "K19,500",
+    "special feature": {
+      "stat": "4K",
+      "stat text size": 4,
+      "feature": "Display"
+    }
+  },
+  {
+    "name": "Asus ZenScreen MB16AC",
+    "category": "Monitors",
+    "images": [
+      "/products/Asus_ZenScreen_MB16AC_1.png",
+      "/products/Asus_ZenScreen_MB16AC_2.png",
+      "/products/Asus_ZenScreen_MB16AC_3.png"
+    ],
+    "brand": "Asus",
+    "brand logo": "/logos/Asus.png",
+    "specs": {
+      "size": "15.6 inches",
+      "resolution": "Full HD (1920x1080)",
+      "panel-type": "IPS",
+      "refresh-rate": "60Hz",
+      "response-time": "5ms",
+      "color-gamut": "sRGB 100%",
+      "hdr": "No",
+      "vesa-mount": "No",
+      "ports": [
+        "USB Type-C",
+        "USB Type-A (requires DisplayLink driver)"
+      ]
+    },
+    "date-added": "2025-03-06",
+    "tagline": "Portable Full HD display with hybrid signal compatibility.",
+    "description": "The Asus ZenScreen MB16AC is a lightweight 15.6\" portable monitor with USB-C/A support and eye-friendly features.",
+    "price": "K3,500",
+    "discounted-price": "K3,000"
+  },
+  {
+    "name": "Asus ZenScreen MB16QHG",
+    "category": "Monitors",
+    "images": [
+      "/products/Asus_ZenScreen_MB16QHG.png",
+      "/products/Asus_ZenScreen_MB16QHG_2.png",
+      "/products/Asus_ZenScreen_MB16QHG_3.png"
+    ],
+    "brand": "Asus",
+    "brand logo": "/logos/Asus.png",
+    "specs": {
+      "size": "15.6 inches",
+      "resolution": "WQXGA (2560x1600)",
+      "panel-type": "IPS",
+      "refresh-rate": "120Hz",
+      "response-time": "3ms",
+      "color-gamut": "DCI-P3 100%",
+      "hdr": "DisplayHDR 400",
+      "vesa-mount": "Yes",
+      "ports": [
+        "USB Type-C",
+        "HDMI"
+      ]
+    },
+    "date-added": "2025-03-06",
+    "tagline": "High-refresh-rate portable monitor for smooth visuals.",
+    "description": "The Asus ZenScreen MB16QHG is a 15.6\" portable monitor with a sharp WQXGA display, 120Hz refresh rate, HDR support, and wide color coverage. It offers USB-C and HDMI ports, plus flexible stand options.",
+    "price": "K4,500",
+    "discounted-price": "K4,000"
+  },
+  {
+    "name": "Dell SE2422H",
+    "category": "Monitors",
+    "images": [
+      "/products/Dell_SE2422H_1.png",
+      "/products/Dell_SE2422H_2.png",
+      "/products/Dell_SE2422H_3.png"
+    ],
+    "brand": "Dell",
+    "brand logo": "/logos/Dell.png",
+    "specs": {
+      "size": "24 inches",
+      "resolution": "Full HD (1920x1080)",
+      "panel-type": "VA",
+      "refresh-rate": "75Hz",
+      "response-time": "5ms",
+      "color-gamut": "sRGB 99%",
+      "hdr": "No",
+      "vesa-mount": "Yes",
+      "ports": [
+        "HDMI"
+      ]
+    },
+    "date-added": "2025-03-06",
+    "tagline": "24-inch FHD monitor with fast response time for leisure gaming.",
+    "description": "The Dell SE2422H features a 24-inch VA panel with a 75Hz refresh rate and 5ms response time, ensuring smooth visuals for casual gaming and daily tasks. Its slim design and VESA compatibility offer flexibility in mounting options.",
+    "price": "K3,000",
+    "discounted-price": "K2,800"
+  },
+  {
+    "name": "Huawei IdeaHub S2 65\" Interactive Display",
+    "category": "Interactive Displays",
+    "images": [
+      "/products/HuaweiIdeaHubS2_1.png",
+      "/products/HuaweiIdeaHubS2_2.png",
+      "/products/HuaweiIdeaHubS2_3.png"
+    ],
+    "brand logo": "/logos/Huawei.png",
+    "specs": {
+      "screen-size": "65 inches",
+      "resolution": "4K UHD (3840x2160)",
+      "touchpoints": "20-point multi-touch",
+      "camera": "1080p30 resolution with Auto Framing and voice tracking",
+      "speakers": "6 stereo speakers (40Hz–20kHz)",
+      "microphones": "12 microphones with 8m pickup distance",
+      "ports": [
+        "HDMI 2.1",
+        "USB Type-C",
+        "USB 3.0",
+        "RJ45 Ethernet",
+        "Wi-Fi 6"
+      ]
+    },
+    "date-added": "2025-03-06",
+    "tagline": "Seamless collaboration with HD video conferencing and interactive touch capabilities.",
+    "description": "The Huawei IdeaHub S2 65\" Interactive Display enhances meetings with a 4K multi-touch screen, 1080p Auto Framing camera, and high-quality audio. Wi-Fi 6 enables seamless wireless projection and collaboration.",
+    "price": "K15,000",
+    "discounted-price": "K14,500",
+    "special feature": {
+      "stat": "4K",
+      "stat text size": 6,
+      "feature": "display"
+    }
+  },
+  {
+    "name": "Huawei IdeaHub S2 75\" Interactive Display",
+    "category": "Interactive Displays",
+    "images": [
+      "/products/HuaweiIdeaHubS2_75_1.png",
+      "/products/HuaweiIdeaHubS2_75_2.png"
+    ],
+    "brand logo": "",
+    "specs": {
+      "screen-size": "75 inches",
+      "resolution": "4K UHD (3840x2160)",
+      "touchpoints": "20-point multi-touch",
+      "camera": "1080p30 resolution with Auto Framing and voice tracking",
+      "speakers": "6 stereo speakers (40Hz–20kHz)",
+      "microphones": "12 microphones with 8m pickup distance",
+      "ports": [
+        "HDMI 2.1",
+        "USB Type-C",
+        "USB 3.0",
+        "RJ45 Ethernet",
+        "Wi-Fi 6"
+      ]
+    },
+    "date-added": "2025-03-06",
+    "tagline": "Enhanced collaboration experience with a larger interactive display and advanced features.",
+    "description": "The Huawei IdeaHub S2 75\" features a 75-inch 4K touchscreen, 1080p Auto Framing camera, powerful audio, and Wi-Fi 6 for smooth collaboration in larger meeting spaces.",
+    "price": "K18,000",
+    "discounted-price": "K17,500",
+    "special feature": {
+      "stat": "4K",
+      "stat text size": 6,
+      "feature": "display"
+    }
+  },
+  {
+    "name": "Huawei IdeaHub S2 86\" Interactive Display",
+    "category": "Interactive Displays",
+    "images": [
+      "/products/HuaweiIdeaHubS2_86_1.png",
+      "/products/HuaweiIdeaHubS2_86_2.png",
+      "/products/HuaweiIdeaHubS2_86_3.png"
+    ],
+    "brand": "Huawei",
+    "brand logo": "",
+    "specs": {
+      "screen-size": "86 inches",
+      "resolution": "4K UHD (3840x2160)",
+      "touchpoints": "20-point multi-touch",
+      "camera": "1080p30 resolution with Auto Framing and voice tracking",
+      "speakers": "6 stereo speakers (40Hz–20kHz)",
+      "microphones": "12 microphones with 8m pickup distance",
+      "ports": [
+        "HDMI 2.1",
+        "USB Type-C",
+        "USB 3.0",
+        "RJ45 Ethernet",
+        "Wi-Fi 6"
+      ]
+    },
+    "date-added": "2025-03-06",
+    "tagline": "Ultimate interactive display solution for large venues with superior collaboration features.",
+    "description": "The Huawei IdeaHub S2 86\" offers a large 4K touchscreen, 1080p Auto Framing camera, rich audio, and Wi-Fi 6 for seamless collaboration in big conference spaces.",
+    "price": "K22,000",
+    "discounted-price": "K21,500",
+    "special feature": {
+      "stat": "4K",
+      "stat text size": 6,
+      "feature": "display"
+    }
+  },
+  {
+    "name": "ADATA XPG INVADER Mid-Tower Gaming Case",
+    "category": "Components",
+    "subcategory": "Cases",
+    "images": [
+      "/products/ADATA_XPG_INVADER_Mid_Tower_Gaming_Case_1.png",
+      "/products/ADATA_XPG_INVADER_Mid_Tower_Gaming_Case_2.png",
+      "/products/ADATA_XPG_INVADER_Mid_Tower_Gaming_Case_3.png"
+    ],
+    "brand": "ADATA",
+    "brand logo": "/logos/XPG.png",
+    "specs": {
+      "type": "Mid-Tower",
+      "motherboard-support": "ATX, Micro-ATX, Mini-ITX",
+      "drive-bays": "2 x 2.5\" / 3.5\" Combo Bays, 1 x 2.5\" Bay",
+      "expansion-slots": "7",
+      "front-i-o-ports": "2 x USB 3.2 Gen 1, 1 x Headphone, 1 x Microphone",
+      "radiator-support": {
+        "front": "120 mm, 140 mm, 240 mm, 280 mm, 360 mm",
+        "top": "120 mm, 140 mm, 240 mm, 280 mm, 360 mm",
+        "rear": "120 mm"
+      },
+      "cooling-support": {
+        "front": "3 x 120 mm, 2 x 140 mm",
+        "top": "3 x 120 mm, 2 x 140 mm",
+        "rear": "1 x 120 mm"
+      },
+      "maximum-cpu-cooler-height": "165 mm",
+      "maximum-gpu-length": "380 mm",
+      "maximum-psu-length": "210 mm",
+      "dimensions": "220 mm (W) x 430 mm (H) x 465 mm (D)",
+      "weight": "7.3 kg",
+      "features": [
+        "Tool-less design for easy installation",
+        "High-airflow layout for optimal cooling",
+        "Front RGB downlight with customizable lighting modes"
+      ]
+    },
+    "date-added": "2025-03-06",
+    "tagline": "Sleek design with customizable RGB lighting and efficient airflow.",
+    "description": "ADATA XPG INVADER case offers stylish design, easy assembly, and customizable RGB lighting.",
+    "price": "K1,500",
+    "discounted-price": "K1,400"
+  },
+  {
+    "name": "ASUS A21 Micro-ATX Chassis",
+    "category": "Components",
+    "subcategory": "Cases",
+    "images": [
+      "/products/ASUS_A21_Micro_ATX_Chassis_1.png",
+      "/products/ASUS_A21_Micro_ATX_Chassis_2.png",
+      "/products/ASUS_A21_Micro_ATX_Chassis_3.png"
+    ],
+    "brand": "ASUS",
+    "brand logo": "/logos/Asus.png",
+    "specs": {
+      "type": "Micro-ATX",
+      "motherboard-support": "Micro-ATX, Mini-ITX",
+      "drive-bays": "2 x 2.5\" / 3.5\" Combo Bays, 1 x 2.5\" Bay",
+      "expansion-slots": "5",
+      "front-i-o-ports": "2 x USB 3.2 Gen 1, 1 x Headphone, 1 x Microphone",
+      "radiator-support": {
+        "front": "120 mm, 140 mm, 240 mm, 280 mm, 360 mm",
+        "top": "120 mm, 140 mm, 240 mm, 280 mm, 360 mm",
+        "rear": "120 mm"
+      },
+      "cooling-support": {
+        "front": "3 x 120 mm, 2 x 140 mm",
+        "top": "3 x 120 mm, 2 x 140 mm",
+        "rear": "1 x 120 mm"
+      },
+      "maximum-cpu-cooler-height": "165 mm",
+      "maximum-gpu-length": "380 mm",
+      "maximum-psu-length": "210 mm",
+      "dimensions": "220 mm (W) x 430 mm (H) x 465 mm (D)",
+      "features": [
+        "Supports hidden-connector motherboards for clean cable management",
+        "Front-panel mesh design for enhanced airflow",
+        "Ample space for high-performance components"
+      ]
+    },
+    "date-added": "2025-03-06",
+    "tagline": "Compact design with excellent cooling and cable management features.",
+    "description": "The ASUS A21 Micro-ATX Chassis offers a compact, functional design with support for AIO coolers and GPUs, front mesh for airflow, and ample space for clean cable management.",
+    "price": "K1,200",
+    "discounted-price": "K1,100"
+  },
+  {
+    "name": "AMD Ryzen 3 1200",
+    "category": "Components",
+    "subcategory": "Processors",
+    "images": [
+      "/products/AMD_Ryzen_3_1200_1.png",
+      "/products/AMD_Ryzen_3_1200_2.png"
+    ],
+    "brand": "AMD",
+    "brand logo": "",
+    "specs": {
+      "cores": 4,
+      "threads": 4,
+      "base-clock": "3.1 GHz",
+      "boost-clock": "3.4 GHz",
+      "cache": "192 KB L1, 512 KB L2, 2 MB L3",
+      "tdp": "95W",
+      "socket": "AM4"
+    },
+    "date-added": "2025-03-06",
+    "tagline": "Quad-core processor suitable for entry-level gaming and multitasking.",
+    "description": "The AMD Ryzen 3 1200 offers four cores and four threads, providing a base clock of 3.1 GHz with a boost up to 3.4 GHz. It's ideal for users seeking reliable performance for everyday computing tasks.",
+    "price": "K500",
+    "discounted-price": "K450"
+  },
+  {
+    "name": "ASUS Dual GeForce GTX 1650 V2 OC Edition 4GB GDDR6",
+    "category": "Components",
+    "subcategory": "Graphics Cards",
+    "images": [
+      "/products/ASUS_Dual_GeForce_GTX_1650_1.png",
+      "/products/ASUS_Dual_GeForce_GTX_1650_2.png"
+    ],
+    "brand": "ASUS",
+    "brand logo": "/logos/Asus.png",
+    "specs": {
+      "graphics_engine": "NVIDIA GeForce GTX 1650",
+      "bus_standard": "PCI Express 3.0",
+      "video_memory": "4GB GDDR6",
+      "engine_clock": "Base: 1410 MHz, Boost: 1620 MHz (OC Mode)",
+      "cuda_cores": 896,
+      "memory_speed": "12 Gbps",
+      "memory_interface": "128-bit",
+      "max_resolution": "7680 x 4320",
+      "interface": "HDMI 2.0b, DisplayPort 1.4, DVI-D",
+      "directx": "DirectX 12",
+      "opengl": "OpenGL 4.6",
+      "dimensions": "204 x 115 x 42 mm"
+    },
+    "date_added": "2025-03-06",
+    "tagline": "Experience high-definition gaming with advanced cooling.",
+    "description": "The ASUS Dual GeForce GTX 1650 V2 OC Edition 4GB GDDR6 is built with advanced cooling technologies derived from flagship graphics cards. It delivers high refresh rates in high definition, making it a perfect choice for a well-balanced gaming build.",
+    "price": "K1,200",
+    "discounted price": "K1,100"
+  },
+  {
+    "name": "Dell 8TB 7.2K RPM NLSAS 12Gbps 3.5in Hot-Plug Hard Drive",
+    "category": "Components",
+    "subcategory": "Server Hard Drives",
+    "images": [
+      "/products/Dell_8TB_72K_1.png",
+      "/products/Dell_8TB_72K_2.png"
+    ],
+    "brand": "Dell",
+    "brand logo": "/logos/Dell.png",
+    "specs": {
+      "capacity": "8TB",
+      "interface": "NLSAS 12Gbps",
+      "form_factor": "3.5-inch",
+      "rotational_speed": "7,200 RPM",
+      "sector_size": "512e"
+    },
+    "date_added": "2025-03-06",
+    "tagline": "High-capacity storage solution with efficient data transfer speeds.",
+    "description": "The Dell 8TB 7.2K RPM NLSAS 12Gbps 3.5-inch Hot-Plug Hard Drive offers ample storage capacity and reliable performance for enterprise systems. Its 7,200 RPM speed ensures efficient data access, while the NLSAS interface provides enhanced data transfer rates. Please note, VMware does not support 512e or 4Kn hard drives. Compatibility is limited to specific operating systems and configurations.",
+    "price": "K6,500",
+    "discounted price": "K6,200",
+    "product_page": "https://www.dell.com/en-us/shop/dell-8tb-72k-rpm-nlsas-12gbps-512e-35in-hot-plug-hard-drive/apd/400-ampd/storage-drives-media"
+  },
+  {
+    "name": "Seagate SATA HDD",
+    "category": "Components",
+    "subcategory": "Consumer Storage",
+    "images": [
+      "/products/Seagate_SATA_HDD_1.png",
+      "/products/Seagate_SATA_HDD_2.png",
+      "/products/Seagate_SATA_HDD_3.png"
+    ],
+    "brand": "Seagate",
+    "brand logo": "",
+    "specs": {
+      "capacity": "1TB / 2TB / 4TB / 5TB / 6TB / 8TB / 10TB / 12TB / 14TB / 16TB / 18TB / 20TB",
+      "interface": "SATA III 6Gb/s",
+      "form_factor": "3.5-inch",
+      "cache": "Up to 256MB",
+      "rpm": "5400/7200 RPM",
+      "features": [
+        "High Storage Capacity",
+        "Reliable Performance",
+        "Long Lifespan"
+      ]
+    },
+    "date_added": "2025-03-06",
+    "tagline": "Massive storage capacity for personal and professional use.",
+    "description": "Seagate's SATA HDD lineup offers a variety of storage options, ensuring reliability and high performance for desktops, NAS systems, and external drives. Perfect for data backup and large multimedia libraries.",
+    "price": "K3,000 - K25,000",
+    "discounted price": "K2,800 - K24,000"
+  },
+  {
+    "name": "TP-LINK 24-Port Gigabit Easy Smart Switch",
+    "category": "Networking",
+    "subcategory": "Switches",
+    "images": [
+      "/products/TP_LINK_24_Port_Gigabit_Easy_Smart_Switch_1.png",
+      "/products/TP_LINK_24_Port_Gigabit_Easy_Smart_Switch_2.png",
+      "/products/TP_LINK_24_Port_Gigabit_Easy_Smart_Switch_3.png"
+    ],
+    "brand": "TP-Link",
+    "brand logo": "/logos/TPLink.png",
+    "specs": {
+      "ports": "24 x Gigabit Ethernet",
+      "PoE": "No",
+      "management": "Easy Smart Managed",
+      "features": [
+        "QoS Optimization",
+        "VLAN Support",
+        "Energy Efficient"
+      ]
+    },
+    "date_added": "2025-03-06",
+    "tagline": "Simple and reliable 24-port Gigabit switch.",
+    "description": "A 24-port easy smart switch offering gigabit speeds and essential management features for small and medium businesses.",
+    "price": "K10,500",
+    "discounted price": "K10,000"
+  },
+  {
+    "name": "ASUS AX1800 Dual Band WiFi 6 Router",
+    "category": "Networking",
+    "subcategory": "Routers",
+    "images": [
+      "/products/ASUS_AX1800_1.png",
+      "/products/ASUS_AX1800_2.png",
+      "/products/ASUS_AX1800_3.png"
+    ],
+    "brand": "ASUS",
+    "brand logo": "/logos/Asus.png",
+    "specs": {
+      "WiFi Standard": "WiFi 6 (802.11ax)",
+      "Bands": "Dual Band (2.4GHz + 5GHz)",
+      "Speed": "Up to 1800 Mbps",
+      "Ports": "Gigabit Ethernet, USB (available in select versions)",
+      "Features": [
+        "OFDMA & MU-MIMO",
+        "Beamforming",
+        "Parental Controls",
+        "AiProtection Security"
+      ]
+    },
+    "date_added": "2025-03-06",
+    "tagline": "Fast and efficient WiFi 6 performance.",
+    "description": "The ASUS AX1800 Dual Band WiFi 6 Router provides stable and fast connections, ideal for home and small office networks.",
+    "price": "K5,500",
+    "discounted price": "K5,000"
+  },
+  {
+    "name": "TP-LINK AX3000 Ceiling Mount Dual-Band Wi-Fi 6 Access Point",
+    "category": "Accessories",
+    "subcategory": "Access Points",
+    "images": [
+      "/products/TP_LINK_AX3000_1.png",
+      "/products/TP_LINK_AX3000_2.png",
+      "/products/TP_LINK_AX3000_3.png"
+    ],
+    "brand": "TP-Link",
+    "brand logo": "/logos/TPLink.png",
+    "specs": {
+      "WiFi Standard": "Wi-Fi 6 (802.11ax)",
+      "Bands": "Dual-band 2.4GHz & 5GHz",
+      "Speed": "Up to 3000Mbps",
+      "Ports": "1x Gigabit Ethernet, PoE support",
+      "Features": [
+        "MU-MIMO",
+        "Seamless Roaming",
+        "High-Density Performance",
+        "VLAN Support"
+      ]
+    },
+    "date-added": "2025-03-06",
+    "tagline": "Enterprise-grade Wi-Fi 6 ceiling mount access point.",
+    "description": "The AX3000 access point offers high-speed Wi-Fi 6 coverage with seamless roaming and robust performance for business environments.",
+    "price": "K10,000",
+    "discounted price": "K9,500"
+  },
+  {
+    "name": "TP-LINK AX5400 Whole Home Mesh Wi-Fi 6 System",
+    "category": "Accessories",
+    "subcategory": "Access Points",
+    "images": [
+      "/products/TP_LINK_AX5400_1.png",
+      "/products/TP_LINK_AX5400_2.png",
+      "/products/TP_LINK_AX5400_3.png"
+    ],
+    "brand": "TP-Link",
+    "brand logo": "/logos/TPLink.png",
+    "specs": {
+      "WiFi Standard": "Wi-Fi 6 (802.11ax)",
+      "Bands": "Dual-band 2.4GHz & 5GHz",
+      "Speed": "Up to 5400Mbps",
+      "Coverage": "Up to 9,000 sq. ft.",
+      "Features": [
+        "AI-Driven Mesh",
+        "Parental Controls",
+        "Seamless Roaming",
+        "MU-MIMO",
+        "OFDMA"
+      ]
+    },
+    "date-added": "2025-03-06",
+    "tagline": "High-speed whole-home mesh coverage with AI optimization.",
+    "description": "The AX5400 mesh system provides ultra-fast Wi-Fi coverage with advanced features, making it perfect for smart homes and large spaces.",
+    "price": "K14,000",
+    "discounted price": "K13,500"
+  }
+]

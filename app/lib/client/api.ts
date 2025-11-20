@@ -1,161 +1,131 @@
-import clientAuth from './auth';
-
-const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
+// Client API for NestJS Backend
+const API_URL = process.env.NEXT_PUBLIC_ECOM_API_URL?.replace(/\/$/, '') || 'http://localhost:4000';
 
 class ClientApiClient {
   private baseURL: string;
 
   constructor() {
-    const baseUrl = STRAPI_URL.replace(/\/api\/?$/, '');
-    this.baseURL = `${baseUrl}/api`;
+    this.baseURL = API_URL;
   }
 
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const url = `${this.baseURL}${endpoint}`;
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      ...this.getHeaders(),
       ...(options.headers as Record<string, string> || {}),
     };
 
     const response = await fetch(url, {
       ...options,
       headers,
+      cache: 'no-store',
     });
 
     if (!response.ok) {
-      throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+      const errorText = await response.text();
+      let errorMessage = `API request failed: ${response.status} ${response.statusText}`;
+
+      try {
+        const errorJson = JSON.parse(errorText);
+        errorMessage = errorJson.message || errorJson.error?.message || errorMessage;
+      } catch {
+        if (errorText) {
+          errorMessage = errorText;
+        }
+      }
+
+      throw new Error(errorMessage);
     }
 
     return response.json();
   }
 
-  private getHeaders(): Record<string, string> {
-    return clientAuth.getAuthHeaders();
-  }
-
-  // Get client's orders
-  async getOrders(params?: {
-    pagination?: { page: number; pageSize: number };
-    populate?: string[];
-  }) {
-    const searchParams = new URLSearchParams();
-    
-    if (params?.pagination) {
-      searchParams.append('pagination[page]', params.pagination.page.toString());
-      searchParams.append('pagination[pageSize]', params.pagination.pageSize.toString());
-    }
-    
-    if (params?.populate) {
-      params.populate.forEach(field => {
-        searchParams.append('populate', field);
-      });
-    }
-
-    const queryString = searchParams.toString();
-    const endpoint = `/orders${queryString ? `?${queryString}` : ''}`;
-    
-    return this.request<{ data: any[]; meta: any }>(endpoint);
-  }
-
-  // Get single order
-  async getOrder(id: string) {
-    return this.request<{ data: any }>(`/orders/${id}?populate=*`);
-  }
-
-  // Get client profile
-  async getProfile() {
-    return this.request<{ data: any }>('/users/me');
-  }
-
-  // Update client profile
-  async updateProfile(data: any) {
-    return this.request('/users/me', {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    });
-  }
-
-  // Get client addresses
-  async getAddresses() {
-    return this.request<{ data: any[] }>('/addresses');
-  }
-
-  // Create address
-  async createAddress(data: any) {
-    return this.request('/addresses', {
-      method: 'POST',
-      body: JSON.stringify({ data }),
-    });
-  }
-
-  // Update address
-  async updateAddress(id: string, data: any) {
-    return this.request(`/addresses/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify({ data }),
-    });
-  }
-
-  // Delete address
-  async deleteAddress(id: string) {
-    return this.request(`/addresses/${id}`, {
-      method: 'DELETE',
-    });
-  }
-
-  // Products API - Public access (only published products)
+  // Products API - Public access (only active products)
   async getProducts(params?: {
     pagination?: { page: number; pageSize: number };
     filters?: Record<string, any>;
     sort?: string;
-    populate?: string[];
   }) {
     const searchParams = new URLSearchParams();
-    
+
     if (params?.pagination) {
-      searchParams.append('pagination[page]', params.pagination.page.toString());
-      searchParams.append('pagination[pageSize]', params.pagination.pageSize.toString());
+      searchParams.append('page', params.pagination.page.toString());
+      searchParams.append('pageSize', params.pagination.pageSize.toString());
     }
-    
+
     if (params?.filters) {
       Object.entries(params.filters).forEach(([key, value]) => {
         if (value !== undefined && value !== null && value !== '') {
-          searchParams.append(`filters[${key}][$eq]`, value.toString());
+          searchParams.append(key, value.toString());
         }
       });
     }
-    
+
     if (params?.sort) {
       searchParams.append('sort', params.sort);
     }
 
-        if (params?.populate) {
-          params.populate.forEach(field => {
-            searchParams.append('populate', field);
-          });
-        } else {
-          // Default populate everything - Strapi will populate all relations including nested ones
-          searchParams.append('populate', '*');
-        }
+    const queryString = searchParams.toString();
+    const endpoint = `/catalog/products${queryString ? `?${queryString}` : ''}`;
 
-        // Only fetch published products (default Strapi behavior, no publicationState=preview)
-        const queryString = searchParams.toString();
-        const endpoint = `/products${queryString ? `?${queryString}` : ''}`;
-        
-        return this.request<{ data: any[]; meta: any }>(endpoint);
-      }
+    return this.request<{ data: any[]; meta: any }>(endpoint);
+  }
 
-      async getProduct(slug: string) {
-        // Get product by slug with brand and logo populated
-        return this.request<{ data: any }>(`/products?filters[slug][$eq]=${encodeURIComponent(slug)}&populate[brand][populate][0]=logo&populate=images`);
-      }
+  async getProduct(slug: string) {
+    // Get product by slug
+    return this.request<{ data: any }>(`/catalog/products/${slug}`);
+  }
 
-      async getProductById(id: string | number) {
-        return this.request<{ data: any }>(`/products/${id}?populate[brand][populate][0]=logo&populate=images`);
-      }
+  async getProductById(id: string | number) {
+    return this.request<{ data: any }>(`/catalog/products/${id}`);
+  }
+
+  // Client orders - TODO: Implement in NestJS
+  async getOrders(params?: {
+    pagination?: { page: number; pageSize: number };
+    populate?: string[];
+  }) {
+    // TODO: Implement client orders endpoint
+    return { data: [], meta: { pagination: { total: 0 } } };
+  }
+
+  async getOrder(id: string) {
+    // TODO: Implement client order endpoint
+    throw new Error('Client orders not yet implemented');
+  }
+
+  // Client profile - TODO: Implement in NestJS
+  async getProfile() {
+    // TODO: Implement client profile endpoint
+    throw new Error('Client profile not yet implemented');
+  }
+
+  async updateProfile(data: any) {
+    // TODO: Implement client profile update
+    throw new Error('Client profile update not yet implemented');
+  }
+
+  // Client addresses - TODO: Implement in NestJS
+  async getAddresses() {
+    // TODO: Implement client addresses endpoint
+    return { data: [] };
+  }
+
+  async createAddress(data: any) {
+    // TODO: Implement client address creation
+    throw new Error('Client address creation not yet implemented');
+  }
+
+  async updateAddress(id: string, data: any) {
+    // TODO: Implement client address update
+    throw new Error('Client address update not yet implemented');
+  }
+
+  async deleteAddress(id: string) {
+    // TODO: Implement client address deletion
+    throw new Error('Client address deletion not yet implemented');
+  }
 }
 
 export const clientApi = new ClientApiClient();
 export default clientApi;
-

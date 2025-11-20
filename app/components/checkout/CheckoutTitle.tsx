@@ -5,8 +5,8 @@ interface CheckoutTitleProps {
 }
 
 const stepTitles: Record<number, string> = {
-  1: "Let's get your order ready!",
-  2: "Almost there! Just review your order",
+  1: "Let's review your order!",
+  2: "Almost there! Where should we deliver?",
   3: "Final step! Complete your payment",
 }
 

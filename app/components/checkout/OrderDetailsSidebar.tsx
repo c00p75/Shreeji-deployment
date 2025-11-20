@@ -25,7 +25,7 @@ export default function OrderDetailsSidebar() {
   const totalAmount = cart.total
 
   return (
-    <div className='rounded-lg border-t-4 border-blue-500 bg-white p-6 shadow-sm'>
+    <div className='rounded-lg border-t-4 border-[var(--shreeji-primary)] bg-white p-6 shadow-sm'>
       <h2 className='mb-4 text-xl font-semibold text-gray-900'>Order Details</h2>
 
       <div className='space-y-3 text-sm'>

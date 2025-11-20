@@ -89,16 +89,35 @@ export default function ProductManagement() {
             // Use enhanced image processing that prioritizes local images
             const images = processProductImages(productData);
 
+            // Extract brand name (handle both string and object)
+            const brand = typeof productData.brand === 'object' && productData.brand !== null
+              ? productData.brand.name || productData.brand
+              : productData.brand || '';
+
+            // Extract subcategory name (handle both string and object)
+            const subcategory = typeof productData.subcategory === 'object' && productData.subcategory !== null
+              ? productData.subcategory.name || productData.subcategory
+              : productData.subcategory || null;
+
+            // Ensure id is a number
+            const productId = typeof product.id === 'number' 
+              ? product.id 
+              : typeof product.id === 'string' 
+                ? parseInt(product.id, 10) 
+                : typeof productData.id === 'number'
+                  ? productData.id
+                  : parseInt(productData.id || '0', 10);
+
             return {
-              id: product.id || productData.id,
-              documentId: product.documentId || productData.documentId,
+              id: productId,
+              documentId: product.documentId || productData.documentId || productId.toString(),
               name: productData.name,
               slug: productData.slug,
-              category: productData.category,
-              subcategory: productData.subcategory,
-              brand: productData.brand,
-              price: productData.price,
-              discountedPrice: productData.discountedPrice,
+              category: productData.category || '',
+              subcategory: subcategory,
+              brand: brand,
+              price: productData.price || productData.sellingPrice || '0',
+              discountedPrice: productData.discountedPrice || null,
               tagline: productData.tagline,
               description: productData.description,
               specs: productData.specs,
@@ -118,7 +137,13 @@ export default function ProductManagement() {
             return null;
           }
         })
-        .filter((p): p is Product => p !== null) // Remove any failed transformations
+        .filter((p): p is Product => {
+          // Type guard: ensure p is not null and has required fields
+          return p !== null && 
+                 typeof p.id === 'number' && 
+                 typeof p.name === 'string' &&
+                 typeof p.brand === 'string';
+        }) // Remove any failed transformations
 
       console.log('Transformed products:', transformedProducts)
       console.log('Transformed products count:', transformedProducts.length)
@@ -186,9 +211,9 @@ export default function ProductManagement() {
     setFilteredProducts(filtered)
   }, [searchTerm, selectedCategory, selectedSubcategory, selectedBrand, products])
 
-  const categories = Array.from(new Set(products.map(p => p.category)))
+  const categories = Array.from(new Set(products.map(p => p.category).filter(Boolean)))
   const subcategories = Array.from(new Set(products.map(p => p.subcategory).filter(Boolean)))
-  const brands = Array.from(new Set(products.map(p => p.brand)))
+  const brands = Array.from(new Set(products.map(p => p.brand).filter(Boolean)))
 
   const handleDelete = (id: number) => {
     if (confirm('Are you sure you want to delete this product?')) {
@@ -386,8 +411,8 @@ export default function ProductManagement() {
               }}
             >
               <option value="">All Categories</option>
-              {categories.map(category => (
-                <option key={category} value={category}>{category}</option>
+              {categories.map((category, index) => (
+                <option key={`category-${category}-${index}`} value={category}>{category}</option>
               ))}
             </select>
 
@@ -401,8 +426,8 @@ export default function ProductManagement() {
               <option value="">All Subcategories</option>
               {subcategories
                 .filter(sub => !selectedCategory || products.some(p => p.category === selectedCategory && p.subcategory === sub))
-                .map(subcategory => (
-                  <option key={subcategory} value={subcategory}>{subcategory}</option>
+                .map((subcategory, index) => (
+                  <option key={`subcategory-${subcategory}-${index}`} value={subcategory}>{subcategory}</option>
                 ))}
             </select>
 
@@ -413,8 +438,8 @@ export default function ProductManagement() {
               onChange={(e) => setSelectedBrand(e.target.value)}
             >
               <option value="">All Brands</option>
-              {brands.map(brand => (
-                <option key={brand} value={brand}>{brand}</option>
+              {brands.map((brand, index) => (
+                <option key={`brand-${brand}-${index}`} value={brand}>{brand}</option>
               ))}
             </select>
 
@@ -454,7 +479,7 @@ export default function ProductManagement() {
         {viewMode === 'grid' ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} onDelete={handleDelete} onToggleActive={toggleActive} onEdit={handleEditProduct} onView={handleViewProduct} />
+              <ProductCard key={`product-${product.id}-${product.slug}`} product={product} onDelete={handleDelete} onToggleActive={toggleActive} onEdit={handleEditProduct} onView={handleViewProduct} />
             ))}
           </div>
         ) : (
@@ -600,7 +625,7 @@ function ProductTable({ products, onDelete, onToggleActive, onEdit, onView }: {
                 : { url: 'https://via.placeholder.com/50x50?text=No+Image', alt: product.name };
               
               return (
-                <tr key={product.id} className="hover:bg-gray-50">
+                <tr key={`product-row-${product.id}-${product.slug}`} className="hover:bg-gray-50">
                   <td className="table-cell">
                     <div className="flex items-center">
                       <img

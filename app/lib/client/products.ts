@@ -4,13 +4,13 @@
 import clientApi from './api';
 import { processProductImages } from '@/app/lib/admin/image-mapping';
 
-// Transform Strapi product format to match local productsData.js format
-function transformProduct(strapiProduct: any): any {
-  if (!strapiProduct) return null;
+// Transform NestJS product format to match local productsData.js format
+function transformProduct(nestProduct: any): any {
+  if (!nestProduct) return null;
 
-  // Handle Strapi v4+ structure where attributes are nested
-  const productData = strapiProduct.attributes || strapiProduct;
-  const productId = strapiProduct.id || productData.id;
+  // NestJS returns product directly (not wrapped in attributes)
+  const productData = nestProduct;
+  const productId = productData.id;
 
   // Process images using existing utility (handles local mapping and Strapi images)
   const processedImages = processProductImages(productData);
@@ -43,9 +43,11 @@ function transformProduct(strapiProduct: any): any {
         .filter((url): url is string => url !== null && url !== undefined) // Remove any null/undefined values
     : []; // Fallback to empty array if no images
 
-  // Format date-added from createdAt
-  const dateAdded = productData.createdAt 
-    ? new Date(productData.createdAt).toISOString().split('T')[0] // YYYY-MM-DD format
+  // Format date-added from dateAdded or createdAt
+  const dateAdded = productData.dateAdded 
+    ? new Date(productData.dateAdded).toISOString().split('T')[0] // YYYY-MM-DD format
+    : productData.createdAt
+    ? new Date(productData.createdAt).toISOString().split('T')[0]
     : new Date().toISOString().split('T')[0];
 
       // Extract brand information from relation
@@ -53,56 +55,33 @@ function transformProduct(strapiProduct: any): any {
       let brandLogo: string | null = null;
       
       if (productData.brand) {
-        // Handle Strapi v4+ structure where brand is a relation
-        const brandData = productData.brand.data || productData.brand;
-        const brandAttributes = brandData?.attributes || brandData || {};
-        
-        brandName = brandAttributes.name || brandData?.name || '';
-        
-        // Get logo from media or logoUrl
-        if (brandAttributes.logo?.data) {
-          const logoData = brandAttributes.logo.data.attributes || brandAttributes.logo.data;
-          const logoUrl = logoData.url || logoData.formats?.thumbnail?.url || null;
-          // Ensure absolute URL for Strapi media
-          if (logoUrl && !logoUrl.startsWith('http') && !logoUrl.startsWith('//')) {
-            const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
-            const baseUrl = strapiUrl.replace(/\/api\/?$/, '');
-            brandLogo = baseUrl + (logoUrl.startsWith('/') ? logoUrl : '/' + logoUrl);
-          } else {
-            brandLogo = logoUrl;
-          }
-        } else if (brandAttributes.logoUrl) {
-          brandLogo = brandAttributes.logoUrl;
-        }
-        
-        // If logo is a string URL directly
-        if (!brandLogo && typeof brandAttributes.logo === 'string') {
-          brandLogo = brandAttributes.logo;
-        }
+        // NestJS returns brand as object directly
+        brandName = productData.brand.name || '';
+        brandLogo = productData.brand.logoUrl || null;
       }
 
       return {
         id: productId,
-        documentId: strapiProduct.documentId || productData.documentId,
+        documentId: productData.documentId || String(productId),
         name: productData.name || '',
         category: productData.category || '',
-        subcategory: productData.subcategory || '',
+        subcategory: productData.subcategory?.name || '',
         images: imageUrls, // Array of image URLs for compatibility
         brand: brandName,
         'brand logo': brandLogo,
-    price: productData.price || '',
-    'discounted price': productData.discountedPrice || '',
-    tagline: productData.tagline || '',
-    description: productData.description || '',
-    specs: productData.specs || {},
-    'date-added': dateAdded,
-    slug: productData.slug || '',
-    isActive: productData.isActive !== false,
-    SKU: productData.SKU || productData.sku || '',
-    stockQuantity: productData.stockQuantity || 0,
-    // Keep Strapi images array format for components that need it
-    strapiImages: processedImages,
-  };
+        price: String(productData.price || productData.sellingPrice || ''),
+        'discounted price': productData.discountedPrice ? String(productData.discountedPrice) : '',
+        tagline: productData.tagline || '',
+        description: productData.description || '',
+        specs: productData.specs || {},
+        'date-added': dateAdded,
+        slug: productData.slug || '',
+        isActive: productData.isActive !== false,
+        SKU: productData.sku || '',
+        stockQuantity: productData.stockQuantity || 0,
+        // Keep images array format for components that need it
+        strapiImages: processedImages,
+      };
 }
 
 // Transform array of Strapi products
@@ -136,7 +115,7 @@ async function getAllProducts(forceRefresh = false): Promise<any[]> {
     while (hasMore) {
       const response = await clientApi.getProducts({
         pagination: { page, pageSize },
-        sort: 'createdAt:desc',
+        sort: 'dateAdded:desc',
       });
 
       const products = response.data || [];
@@ -238,8 +217,9 @@ export async function getProductByName(name: string): Promise<any | null> {
 export async function getProductBySlug(slug: string): Promise<any | null> {
   try {
     const response = await clientApi.getProduct(slug);
-    if (response.data && response.data.length > 0) {
-      return transformProduct(response.data[0]);
+    // NestJS returns product directly, not wrapped in data array
+    if (response) {
+      return transformProduct(response);
     }
     return null;
   } catch (error) {

@@ -7,9 +7,11 @@ export interface ImageMapping {
   mappings: Record<string, string[]>;
 }
 
-// Convert @/public path to /public path for Next.js
+// Convert @/public path to proper static asset path for Next.js (removes /public prefix)
 function convertImagePath(path: string): string {
-  return path.replace('@/public', '/public');
+  if (!path) return '';
+  // Replace "@/public" prefix with "" so resulting path starts with "/products/..."
+  return path.replace(/^@\/public/, '');
 }
 
 // Get images for a product by name

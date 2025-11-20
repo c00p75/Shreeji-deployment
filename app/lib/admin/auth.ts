@@ -1,106 +1,81 @@
-// Strapi Authentication utilities
-import axios from 'axios';
+// NestJS Backend Authentication utilities
+const API_URL = process.env.NEXT_PUBLIC_ECOM_API_URL?.replace(/\/$/, '') || 'http://localhost:4000';
 
-const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337/api';
-const STRAPI_ADMIN_URL = process.env.NEXT_PUBLIC_STRAPI_ADMIN_URL || 'http://localhost:1337';
-
-export interface StrapiUser {
+export interface AdminUser {
   id: number;
-  username: string;
   email: string;
-  confirmed: boolean;
-  blocked: boolean;
-  createdAt: string;
-  updatedAt: string;
+  firstName: string;
+  lastName: string;
+  role: string;
 }
 
 export interface AuthResponse {
-  jwt: string;
-  user: StrapiUser;
+  access_token: string;
+  user: AdminUser;
 }
 
 export interface LoginCredentials {
-  identifier: string; // email or username
+  email: string;
   password: string;
 }
 
-class StrapiAuth {
+class AdminAuth {
   private baseURL: string;
 
   constructor() {
-    this.baseURL = STRAPI_URL;
+    this.baseURL = API_URL;
   }
 
-  // Login with email/username and password using Admin API
+  // Login with email and password
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
-      // Admin API uses '/admin/login' endpoint and 'email' field
-      // The identifier from the form can be either email or username
-      const response = await axios.post(`${STRAPI_ADMIN_URL}/admin/login`, {
-        email: credentials.identifier, // Admin API uses email field
-        password: credentials.password,
+      const response = await fetch(`${this.baseURL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(credentials),
       });
 
-      // Admin API typically returns: { data: { token: string, user: {...} } }
-      // Handle different possible response structures
-      const responseData = response.data;
-      const jwt = responseData?.data?.token || responseData?.token || responseData?.jwt || responseData?.data?.jwt;
-      const user = responseData?.data?.user || responseData?.user || responseData?.data;
-
-      if (!jwt || !user) {
-        throw new Error('Invalid response structure from Admin API');
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({ message: 'Login failed' }));
+        throw new Error(error.message || 'Login failed');
       }
 
-      // Store JWT in localStorage with admin-specific key
+      const data = await response.json();
+
+      // Store JWT in localStorage
       if (typeof window !== 'undefined') {
-        localStorage.setItem('strapi_admin_jwt', jwt);
-        localStorage.setItem('strapi_admin_user', JSON.stringify(user));
+        localStorage.setItem('admin_jwt', data.access_token);
+        localStorage.setItem('admin_user', JSON.stringify(data.user));
       }
 
-      return { jwt, user };
+      return data;
     } catch (error: any) {
       console.error('Login error:', error);
-      throw new Error(error.response?.data?.error?.message || error.response?.data?.message || error.message || 'Login failed');
+      throw new Error(error.message || 'Login failed');
     }
   }
 
-  // Register a new user (admin only)
-  async register(userData: {
-    username: string;
-    email: string;
-    password: string;
-  }): Promise<AuthResponse> {
-    try {
-      const response = await axios.post(`${STRAPI_ADMIN_URL}/api/auth/local/register`, userData);
-      const { jwt, user } = response.data;
-
-      // Store JWT in localStorage with admin-specific key
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('strapi_admin_jwt', jwt);
-        localStorage.setItem('strapi_admin_user', JSON.stringify(user));
-      }
-
-      return { jwt, user };
-    } catch (error: any) {
-      console.error('Registration error:', error);
-      throw new Error(error.response?.data?.error?.message || 'Registration failed');
-    }
-  }
-
-  // Get current user from stored JWT using Admin API
-  async getCurrentUser(): Promise<StrapiUser | null> {
+  // Get current user from stored JWT
+  async getCurrentUser(): Promise<AdminUser | null> {
     try {
       const jwt = this.getStoredToken();
       if (!jwt) return null;
 
-      const response = await axios.get(`${STRAPI_ADMIN_URL}/admin/users/me`, {
+      const response = await fetch(`${this.baseURL}/auth/me`, {
         headers: {
           Authorization: `Bearer ${jwt}`,
         },
       });
 
-      // Admin API may return data in { data: { ... } } format
-      return response.data.data || response.data;
+      if (!response.ok) {
+        this.logout(); // Clear invalid token
+        return null;
+      }
+
+      const user = await response.json();
+      return user;
     } catch (error) {
       console.error('Get current user error:', error);
       this.logout(); // Clear invalid token
@@ -108,19 +83,19 @@ class StrapiAuth {
     }
   }
 
-  // Validate stored token using Admin API
+  // Validate stored token
   async validateToken(): Promise<boolean> {
     try {
       const jwt = this.getStoredToken();
       if (!jwt) return false;
 
-      const response = await axios.get(`${STRAPI_ADMIN_URL}/admin/users/me`, {
+      const response = await fetch(`${this.baseURL}/auth/me`, {
         headers: {
           Authorization: `Bearer ${jwt}`,
         },
       });
 
-      return response.status === 200;
+      return response.ok;
     } catch (error) {
       return false;
     }
@@ -129,21 +104,21 @@ class StrapiAuth {
   // Get stored JWT token
   getStoredToken(): string | null {
     if (typeof window === 'undefined') return null;
-    return localStorage.getItem('strapi_admin_jwt');
+    return localStorage.getItem('admin_jwt');
   }
 
   // Get stored user data
-  getStoredUser(): StrapiUser | null {
+  getStoredUser(): AdminUser | null {
     if (typeof window === 'undefined') return null;
-    const userStr = localStorage.getItem('strapi_admin_user');
+    const userStr = localStorage.getItem('admin_user');
     return userStr ? JSON.parse(userStr) : null;
   }
 
   // Logout user
   logout(): void {
     if (typeof window !== 'undefined') {
-      localStorage.removeItem('strapi_admin_jwt');
-      localStorage.removeItem('strapi_admin_user');
+      localStorage.removeItem('admin_jwt');
+      localStorage.removeItem('admin_user');
     }
   }
 
@@ -160,7 +135,6 @@ class StrapiAuth {
 }
 
 // Create singleton instance
-const strapiAuth = new StrapiAuth();
+const adminAuth = new AdminAuth();
 
-export default strapiAuth;
-
+export default adminAuth;

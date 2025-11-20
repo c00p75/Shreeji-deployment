@@ -79,12 +79,12 @@ export interface CheckoutResponse {
   };
 }
 
-const API_URL = process.env.NEXT_PUBLIC_ECOM_API_URL?.replace(/\/$/, '') || 'http://localhost:3001';
+const API_URL = process.env.NEXT_PUBLIC_ECOM_API_URL?.replace(/\/$/, '') || 'http://localhost:4000';
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const url = `${API_URL}${path}`
   
-  if (!API_URL || API_URL === 'http://localhost:3001') {
+  if (!API_URL || API_URL === 'http://localhost:4000') {
     console.warn('E-commerce API URL not configured. Using default:', API_URL)
   }
 

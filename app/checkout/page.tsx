@@ -13,10 +13,11 @@ import PickupLocationSection from '@/app/components/checkout/PickupLocationSecti
 import OrderSummarySection from '@/app/components/checkout/OrderSummarySection'
 import PaymentDetailsSection from '@/app/components/checkout/PaymentDetailsSection'
 import OrderDetailsSidebar from '@/app/components/checkout/OrderDetailsSidebar'
+import { ShoppingBag } from 'lucide-react'
 
 const CHECKOUT_STEPS = [
-  { label: 'Fulfillment & Address', number: 1 },
-  { label: 'Review', number: 2 },
+  { label: 'Review', number: 1 },
+  { label: 'Fulfillment & Address', number: 2 },
   { label: 'Payment', number: 3 },
 ]
 
@@ -39,14 +40,14 @@ export default function CheckoutPage() {
 
     // Validate current step before proceeding
     if (currentStep === 1) {
-      // Step 1: Fulfillment & Address - validate if delivery
+      // Step 1: Review - proceed to fulfillment & address
+      setCurrentStep(2)
+    } else if (currentStep === 2) {
+      // Step 2: Fulfillment & Address - validate if delivery
       if (fulfillmentType === 'delivery' && !selectedAddressId) {
         setFormError('Please select a delivery address.')
         return
       }
-      setCurrentStep(2)
-    } else if (currentStep === 2) {
-      // Step 2: Review - proceed to payment
       setCurrentStep(3)
     } else if (currentStep === 3) {
       // Step 3: Payment - process checkout
@@ -112,9 +113,9 @@ export default function CheckoutPage() {
   const canProceedToNext = () => {
     switch (currentStep) {
       case 1:
-        return fulfillmentType === 'pickup' || selectedAddressId !== null
-      case 2:
         return true // Review always valid
+      case 2:
+        return fulfillmentType === 'pickup' || selectedAddressId !== null
       case 3:
         return paymentMethod !== ''
       default:
@@ -145,8 +146,22 @@ export default function CheckoutPage() {
         <div className='grid grid-cols-1 gap-8 lg:grid-cols-[1fr_400px]'>
           {/* Left Column - Main Content */}
           <div className='space-y-8'>
-            {/* Step 1: Fulfillment & Address */}
+            {/* Step 1: Review Order */}
             {currentStep === 1 && (
+              <div className='rounded-2xl bg-white p-6 shadow-sm'>
+                <div className='mb-6'>
+                  <div className='flex items-center gap-3'>
+                    <ShoppingBag className='h-5 w-5 text-[#544829]' />
+                    <h2 className='text-xl font-semibold text-gray-900'>Order Summary</h2>
+                  </div>
+                  <p className='mt-1 text-sm text-gray-500'>Review your order details before proceeding</p>
+                </div>
+                <OrderSummarySection />
+              </div>
+            )}
+
+            {/* Step 2: Fulfillment & Address */}
+            {currentStep === 2 && (
               <div className='space-y-6 rounded-2xl bg-white p-6 shadow-sm'>
                 <DeliveryPickupToggle
                   fulfillmentType={fulfillmentType}
@@ -161,32 +176,6 @@ export default function CheckoutPage() {
                 ) : (
                   <PickupLocationSection />
                 )}
-            </div>
-          )}
-
-            {/* Step 2: Review Order */}
-            {currentStep === 2 && (
-              <div className='rounded-2xl bg-white p-6 shadow-sm'>
-                <div className='mb-6'>
-                  <h2 className='text-xl font-semibold text-gray-900'>Order Summary</h2>
-                  <p className='mt-1 text-sm text-gray-500'>Review your order details before proceeding to payment</p>
-                      </div>
-                <OrderSummarySection />
-                <div className='mt-6 rounded-lg border border-gray-200 bg-gray-50 p-4'>
-                  <h3 className='mb-3 font-semibold text-gray-900'>Fulfillment Details</h3>
-                  <div className='space-y-2 text-sm'>
-                    <div className='flex justify-between'>
-                      <span className='text-gray-600'>Method:</span>
-                      <span className='font-medium text-gray-900'>{fulfillmentType === 'delivery' ? 'Delivery' : 'Store Pickup'}</span>
-                    </div>
-                    {fulfillmentType === 'delivery' && selectedAddressId && (
-                      <div className='flex justify-between'>
-                        <span className='text-gray-600'>Address:</span>
-                        <span className='font-medium text-gray-900'>Selected</span>
-                </div>
-              )}
-            </div>
-                </div>
               </div>
             )}
 

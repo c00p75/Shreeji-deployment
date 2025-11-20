@@ -110,7 +110,7 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
     documentId?: string;
     name: string;
     slug?: string;
-    category: number | Category;
+    category: number | Category | string; // Can be category name (string) or ID (number) or Category object
   }
 
   // Brands fetched from API with logo support
@@ -216,17 +216,16 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
     if (value === '__add_new__') {
       setShowAddCategoryModal(true);
     } else if (value.startsWith('__edit__')) {
-      const categoryId = value.replace('__edit__', '');
-      const category = categories.find(c => c.id.toString() === categoryId);
+      const categoryName = value.replace('__edit__', '');
+      const category = categories.find(c => c.name === categoryName || c.id === categoryName);
       if (category) {
         setEditingCategory(category);
         setNewCategoryName(category.name);
         setShowEditCategoryModal(true);
       }
     } else {
-      // Convert to number if it's a numeric string (category ID)
-      const categoryId = value && !isNaN(Number(value)) ? Number(value) : value;
-      handleInputChange('category', categoryId);
+      // Categories are strings, so just use the value directly
+      handleInputChange('category', value);
       // Clear subcategory when category changes
       handleInputChange('subcategory', '');
     }
@@ -241,7 +240,7 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
     }
   };
 
-  // Add new category
+  // Add new category (categories are just strings, not separate entities)
   const handleAddCategory = async () => {
     const trimmedName = newCategoryName.trim();
     
@@ -257,41 +256,31 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
       return;
     }
 
-    try {
-      const response = await api.createCategory({ name: trimmedName }) as { data: any };
-      const createdCategory = response.data;
-      const categoryDataAttr = createdCategory.attributes || createdCategory;
+    // Categories are just strings, so we don't need to create them via API
+    // Just add to the local list and select it
+    const newCategory: Category = {
+      id: trimmedName, // Use name as ID since categories are strings
+      documentId: trimmedName,
+      name: trimmedName,
+      slug: trimmedName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+    };
 
-      const newCategory: Category = {
-        id: createdCategory.id || createdCategory.documentId,
-        documentId: createdCategory.documentId,
-        name: categoryDataAttr.name || trimmedName,
-        slug: categoryDataAttr.slug || null
-      };
-
-      setCategories(prev => [...prev, newCategory]);
-      
-      // Select the new category (use ID)
-      handleInputChange('category', newCategory.id.toString());
-      
-      // Reset and close modal
-      setNewCategoryName('');
-      setShowAddCategoryModal(false);
-      setErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors.newCategory;
-        return newErrors;
-      });
-    } catch (error: any) {
-      console.error('Error creating category:', error);
-      setErrors(prev => ({ 
-        ...prev, 
-        newCategory: error.message || 'Failed to create category. Please try again.' 
-      }));
-    }
+    setCategories(prev => [...prev, newCategory]);
+    
+    // Select the new category (use name as value)
+    handleInputChange('category', trimmedName);
+    
+    // Reset and close modal
+    setNewCategoryName('');
+    setShowAddCategoryModal(false);
+    setErrors(prev => {
+      const newErrors = { ...prev };
+      delete newErrors.newCategory;
+      return newErrors;
+    });
   };
 
-  // Update category
+  // Update category (categories are just strings, so we update products using this category)
   const handleUpdateCategory = async () => {
     if (!editingCategory) return;
     
@@ -308,68 +297,53 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
       return;
     }
 
-    try {
-      const response = await api.updateCategory(editingCategory.id, { name: trimmedName }) as { data: any };
-      const updatedCategory = response.data;
-      const categoryDataAttr = updatedCategory.attributes || updatedCategory;
+    // Categories are just strings, so we just update the local list
+    // Note: This won't update existing products - they would need to be updated individually
+    const updated: Category = {
+      id: trimmedName,
+      documentId: trimmedName,
+      name: trimmedName,
+      slug: trimmedName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+    };
 
-      const updated: Category = {
-        id: updatedCategory.id || updatedCategory.documentId,
-        documentId: updatedCategory.documentId,
-        name: categoryDataAttr.name || trimmedName,
-        slug: categoryDataAttr.slug || null
-      };
-
-      setCategories(prev => prev.map(cat => cat.id === editingCategory.id ? updated : cat));
-      
-      // Update formData if this category is selected
-      if (formData.category === editingCategory.id || formData.category === editingCategory.id.toString()) {
-        handleInputChange('category', updated.id.toString());
-      }
-      
-      // Reset and close modal
-      setNewCategoryName('');
-      setEditingCategory(null);
-      setShowEditCategoryModal(false);
-      setErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors.newCategory;
-        return newErrors;
-      });
-    } catch (error: any) {
-      console.error('Error updating category:', error);
-      setErrors(prev => ({ 
-        ...prev, 
-        newCategory: error.message || 'Failed to update category. Please try again.' 
-      }));
+    setCategories(prev => prev.map(cat => cat.id === editingCategory.id ? updated : cat));
+    
+    // Update formData if this category is selected
+    if (formData.category === editingCategory.id || formData.category === editingCategory.id.toString() || formData.category === editingCategory.name) {
+      handleInputChange('category', trimmedName);
     }
+    
+    // Reset and close modal
+    setNewCategoryName('');
+    setEditingCategory(null);
+    setShowEditCategoryModal(false);
+    setErrors(prev => {
+      const newErrors = { ...prev };
+      delete newErrors.newCategory;
+      return newErrors;
+    });
   };
 
-  // Delete category
+  // Delete category (categories are just strings, so we just remove from local list)
   const handleDeleteCategory = async (categoryId: number | string) => {
-    if (!confirm('Are you sure you want to delete this category? This action cannot be undone.')) {
+    if (!confirm('Are you sure you want to remove this category from the list? This will not delete products using this category.')) {
       return;
     }
 
-    try {
-      await api.deleteCategory(categoryId);
-      setCategories(prev => prev.filter(cat => cat.id !== categoryId));
-      
-      // Clear category selection if deleted category was selected
-      if (formData.category === categoryId || formData.category === categoryId.toString()) {
-        handleInputChange('category', '');
-        handleInputChange('subcategory', '');
-      }
-      
-      // Close modal if editing
-      if (editingCategory && editingCategory.id === categoryId) {
-        setShowEditCategoryModal(false);
-        setEditingCategory(null);
-        setNewCategoryName('');
-      }
-    } catch (error: any) {
-      console.error('Error deleting category:', error);
-      alert(error.message || 'Failed to delete category. It may be in use by subcategories.');
+    // Categories are just strings, so we just remove from the local list
+    setCategories(prev => prev.filter(cat => cat.id !== categoryId && cat.name !== categoryId));
+    
+    // Clear category selection if deleted category was selected
+    if (formData.category === categoryId || formData.category === categoryId.toString()) {
+      handleInputChange('category', '');
+      handleInputChange('subcategory', '');
+    }
+    
+    // Close modal if editing
+    if (editingCategory && (editingCategory.id === categoryId || editingCategory.name === categoryId)) {
+      setShowEditCategoryModal(false);
+      setEditingCategory(null);
+      setNewCategoryName('');
     }
   };
 
@@ -493,45 +467,33 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
       return;
     }
 
-    const categoryId = formData.category;
-    if (!categoryId) {
+    const categoryName = formData.category;
+    if (!categoryName) {
       setErrors(prev => ({ ...prev, newSubcategory: 'Please select a category first' }));
       return;
     }
 
-    // Extract category ID
-    const categoryIdNum = typeof categoryId === 'string' && !isNaN(Number(categoryId))
-      ? Number(categoryId)
-      : categoryId;
-
-    if (typeof categoryIdNum !== 'number') {
-      setErrors(prev => ({ ...prev, newSubcategory: 'Invalid category selected' }));
-      return;
-    }
-
-    // Check for duplicates (case-insensitive, within same category)
+    // Check for duplicates (case-insensitive)
     if (subcategories.some(sub => 
-      sub.name.toLowerCase() === trimmedName.toLowerCase() && 
-      (typeof sub.category === 'number' ? sub.category : (sub.category as Category).id) === categoryIdNum
+      sub.name.toLowerCase() === trimmedName.toLowerCase()
     )) {
-      setErrors(prev => ({ ...prev, newSubcategory: 'Subcategory already exists in this category' }));
+      setErrors(prev => ({ ...prev, newSubcategory: 'Subcategory already exists' }));
       return;
     }
 
     try {
+      // Backend doesn't require category - subcategories are standalone entities
       const response = await api.createSubcategory({ 
-        name: trimmedName,
-        category: categoryIdNum
+        name: trimmedName
       }) as { data: any };
       const createdSubcategory = response.data;
-      const subcategoryDataAttr = createdSubcategory.attributes || createdSubcategory;
 
       const newSubcategory: Subcategory = {
-        id: createdSubcategory.id || createdSubcategory.documentId,
-        documentId: createdSubcategory.documentId,
-        name: subcategoryDataAttr.name || trimmedName,
-        slug: subcategoryDataAttr.slug || null,
-        category: categoryIdNum
+        id: createdSubcategory.id,
+        documentId: createdSubcategory.id?.toString(),
+        name: createdSubcategory.name || trimmedName,
+        slug: createdSubcategory.urlPath || createdSubcategory.slug || null,
+        category: categoryName // Store category name for reference (not used by backend)
       };
 
       setSubcategories(prev => [...prev, newSubcategory]);
@@ -567,40 +529,30 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
       return;
     }
 
-    const categoryId = formData.category;
-    const categoryIdNum = typeof categoryId === 'string' && !isNaN(Number(categoryId))
-      ? Number(categoryId)
-      : categoryId;
-
-    if (typeof categoryIdNum !== 'number') {
-      setErrors(prev => ({ ...prev, newSubcategory: 'Invalid category selected' }));
-      return;
-    }
+    const categoryName = formData.category;
 
     // Check for duplicates (excluding current subcategory)
     if (subcategories.some(sub => 
       sub.id !== editingSubcategory.id &&
-      sub.name.toLowerCase() === trimmedName.toLowerCase() &&
-      (typeof sub.category === 'number' ? sub.category : (sub.category as Category).id) === categoryIdNum
+      sub.name.toLowerCase() === trimmedName.toLowerCase()
     )) {
-      setErrors(prev => ({ ...prev, newSubcategory: 'Subcategory name already exists in this category' }));
+      setErrors(prev => ({ ...prev, newSubcategory: 'Subcategory name already exists' }));
       return;
     }
 
     try {
+      // Backend doesn't require category - subcategories are standalone entities
       const response = await api.updateSubcategory(editingSubcategory.id, { 
-        name: trimmedName,
-        category: categoryIdNum
+        name: trimmedName
       }) as { data: any };
       const updatedSubcategory = response.data;
-      const subcategoryDataAttr = updatedSubcategory.attributes || updatedSubcategory;
 
       const updated: Subcategory = {
-        id: updatedSubcategory.id || updatedSubcategory.documentId,
-        documentId: updatedSubcategory.documentId,
-        name: subcategoryDataAttr.name || trimmedName,
-        slug: subcategoryDataAttr.slug || null,
-        category: categoryIdNum
+        id: updatedSubcategory.id,
+        documentId: updatedSubcategory.id?.toString(),
+        name: updatedSubcategory.name || trimmedName,
+        slug: updatedSubcategory.urlPath || updatedSubcategory.slug || null,
+        category: categoryName || editingSubcategory.category // Keep category name for reference
       };
 
       setSubcategories(prev => prev.map(sub => sub.id === editingSubcategory.id ? updated : sub));
@@ -768,11 +720,10 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
     setUploadingImages(true);
     try {
       // Create a wrapper to track progress during sequential uploads
-      // The api.uploadImagesToImghippo handles sequential uploads with retry logic
-      const uploadedImages: Array<{ url: string; view_url: string; name: string }> = [];
+      const uploadedImages: Array<{ id: number; url: string; name: string }> = [];
       
       // Track progress by intercepting individual uploads
-      // Since uploadImagesToImghippo is sequential, we'll track manually
+      // Upload sequentially to show progress
       for (let i = 0; i < imageFiles.length; i++) {
         setUploadProgress({ 
           current: i + 1, 
@@ -781,15 +732,15 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
         });
         
         // Upload one at a time to show progress
-        const result = await api.uploadImageToImghippo(imageFiles[i]);
+        const result = await api.uploadImage(imageFiles[i]);
         uploadedImages.push(result);
       }
       
       setUploadProgress(null);
       
-      // Format images for product using view_url (CDN link for better performance)
+      // Format images for product
       const formattedImages = uploadedImages.map((uploaded, index) => ({
-        url: uploaded.view_url, // Use view_url as recommended (direct CDN link)
+        url: uploaded.url, // Use url from upload response
         alt: formData.name || `Product image ${index + 1}`,
         isMain: index === 0 // First image is main
       }));
@@ -962,21 +913,36 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
     }
   }, [isOpen]);
 
-  // Fetch categories from API on component mount
+  // Fetch categories by extracting unique categories from existing products
   useEffect(() => {
     const fetchCategories = async () => {
       setLoadingCategories(true);
       try {
-        const response = await api.getCategories({ populate: [] });
-        const categoriesData = response.data.map((category: any) => {
-          const categoryData = category.attributes || category;
-          return {
-            id: category.id || category.documentId,
-            documentId: category.documentId,
-            name: categoryData.name || '',
-            slug: categoryData.slug || null
-          };
+        // Fetch products to extract unique categories
+        const response = await api.getProducts({ 
+          pagination: { page: 1, pageSize: 1000 } // Get enough products to extract all categories
         });
+        
+        // Extract unique categories from products
+        const uniqueCategories = new Set<string>();
+        const productsArray = response.data || [];
+        
+        productsArray.forEach((product: any) => {
+          const productData = product.attributes || product;
+          const category = productData.category;
+          if (category && typeof category === 'string' && category.trim()) {
+            uniqueCategories.add(category.trim());
+          }
+        });
+        
+        // Convert Set to array of Category objects
+        const categoriesData = Array.from(uniqueCategories).map((categoryName, index) => ({
+          id: categoryName, // Use category name as ID since categories are strings
+          documentId: categoryName,
+          name: categoryName,
+          slug: categoryName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+        }));
+        
         setCategories(categoriesData);
       } catch (error) {
         console.error('Error fetching categories:', error);
@@ -992,38 +958,69 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
   }, [isOpen]);
 
   // Fetch subcategories when category changes
+  // Since subcategories aren't directly linked to categories, we extract them from products
   useEffect(() => {
     const fetchSubcategories = async () => {
-      const categoryId = formData.category;
+      const categoryName = formData.category;
       
-      // If category is a string (legacy) or empty, don't fetch
-      if (!categoryId || typeof categoryId === 'string') {
+      // If category is empty or not a string, don't fetch
+      if (!categoryName || typeof categoryName !== 'string') {
         setSubcategories([]);
         return;
       }
 
-      // Extract category ID if it's a number string
-      const categoryIdNum = typeof categoryId === 'string' && !isNaN(Number(categoryId)) 
-        ? Number(categoryId) 
-        : categoryId;
-
       setLoadingSubcategories(true);
       try {
-        const response = await api.getSubcategories({ 
-          category: typeof categoryIdNum === 'number' ? categoryIdNum : undefined,
-          populate: ['category']
+        // Fetch all subcategories from backend
+        const subcategoriesResponse = await api.getSubcategories();
+        const allSubcategories = subcategoriesResponse.data || [];
+        
+        // Fetch products with the selected category to find which subcategories are used
+        const productsResponse = await api.getProducts({
+          pagination: { page: 1, pageSize: 1000 },
+          filters: { category: categoryName }
         });
-        const subcategoriesData = response.data.map((subcategory: any) => {
-          const subcategoryData = subcategory.attributes || subcategory;
-          return {
-            id: subcategory.id || subcategory.documentId,
-            documentId: subcategory.documentId,
-            name: subcategoryData.name || '',
-            slug: subcategoryData.slug || null,
-            category: subcategoryData.category?.data?.id || subcategoryData.category?.id || subcategoryData.category
-          };
+        
+        const productsArray = productsResponse.data || [];
+        
+        // Extract unique subcategory IDs used by products in this category
+        const usedSubcategoryIds = new Set<number>();
+        productsArray.forEach((product: any) => {
+          const productData = product.attributes || product;
+          // Handle both object and ID formats
+          if (productData.subcategory) {
+            if (typeof productData.subcategory === 'object' && productData.subcategory.id) {
+              usedSubcategoryIds.add(productData.subcategory.id);
+            } else if (typeof productData.subcategory === 'number') {
+              usedSubcategoryIds.add(productData.subcategory);
+            } else if (typeof productData.subcategoryId === 'number') {
+              usedSubcategoryIds.add(productData.subcategoryId);
+            }
+          } else if (productData.subcategoryId) {
+            usedSubcategoryIds.add(productData.subcategoryId);
+          }
         });
-        setSubcategories(subcategoriesData);
+        
+        // Filter subcategories to only those used by products in this category
+        // Also include all subcategories if no filtering is needed (for flexibility)
+        const filteredSubcategories = allSubcategories
+          .filter((subcategory: any) => {
+            const subcategoryId = subcategory.id || subcategory.documentId;
+            // If we have products with subcategories, only show those
+            // Otherwise show all subcategories
+            return usedSubcategoryIds.size === 0 || usedSubcategoryIds.has(subcategoryId);
+          })
+          .map((subcategory: any) => {
+            return {
+              id: subcategory.id,
+              documentId: subcategory.id?.toString(),
+              name: subcategory.name || '',
+              slug: subcategory.urlPath || subcategory.slug || null,
+              category: categoryName // Store the category name for reference
+            };
+          });
+        
+        setSubcategories(filteredSubcategories);
       } catch (error) {
         console.error('Error fetching subcategories:', error);
         setSubcategories([]);
@@ -1239,15 +1236,15 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
                           className={`w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 4 5%22><path fill=%22%23666%22 d=%22M2 0L0 2h4zm0 5L0 3h4z%22/></svg>')] bg-no-repeat bg-right bg-[length:12px] pr-10 ${errors.category ? 'border-red-500' : ''}`}
                     >
                       <option value="">Select category</option>
-                      {categories.map(category => (
-                        <option key={category.id} value={category.id.toString()}>{category.name}</option>
+                      {categories.map((category, index) => (
+                        <option key={`category-${category.id}-${index}`} value={category.name}>{category.name}</option>
                       ))}
                       <option value="__add_new__" className="text-primary-600 font-medium">+ Add new category</option>
                       {categories.length > 0 && (
                         <>
                           <option disabled>──────────</option>
-                          {categories.map(category => (
-                            <option key={`edit-${category.id}`} value={`__edit__${category.id}`} className="text-gray-600">✏️ Edit: {category.name}</option>
+                          {categories.map((category, index) => (
+                            <option key={`edit-${category.id}-${index}`} value={`__edit__${category.name}`} className="text-gray-600">✏️ Edit: {category.name}</option>
                           ))}
                         </>
                       )}
@@ -1267,20 +1264,20 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
                       </div>
                     ) : (
                     <select
-                      value={formData.subcategory ? (typeof formData.subcategory === 'number' ? formData.subcategory.toString() : formData.subcategory) : ''}
+                      value={formData.subcategory ? (typeof formData.subcategory === 'number' ? formData.subcategory.toString() : formData.subcategory.toString()) : ''}
                       onChange={(e) => handleSubcategoryChange(e.target.value)}
                             className={`w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 4 5%22><path fill=%22%23666%22 d=%22M2 0L0 2h4zm0 5L0 3h4z%22/></svg>')] bg-no-repeat bg-right bg-[length:12px] pr-10 ${errors.subcategory ? 'border-red-500' : ''}`}
                     >
                       <option value="">Select subcategory</option>
-                      {subcategories.map(subcategory => (
-                        <option key={subcategory.id} value={subcategory.id.toString()}>{subcategory.name}</option>
+                      {subcategories.map((subcategory, index) => (
+                        <option key={`subcategory-${subcategory.id}-${index}`} value={subcategory.id.toString()}>{subcategory.name}</option>
                       ))}
                       <option value="__add_new__" className="text-primary-600 font-medium">+ Add new subcategory</option>
                       {subcategories.length > 0 && (
                         <>
                           <option disabled>──────────</option>
-                          {subcategories.map(subcategory => (
-                            <option key={`edit-${subcategory.id}`} value={`__edit__${subcategory.id}`} className="text-gray-600">✏️ Edit: {subcategory.name}</option>
+                          {subcategories.map((subcategory, index) => (
+                            <option key={`edit-subcategory-${subcategory.id}-${index}`} value={`__edit__${subcategory.id}`} className="text-gray-600">✏️ Edit: {subcategory.name}</option>
                           ))}
                         </>
                       )}

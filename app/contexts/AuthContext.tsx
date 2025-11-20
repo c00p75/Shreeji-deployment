@@ -1,12 +1,12 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import strapiAuth, { StrapiUser } from '@/app/lib/admin/auth';
+import adminAuth, { AdminUser } from '@/app/lib/admin/auth';
 
 interface AuthContextType {
-  user: StrapiUser | null;
+  user: AdminUser | null;
   loading: boolean;
-  login: (identifier: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
 }
@@ -14,7 +14,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<StrapiUser | null>(null);
+  const [user, setUser] = useState<AdminUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -26,28 +26,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(true);
       
       // Check if we have a stored token
-      if (strapiAuth.isAuthenticated()) {
+      if (adminAuth.isAuthenticated()) {
         // Validate the token and get user data
-        const isValid = await strapiAuth.validateToken();
+        const isValid = await adminAuth.validateToken();
         if (isValid) {
-          const currentUser = await strapiAuth.getCurrentUser();
+          const currentUser = await adminAuth.getCurrentUser();
           setUser(currentUser);
         } else {
           // Token is invalid, clear it
-          strapiAuth.logout();
+          adminAuth.logout();
         }
       }
     } catch (error) {
       console.error('Auth check error:', error);
-      strapiAuth.logout();
+      adminAuth.logout();
     } finally {
       setLoading(false);
     }
   };
 
-  const login = async (identifier: string, password: string) => {
+  const login = async (email: string, password: string) => {
     try {
-      const response = await strapiAuth.login({ identifier, password });
+      const response = await adminAuth.login({ email, password });
       setUser(response.user);
     } catch (error: any) {
       throw new Error(error.message || 'Login failed');
@@ -55,7 +55,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = () => {
-    strapiAuth.logout();
+    adminAuth.logout();
     setUser(null);
   };
 

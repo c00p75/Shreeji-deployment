@@ -7,7 +7,7 @@ import { useAuth } from '@/app/contexts/AuthContext';
 
 export default function AdminLoginPage() {
   const [credentials, setCredentials] = useState({
-    identifier: '',
+    email: '',
     password: ''
   });
   const [showPassword, setShowPassword] = useState(false);
@@ -29,7 +29,7 @@ export default function AdminLoginPage() {
     setError('');
 
     try {
-      await loginUser(credentials.identifier, credentials.password);
+      await loginUser(credentials.email, credentials.password);
       // Redirect will happen automatically via useEffect when isAuthenticated becomes true
     } catch (error: any) {
       setError(error.message || 'Login failed');
@@ -69,25 +69,25 @@ export default function AdminLoginPage() {
             Sign in to Shreeji Admin
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Use your Strapi credentials to access the admin dashboard
+            Use your admin credentials to access the dashboard
           </p>
         </div>
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
-              <label htmlFor="identifier" className="sr-only">
-                Email address or Username
+              <label htmlFor="email" className="sr-only">
+                Email address
               </label>
               <input
-                id="identifier"
-                name="identifier"
-                type="text"
+                id="email"
+                name="email"
+                type="email"
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
-                placeholder="Email address or Username"
-                value={credentials.identifier}
-                onChange={(e) => handleInputChange('identifier', e.target.value)}
+                placeholder="Email address"
+                value={credentials.email}
+                onChange={(e) => handleInputChange('email', e.target.value)}
               />
             </div>
             <div className="relative">

@@ -19,10 +19,6 @@ export default function OrderSummarySection() {
   if (!cart || cart.items.length === 0) {
     return (
       <div className='space-y-4'>
-        <div className='flex items-center gap-3'>
-          <ShoppingBag className='h-5 w-5 text-[#544829]' />
-          <h2 className='text-xl font-semibold text-gray-900'>Order Summary</h2>
-        </div>
         <p className='text-gray-500'>Your cart is empty.</p>
       </div>
     )
