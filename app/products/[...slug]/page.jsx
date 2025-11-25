@@ -13,7 +13,7 @@ import PrimaryPromotionalBanner from "@/components/products/main grid/primary pr
 import ProductDetailsWithEdit from "../../components/products/ProductDetailsWithEdit";
 
 const ProductPage = async ({ params }) => {
-  const { slug } = params;
+  const { slug } = await params;
   let [category, subcategory, product] = slug || [];
 
   // Ensure variables are defined to avoid errors

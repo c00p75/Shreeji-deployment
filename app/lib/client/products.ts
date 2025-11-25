@@ -12,9 +12,11 @@ function transformProduct(nestProduct: any): any {
   const productData = nestProduct;
   const productId = productData.id;
 
-  // Debug: Log raw category data for first few products
-  if (productId <= 3) {
-    console.log(`[DEBUG] Product ${productId} raw category:`, productData.category, typeof productData.category);
+  // Debug: Log specs and specialFeature for first product
+  if (productId === 1) {
+    console.log(`[DEBUG] Product ${productId} raw specs:`, productData.specs, typeof productData.specs);
+    console.log(`[DEBUG] Product ${productId} raw specialFeature:`, productData.specialFeature, typeof productData.specialFeature);
+    console.log(`[DEBUG] Product ${productId} specs keys:`, productData.specs ? Object.keys(productData.specs) : 'null/undefined');
   }
 
   // Process images using existing utility (handles local mapping and backend images)
@@ -75,14 +77,6 @@ function transformProduct(nestProduct: any): any {
         }
       }
       
-      // Debug: Log if category is empty but productData.category exists
-      if (!categoryName && productData.category !== undefined && productData.category !== null) {
-        console.log(`[DEBUG] Empty category extracted for product ${productId}:`, {
-          rawCategory: productData.category,
-          type: typeof productData.category,
-          stringified: String(productData.category)
-        });
-      }
 
       // Extract subcategory - handle both string and object cases
       let subcategoryName = '';
@@ -109,7 +103,28 @@ function transformProduct(nestProduct: any): any {
         'discounted price': productData.discountedPrice ? String(productData.discountedPrice) : '',
         tagline: productData.tagline || '',
         description: productData.description || '',
-        specs: productData.specs || {},
+        specs: (() => {
+          const specs = productData.specs;
+          if (!specs || typeof specs !== 'object') return null;
+          const keys = Object.keys(specs);
+          if (keys.length === 0) return null;
+          // Debug for first product
+          if (productId === 1) {
+            console.log(`[DEBUG] Product ${productId} specs transformed:`, specs, `(${keys.length} keys)`);
+          }
+          return specs;
+        })(),
+        'special feature': (() => {
+          const sf = productData.specialFeature;
+          if (!sf || typeof sf !== 'object') return null;
+          const keys = Object.keys(sf);
+          if (keys.length === 0) return null;
+          // Debug for first product
+          if (productId === 1) {
+            console.log(`[DEBUG] Product ${productId} specialFeature transformed:`, sf, `(${keys.length} keys)`);
+          }
+          return sf;
+        })(),
         'date-added': dateAdded,
         slug: productData.slug || '',
         isActive: productData.isActive !== false,
@@ -126,29 +141,16 @@ function transformProducts(backendProducts: any[]): any[] {
     .map(product => transformProduct(product))
     .filter(product => product !== null && product.isActive !== false); // Only active products
   
-  // Debug: Log unique categories to understand the data structure
+  // Debug: Log specs and specialFeature for first transformed product
   if (transformed.length > 0) {
-    const uniqueCategories = new Set(transformed.map(p => {
-      const cat = p.category;
-      return typeof cat === 'object' ? JSON.stringify(cat) : cat;
-    }).filter(Boolean));
-    console.log('Unique categories found:', Array.from(uniqueCategories));
-    console.log('Sample product category (raw):', transformed[0]?.category, typeof transformed[0]?.category);
-    
-    // Show detailed category info for first 5 products
-    const sampleProducts = transformed.slice(0, 5).map(p => ({ 
-      name: p.name, 
-      category: p.category, 
-      categoryLength: p.category?.length || 0,
-      categoryType: typeof p.category,
-      isEmpty: !p.category || p.category.trim() === ''
-    }));
-    console.log('Sample product categories (detailed):', sampleProducts);
-    
-    // Also log raw backend data for first product
-    if (backendProducts.length > 0) {
-      console.log('Raw backend product[0] category field:', backendProducts[0]?.category, typeof backendProducts[0]?.category);
-      console.log('Raw backend product[0] keys:', Object.keys(backendProducts[0] || {}));
+    const firstProduct = transformed[0];
+    console.log('[DEBUG] First product specs (final):', firstProduct?.specs);
+    console.log('[DEBUG] First product specialFeature (final):', firstProduct?.['special feature']);
+    console.log('[DEBUG] First product has specs?', !!firstProduct?.specs);
+    console.log('[DEBUG] First product specs type:', typeof firstProduct?.specs);
+    if (firstProduct?.specs) {
+      console.log('[DEBUG] First product specs keys:', Object.keys(firstProduct.specs));
+      console.log('[DEBUG] First product specs entries:', Object.entries(firstProduct.specs).slice(0, 3));
     }
   }
   
@@ -201,15 +203,12 @@ async function getAllProducts(forceRefresh = false): Promise<any[]> {
 
     console.log(`Total products fetched: ${allProducts.length}`);
     
-    // Debug: Log raw category data from backend for first 3 products
+    // Debug: Log raw specs and specialFeature from backend for first product
     if (allProducts.length > 0) {
-      console.log('[DEBUG] Raw backend categories (first 3):', allProducts.slice(0, 3).map(p => ({
-        id: p.id,
-        name: p.name,
-        category: p.category,
-        categoryType: typeof p.category,
-        categoryKeys: typeof p.category === 'object' ? Object.keys(p.category || {}) : null
-      })));
+      const firstProduct = allProducts[0];
+      console.log('[DEBUG] Raw backend product[0] specs:', firstProduct?.specs, typeof firstProduct?.specs);
+      console.log('[DEBUG] Raw backend product[0] specialFeature:', firstProduct?.specialFeature, typeof firstProduct?.specialFeature);
+      console.log('[DEBUG] Raw backend product[0] all keys:', Object.keys(firstProduct || {}));
     }
 
     const transformed = transformProducts(allProducts);
@@ -249,27 +248,6 @@ export async function filterProducts(
     }
     
     console.log(`Filtering products by ${filterBy}="${filter}" from ${allProducts.length} total products`);
-    
-    // Debug: Show sample category values with more detail
-    if (normalizedFilterBy === 'category' && allProducts.length > 0) {
-      const sampleCategories = allProducts
-        .slice(0, 5)
-        .map(p => ({ 
-          name: p.name, 
-          category: p.category, 
-          categoryType: typeof p.category,
-          categoryValue: JSON.stringify(p.category),
-          isEmpty: !p.category || String(p.category).trim() === ''
-        }));
-      console.log('Sample product categories (filtering):', sampleCategories);
-      
-      // Show all unique category values
-      const allCategories = allProducts
-        .map(p => p.category)
-        .filter(cat => cat !== null && cat !== undefined && String(cat).trim() !== '');
-      const uniqueCats = [...new Set(allCategories.map(c => String(c).toLowerCase()))];
-      console.log(`All unique non-empty categories (${uniqueCats.length}):`, uniqueCats);
-    }
     
     let filtered = allProducts.filter(product => {
       const value = product[normalizedFilterBy];
