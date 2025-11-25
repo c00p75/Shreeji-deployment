@@ -108,26 +108,18 @@ export default function Dashboard() {
           <StatCard
             title="Total Products"
             value={stats?.totalProducts.toString() || "0"}
-            change="Live Data"
-            changeLabel="from Strapi"
           />
           <StatCard
             title="Total Customers"
             value={stats?.totalCustomers.toString() || "0"}
-            change="Live Data"
-            changeLabel="from Strapi"
           />
           <StatCard
             title="Total Orders"
             value={stats?.totalOrders.toString() || "0"}
-            change="Live Data"
-            changeLabel="from Strapi"
           />
           <StatCard
             title="Total Revenue"
             value={`K${stats?.totalRevenue.toLocaleString() || "0"}`}
-            change="ZMW"
-            changeLabel="from Strapi"
           />
         </div>
 

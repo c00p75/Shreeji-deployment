@@ -1,11 +1,16 @@
-import { getProductByName, getProductBySlug, randomProduct, subcategoryExists } from "@/app/lib/client/products";
+import {
+  getProductByName,
+  getProductBySlug,
+  randomProduct,
+  subcategoryExists,
+} from "@/app/lib/client/products";
 import ProductDetails from "@/components/products/product details";
 import SideGrid from "@/components/products/side grid";
 import "@/components/products/style.scss";
 import Breadcrumbs from "@/components/products/product category/breadcrumbs";
 import ProductList from "@/components/products/product category/product list";
 import PrimaryPromotionalBanner from "@/components/products/main grid/primary promotional banner";
-// import '@/components/products/product details/style.scss'
+import ProductDetailsWithEdit from "../../components/products/ProductDetailsWithEdit";
 
 const ProductPage = async ({ params }) => {
   const { slug } = params;
@@ -43,24 +48,31 @@ const ProductPage = async ({ params }) => {
     categoryName = decodeURIComponent(category)
   }
 
+  // Dedicated hero layout for individual product view
+  if (product && productDetails) {
+    return (
+      <section className="products-main-section relative z-[1] h-fit min-h-screen gap-5 pb-[2rem] pl-1 pr-1 text-white md:pr-8">
+        <SideGrid />
+        <section className="main-grid relative flex flex-[3] flex-col gap-5 overflow-visible">
+          <Breadcrumbs breadcrumbs={[categoryName, subcategoryName, productName]} />
+          <ProductDetailsWithEdit
+            product={productDetails}
+            breadcrumbs={[categoryName, subcategoryName, productName].filter(Boolean)}
+          />
+        </section>
+      </section>
+    );
+  }
+
   return (
-    <section
-      className={`z-[1] products-main-section min-h-screen relative pl-1 pr-1 md:pr-8 gap-5 pb-[2rem] text-white h-fit ${
-        productName ? "product-details-page" : ""
-      }`}
-    >
+    <section className="products-main-section relative z-[1] h-fit min-h-screen gap-5 pb-[2rem] pl-1 pr-1 text-white md:pr-8">
       <SideGrid />
-      <section className="main-grid overflow-visible flex-[3] relative flex flex-col gap-5">
-        {product ? (
-          <>
-            <Breadcrumbs breadcrumbs={[categoryName, subcategoryName, productName]} />
-            <ProductDetails product={productDetails} />
-          </>
-        ) : subcategory ? (
+      <section className="main-grid relative flex flex-[3] flex-col gap-5 overflow-visible">
+        {subcategory ? (
           (await subcategoryExists(subcategoryName)) ? (
             <>
               <Breadcrumbs breadcrumbs={[categoryName, subcategoryName]} />
-              <PrimaryPromotionalBanner promoProduct={await randomProduct('subcategory', subcategoryName, 1)} />
+              <PrimaryPromotionalBanner promoProduct={await randomProduct("subcategory", subcategoryName, 1)} />
               <ProductList filterBy="subcategory" filter={subcategoryName} />
             </>
           ) : (
@@ -72,7 +84,7 @@ const ProductPage = async ({ params }) => {
         ) : (
           <>
             <Breadcrumbs breadcrumbs={[categoryName]} />
-            <PrimaryPromotionalBanner promoProduct={await randomProduct('category', categoryName, 1)} />
+            <PrimaryPromotionalBanner promoProduct={await randomProduct("category", categoryName, 1)} />
             <ProductList filterBy="category" filter={categoryName} />
           </>
         )}

@@ -1,5 +1,5 @@
 // Client-side product fetching and transformation utilities
-// Replaces productsData.js functions with Strapi API calls
+// Replaces productsData.js functions with NestJS API calls
 
 import clientApi from './api';
 import { processProductImages } from '@/app/lib/admin/image-mapping';
@@ -12,7 +12,12 @@ function transformProduct(nestProduct: any): any {
   const productData = nestProduct;
   const productId = productData.id;
 
-  // Process images using existing utility (handles local mapping and Strapi images)
+  // Debug: Log raw category data for first few products
+  if (productId <= 3) {
+    console.log(`[DEBUG] Product ${productId} raw category:`, productData.category, typeof productData.category);
+  }
+
+  // Process images using existing utility (handles local mapping and backend images)
   const processedImages = processProductImages(productData);
   
   // Convert images array format: [{url, alt, isMain}] to [url, url, ...] for compatibility
@@ -32,12 +37,12 @@ function transformProduct(nestProduct: any): any {
           }
           
           // If URL is relative and starts with /, it should work with Next.js
-          // If it's from Strapi/Imghippo, it should already be absolute
+          // If it's from backend/Imghippo, it should already be absolute
           // Convert @/public paths if present
           if (url.startsWith('@/public')) {
             url = url.replace('@/public', '');
           }
-          // Ensure absolute URLs from Strapi work (they should already be absolute)
+          // Ensure absolute URLs from backend work (they should already be absolute)
           return url;
         })
         .filter((url): url is string => url !== null && url !== undefined) // Remove any null/undefined values
@@ -60,12 +65,43 @@ function transformProduct(nestProduct: any): any {
         brandLogo = productData.brand.logoUrl || null;
       }
 
+      // Extract category - handle both string and object cases
+      let categoryName = '';
+      if (productData.category) {
+        if (typeof productData.category === 'object') {
+          categoryName = productData.category.name || productData.category || '';
+        } else {
+          categoryName = String(productData.category).trim();
+        }
+      }
+      
+      // Debug: Log if category is empty but productData.category exists
+      if (!categoryName && productData.category !== undefined && productData.category !== null) {
+        console.log(`[DEBUG] Empty category extracted for product ${productId}:`, {
+          rawCategory: productData.category,
+          type: typeof productData.category,
+          stringified: String(productData.category)
+        });
+      }
+
+      // Extract subcategory - handle both string and object cases
+      let subcategoryName = '';
+      if (productData.subcategory) {
+        if (typeof productData.subcategory === 'object' && productData.subcategory !== null) {
+          // Handle object with name property (from relation)
+          subcategoryName = productData.subcategory.name || '';
+        } else {
+          // Handle string
+          subcategoryName = String(productData.subcategory);
+        }
+      }
+
       return {
         id: productId,
         documentId: productData.documentId || String(productId),
         name: productData.name || '',
-        category: productData.category || '',
-        subcategory: productData.subcategory?.name || '',
+        category: categoryName,
+        subcategory: subcategoryName,
         images: imageUrls, // Array of image URLs for compatibility
         brand: brandName,
         'brand logo': brandLogo,
@@ -80,15 +116,43 @@ function transformProduct(nestProduct: any): any {
         SKU: productData.sku || '',
         stockQuantity: productData.stockQuantity || 0,
         // Keep images array format for components that need it
-        strapiImages: processedImages,
+        backendImages: processedImages,
       };
 }
 
-// Transform array of Strapi products
-function transformProducts(strapiProducts: any[]): any[] {
-  return strapiProducts
+// Transform array of backend products
+function transformProducts(backendProducts: any[]): any[] {
+  const transformed = backendProducts
     .map(product => transformProduct(product))
     .filter(product => product !== null && product.isActive !== false); // Only active products
+  
+  // Debug: Log unique categories to understand the data structure
+  if (transformed.length > 0) {
+    const uniqueCategories = new Set(transformed.map(p => {
+      const cat = p.category;
+      return typeof cat === 'object' ? JSON.stringify(cat) : cat;
+    }).filter(Boolean));
+    console.log('Unique categories found:', Array.from(uniqueCategories));
+    console.log('Sample product category (raw):', transformed[0]?.category, typeof transformed[0]?.category);
+    
+    // Show detailed category info for first 5 products
+    const sampleProducts = transformed.slice(0, 5).map(p => ({ 
+      name: p.name, 
+      category: p.category, 
+      categoryLength: p.category?.length || 0,
+      categoryType: typeof p.category,
+      isEmpty: !p.category || p.category.trim() === ''
+    }));
+    console.log('Sample product categories (detailed):', sampleProducts);
+    
+    // Also log raw backend data for first product
+    if (backendProducts.length > 0) {
+      console.log('Raw backend product[0] category field:', backendProducts[0]?.category, typeof backendProducts[0]?.category);
+      console.log('Raw backend product[0] keys:', Object.keys(backendProducts[0] || {}));
+    }
+  }
+  
+  return transformed;
 }
 
 // Cache for all products to avoid multiple API calls
@@ -108,22 +172,24 @@ async function getAllProducts(forceRefresh = false): Promise<any[]> {
   try {
     let allProducts: any[] = [];
     let page = 1;
-    const pageSize = 100; // Strapi default max is usually 100
+    const pageSize = 100; // Backend default max is usually 100
     let hasMore = true;
 
     // Fetch all pages of products
     while (hasMore) {
       const response = await clientApi.getProducts({
         pagination: { page, pageSize },
-        sort: 'dateAdded:desc',
       });
 
       const products = response.data || [];
       allProducts = [...allProducts, ...products];
 
       // Check if there are more pages
-      const total = response.meta?.pagination?.total || 0;
-      const pageCount = response.meta?.pagination?.pageCount || 1;
+      const total = response.meta?.pagination?.total ?? products.length;
+      const inferredTotal = response.meta?.pagination?.total ?? products.length;
+      const pageCount =
+        response.meta?.pagination?.pageCount ??
+        Math.max(1, Math.ceil(inferredTotal / pageSize));
       hasMore = page < pageCount;
 
       console.log(`Fetched page ${page}/${pageCount}: ${products.length} products (total: ${allProducts.length}/${total})`);
@@ -134,6 +200,17 @@ async function getAllProducts(forceRefresh = false): Promise<any[]> {
     }
 
     console.log(`Total products fetched: ${allProducts.length}`);
+    
+    // Debug: Log raw category data from backend for first 3 products
+    if (allProducts.length > 0) {
+      console.log('[DEBUG] Raw backend categories (first 3):', allProducts.slice(0, 3).map(p => ({
+        id: p.id,
+        name: p.name,
+        category: p.category,
+        categoryType: typeof p.category,
+        categoryKeys: typeof p.category === 'object' ? Object.keys(p.category || {}) : null
+      })));
+    }
 
     const transformed = transformProducts(allProducts);
     console.log(`Total products after transformation: ${transformed.length}`);
@@ -142,7 +219,7 @@ async function getAllProducts(forceRefresh = false): Promise<any[]> {
     productsCacheTimestamp = now;
     return transformed;
   } catch (error) {
-    console.error('Error fetching products from Strapi:', error);
+    console.error('Error fetching products from backend:', error);
     // Return cached products if available, even if expired
     if (productsCache) {
       console.log('Returning cached products due to error');
@@ -160,12 +237,47 @@ export async function filterProducts(
 ): Promise<any[]> {
   try {
     const allProducts = await getAllProducts();
+    const normalizedFilterBy = typeof filterBy === 'string' ? filterBy.trim() : '';
+    const normalizedFilter = typeof filter === 'string' ? filter.trim() : '';
+    
+    // If no filter provided, return all products (optionally limited by count)
+    if (!normalizedFilterBy || !normalizedFilter) {
+      if (count && count > 0) {
+        return allProducts.slice(0, count);
+      }
+      return allProducts;
+    }
     
     console.log(`Filtering products by ${filterBy}="${filter}" from ${allProducts.length} total products`);
     
+    // Debug: Show sample category values with more detail
+    if (normalizedFilterBy === 'category' && allProducts.length > 0) {
+      const sampleCategories = allProducts
+        .slice(0, 5)
+        .map(p => ({ 
+          name: p.name, 
+          category: p.category, 
+          categoryType: typeof p.category,
+          categoryValue: JSON.stringify(p.category),
+          isEmpty: !p.category || String(p.category).trim() === ''
+        }));
+      console.log('Sample product categories (filtering):', sampleCategories);
+      
+      // Show all unique category values
+      const allCategories = allProducts
+        .map(p => p.category)
+        .filter(cat => cat !== null && cat !== undefined && String(cat).trim() !== '');
+      const uniqueCats = [...new Set(allCategories.map(c => String(c).toLowerCase()))];
+      console.log(`All unique non-empty categories (${uniqueCats.length}):`, uniqueCats);
+    }
+    
     let filtered = allProducts.filter(product => {
-      const value = product[filterBy];
-      const matches = value && value.toLowerCase() === filter.toLowerCase();
+      const value = product[normalizedFilterBy];
+      // Handle both string and ensure case-insensitive comparison
+      const productValue = value ? String(value).trim().toLowerCase() : '';
+      const filterValue = normalizedFilter.trim().toLowerCase();
+      const matches = productValue === filterValue;
+      
       if (!matches && value) {
         // Debug: log products that don't match (for troubleshooting)
         console.log(`Product "${product.name}" has ${filterBy}="${value}" (expected "${filter}")`);
@@ -235,14 +347,24 @@ export async function randomProduct(
   count?: number
 ): Promise<any | null> {
   try {
-    // Get more products to choose from if count not specified
-    const productCount = count || 10;
-    const filteredProducts = await filterProducts(filterBy, filter, productCount);
-    if (filteredProducts.length === 0) {
+    const normalizedFilterBy = typeof filterBy === 'string' ? filterBy.trim() : '';
+    const normalizedFilter = typeof filter === 'string' ? filter.trim() : '';
+
+    let pool: any[] = [];
+
+    if (!normalizedFilterBy || !normalizedFilter) {
+      pool = await getAllProducts();
+    } else {
+      const productCount = count || 10;
+      pool = await filterProducts(normalizedFilterBy, normalizedFilter, productCount);
+    }
+
+    if (pool.length === 0) {
       return null;
     }
-    const randomIndex = Math.floor(Math.random() * filteredProducts.length);
-    return filteredProducts[randomIndex];
+
+    const randomIndex = Math.floor(Math.random() * pool.length);
+    return pool[randomIndex];
   } catch (error) {
     console.error('Error getting random product:', error);
     return null;

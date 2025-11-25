@@ -384,7 +384,7 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
         logoUrl = brandLogoUrl;
       }
 
-      // Create brand in Strapi
+      // Create brand in backend
       const brandData: any = {
         name: trimmedName,
       };
@@ -608,7 +608,7 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
   };
 
   const handleSaveDraft = async () => {
-    // Save as draft (isActive: false, publishedAt: null in Strapi)
+    // Save as draft (isActive: false)
     setSavingDraft(true);
     try {
       // Similar to handleSubmit but mark as draft
@@ -621,7 +621,7 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
         uploadedImages = await uploadImages();
       }
 
-      // Prepare product data matching Strapi schema
+      // Prepare product data matching backend schema
       // Convert brand to ID if it's a string (shouldn't happen with new implementation, but for safety)
       let brandId: number | null = null;
       if (formData.brand) {
@@ -772,7 +772,7 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
         uploadedImages = await uploadImages();
       }
 
-      // Prepare product data matching Strapi schema
+      // Prepare product data matching backend schema
       const productData = {
         name: formData.name,
         slug: formData.slug || formData.name.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').replace(/^-+|-+$/g, ''),
@@ -1055,7 +1055,7 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={onClose}></div>
 
         <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-7xl sm:w-full max-h-[95vh] overflow-y-auto">
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className="relative">
             {/* Header */}
             <div className="bg-white px-6 py-4 border-b border-gray-200">
               <div className="flex items-center justify-between">
@@ -1070,14 +1070,6 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
                     <DocumentTextIcon className="h-4 w-4 mr-2" />
                     Save Draft
                   </button>
-                  <button
-                    type="submit"
-                    disabled={loading || savingDraft || uploadingImages}
-                    className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-500 hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50"
-                  >
-                    <CheckIcon className="h-4 w-4 mr-2" />
-                    {uploadingImages ? 'Uploading...' : loading ? 'Adding...' : 'Add Product'}
-                  </button>
                 <button
                   type="button"
                   onClick={onClose}
@@ -1089,7 +1081,7 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
               </div>
               </div>
 
-            <div className="bg-white px-6 py-6">
+            <div className="bg-white px-6 pt-6 pb-6">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
                 {/* Left Column - Sticky */}
@@ -1492,6 +1484,19 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
                   <span className="text-sm">{errors.submit}</span>
                 </div>
               )}
+
+              <div className="sticky bottom-4 z-20 mt-6 flex justify-end">
+                <div className="flex flex-col items-end gap-2 rounded-2xl p-3">
+                  <button
+                    type="submit"
+                    disabled={loading || savingDraft || uploadingImages}
+                    className="inline-flex items-center rounded-xl bg-primary-600 px-6 py-3 text-sm font-semibold text-white shadow-md shadow-primary-500/40 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    <CheckIcon className="mr-2 h-4 w-4" />
+                    {uploadingImages ? 'Uploading...' : loading ? 'Adding...' : 'Add Product'}
+                  </button>
+                </div>
+              </div>
             </div>
           </form>
         </div>

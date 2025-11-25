@@ -3,12 +3,14 @@
 interface StatCardProps {
   title: string
   value: string
-  change: number
-  changeLabel: string
+  change?: number
+  changeLabel?: string
 }
 
 export default function StatCard({ title, value, change, changeLabel }: StatCardProps) {
-  const isPositive = change >= 0
+  const showChange = change !== undefined && change !== 0
+  const showLabel = changeLabel && changeLabel.trim() !== ''
+  const isPositive = change !== undefined ? change >= 0 : true
   
   return (
     <div className="stat-card">
@@ -17,12 +19,18 @@ export default function StatCard({ title, value, change, changeLabel }: StatCard
           <p className="stat-label">{title}</p>
           <p className="stat-value">{value}</p>
         </div>
-        <div className="text-right">
-          <p className={`stat-change ${isPositive ? 'positive' : 'negative'}`}>
-            {isPositive ? '+' : ''}{change}%
-          </p>
-          <p className="text-xs text-gray-500">{changeLabel}</p>
-        </div>
+        {(showChange || showLabel) && (
+          <div className="text-right">
+            {showChange && (
+              <p className={`stat-change ${isPositive ? 'positive' : 'negative'}`}>
+                {isPositive ? '+' : ''}{change}%
+              </p>
+            )}
+            {showLabel && (
+              <p className="text-xs text-gray-500">{changeLabel}</p>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )

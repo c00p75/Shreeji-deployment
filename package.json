@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "dev:strapi": "cd ../shreeji-cms && pnpm develop",
-    "dev:all": "concurrently -n \"strapi,website\" -c \"red,blue\" \"npm run dev:strapi\" \"npm run dev\"",
+    "dev:backend": "cd ../shreeji-ecommerce-backend && npm run start:dev",
+    "dev:all": "concurrently -n \"backend,website\" -c \"red,blue\" \"npm run dev:backend\" \"npm run dev\"",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"

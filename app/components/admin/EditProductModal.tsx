@@ -11,6 +11,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { processProductImages } from '@/app/lib/admin/image-mapping';
 import api from '@/app/lib/admin/api';
+import ModernProductShowcase from '../products/ModernProductShowcase';
 
 interface Product {
   id: number;
@@ -130,6 +131,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [mainImageIndex, setMainImageIndex] = useState<number>(0);
   
   // Modal states for adding/editing category/brand/subcategory
@@ -157,7 +159,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
     documentId?: string;
     name: string;
     slug?: string;
-    category: number | Category;
+    category: number | Category | string;
   }
 
   // Brands fetched from API with logo support
@@ -183,6 +185,9 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
     { value: 'out-of-stock', label: 'Out of Stock' },
     { value: 'discontinued', label: 'Discontinued' }
   ];
+
+  const generateSlug = (value: string) =>
+    value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
   useEffect(() => {
     if (product && isOpen) {
@@ -245,11 +250,13 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
             id: brand.id || brand.documentId,
             documentId: brand.documentId,
             name: brandData.name || '',
-            logo: brandData.logo?.data ? {
-              url: brandData.logo.data.attributes?.url || brandData.logo.data.url,
-              id: brandData.logo.data.id
-            } : null,
-            logoUrl: brandData.logoUrl || null
+            logo: brandData.logo?.data
+              ? {
+                  url: brandData.logo.data.attributes?.url || brandData.logo.data.url,
+                  id: brandData.logo.data.id,
+                }
+              : null,
+            logoUrl: brandData.logoUrl || null,
           };
         });
         setBrands(brandsData);
@@ -267,21 +274,81 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
     }
   }, [isOpen]);
 
-  // Fetch categories from API on component mount
+  // When brands are loaded, map any existing brand names to their IDs so the select can prefill
+  useEffect(() => {
+    if (!isOpen || !product || brands.length === 0) {
+      return;
+    }
+
+    setFormData((prev) => {
+      if (!prev.brand) {
+        return prev;
+      }
+
+      const currentValue =
+        typeof prev.brand === 'number' ? prev.brand.toString() : prev.brand;
+      if (!currentValue.trim()) {
+        return prev;
+      }
+
+      const alreadyMatches = brands.some(
+        (brand) =>
+          brand.id?.toString() === currentValue ||
+          brand.documentId?.toString() === currentValue,
+      );
+      if (alreadyMatches) {
+        return prev;
+      }
+
+      const matchedBrand = brands.find(
+        (brand) => brand.name?.toLowerCase() === currentValue.toLowerCase(),
+      );
+
+      if (!matchedBrand) {
+        return prev;
+      }
+
+      const normalizedValue =
+        matchedBrand.id?.toString() ??
+        matchedBrand.documentId?.toString() ??
+        currentValue;
+
+      if (!normalizedValue || normalizedValue === currentValue) {
+        return prev;
+      }
+
+      return { ...prev, brand: normalizedValue };
+    });
+  }, [brands, isOpen, product]);
+
+  // Fetch categories by extracting unique categories from existing products
   useEffect(() => {
     const fetchCategories = async () => {
       setLoadingCategories(true);
       try {
-        const response = await api.getCategories({ populate: [] });
-        const categoriesData = response.data.map((category: any) => {
-          const categoryData = category.attributes || category;
-          return {
-            id: category.id || category.documentId,
-            documentId: category.documentId,
-            name: categoryData.name || '',
-            slug: categoryData.slug || null
-          };
+        // Fetch products to extract unique categories
+        const response = await api.getProducts({
+          pagination: { page: 1, pageSize: 1000 },
         });
+
+        const uniqueCategories = new Set<string>();
+        const productsArray = response.data || [];
+
+        productsArray.forEach((product: any) => {
+          const productData = product.attributes || product;
+          const category = productData.category;
+          if (category && typeof category === 'string' && category.trim()) {
+            uniqueCategories.add(category.trim());
+          }
+        });
+
+        const categoriesData = Array.from(uniqueCategories).map((categoryName) => ({
+          id: categoryName,
+          documentId: categoryName,
+          name: categoryName,
+          slug: categoryName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+        }));
+
         setCategories(categoriesData);
       } catch (error) {
         console.error('Error fetching categories:', error);
@@ -297,38 +364,60 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
   }, [isOpen]);
 
   // Fetch subcategories when category changes
+  // Since subcategories aren't directly linked to categories, we extract them from products
   useEffect(() => {
     const fetchSubcategories = async () => {
-      const categoryId = formData.category;
-      
-      // If category is a string (legacy) or empty, don't fetch
-      if (!categoryId || typeof categoryId === 'string') {
+      const categoryName = formData.category;
+
+      if (!categoryName || typeof categoryName !== 'string') {
         setSubcategories([]);
         return;
       }
 
-      // Extract category ID if it's a number string
-      const categoryIdNum = typeof categoryId === 'string' && !isNaN(Number(categoryId)) 
-        ? Number(categoryId) 
-        : categoryId;
-
       setLoadingSubcategories(true);
       try {
-        const response = await api.getSubcategories({ 
-          category: typeof categoryIdNum === 'number' ? categoryIdNum : undefined,
-          populate: ['category']
+        // Fetch all subcategories
+        const subcategoriesResponse = await api.getSubcategories();
+        const allSubcategories = subcategoriesResponse.data || [];
+
+        // Fetch products with the selected category to find used subcategories
+        const productsResponse = await api.getProducts({
+          pagination: { page: 1, pageSize: 1000 },
+          filters: { category: categoryName },
         });
-        const subcategoriesData = response.data.map((subcategory: any) => {
-          const subcategoryData = subcategory.attributes || subcategory;
-          return {
-            id: subcategory.id || subcategory.documentId,
-            documentId: subcategory.documentId,
-            name: subcategoryData.name || '',
-            slug: subcategoryData.slug || null,
-            category: subcategoryData.category?.data?.id || subcategoryData.category?.id || subcategoryData.category
-          };
+
+        const productsArray = productsResponse.data || [];
+        const usedSubcategoryIds = new Set<number>();
+
+        productsArray.forEach((product: any) => {
+          const productData = product.attributes || product;
+          if (productData.subcategory) {
+            if (typeof productData.subcategory === 'object' && productData.subcategory.id) {
+              usedSubcategoryIds.add(productData.subcategory.id);
+            } else if (typeof productData.subcategory === 'number') {
+              usedSubcategoryIds.add(productData.subcategory);
+            } else if (typeof productData.subcategoryId === 'number') {
+              usedSubcategoryIds.add(productData.subcategoryId);
+            }
+          } else if (productData.subcategoryId) {
+            usedSubcategoryIds.add(productData.subcategoryId);
+          }
         });
-        setSubcategories(subcategoriesData);
+
+        const filteredSubcategories = allSubcategories
+          .filter((subcategory: any) => {
+            const subcategoryId = subcategory.id || subcategory.documentId;
+            return usedSubcategoryIds.size === 0 || usedSubcategoryIds.has(subcategoryId);
+          })
+          .map((subcategory: any) => ({
+            id: subcategory.id,
+            documentId: subcategory.id?.toString(),
+            name: subcategory.name || '',
+            slug: subcategory.urlPath || subcategory.slug || null,
+            category: categoryName,
+          }));
+
+        setSubcategories(filteredSubcategories);
       } catch (error) {
         console.error('Error fetching subcategories:', error);
         setSubcategories([]);
@@ -343,6 +432,54 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
       setSubcategories([]);
     }
   }, [isOpen, formData.category]);
+
+  useEffect(() => {
+    if (!isOpen || subcategories.length === 0) {
+      return;
+    }
+
+    setFormData((prev) => {
+      if (!prev.subcategory) {
+        return prev;
+      }
+
+      const currentValue =
+        typeof prev.subcategory === 'number'
+          ? prev.subcategory.toString()
+          : prev.subcategory;
+      if (!currentValue.trim()) {
+        return prev;
+      }
+
+      const alreadyMatches = subcategories.some(
+        (subcategory) =>
+          subcategory.id?.toString() === currentValue ||
+          subcategory.documentId?.toString() === currentValue,
+      );
+      if (alreadyMatches) {
+        return prev;
+      }
+
+      const matchedSubcategory = subcategories.find(
+        (subcategory) => subcategory.name?.toLowerCase() === currentValue.toLowerCase(),
+      );
+
+      if (!matchedSubcategory) {
+        return prev;
+      }
+
+      const normalizedValue =
+        matchedSubcategory.id?.toString() ??
+        matchedSubcategory.documentId?.toString() ??
+        currentValue;
+
+      if (!normalizedValue || normalizedValue === currentValue) {
+        return prev;
+      }
+
+      return { ...prev, subcategory: normalizedValue };
+    });
+  }, [subcategories, isOpen]);
 
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({
@@ -447,7 +584,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
   };
 
   // Add new category
-  const handleAddCategory = async () => {
+  const handleAddCategory = () => {
     const trimmedName = newCategoryName.trim();
     
     if (!trimmedName) {
@@ -460,39 +597,27 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
       return;
     }
 
-    try {
-      const response = await api.createCategory({ name: trimmedName }) as { data: any };
-      const createdCategory = response.data;
-      const categoryDataAttr = createdCategory.attributes || createdCategory;
+    const newCategory: Category = {
+      id: trimmedName,
+      documentId: trimmedName,
+      name: trimmedName,
+      slug: generateSlug(trimmedName),
+    };
 
-      const newCategory: Category = {
-        id: createdCategory.id || createdCategory.documentId,
-        documentId: createdCategory.documentId,
-        name: categoryDataAttr.name || trimmedName,
-        slug: categoryDataAttr.slug || null
-      };
-
-      setCategories(prev => [...prev, newCategory]);
-      handleInputChange('category', newCategory.id.toString());
-      
-      setNewCategoryName('');
-      setShowAddCategoryModal(false);
-      setErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors.newCategory;
-        return newErrors;
-      });
-    } catch (error: any) {
-      console.error('Error creating category:', error);
-      setErrors(prev => ({ 
-        ...prev, 
-        newCategory: error.message || 'Failed to create category. Please try again.' 
-      }));
-    }
+    setCategories(prev => [...prev, newCategory]);
+    handleInputChange('category', trimmedName);
+    
+    setNewCategoryName('');
+    setShowAddCategoryModal(false);
+    setErrors(prev => {
+      const newErrors = { ...prev };
+      delete newErrors.newCategory;
+      return newErrors;
+    });
   };
 
   // Update category
-  const handleUpdateCategory = async () => {
+  const handleUpdateCategory = () => {
     if (!editingCategory) return;
     
     const trimmedName = newCategoryName.trim();
@@ -507,64 +632,47 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
       return;
     }
 
-    try {
-      const response = await api.updateCategory(editingCategory.id, { name: trimmedName }) as { data: any };
-      const updatedCategory = response.data;
-      const categoryDataAttr = updatedCategory.attributes || updatedCategory;
+    const updated: Category = {
+      ...editingCategory,
+      id: trimmedName,
+      documentId: trimmedName,
+      name: trimmedName,
+      slug: generateSlug(trimmedName),
+    };
 
-      const updated: Category = {
-        id: updatedCategory.id || updatedCategory.documentId,
-        documentId: updatedCategory.documentId,
-        name: categoryDataAttr.name || trimmedName,
-        slug: categoryDataAttr.slug || null
-      };
-
-      setCategories(prev => prev.map(cat => cat.id === editingCategory.id ? updated : cat));
-      
-      if (formData.category === editingCategory.id || formData.category === editingCategory.id.toString()) {
-        handleInputChange('category', updated.id.toString());
-      }
-      
-      setNewCategoryName('');
-      setEditingCategory(null);
-      setShowEditCategoryModal(false);
-      setErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors.newCategory;
-        return newErrors;
-      });
-    } catch (error: any) {
-      console.error('Error updating category:', error);
-      setErrors(prev => ({ 
-        ...prev, 
-        newCategory: error.message || 'Failed to update category. Please try again.' 
-      }));
+    setCategories(prev => prev.map(cat => cat.id === editingCategory.id ? updated : cat));
+    
+    if (formData.category === editingCategory.id || formData.category === editingCategory.id.toString()) {
+      handleInputChange('category', trimmedName);
     }
+    
+    setNewCategoryName('');
+    setEditingCategory(null);
+    setShowEditCategoryModal(false);
+    setErrors(prev => {
+      const newErrors = { ...prev };
+      delete newErrors.newCategory;
+      return newErrors;
+    });
   };
 
   // Delete category
-  const handleDeleteCategory = async (categoryId: number | string) => {
+  const handleDeleteCategory = (categoryId: number | string) => {
     if (!confirm('Are you sure you want to delete this category? This action cannot be undone.')) {
       return;
     }
 
-    try {
-      await api.deleteCategory(categoryId);
-      setCategories(prev => prev.filter(cat => cat.id !== categoryId));
-      
-      if (formData.category === categoryId || formData.category === categoryId.toString()) {
-        handleInputChange('category', '');
-        handleInputChange('subcategory', '');
-      }
-      
-      if (editingCategory && editingCategory.id === categoryId) {
-        setShowEditCategoryModal(false);
-        setEditingCategory(null);
-        setNewCategoryName('');
-      }
-    } catch (error: any) {
-      console.error('Error deleting category:', error);
-      alert(error.message || 'Failed to delete category. It may be in use by subcategories.');
+    setCategories(prev => prev.filter(cat => cat.id !== categoryId));
+    
+    if (formData.category === categoryId || formData.category === categoryId.toString()) {
+      handleInputChange('category', '');
+      handleInputChange('subcategory', '');
+    }
+    
+    if (editingCategory && editingCategory.id === categoryId) {
+      setShowEditCategoryModal(false);
+      setEditingCategory(null);
+      setNewCategoryName('');
     }
   };
 
@@ -794,7 +902,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
         logoUrl = brandLogoUrl;
       }
 
-      // Create brand in Strapi
+      // Create brand in backend
       const brandData: any = {
         name: trimmedName,
       };
@@ -844,7 +952,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
       if (error.status === 401 || error.status === 403) {
         errorMessage = 'Authentication failed. Please ensure you are logged in and have permission to create brands.';
       } else if (error.status === 404 || error.message?.includes('Method Not Allowed')) {
-        errorMessage = 'Brands endpoint not found. The Brand content type needs to be created in Strapi. Run: node scripts/setup-brand-content-type.js for setup instructions.';
+        errorMessage = 'Brands endpoint not found. Please ensure the backend is running and the brands API is available.';
       } else if (error.message) {
         errorMessage = error.message;
       }
@@ -875,7 +983,8 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
       newErrors.brand = 'Brand is required';
     }
 
-    if (!formData.price.trim()) {
+    const priceString = (formData.price ?? '').toString();
+    if (!priceString.trim()) {
       newErrors.price = 'Price is required';
     }
 
@@ -953,32 +1062,22 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={onClose}></div>
 
         <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-7xl sm:w-full max-h-[95vh] overflow-y-auto">
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className="relative">
             {/* Header */}
             <div className="bg-white px-6 py-4 border-b border-gray-200">
               <div className="flex items-center justify-between">
                 <h3 className="text-xl font-bold text-gray-900">Edit Product</h3>
-                <div className="flex items-center gap-3">
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-500 hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50"
-                  >
-                    <CheckIcon className="h-4 w-4 mr-2" />
-                    {loading ? 'Saving...' : 'Save Changes'}
-                  </button>
                 <button
                   type="button"
                   onClick={onClose}
-                    className="text-gray-400 hover:text-gray-500 ml-2"
+                  className="text-gray-400 hover:text-gray-500"
                 >
                   <XMarkIcon className="h-6 w-6" />
                 </button>
-                </div>
               </div>
               </div>
 
-            <div className="bg-white px-6 py-6">
+          <div className="bg-white px-6 pt-6 pb-6">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Left Column - Sticky */}
                 <div className="space-y-6 lg:sticky lg:top-6 lg:self-start">
@@ -989,7 +1088,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
                     {/* Main Product Image */}
                     <div className="mb-4">
                       {mainImageUrl ? (
-                        <div className="relative w-full aspect-square bg-gray-100 rounded-lg overflow-hidden border border-gray-200 group">
+                        <div className="relative w-full bg-gray-100 rounded-lg overflow-hidden border border-gray-200 group">
                           <img
                             src={mainImageUrl}
                             alt={formData.images[mainImageIndex]?.alt || "Main product image"}
@@ -1385,10 +1484,42 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
                   <span className="text-sm">{errors.submit}</span>
                 </div>
               )}
+
+              <div className="sticky bottom-4 z-20 mt-6 flex justify-end">
+                <div className="flex flex-wrap items-center justify-end gap-3 rounded-2xl p-3">
+                  <button
+                    type="button"
+                    onClick={() => setIsPreviewOpen(true)}
+                    className="inline-flex items-center rounded-xl border border-primary-200 bg-white px-5 py-3 text-sm font-semibold text-primary-700 shadow-sm hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-primary-200 focus:ring-offset-2"
+                  >
+                    Preview
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="inline-flex items-center rounded-xl bg-primary-600 px-6 py-3 text-sm font-semibold text-white shadow-md shadow-primary-500/40 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    <CheckIcon className="mr-2 h-4 w-4" />
+                    {loading ? 'Saving...' : 'Save Changes'}
+                  </button>
+                </div>
+              </div>
                       </div>
           </form>
-                    </div>
+        </div>
       </div>
+
+      {isPreviewOpen && (
+        <ProductPreviewOverlay
+          product={formData}
+          breadcrumbs={[
+            typeof formData.category === 'string' ? formData.category : '',
+            typeof formData.subcategory === 'string' ? formData.subcategory : '',
+            formData.name,
+          ].filter(Boolean)}
+          onClose={() => setIsPreviewOpen(false)}
+        />
+      )}
 
       {/* Add New Category Modal */}
       {showAddCategoryModal && (
@@ -1931,6 +2062,31 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
       </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function ProductPreviewOverlay({
+  product,
+  breadcrumbs,
+  onClose,
+}: {
+  product: Product;
+  breadcrumbs: string[];
+  onClose: () => void;
+}) {
+  return (
+    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 px-4 py-8">
+      <div className="relative w-full max-w-5xl">
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute right-5 top-5 z-10 rounded-full bg-white/90 p-2 text-gray-600 shadow hover:bg-white"
+        >
+          <XMarkIcon className="h-5 w-5" />
+        </button>
+        <ModernProductShowcase product={product} breadcrumbs={breadcrumbs} />
+      </div>
     </div>
   );
 }

@@ -1,6 +1,12 @@
+/**
+ * @deprecated This file is deprecated. The project no longer uses Strapi CMS.
+ * Please use app/lib/admin/api.ts instead, which connects to the NestJS backend.
+ * This file is kept for reference only and may be removed in a future version.
+ */
+
 import axios from 'axios'
 
-// Strapi API configuration
+// Strapi API configuration (DEPRECATED - not used)
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337'
 const STRAPI_API_KEY = process.env.NEXT_PUBLIC_STRAPI_API_KEY || ''
 

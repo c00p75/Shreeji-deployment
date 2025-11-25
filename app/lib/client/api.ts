@@ -44,7 +44,6 @@ class ClientApiClient {
   async getProducts(params?: {
     pagination?: { page: number; pageSize: number };
     filters?: Record<string, any>;
-    sort?: string;
   }) {
     const searchParams = new URLSearchParams();
 
@@ -59,10 +58,6 @@ class ClientApiClient {
           searchParams.append(key, value.toString());
         }
       });
-    }
-
-    if (params?.sort) {
-      searchParams.append('sort', params.sort);
     }
 
     const queryString = searchParams.toString();

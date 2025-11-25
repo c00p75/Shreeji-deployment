@@ -68,13 +68,13 @@ export default function InventoryManagement() {
     try {
       setLoading(true);
       
-      // Fetch products from Strapi API
+      // Fetch products from backend API
       const response = await api.getProducts({ pagination: { page: 1, pageSize: 100 } });
       
-      // Transform Strapi data to match our interface
+      // Transform backend data to match our interface
       const transformedProducts: Product[] = (response.data || []).map((product: any) => {
-        // Handle Strapi v4+ structure where attributes are nested
-        const productData = product.attributes || product;
+        // Handle backend structure - products are returned directly
+        const productData = product;
         
         // Use enhanced image processing that prioritizes local images
         const images = processProductImages(productData);

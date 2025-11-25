@@ -2,15 +2,15 @@
 
 ## Starting the Admin Dashboard
 
-The admin dashboard requires **Strapi CMS to be running** before you can log in.
+The admin dashboard requires **NestJS Backend to be running** before you can log in.
 
-### Option 1: Start Strapi and Next.js Separately
+### Option 1: Start Backend and Next.js Separately
 
-**Terminal 1 - Start Strapi:**
+**Terminal 1 - Start NestJS Backend:**
 ```bash
-npm run dev:strapi
+npm run dev:backend
 # OR
-cd ../shreeji-cms && pnpm develop
+cd ../shreeji-ecommerce-backend && npm run start:dev
 ```
 
 **Terminal 2 - Start Next.js:**
@@ -24,36 +24,35 @@ npm run dev
 npm run dev:all
 ```
 
-This will start both Strapi and Next.js concurrently.
+This will start both NestJS backend and Next.js concurrently.
 
-### Verify Strapi is Running
+### Verify Backend is Running
 
-Once Strapi starts, you should see:
-- Strapi admin panel available at: `http://localhost:1337/admin`
-- API available at: `http://localhost:1337/api`
+Once the backend starts, you should see:
+- Backend API available at: `http://localhost:4000`
+- API documentation at: `http://localhost:4000/api` (if Swagger is enabled)
 
 ### Access Admin Dashboard
 
-1. Make sure Strapi is running (check port 1337)
+1. Make sure the backend is running (check port 4000)
 2. Navigate to: `http://localhost:3000/admin/login`
-3. Use your Strapi admin credentials to log in
+3. Use your admin credentials to log in
 
 ### Troubleshooting
 
-**Error: `ERR_CONNECTION_REFUSED` on port 1337**
-- **Solution**: Start Strapi first using `npm run dev:strapi` or `npm run dev:all`
+**Error: `ERR_CONNECTION_REFUSED` on port 4000**
+- **Solution**: Start the backend first using `npm run dev:backend` or `npm run dev:all`
 
 **Error: `Network Error`**
-- Check if Strapi is running: Visit `http://localhost:1337/admin` in your browser
-- Verify environment variables (if using custom Strapi URL)
+- Check if the backend is running: Visit `http://localhost:4000` in your browser
+- Verify environment variables (if using custom backend URL)
 
 ### Environment Variables
 
-If your Strapi is running on a different URL, create a `.env.local` file:
+If your backend is running on a different URL, create a `.env.local` file:
 
 ```env
-NEXT_PUBLIC_STRAPI_URL=http://localhost:1337/api
-NEXT_PUBLIC_STRAPI_ADMIN_URL=http://localhost:1337
+NEXT_PUBLIC_ECOM_API_URL=http://localhost:4000
 ```
 
 ## Admin Dashboard Routes

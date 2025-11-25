@@ -1,5 +1,9 @@
 /**
- * Strapi API client for the main Shreeji website
+ * @deprecated This file is deprecated. The project no longer uses Strapi CMS.
+ * Please use app/lib/client/api.ts instead, which connects to the NestJS backend.
+ * This file is kept for reference only and may be removed in a future version.
+ * 
+ * Strapi API client for the main Shreeji website (DEPRECATED)
  * This will replace the static product data imports
  */
 

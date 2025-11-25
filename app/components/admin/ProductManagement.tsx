@@ -69,23 +69,23 @@ export default function ProductManagement() {
       console.log('API Response:', response)
       console.log('Response meta:', response.meta)
       
-      // Handle Strapi response structure: { data: [...], meta: {...} }
-      // Products might be in response.data array, where each item has { id, documentId, attributes: {...} }
+      // Handle NestJS response structure: { data: [...], meta: {...} }
+      // Products are in response.data array
       const productsArray = response.data || []
       
       console.log('Products array length:', productsArray.length)
       console.log('First product in array:', productsArray[0])
       
       if (productsArray.length === 0) {
-        setError('No products found. Make sure products exist in Strapi and permissions are configured correctly.')
+        setError('No products found. Make sure products exist in the backend and the API is configured correctly.')
       }
       
-      // Transform Strapi data to match our interface
+      // Transform NestJS data to match our interface
       const transformedProducts = productsArray
         .map((product: any) => {
           try {
-            // Handle Strapi v4+ structure where attributes are nested
-            const productData = product.attributes || product
+            // Handle NestJS structure - products are returned directly
+            const productData = product
             // Use enhanced image processing that prioritizes local images
             const images = processProductImages(productData);
 
@@ -163,11 +163,10 @@ export default function ProductManagement() {
       if (error.status === 401 || error.status === 403) {
         setError(
           'Authentication failed. Please ensure you have logged in or configured an API token. ' +
-          'To create an API token: Go to Strapi Admin → Settings → API Tokens → Create new token ' +
-          'with Read access to Products, then add it to your .env.local as NEXT_PUBLIC_STRAPI_API_KEY'
+          'Please check your backend API configuration. Ensure NEXT_PUBLIC_ECOM_API_URL is set correctly in .env.local'
         )
       } else if (error.status === 404) {
-        setError('Products endpoint not found. Make sure Strapi is running and the Product content type exists.')
+        setError('Products endpoint not found. Make sure the backend is running and the products API is available.')
       } else {
         setError(`Failed to load products: ${error.message || 'Unknown error'}`)
       }
@@ -244,7 +243,7 @@ export default function ProductManagement() {
         throw new Error('Product ID is missing. Cannot save product.')
       }
 
-      // Prepare the data for Strapi - only include fields that have values
+      // Prepare the data for NestJS backend - only include fields that have values
       // Convert price strings to numbers (remove currency symbols and commas)
       const priceValue = typeof updatedProduct.price === 'string' 
         ? parseFloat(updatedProduct.price.replace(/[^0-9.]/g, '')) || 0
@@ -256,11 +255,17 @@ export default function ProductManagement() {
           : updatedProduct.discountedPrice)
         : null;
 
+      let normalizedSubcategory: string | number | null =
+        updatedProduct.subcategory === undefined ? null : (updatedProduct.subcategory as string | number | null);
+      if (typeof normalizedSubcategory === 'string') {
+        normalizedSubcategory = normalizedSubcategory.trim() || null;
+      }
+
       const productData = {
         name: updatedProduct.name,
         slug: updatedProduct.slug,
         category: updatedProduct.category,
-        subcategory: updatedProduct.subcategory && updatedProduct.subcategory.trim() !== '' ? updatedProduct.subcategory : null,
+        subcategory: normalizedSubcategory,
         brand: updatedProduct.brand,
         price: priceValue,
         discountedPrice: discountedPriceValue,
@@ -303,7 +308,7 @@ export default function ProductManagement() {
       } else if (error.response?.status >= 500) {
         throw new Error('Server error. Please try again later.')
       } else if (error.code === 'NETWORK_ERROR' || error.message?.includes('Network Error')) {
-        throw new Error('Cannot connect to server. Please check if Strapi is running.')
+        throw new Error('Cannot connect to server. Please check if the backend is running.')
       } else {
         throw error // Re-throw so the modal can handle the error
       }
