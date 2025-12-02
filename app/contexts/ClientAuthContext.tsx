@@ -7,6 +7,7 @@ interface ClientAuthContextType {
   user: ClientUser | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
+  register: (email: string, password: string, firstName?: string, lastName?: string, phone?: string) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
 }
@@ -54,6 +55,15 @@ export function ClientAuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const register = async (email: string, password: string, firstName?: string, lastName?: string, phone?: string) => {
+    try {
+      const response = await clientAuth.register({ email, password, firstName, lastName, phone });
+      setUser(response.user);
+    } catch (error: any) {
+      throw new Error(error.message || 'Client registration failed');
+    }
+  };
+
   const logout = () => {
     clientAuth.logout();
     setUser(null);
@@ -63,6 +73,7 @@ export function ClientAuthProvider({ children }: { children: ReactNode }) {
     user,
     loading,
     login,
+    register,
     logout,
     isAuthenticated: !!user
   };

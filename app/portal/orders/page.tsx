@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { useClientAuth } from '@/app/contexts/ClientAuthContext'
 import clientApi from '@/app/lib/client/api'
 
@@ -20,6 +21,13 @@ export default function PortalOrdersPage() {
   useEffect(() => {
     if (isAuthenticated) {
       fetchOrders()
+      
+      // Refresh orders every 30 seconds
+      const interval = setInterval(() => {
+        fetchOrders()
+      }, 30000)
+      
+      return () => clearInterval(interval)
     }
   }, [isAuthenticated])
 
@@ -40,7 +48,7 @@ export default function PortalOrdersPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-[#f5f1e8]">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
       </div>
     )
@@ -51,14 +59,14 @@ export default function PortalOrdersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#f5f1e8]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">My Orders</h1>
 
         <div className="bg-white rounded-lg shadow overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+              <thead className="bg-[#f5f1e8]">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Order #
@@ -107,9 +115,9 @@ export default function PortalOrdersPage() {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <a href={`/portal/orders/${order.id}`} className="text-primary-600 hover:text-primary-900">
+                        <Link href={`/portal/orders/${order.id}`} className="text-[var(--shreeji-primary)] hover:text-[var(--shreeji-secondary)]">
                           View
-                        </a>
+                        </Link>
                       </td>
                     </tr>
                   ))

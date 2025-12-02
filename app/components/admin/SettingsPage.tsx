@@ -77,7 +77,7 @@ export default function SettingsPage() {
     
     // General
     companyName: 'Shreeji Technologies',
-    currency: 'USD',
+    currency: 'ZMW',
     dateFormat: 'MM/DD/YYYY',
     timeFormat: '12h',
     
@@ -202,7 +202,7 @@ export default function SettingsPage() {
             onChange={(e) => handleInputChange('currency', e.target.value)}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
           >
-            <option value="USD">USD - US Dollar</option>
+            <option value="ZMW">ZMW - Zambian Kwacha</option>
             <option value="EUR">EUR - Euro</option>
             <option value="GBP">GBP - British Pound</option>
             <option value="CAD">CAD - Canadian Dollar</option>

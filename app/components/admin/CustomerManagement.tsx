@@ -1,73 +1,11 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { MagnifyingGlassIcon, FunnelIcon, PlusIcon, EyeIcon, PencilIcon, TrashIcon, EnvelopeIcon, PhoneIcon } from '@heroicons/react/20/solid';
 import { Menu, Transition } from '@headlessui/react';
 import clsx from 'clsx';
 import Layout from './Layout'
-
-const customers = [
-  {
-    id: 'CUST-001',
-    name: 'John Doe',
-    email: 'john@example.com',
-    phone: '+1234567890',
-    status: 'active',
-    totalOrders: 12,
-    totalSpent: 2450.75,
-    lastOrder: '2024-01-15',
-    registrationDate: '2023-06-15',
-    location: 'New York, NY'
-  },
-  {
-    id: 'CUST-002',
-    name: 'Jane Smith',
-    email: 'jane@example.com',
-    phone: '+0987654321',
-    status: 'active',
-    totalOrders: 8,
-    totalSpent: 1890.50,
-    lastOrder: '2024-01-14',
-    registrationDate: '2023-08-20',
-    location: 'Los Angeles, CA'
-  },
-  {
-    id: 'CUST-003',
-    name: 'Bob Johnson',
-    email: 'bob@example.com',
-    phone: '+1122334455',
-    status: 'inactive',
-    totalOrders: 3,
-    totalSpent: 650.25,
-    lastOrder: '2023-12-10',
-    registrationDate: '2023-10-05',
-    location: 'Chicago, IL'
-  },
-  {
-    id: 'CUST-004',
-    name: 'Alice Brown',
-    email: 'alice@example.com',
-    phone: '+5566778899',
-    status: 'active',
-    totalOrders: 15,
-    totalSpent: 3200.00,
-    lastOrder: '2024-01-12',
-    registrationDate: '2023-05-12',
-    location: 'Houston, TX'
-  },
-  {
-    id: 'CUST-005',
-    name: 'Charlie Wilson',
-    email: 'charlie@example.com',
-    phone: '+9988776655',
-    status: 'blocked',
-    totalOrders: 1,
-    totalSpent: 125.00,
-    lastOrder: '2023-11-15',
-    registrationDate: '2023-11-01',
-    location: 'Phoenix, AZ'
-  }
-];
+import api from '@/app/lib/admin/api'
 
 const statusColors = {
   active: 'bg-green-100 text-green-800',
@@ -76,9 +14,52 @@ const statusColors = {
 };
 
 export default function CustomerManagement() {
+  const [customers, setCustomers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedCustomers, setSelectedCustomers] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
+
+  useEffect(() => {
+    fetchCustomers();
+  }, []);
+
+  const fetchCustomers = async () => {
+    try {
+      setLoading(true);
+      const response = await api.getCustomers({ 
+        pagination: { page: 1, pageSize: 100 }
+      });
+      
+      // Transform API response to match component format
+      const transformedCustomers = (response.data || []).map((customer: any) => ({
+        id: `CUST-${String(customer.id).padStart(3, '0')}`,
+        name: `${customer.firstName} ${customer.lastName}`,
+        email: customer.email,
+        phone: customer.phone || 'N/A',
+        status: customer.isActive ? 'active' : 'inactive',
+        totalOrders: customer.totalOrders || 0,
+        totalSpent: customer.totalSpent || 0,
+        lastOrder: customer.lastOrderDate 
+          ? new Date(customer.lastOrderDate).toISOString().split('T')[0] 
+          : 'N/A',
+        registrationDate: customer.createdAt 
+          ? new Date(customer.createdAt).toISOString().split('T')[0] 
+          : new Date().toISOString().split('T')[0],
+        location: customer.addresses?.[0] 
+          ? `${customer.addresses[0].city || ''}, ${customer.addresses[0].province || ''}`.trim() || 'N/A'
+          : 'N/A',
+        rawCustomer: customer // Keep raw customer for details view
+      }));
+      
+      setCustomers(transformedCustomers);
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      setCustomers([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filteredCustomers = customers.filter(customer =>
     customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -101,6 +82,16 @@ export default function CustomerManagement() {
         : filteredCustomers.map(customer => customer.id)
     );
   };
+
+  if (loading) {
+    return (
+      <Layout currentPage="Customers">
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout currentPage="Customers">
@@ -180,7 +171,7 @@ export default function CustomerManagement() {
               <div className="ml-5 w-0 flex-1">
                 <dl>
                   <dt className="text-sm font-medium text-gray-500 truncate">Total Revenue</dt>
-                  <dd className="text-lg font-medium text-gray-900">${customers.reduce((sum, customer) => sum + customer.totalSpent, 0).toLocaleString()}</dd>
+                  <dd className="text-lg font-medium text-gray-900">K{customers.reduce((sum, customer) => sum + customer.totalSpent, 0).toLocaleString()}</dd>
                 </dl>
               </div>
             </div>
@@ -366,10 +357,10 @@ export default function CustomerManagement() {
                       {customer.totalOrders}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      ${customer.totalSpent.toLocaleString()}
+                      K{customer.totalSpent.toLocaleString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {new Date(customer.lastOrder).toLocaleDateString()}
+                      {customer.lastOrder !== 'N/A' ? new Date(customer.lastOrder).toLocaleDateString() : 'N/A'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex items-center justify-end space-x-2">
@@ -440,7 +431,7 @@ export default function CustomerManagement() {
                   </div>
                   <div>
                     <span className="text-gray-500">Spent:</span>
-                    <span className="ml-1 font-medium text-gray-900">${customer.totalSpent.toLocaleString()}</span>
+                    <span className="ml-1 font-medium text-gray-900">K{customer.totalSpent.toLocaleString()}</span>
                   </div>
                 </div>
               </div>

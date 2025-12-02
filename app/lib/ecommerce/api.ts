@@ -56,12 +56,28 @@ export interface CheckoutAddressInput {
   phone?: string;
 }
 
+export interface CheckoutCardDetails {
+  cardId?: string; // For saved cards
+  number?: string;
+  expiryMonth?: string;
+  expiryYear?: string;
+  cvv?: string;
+  cardholderName?: string;
+}
+
+export interface CheckoutMobileMoneyDetails {
+  provider: 'mtn' | 'airtel' | 'zamtel' | 'orange';
+  phoneNumber: string;
+}
+
 export interface CheckoutRequest {
   cartId: string;
   customer: CheckoutCustomerInput;
   shippingAddress: CheckoutAddressInput;
   billingAddress?: CheckoutAddressInput;
   paymentMethod: string;
+  cardDetails?: CheckoutCardDetails;
+  mobileMoneyDetails?: CheckoutMobileMoneyDetails;
   notes?: string;
 }
 
@@ -69,6 +85,8 @@ export interface CheckoutResponse {
   orderNumber: string;
   orderId: number;
   paymentStatus: string;
+  redirectUrl?: string;
+  requiresAction?: boolean;
   totals: {
     subtotal: number;
     taxAmount: number;
@@ -84,9 +102,7 @@ const API_URL = process.env.NEXT_PUBLIC_ECOM_API_URL?.replace(/\/$/, '') || 'htt
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const url = `${API_URL}${path}`
   
-  if (!API_URL || API_URL === 'http://localhost:4000') {
-    console.warn('E-commerce API URL not configured. Using default:', API_URL)
-  }
+  // Removed warning - default URL is expected in development
 
   try {
     const response = await fetch(url, {
@@ -100,14 +116,28 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 
     if (!response.ok) {
       let message = 'Something went wrong'
+      let errorData: any = null
       try {
-        const error = await response.json()
-        message = error.message || error.error || message
+        errorData = await response.json()
+        message = errorData.message || errorData.error?.message || errorData.error || message
       } catch {
-        message = await response.text()
+        try {
+          message = await response.text()
+        } catch {
+          message = `Request failed: ${response.status} ${response.statusText}`
+        }
       }
-      console.error(`API request failed: ${response.status} ${response.statusText}`, { url, message })
-      throw new Error(message || `Request failed: ${response.status} ${response.statusText}`)
+      
+      // Don't log 404s for product lookups (they're handled gracefully)
+      // Also include status code in error message for better error detection
+      const errorMessage = message || `Request failed: ${response.status} ${response.statusText}`
+      const fullErrorMessage = `${errorMessage} (${response.status})`
+      
+      if (response.status !== 404 || !url.includes('/products/')) {
+        console.error(`API request failed: ${response.status} ${response.statusText}`, { url, message: errorMessage })
+      }
+      
+      throw new Error(fullErrorMessage)
     }
 
     return response.json()
@@ -120,7 +150,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   }
 }
 
-export async function createCart(currency = 'USD'): Promise<Cart> {
+export async function createCart(currency = 'ZMW'): Promise<Cart> {
   return request<Cart>('/cart', {
     method: 'POST',
     body: JSON.stringify({ currency }),
@@ -146,7 +176,14 @@ export async function updateCartItem(cartId: string, itemId: string, quantity: n
 }
 
 export async function removeCartItem(cartId: string, itemId: string): Promise<Cart> {
-  return request<Cart>(`/cart/${cartId}/items/${itemId}`, {
+  // Ensure itemId is properly formatted
+  if (!itemId || typeof itemId !== 'string') {
+    throw new Error('Invalid item ID');
+  }
+  
+  // Don't validate UUID format here - let the backend handle it
+  // This allows for backward compatibility and proper error handling
+  return await request<Cart>(`/cart/${cartId}/items/${itemId}`, {
     method: 'DELETE',
   });
 }

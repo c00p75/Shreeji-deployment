@@ -7,6 +7,7 @@ import EditProductModal from '@/app/components/admin/EditProductModal';
 import ProductDetails from '@/components/products/product details';
 import api from '@/app/lib/admin/api';
 import adminAuth from '@/app/lib/admin/auth';
+import { clearProductsCache } from '@/app/lib/client/products';
 
 interface ProductDetailsWithEditProps {
   product: any;
@@ -69,11 +70,14 @@ export default function ProductDetailsWithEdit({
         ? parseFloat(updatedProduct.price.replace(/[^0-9.]/g, '')) || 0
         : updatedProduct.price || 0;
       
-      const discountedPriceValue = updatedProduct.discountedPrice
-        ? (typeof updatedProduct.discountedPrice === 'string'
-          ? parseFloat(updatedProduct.discountedPrice.replace(/[^0-9.]/g, '')) || null
-          : updatedProduct.discountedPrice)
-        : null;
+      const discountedPriceValue =
+        updatedProduct.discountedPrice !== undefined &&
+        updatedProduct.discountedPrice !== null &&
+        `${updatedProduct.discountedPrice}`.trim() !== ''
+          ? (typeof updatedProduct.discountedPrice === 'string'
+              ? parseFloat(updatedProduct.discountedPrice.replace(/[^0-9.]/g, '')) || 0
+              : Number(updatedProduct.discountedPrice))
+          : 0;
 
       let normalizedSubcategory: string | number | null =
         updatedProduct.subcategory === undefined ? null : (updatedProduct.subcategory as string | number | null);
@@ -111,6 +115,9 @@ export default function ProductDetailsWithEdit({
       const response = await api.updateProduct(updatedProduct.documentId, productData);
       console.log('Update response:', response);
       
+      // Clear product cache so next fetch shows fresh data
+      clearProductsCache();
+
       // Close modal first
       setShowEditModal(false);
       
@@ -156,7 +163,7 @@ export default function ProductDetailsWithEdit({
       {isAuthenticated && (
         <button
           onClick={handleOpenEditModal}
-          className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-full bg-primary-600 px-5 py-3 text-white shadow-lg transition-all hover:bg-primary-700 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 md:bottom-8 md:right-8"
+          className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-2xl bg-primary-600 px-5 py-3 text-white shadow-lg transition-all hover:bg-primary-700 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 md:bottom-8 md:right-8"
           title="Edit Product"
         >
           <PencilIcon className="h-5 w-5" />

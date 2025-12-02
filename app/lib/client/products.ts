@@ -307,12 +307,22 @@ export async function getProductByName(name: string): Promise<any | null> {
 export async function getProductBySlug(slug: string): Promise<any | null> {
   try {
     const response = await clientApi.getProduct(slug);
-    // NestJS returns product directly, not wrapped in data array
-    if (response) {
-      return transformProduct(response);
+    // NestJS returns product directly or wrapped in data
+    const product = response?.data || response;
+    if (product) {
+      return transformProduct(product);
     }
     return null;
-  } catch (error) {
+  } catch (error: any) {
+    // Don't throw error for missing products, just return null silently
+    // This allows the fallback to getProductByName to work
+    if (error.message?.includes('not found') || 
+        error.message?.includes('404') || 
+        error.message?.includes('Product') && error.message?.includes('not found')) {
+      // Silently return null - let getProductByName try as fallback
+      return null;
+    }
+    // Only log non-404 errors
     console.error('Error getting product by slug:', error);
     return null;
   }

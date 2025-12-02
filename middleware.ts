@@ -32,7 +32,7 @@ export function middleware(request: NextRequest) {
     }
     
     // For other portal routes, check authentication
-    const clientToken = request.cookies.get('strapi_client_jwt')?.value ||
+    const clientToken = request.cookies.get('client_jwt')?.value ||
                        request.headers.get('authorization')?.replace('Bearer ', '')
     
     // Similar to admin - client-side protection will handle redirects

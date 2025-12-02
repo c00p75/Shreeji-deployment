@@ -9,13 +9,13 @@ import SpecialFeaturBudge from './special feature badge';
 import RequestQuoteModal from '../request quote';
 import { useState } from 'react';
 import { useCart } from '@/app/contexts/CartContext';
+import toast from 'react-hot-toast';
+import QuantityInput from '../QuantityInput';
 
 const ProductDetails = ({product}) => {  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [quantity, setQuantity] = useState(1)
   const [addingToCart, setAddingToCart] = useState(false)
-  const [cartMessage, setCartMessage] = useState('')
-  const [cartError, setCartError] = useState('')
   const { addItem } = useCart()
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
@@ -114,53 +114,60 @@ const ProductDetails = ({product}) => {
             </div>
           )}
 
-          <div className='mt-10 rounded-2xl border border-[#e8d9c2] bg-white/80 p-6 shadow-sm'>
-            <p className='text-xl font-semibold text-[#544829]'>Ready to purchase?</p>
-            <p className='text-sm text-gray-500 mb-4'>Add this product to your cart and complete checkout when you&apos;re ready.</p>
+          <div className='mt-10'>
+            {/* <p className='text-xl font-semibold text-[#544829]'>Ready to purchase?</p>
+            <p className='text-sm text-gray-500 mb-4'>Add this product to your cart and complete checkout when you&apos;re ready.</p> */}
             <div className='flex flex-col gap-3 md:flex-row md:items-center'>
-              <label className='text-sm font-medium text-gray-600' htmlFor='quantity'>Quantity</label>
-              <input
-                id='quantity'
-                type='number'
-                min={1}
+              <QuantityInput
                 value={quantity}
-                onChange={(e) => setQuantity(Math.max(1, Number(e.target.value)))}
-                className='w-24 rounded-md border border-gray-300 px-3 py-2 text-center focus:border-[var(--shreeji-primary)] focus:outline-none'
+                onChange={setQuantity}
+                min={1}
+                className="w-auto"
               />
+              
               <button
                 type='button'
                 onClick={async () => {
                   const productIdentifier = product?.documentId ?? product?.id
                   if (!productIdentifier) {
-                    setCartError('Product identifier is missing')
+                    toast.error('Product identifier is missing')
                     return
                   }
                   setAddingToCart(true)
-                  setCartMessage('')
-                  setCartError('')
                   try {
                     await addItem(productIdentifier, quantity)
-                    setCartMessage('Added to cart! Continue shopping or proceed to checkout.')
+                    toast.success((t) => (
+                      <div className="flex flex-col items-center gap-3">
+                        <span>Added to cart!</span>
+                        <Link
+                          href="/checkout"
+                          onClick={() => toast.dismiss(t.id)}
+                          className="px-4 py-2 bg-[var(--shreeji-primary)] text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+                        >
+                          Proceed to Checkout
+                        </Link>
+                      </div>
+                    ), {
+                      duration: 5000,
+                    })
                   } catch (err) {
                     console.error('Add to cart error:', err)
-                    setCartError(err instanceof Error ? err.message : 'Unable to add to cart. Please check if the backend is running.')
+                    toast.error(err instanceof Error ? err.message : 'Unable to add to cart. Please check if the backend is running.')
                   } finally {
                     setAddingToCart(false)
                   }
                 }}
-                className='flex-1 rounded-full bg-[var(--shreeji-primary)] px-6 py-3 text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70'
+                className='w-fit rounded-2xl bg-[var(--shreeji-primary)] px-6 py-3 text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70'
                 disabled={addingToCart || !(product?.documentId || product?.id)}
               >
                 {addingToCart ? 'Adding...' : 'Add to Cart'}
               </button>
             </div>
-            {cartMessage && <p className='mt-3 text-sm text-green-600'>{cartMessage}</p>}
-            {cartError && <p className='mt-3 text-sm text-red-600'>{cartError}</p>}
           </div>
         </div>
       </div>
 
-      <div className='bg-[var(--shreeji-primary)] px-10 py-3 mt-16 text-white md:text-2xl font-semibold flex justify-between items-center rounded-full border-t-[#e8d9c2] border-4'>
+      {/* <div className='bg-[var(--shreeji-primary)] px-10 py-3 mt-16 text-white md:text-2xl font-semibold flex justify-between items-center rounded-full border-t-[#e8d9c2] border-4'>
         <p className='hidden md:flex flex-1 text-base'>
           Shreeji House, Plot No. 1209,
           <br />
@@ -175,7 +182,7 @@ const ProductDetails = ({product}) => {
         <p className='hidden md:flex flex-1 text-right'>
           +260 77 116 1111
         </p>
-      </div>
+      </div> */}
 
       <RequestQuoteModal 
         product={product}

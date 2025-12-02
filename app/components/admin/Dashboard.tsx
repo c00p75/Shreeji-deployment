@@ -24,17 +24,16 @@ export default function Dashboard() {
   const [topProducts, setTopProducts] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        setLoading(true)
-        
-        // Fetch all dashboard data in parallel
-        const [statsData, ordersData, productsData] = await Promise.all([
-          api.getDashboardStats(),
-          api.getOrders({ pagination: { page: 1, pageSize: 5 }, populate: ['customer'] }),
-          api.getProducts({ pagination: { page: 1, pageSize: 5 } })
-        ])
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true)
+      
+      // Fetch all dashboard data in parallel
+      const [statsData, ordersData, productsData] = await Promise.all([
+        api.getDashboardStats(),
+        api.getOrders({ pagination: { page: 1, pageSize: 5 }, populate: ['customer'] }),
+        api.getProducts({ pagination: { page: 1, pageSize: 5 } })
+      ])
 
         setStats(statsData)
         
@@ -63,24 +62,32 @@ export default function Dashboard() {
 
         setTopProducts(transformedProducts)
 
-      } catch (error) {
-        console.error('Error fetching dashboard data:', error)
-        // Keep mock data as fallback
-        setStats({
-          totalProducts: 25,
-          totalCustomers: 4,
-          totalOrders: 1,
-          totalRevenue: 0,
-          inventoryValue: 1592500,
-          lowStockProducts: 2,
-          outOfStockProducts: 1,
-        })
-      } finally {
-        setLoading(false)
-      }
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error)
+      // Keep mock data as fallback
+      setStats({
+        totalProducts: 25,
+        totalCustomers: 4,
+        totalOrders: 1,
+        totalRevenue: 0,
+        inventoryValue: 1592500,
+        lowStockProducts: 2,
+        outOfStockProducts: 1,
+      })
+    } finally {
+      setLoading(false)
     }
+  }
 
+  useEffect(() => {
     fetchDashboardData()
+    
+    // Refresh dashboard data every 30 seconds
+    const interval = setInterval(() => {
+      fetchDashboardData()
+    }, 30000)
+    
+    return () => clearInterval(interval)
   }, [])
 
   if (loading) {

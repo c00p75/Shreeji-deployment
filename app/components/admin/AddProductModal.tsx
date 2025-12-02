@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from 'react';
+import { Listbox, Transition } from '@headlessui/react';
 import { 
   XMarkIcon,
   PhotoIcon,
@@ -9,7 +10,9 @@ import {
   ExclamationTriangleIcon,
   CloudArrowUpIcon,
   DocumentTextIcon,
-  CheckIcon
+  CheckIcon,
+  PencilIcon,
+  ChevronDownIcon
 } from '@heroicons/react/24/outline';
 import api from '@/app/lib/admin/api';
 
@@ -57,7 +60,7 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
     subcategory: '',
     brand: '',
     price: '',
-    discountedPrice: '',
+    discountedPrice: '0',
     costPrice: 0,
     taxRate: 0,
     tagline: '',
@@ -91,11 +94,13 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
   const [showAddSubcategoryModal, setShowAddSubcategoryModal] = useState(false);
   const [showEditSubcategoryModal, setShowEditSubcategoryModal] = useState(false);
   const [showAddBrandModal, setShowAddBrandModal] = useState(false);
+  const [showEditBrandModal, setShowEditBrandModal] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState('');
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [newSubcategoryName, setNewSubcategoryName] = useState('');
   const [editingSubcategory, setEditingSubcategory] = useState<Subcategory | null>(null);
   const [newBrandName, setNewBrandName] = useState('');
+  const [editingBrand, setEditingBrand] = useState<Brand | null>(null);
 
   // Category and Subcategory interfaces
   interface Category {
@@ -435,6 +440,119 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
     }
   };
 
+  // Update brand
+  const handleUpdateBrand = async () => {
+    if (!editingBrand) return;
+    
+    const trimmedName = newBrandName.trim();
+    
+    if (!trimmedName) {
+      setErrors(prev => ({ ...prev, newBrand: 'Brand name is required' }));
+      return;
+    }
+    
+    // Check for duplicates (excluding current brand)
+    if (brands.some(b => b.id !== editingBrand.id && b.name.toLowerCase() === trimmedName.toLowerCase())) {
+      setErrors(prev => ({ ...prev, newBrand: 'Brand name already exists' }));
+      return;
+    }
+
+    // Logo is optional - check if provided
+    const brandLogoFile = (document.getElementById('edit-brand-logo-file') as HTMLInputElement)?.files?.[0];
+    const brandLogoUrl = (document.getElementById('edit-brand-logo-url') as HTMLInputElement)?.value?.trim();
+
+    try {
+      let logoId: number | undefined;
+      let logoUrl: string | undefined;
+
+      // Upload logo file if provided
+      if (brandLogoFile) {
+        const uploadResponse = await api.uploadImage(brandLogoFile);
+        logoId = uploadResponse.id;
+      } else if (brandLogoUrl) {
+        logoUrl = brandLogoUrl;
+      }
+
+      // Update brand in backend
+      const brandData: any = {
+        name: trimmedName,
+      };
+      
+      if (logoId) {
+        brandData.logo = logoId;
+      } else if (logoUrl) {
+        brandData.logoUrl = logoUrl;
+      }
+
+      const response = await api.updateBrand(editingBrand.id.toString(), brandData) as { data: any };
+      const updatedBrand = response.data;
+      const brandDataAttr = updatedBrand.attributes || updatedBrand;
+
+      const updated: Brand = {
+        id: updatedBrand.id || updatedBrand.documentId,
+        documentId: updatedBrand.documentId,
+        name: brandDataAttr.name || trimmedName,
+        logo: brandDataAttr.logo?.data ? {
+          url: brandDataAttr.logo.data.attributes?.url || brandDataAttr.logo.data.url,
+          id: brandDataAttr.logo.data.id
+        } : null,
+        logoUrl: brandDataAttr.logoUrl || logoUrl || null
+      };
+
+      setBrands(prev => prev.map(b => b.id === editingBrand.id ? updated : b));
+      
+      // Update formData if this brand is selected
+      if (formData.brand === editingBrand.id || formData.brand === editingBrand.id.toString()) {
+        handleInputChange('brand', updated.id.toString());
+      }
+      
+      // Reset and close modal
+      setNewBrandName('');
+      setEditingBrand(null);
+      setShowEditBrandModal(false);
+      (document.getElementById('edit-brand-logo-file') as HTMLInputElement).value = '';
+      (document.getElementById('edit-brand-logo-url') as HTMLInputElement).value = '';
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors.newBrand;
+        return newErrors;
+      });
+    } catch (error: any) {
+      console.error('Error updating brand:', error);
+      setErrors(prev => ({ 
+        ...prev, 
+        newBrand: error.message || 'Failed to update brand. Please try again.' 
+      }));
+    }
+  };
+
+  // Delete brand
+  const handleDeleteBrand = async (brandId: number | string) => {
+    if (!confirm('Are you sure you want to delete this brand? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      await api.deleteBrand(brandId);
+      setBrands(prev => prev.filter(b => b.id !== brandId));
+      
+      // Clear brand selection if deleted brand was selected
+      if (formData.brand === brandId || formData.brand === brandId.toString()) {
+        handleInputChange('brand', '');
+      }
+      
+      // Close modal if editing
+      if (editingBrand && editingBrand.id === brandId) {
+        setShowEditBrandModal(false);
+        setEditingBrand(null);
+        setNewBrandName('');
+      }
+    } catch (error: any) {
+      console.error('Error deleting brand:', error);
+      alert(error.message || 'Failed to delete brand. It may be in use by products.');
+    }
+  };
+
   // Handle subcategory selection
   const handleSubcategoryChange = (value: string) => {
     if (value === '__add_new__') {
@@ -646,7 +764,7 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
         subcategory: formData.subcategory || null,
         brand: brandId,
         price: parseFloat(formData.price.replace(/[^0-9.]/g, '')) || 0,
-        discountedPrice: formData.discountedPrice ? parseFloat(formData.discountedPrice.replace(/[^0-9.]/g, '')) : null,
+        discountedPrice: formData.discountedPrice ? parseFloat(formData.discountedPrice.replace(/[^0-9.]/g, '')) : 0,
         costPrice: formData.costPrice || null,
         taxRate: formData.taxRate || 0,
         tagline: formData.tagline || null,
@@ -780,7 +898,7 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
         subcategory: formData.subcategory || null,
         brand: formData.brand || null,
         price: parseFloat(formData.price.replace(/[^0-9.]/g, '')) || 0,
-        discountedPrice: formData.discountedPrice ? parseFloat(formData.discountedPrice.replace(/[^0-9.]/g, '')) : null,
+        discountedPrice: formData.discountedPrice ? parseFloat(formData.discountedPrice.replace(/[^0-9.]/g, '')) : 0,
         costPrice: formData.costPrice || null,
         taxRate: formData.taxRate || 0,
         tagline: formData.tagline || null,
@@ -812,7 +930,7 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
         subcategory: '',
         brand: '',
         price: '',
-        discountedPrice: '',
+        discountedPrice: '0',
         costPrice: 0,
         taxRate: 0,
         tagline: '',
@@ -1222,25 +1340,85 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
                         Loading categories...
                       </div>
                     ) : (
-                    <select
+                    <Listbox
                       value={formData.category ? (typeof formData.category === 'number' ? formData.category.toString() : formData.category) : ''}
-                      onChange={(e) => handleCategoryChange(e.target.value)}
-                          className={`w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 4 5%22><path fill=%22%23666%22 d=%22M2 0L0 2h4zm0 5L0 3h4z%22/></svg>')] bg-no-repeat bg-right bg-[length:12px] pr-10 ${errors.category ? 'border-red-500' : ''}`}
+                      onChange={(value) => {
+                        if (value !== '__add_new__') {
+                          handleCategoryChange(value);
+                        } else {
+                          setShowAddCategoryModal(true);
+                        }
+                      }}
                     >
-                      <option value="">Select category</option>
+                      <div className="relative">
+                        <Listbox.Button
+                          className={`relative w-full cursor-default rounded-lg border border-gray-300 bg-gray-50 py-2 pl-3 pr-10 text-left text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent ${
+                            errors.category ? 'border-red-500' : ''
+                          }`}
+                        >
+                          <span className="block truncate">
+                            {formData.category
+                              ? categories.find(c => c.name === formData.category || c.id === formData.category)?.name || 'Select category'
+                              : 'Select category'}
+                          </span>
+                          <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                            <ChevronDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                          </span>
+                        </Listbox.Button>
+                        <Transition
+                          as="div"
+                          leave="transition ease-in duration-100"
+                          leaveFrom="opacity-100"
+                          leaveTo="opacity-0"
+                          className="absolute z-10 mt-1 w-full rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                        >
+                          <Listbox.Options className="max-h-60 overflow-auto rounded-lg py-1 text-base">
                       {categories.map((category, index) => (
-                        <option key={`category-${category.id}-${index}`} value={category.name}>{category.name}</option>
-                      ))}
-                      <option value="__add_new__" className="text-primary-600 font-medium">+ Add new category</option>
-                      {categories.length > 0 && (
-                        <>
-                          <option disabled>──────────</option>
-                          {categories.map((category, index) => (
-                            <option key={`edit-${category.id}-${index}`} value={`__edit__${category.name}`} className="text-gray-600">✏️ Edit: {category.name}</option>
-                          ))}
-                        </>
-                      )}
-                    </select>
+                              <Listbox.Option
+                                key={`category-${category.id}-${index}`}
+                                value={category.name}
+                                className={({ active }) =>
+                                  `relative cursor-default select-none py-2 pl-3 pr-9 ${
+                                    active ? 'bg-primary-100 text-primary-900' : 'text-gray-900'
+                                  }`
+                                }
+                              >
+                                {({ selected }) => (
+                                  <div className="flex items-center justify-between">
+                                    <span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>
+                                      {category.name}
+                                    </span>
+                                    <button
+                                      type="button"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setEditingCategory(category);
+                                        setNewCategoryName(category.name);
+                                        setShowEditCategoryModal(true);
+                                      }}
+                                      className="flex-shrink-0 p-1 rounded hover:bg-gray-200 text-gray-600 hover:text-primary-600 transition-colors"
+                                      title="Edit category"
+                                    >
+                                      <PencilIcon className="h-4 w-4" />
+                                    </button>
+                                  </div>
+                                )}
+                              </Listbox.Option>
+                            ))}
+                            <Listbox.Option
+                              value="__add_new__"
+                              className={({ active }) =>
+                                `relative cursor-default select-none py-2 pl-3 pr-4 ${
+                                  active ? 'bg-primary-100 text-primary-900' : 'text-primary-600 font-medium'
+                                }`
+                              }
+                            >
+                              <span className="block truncate">+ Add new category</span>
+                            </Listbox.Option>
+                          </Listbox.Options>
+                        </Transition>
+                      </div>
+                    </Listbox>
                     )}
                     {errors.category && <p className="mt-1 text-sm text-red-600">{errors.category}</p>}
                     {errors.newCategory && <p className="mt-1 text-sm text-red-600">{errors.newCategory}</p>}
@@ -1255,25 +1433,89 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
                         Loading subcategories...
                       </div>
                     ) : (
-                    <select
+                    <Listbox
                       value={formData.subcategory ? (typeof formData.subcategory === 'number' ? formData.subcategory.toString() : formData.subcategory.toString()) : ''}
-                      onChange={(e) => handleSubcategoryChange(e.target.value)}
-                            className={`w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 4 5%22><path fill=%22%23666%22 d=%22M2 0L0 2h4zm0 5L0 3h4z%22/></svg>')] bg-no-repeat bg-right bg-[length:12px] pr-10 ${errors.subcategory ? 'border-red-500' : ''}`}
+                      onChange={(value) => {
+                        if (value !== '__add_new__') {
+                          handleSubcategoryChange(value);
+                        } else {
+                          if (!formData.category) {
+                            setErrors(prev => ({ ...prev, subcategory: 'Please select a category first' }));
+                            return;
+                          }
+                          setShowAddSubcategoryModal(true);
+                        }
+                      }}
                     >
-                      <option value="">Select subcategory</option>
+                      <div className="relative">
+                        <Listbox.Button
+                          className={`relative w-full cursor-default rounded-lg border border-gray-300 bg-gray-50 py-2 pl-3 pr-10 text-left text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent ${
+                            errors.subcategory ? 'border-red-500' : ''
+                          }`}
+                        >
+                          <span className="block truncate">
+                            {formData.subcategory
+                              ? subcategories.find(s => s.id.toString() === formData.subcategory?.toString() || s.id === formData.subcategory)?.name || 'Select subcategory'
+                              : 'Select subcategory'}
+                          </span>
+                          <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                            <ChevronDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                          </span>
+                        </Listbox.Button>
+                        <Transition
+                          as="div"
+                          leave="transition ease-in duration-100"
+                          leaveFrom="opacity-100"
+                          leaveTo="opacity-0"
+                          className="absolute z-10 mt-1 w-full rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                        >
+                          <Listbox.Options className="max-h-60 overflow-auto rounded-lg py-1 text-base">
                       {subcategories.map((subcategory, index) => (
-                        <option key={`subcategory-${subcategory.id}-${index}`} value={subcategory.id.toString()}>{subcategory.name}</option>
-                      ))}
-                      <option value="__add_new__" className="text-primary-600 font-medium">+ Add new subcategory</option>
-                      {subcategories.length > 0 && (
-                        <>
-                          <option disabled>──────────</option>
-                          {subcategories.map((subcategory, index) => (
-                            <option key={`edit-subcategory-${subcategory.id}-${index}`} value={`__edit__${subcategory.id}`} className="text-gray-600">✏️ Edit: {subcategory.name}</option>
-                          ))}
-                        </>
-                      )}
-                    </select>
+                              <Listbox.Option
+                                key={`subcategory-${subcategory.id}-${index}`}
+                                value={subcategory.id.toString()}
+                                className={({ active }) =>
+                                  `relative cursor-default select-none py-2 pl-3 pr-9 ${
+                                    active ? 'bg-primary-100 text-primary-900' : 'text-gray-900'
+                                  }`
+                                }
+                              >
+                                {({ selected }) => (
+                                  <div className="flex items-center justify-between">
+                                    <span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>
+                                      {subcategory.name}
+                                    </span>
+                                    <button
+                                      type="button"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setEditingSubcategory(subcategory);
+                                        setNewSubcategoryName(subcategory.name);
+                                        setShowEditSubcategoryModal(true);
+                                      }}
+                                      className="flex-shrink-0 p-1 rounded hover:bg-gray-200 text-gray-600 hover:text-primary-600 transition-colors"
+                                      title="Edit subcategory"
+                                    >
+                                      <PencilIcon className="h-4 w-4" />
+                                    </button>
+                                  </div>
+                                )}
+                              </Listbox.Option>
+                            ))}
+                            <Listbox.Option
+                              value="__add_new__"
+                              className={({ active }) =>
+                                `relative cursor-default select-none py-2 pl-3 pr-4 ${
+                                  active ? 'bg-primary-100 text-primary-900' : 'text-primary-600 font-medium'
+                                }`
+                              }
+                            >
+                              <span className="block truncate">+ Add new subcategory</span>
+                            </Listbox.Option>
+                          </Listbox.Options>
+                        </Transition>
+                      </div>
+                    </Listbox>
                     )}
                     {errors.subcategory && <p className="mt-1 text-sm text-red-600">{errors.subcategory}</p>}
                     {errors.newSubcategory && <p className="mt-1 text-sm text-red-600">{errors.newSubcategory}</p>}
@@ -1288,17 +1530,85 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
                         Loading brands...
                       </div>
                     ) : (
-                    <select
+                    <Listbox
                         value={formData.brand || ''}
-                        onChange={(e) => handleBrandChange(e.target.value)}
-                            className={`w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 4 5%22><path fill=%22%23666%22 d=%22M2 0L0 2h4zm0 5L0 3h4z%22/></svg>')] bg-no-repeat bg-right bg-[length:12px] pr-10 ${errors.brand ? 'border-red-500' : ''}`}
+                      onChange={(value: string) => {
+                        if (value !== '__add_new__') {
+                          handleBrandChange(value);
+                        } else {
+                          setShowAddBrandModal(true);
+                        }
+                      }}
                     >
-                      <option value="">Select brand</option>
-                      {brands.map(brand => (
-                          <option key={brand.id} value={brand.id.toString()}>{brand.name}</option>
-                      ))}
-                        <option value="__add_new__" className="text-primary-600 font-medium">+ Add new brand</option>
-                    </select>
+                      <div className="relative">
+                        <Listbox.Button
+                          className={`relative w-full cursor-default rounded-lg border border-gray-300 bg-gray-50 py-2 pl-3 pr-10 text-left text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent ${
+                            errors.brand ? 'border-red-500' : ''
+                          }`}
+                        >
+                          <span className="block truncate">
+                            {formData.brand
+                              ? brands.find(b => b.id.toString() === formData.brand?.toString() || b.id === formData.brand)?.name || 'Select brand'
+                              : 'Select brand'}
+                          </span>
+                          <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                            <ChevronDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                          </span>
+                        </Listbox.Button>
+                        <Transition
+                          as="div"
+                          leave="transition ease-in duration-100"
+                          leaveFrom="opacity-100"
+                          leaveTo="opacity-0"
+                          className="absolute z-10 mt-1 w-full rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                        >
+                          <Listbox.Options className="max-h-60 overflow-auto rounded-lg py-1 text-base">
+                            {brands.map((brand) => (
+                              <Listbox.Option
+                                key={brand.id}
+                                value={brand.id.toString()}
+                                className={({ active }) =>
+                                  `relative cursor-default select-none py-2 pl-3 pr-9 ${
+                                    active ? 'bg-primary-100 text-primary-900' : 'text-gray-900'
+                                  }`
+                                }
+                              >
+                                {({ selected }) => (
+                                  <div className="flex items-center justify-between">
+                                    <span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>
+                                      {brand.name}
+                                    </span>
+                                    <button
+                                      type="button"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setEditingBrand(brand);
+                                        setNewBrandName(brand.name);
+                                        setShowEditBrandModal(true);
+                                      }}
+                                      className="flex-shrink-0 p-1 rounded hover:bg-gray-200 text-gray-600 hover:text-primary-600 transition-colors"
+                                      title="Edit brand"
+                                    >
+                                      <PencilIcon className="h-4 w-4" />
+                                    </button>
+                                  </div>
+                                )}
+                              </Listbox.Option>
+                            ))}
+                            <Listbox.Option
+                              value="__add_new__"
+                              className={({ active }) =>
+                                `relative cursor-default select-none py-2 pl-3 pr-4 ${
+                                  active ? 'bg-primary-100 text-primary-900' : 'text-primary-600 font-medium'
+                                }`
+                              }
+                            >
+                              <span className="block truncate">+ Add new brand</span>
+                            </Listbox.Option>
+                          </Listbox.Options>
+                        </Transition>
+                      </div>
+                    </Listbox>
                     )}
                     {errors.brand && <p className="mt-1 text-sm text-red-600">{errors.brand}</p>}
                     {errors.newBrand && <p className="mt-1 text-sm text-red-600">{errors.newBrand}</p>}
@@ -1355,7 +1665,7 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
                         <label className="block text-sm font-medium text-gray-700 mb-2">Discounted Price</label>
                     <input
                       type="text"
-                      value={formData.discountedPrice || ''}
+                      value={formData.discountedPrice || '0'}
                       onChange={(e) => handleInputChange('discountedPrice', e.target.value)}
                           className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                           placeholder="e.g., K25,000 or 25000"
@@ -2027,6 +2337,143 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
                 type="button"
                   onClick={() => {
                     setShowAddBrandModal(false);
+                    setNewBrandName('');
+                    setErrors(prev => {
+                      const newErrors = { ...prev };
+                      delete newErrors.newBrand;
+                      return newErrors;
+                    });
+                  }}
+                className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+              >
+                Cancel
+              </button>
+            </div>
+        </div>
+      </div>
+        </div>
+      )}
+
+      {/* Edit Brand Modal */}
+      {showEditBrandModal && editingBrand && (
+        <div className="fixed inset-0 z-[60] overflow-y-auto">
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={() => {
+            setShowEditBrandModal(false);
+            setEditingBrand(null);
+            setNewBrandName('');
+            setErrors(prev => {
+              const newErrors = { ...prev };
+              delete newErrors.newBrand;
+              return newErrors;
+            });
+          }}></div>
+          <div className="flex items-center justify-center min-h-screen px-4 py-4">
+            <div className="relative bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all w-full max-w-md">
+              <div className="bg-white px-4 pt-5 pb-4 sm:p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-bold text-gray-900">Edit Brand</h3>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowEditBrandModal(false);
+                      setEditingBrand(null);
+                      setNewBrandName('');
+                      setErrors(prev => {
+                        const newErrors = { ...prev };
+                        delete newErrors.newBrand;
+                        return newErrors;
+                      });
+                    }}
+                    className="text-gray-400 hover:text-gray-500"
+                  >
+                    <XMarkIcon className="h-6 w-6" />
+                  </button>
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Brand Name *</label>
+                    <input
+                      type="text"
+                      value={newBrandName}
+                      onChange={(e) => {
+                        setNewBrandName(e.target.value);
+                        if (errors.newBrand) {
+                          setErrors(prev => {
+                            const newErrors = { ...prev };
+                            delete newErrors.newBrand;
+                            return newErrors;
+                          });
+                        }
+                      }}
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          handleUpdateBrand();
+                        }
+                      }}
+                      className={`w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.newBrand ? 'border-red-500' : ''}`}
+                      placeholder="Enter brand name"
+                      autoFocus
+                    />
+                    {errors.newBrand && <p className="mt-1 text-sm text-red-600">{errors.newBrand}</p>}
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Logo (Upload File)</label>
+                    <input
+                      id="edit-brand-logo-file"
+                      type="file"
+                      accept="image/*"
+                      className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    />
+                    <p className="mt-1 text-xs text-gray-500">Upload a logo image file (optional)</p>
+                  </div>
+
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-gray-300"></div>
+                    </div>
+                    <div className="relative flex justify-center text-sm">
+                      <span className="px-2 bg-white text-gray-500">OR</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Logo (URL)</label>
+                    <input
+                      id="edit-brand-logo-url"
+                      type="text"
+                      defaultValue={editingBrand.logoUrl || ''}
+                      className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      placeholder="https://example.com/logo.png or /logos/brand.png"
+                    />
+                    <p className="mt-1 text-xs text-gray-500">Enter a URL to an existing logo image (optional)</p>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteBrand(editingBrand.id)}
+                    className="inline-flex justify-center rounded-md border border-red-300 shadow-sm px-4 py-2 bg-red-50 text-base font-medium text-red-700 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:text-sm"
+                  >
+                    <TrashIcon className="h-4 w-4 mr-2" />
+                    Delete
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleUpdateBrand}
+                    className="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary-500 text-base font-medium text-white hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:text-sm"
+                  >
+                    Update
+                  </button>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowEditBrandModal(false);
+                    setEditingBrand(null);
                     setNewBrandName('');
                     setErrors(prev => {
                       const newErrors = { ...prev };

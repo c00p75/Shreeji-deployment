@@ -1,12 +1,19 @@
 'use client'
 
-import { CreditCard } from 'lucide-react'
-import { useState } from 'react'
+import { CreditCard, X } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import React from 'react'
+
+import { CheckoutCardDetails, CheckoutMobileMoneyDetails } from '@/app/lib/ecommerce/api'
 
 interface PaymentDetailsSectionProps {
   paymentMethod: string
   onPaymentMethodChange: (method: string) => void
   onPayment: () => void
+  onPaymentDetailsChange?: (details: {
+    cardDetails?: CheckoutCardDetails
+    mobileMoneyDetails?: CheckoutMobileMoneyDetails
+  }) => void
   isProcessing: boolean
 }
 
@@ -35,11 +42,21 @@ export default function PaymentDetailsSection({
   paymentMethod,
   onPaymentMethodChange,
   onPayment,
+  onPaymentDetailsChange,
   isProcessing,
 }: PaymentDetailsSectionProps) {
   const [selectedCardId, setSelectedCardId] = useState<string | null>('1')
   const [selectedMobileProvider, setSelectedMobileProvider] = useState<string>('mtn')
   const [mobileNumber, setMobileNumber] = useState<string>('')
+  const [showNewCardForm, setShowNewCardForm] = useState(false)
+  const [newCardData, setNewCardData] = useState({
+    number: '',
+    expiryMonth: '',
+    expiryYear: '',
+    cvv: '',
+    cardholderName: '',
+    saveCard: false,
+  })
 
   const paymentMethods = [
     { value: 'card', label: 'Credit / Debit Card (Visa, MasterCard, AmEx, Diners)' },
@@ -47,6 +64,58 @@ export default function PaymentDetailsSection({
     { value: 'bank_transfer', label: 'Bank Transfer' },
     { value: 'cod', label: 'Cash on Delivery' },
   ]
+
+  // Validate mobile number format (Zambian format: 09XX XXX XXX or +260 XXX XXX XXX)
+  const validateMobileNumber = (number: string): boolean => {
+    const cleaned = number.replace(/\s+/g, '').replace(/^\+260/, '0')
+    return /^0[0-9]{9}$/.test(cleaned)
+  }
+
+  // Update payment details when they change
+  const updatePaymentDetails = () => {
+    if (!onPaymentDetailsChange) return
+
+    if (paymentMethod === 'card') {
+      if (showNewCardForm && newCardData.number) {
+        onPaymentDetailsChange({
+          cardDetails: {
+            number: newCardData.number.replace(/\s+/g, ''),
+            expiryMonth: newCardData.expiryMonth,
+            expiryYear: newCardData.expiryYear,
+            cvv: newCardData.cvv,
+            cardholderName: newCardData.cardholderName,
+          },
+        })
+      } else if (selectedCardId) {
+        onPaymentDetailsChange({
+          cardDetails: {
+            cardId: selectedCardId,
+          },
+        })
+      } else {
+        onPaymentDetailsChange({})
+      }
+    } else if (paymentMethod === 'mobile_money') {
+      if (mobileNumber && validateMobileNumber(mobileNumber)) {
+        onPaymentDetailsChange({
+          mobileMoneyDetails: {
+            provider: selectedMobileProvider as 'mtn' | 'airtel' | 'zamtel' | 'orange',
+            phoneNumber: mobileNumber.replace(/\s+/g, '').replace(/^\+260/, '0'),
+          },
+        })
+      } else {
+        onPaymentDetailsChange({})
+      }
+    } else {
+      onPaymentDetailsChange({})
+    }
+  }
+
+  // Update details when payment method or inputs change
+  useEffect(() => {
+    updatePaymentDetails()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paymentMethod, selectedCardId, showNewCardForm, newCardData, selectedMobileProvider, mobileNumber])
 
   return (
     <div className='space-y-4'>
@@ -112,6 +181,10 @@ export default function PaymentDetailsSection({
 
             <button
               type='button'
+              onClick={() => {
+                setShowNewCardForm(true)
+                setSelectedCardId(null)
+              }}
               className='flex min-h-[120px] flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-4 text-gray-600 transition-colors hover:border-gray-400 hover:bg-gray-100'
             >
               <svg className='mb-2 h-8 w-8' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
@@ -120,6 +193,135 @@ export default function PaymentDetailsSection({
               <span className='text-sm font-medium'>Add New Card</span>
             </button>
           </div>
+
+          {showNewCardForm && (
+            <div className='space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4'>
+              <div className='flex items-center justify-between'>
+                <h3 className='text-lg font-semibold text-gray-900'>Add New Card</h3>
+                <button
+                  type='button'
+                  onClick={() => {
+                    setShowNewCardForm(false)
+                    setNewCardData({
+                      number: '',
+                      expiryMonth: '',
+                      expiryYear: '',
+                      cvv: '',
+                      cardholderName: '',
+                      saveCard: false,
+                    })
+                    setSelectedCardId('1')
+                  }}
+                  className='text-gray-400 hover:text-gray-600'
+                >
+                  <X className='h-5 w-5' />
+                </button>
+              </div>
+
+              <div className='space-y-3'>
+                <div>
+                  <label htmlFor='cardNumber' className='mb-1 block text-sm font-medium text-gray-700'>
+                    Card Number
+                  </label>
+                  <input
+                    id='cardNumber'
+                    type='text'
+                    value={newCardData.number}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\s+/g, '').replace(/\D/g, '')
+                      const formatted = value.match(/.{1,4}/g)?.join(' ') || value
+                      setNewCardData({ ...newCardData, number: formatted })
+                    }}
+                    placeholder='1234 5678 9012 3456'
+                    maxLength={19}
+                    className='w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500'
+                  />
+                </div>
+
+                <div className='grid grid-cols-2 gap-3'>
+                  <div>
+                    <label htmlFor='expiryMonth' className='mb-1 block text-sm font-medium text-gray-700'>
+                      Month
+                    </label>
+                    <input
+                      id='expiryMonth'
+                      type='text'
+                      value={newCardData.expiryMonth}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/\D/g, '').slice(0, 2)
+                        if (value === '' || (parseInt(value) >= 1 && parseInt(value) <= 12)) {
+                          setNewCardData({ ...newCardData, expiryMonth: value })
+                        }
+                      }}
+                      placeholder='MM'
+                      maxLength={2}
+                      className='w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500'
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor='expiryYear' className='mb-1 block text-sm font-medium text-gray-700'>
+                      Year
+                    </label>
+                    <input
+                      id='expiryYear'
+                      type='text'
+                      value={newCardData.expiryYear}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/\D/g, '').slice(0, 4)
+                        setNewCardData({ ...newCardData, expiryYear: value })
+                      }}
+                      placeholder='YYYY'
+                      maxLength={4}
+                      className='w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500'
+                    />
+                  </div>
+                </div>
+
+                <div className='grid grid-cols-2 gap-3'>
+                  <div>
+                    <label htmlFor='cvv' className='mb-1 block text-sm font-medium text-gray-700'>
+                      CVV
+                    </label>
+                    <input
+                      id='cvv'
+                      type='text'
+                      value={newCardData.cvv}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/\D/g, '').slice(0, 4)
+                        setNewCardData({ ...newCardData, cvv: value })
+                      }}
+                      placeholder='123'
+                      maxLength={4}
+                      className='w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500'
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor='cardholderName' className='mb-1 block text-sm font-medium text-gray-700'>
+                      Cardholder Name
+                    </label>
+                    <input
+                      id='cardholderName'
+                      type='text'
+                      value={newCardData.cardholderName}
+                      onChange={(e) => setNewCardData({ ...newCardData, cardholderName: e.target.value })}
+                      placeholder='John Doe'
+                      className='w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500'
+                    />
+                  </div>
+                </div>
+
+                <label className='flex items-center gap-2'>
+                  <input
+                    type='checkbox'
+                    checked={newCardData.saveCard}
+                    onChange={(e) => setNewCardData({ ...newCardData, saveCard: e.target.checked })}
+                    className='h-4 w-4 text-green-600 focus:ring-green-500'
+                  />
+                  <span className='text-sm text-gray-700'>Save this card for future purchases</span>
+                </label>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -159,11 +361,23 @@ export default function PaymentDetailsSection({
                 id='mobileNumber'
                 type='tel'
                 value={mobileNumber}
-                onChange={(e) => setMobileNumber(e.target.value)}
-                placeholder='Enter your mobile money number'
+                onChange={(e) => {
+                  let value = e.target.value.replace(/\s+/g, '')
+                  // Auto-format Zambian numbers
+                  if (value.startsWith('+260')) {
+                    value = '0' + value.slice(4)
+                  }
+                  setMobileNumber(value)
+                }}
+                placeholder='0977123456 or +260977123456'
                 className='w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500'
               />
-              <p className='mt-1 text-xs text-gray-500'>Enter the mobile number linked to your {mobileMoneyProviders.find(p => p.value === selectedMobileProvider)?.label} account</p>
+              <p className='mt-1 text-xs text-gray-500'>
+                Enter the mobile number linked to your {mobileMoneyProviders.find(p => p.value === selectedMobileProvider)?.label} account
+              </p>
+              {mobileNumber && !validateMobileNumber(mobileNumber) && (
+                <p className='mt-1 text-xs text-red-600'>Please enter a valid mobile number (e.g., 0977123456)</p>
+              )}
             </div>
           </div>
         </div>
@@ -180,10 +394,15 @@ export default function PaymentDetailsSection({
       <button
         type='button'
         onClick={onPayment}
-        disabled={isProcessing}
+        disabled={
+          isProcessing ||
+          (paymentMethod === 'card' && !selectedCardId && !showNewCardForm) ||
+          (paymentMethod === 'card' && showNewCardForm && (!newCardData.number || !newCardData.expiryMonth || !newCardData.expiryYear || !newCardData.cvv || !newCardData.cardholderName)) ||
+          (paymentMethod === 'mobile_money' && (!mobileNumber || !validateMobileNumber(mobileNumber)))
+        }
         className='w-full rounded-lg bg-green-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50'
       >
-        {isProcessing ? 'Processing...' : 'Payment now'}
+        {isProcessing ? 'Processing...' : 'Pay Now'}
       </button>
     </div>
   )

@@ -35,14 +35,24 @@ const ProductPage = async ({ params }) => {
     categoryName = decodeURIComponent(category)
     subcategoryName = decodeURIComponent(subcategory)
     // Try to get by slug first, then by name
-    productDetails = await getProductBySlug(productName) || await getProductByName(productName);
+    try {
+      productDetails = await getProductBySlug(productName) || await getProductByName(productName);
+    } catch (error) {
+      console.error('Error fetching product:', error);
+      productDetails = null;
+    }
   } else if (subcategory) {
     categoryName = decodeURIComponent(category)
     subcategoryName = decodeURIComponent(subcategory)
     const exists = await subcategoryExists(subcategoryName);
     if(!exists){
       productName = subcategory;
-      productDetails = await getProductBySlug(subcategoryName) || await getProductByName(subcategoryName);
+      try {
+        productDetails = await getProductBySlug(subcategoryName) || await getProductByName(subcategoryName);
+      } catch (error) {
+        console.error('Error fetching product:', error);
+        productDetails = null;
+      }
     };
   } else if (category) {
     categoryName = decodeURIComponent(category)

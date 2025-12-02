@@ -16,10 +16,23 @@ export default function OrderDetailsSidebar() {
   }
 
   const originalTotal = cart.items.reduce(
-    (sum, item) => sum + (item.productSnapshot.price ?? 0) * item.quantity,
+    (sum, item) => {
+      const originalPrice = item.productSnapshot.price ?? 0
+      return sum + originalPrice * item.quantity
+    },
     0,
   )
-  const discountedTotal = cart.subtotal
+  const discountedTotal = cart.items.reduce(
+    (sum, item) => {
+      const originalPrice = item.productSnapshot.price ?? 0
+      // Treat 0, null, or undefined as "no discount" - use original price
+      const discountedPrice = (item.productSnapshot.discountedPrice && item.productSnapshot.discountedPrice > 0)
+        ? item.productSnapshot.discountedPrice
+        : originalPrice
+      return sum + discountedPrice * item.quantity
+    },
+    0,
+  )
   const discountAmount = originalTotal - discountedTotal
   const deliveryCharges = 0 // Free delivery
   const totalAmount = cart.total

@@ -1,12 +1,14 @@
 'use client'
 
 import { useCart } from '@/app/contexts/CartContext'
-import { useState } from 'react'
+import { useClientAuth } from '@/app/contexts/ClientAuthContext'
+import { useState, useEffect } from 'react'
 import CheckoutTopBar from '@/app/components/checkout/CheckoutTopBar'
 import CheckoutTitle from '@/app/components/checkout/CheckoutTitle'
 import CheckoutAlerts from '@/app/components/checkout/CheckoutAlerts'
 import CheckoutSteps from '@/app/components/checkout/CheckoutSteps'
 import CheckoutNavigation from '@/app/components/checkout/CheckoutNavigation'
+import StickyCheckoutNavigation from '@/app/components/checkout/StickyCheckoutNavigation'
 import DeliveryPickupToggle from '@/app/components/checkout/DeliveryPickupToggle'
 import DeliveryAddressSection from '@/app/components/checkout/DeliveryAddressSection'
 import PickupLocationSection from '@/app/components/checkout/PickupLocationSection'
@@ -14,6 +16,7 @@ import OrderSummarySection from '@/app/components/checkout/OrderSummarySection'
 import PaymentDetailsSection from '@/app/components/checkout/PaymentDetailsSection'
 import OrderDetailsSidebar from '@/app/components/checkout/OrderDetailsSidebar'
 import { ShoppingBag } from 'lucide-react'
+import clientApi from '@/app/lib/client/api'
 
 const CHECKOUT_STEPS = [
   { label: 'Review', number: 1 },
@@ -23,12 +26,99 @@ const CHECKOUT_STEPS = [
 
 export default function CheckoutPage() {
   const { cart, loading, checkout, isCheckingOut, error: cartError } = useCart()
+  const { user, isAuthenticated } = useClientAuth()
   const [currentStep, setCurrentStep] = useState(1)
   const [formError, setFormError] = useState<string | null>(null)
-  const [success, setSuccess] = useState<{ orderNumber: string; paymentStatus: string } | null>(null)
+  const [success, setSuccess] = useState<{ orderNumber: string; orderId: number; paymentStatus: string; redirectUrl?: string; requiresAction?: boolean } | null>(null)
   const [fulfillmentType, setFulfillmentType] = useState<'pickup' | 'delivery'>('pickup')
-  const [selectedAddressId, setSelectedAddressId] = useState<string | null>('1')
+  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null)
+  const [addresses, setAddresses] = useState<any[]>([])
+  const [loadingAddresses, setLoadingAddresses] = useState(false)
+  const [userProfile, setUserProfile] = useState<any>(null)
   const [paymentMethod, setPaymentMethod] = useState('card')
+  const [paymentDetails, setPaymentDetails] = useState<{
+    cardDetails?: { cardId?: string; number?: string; expiryMonth?: string; expiryYear?: string; cvv?: string; cardholderName?: string }
+    mobileMoneyDetails?: { provider: 'mtn' | 'airtel' | 'zamtel' | 'orange'; phoneNumber: string }
+  }>({})
+  const [showRecoveryMessage, setShowRecoveryMessage] = useState(false)
+
+  // Restore checkout progress on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !success) {
+      const saved = sessionStorage.getItem('checkout_progress')
+      if (saved) {
+        try {
+          const state = JSON.parse(saved)
+          if (state.currentStep && state.currentStep > 1) {
+            setShowRecoveryMessage(true)
+            setCurrentStep(state.currentStep)
+            setFulfillmentType(state.fulfillmentType || 'pickup')
+            setSelectedAddressId(state.selectedAddressId || null)
+            setPaymentMethod(state.paymentMethod || 'card')
+          }
+        } catch (err) {
+          console.error('Failed to restore checkout state', err)
+        }
+      }
+    }
+  }, [success])
+
+  // Save checkout progress whenever it changes
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !success && currentStep > 1) {
+      const checkoutState = {
+        currentStep,
+        fulfillmentType,
+        selectedAddressId,
+        paymentMethod,
+        // Don't save sensitive payment details
+      }
+      sessionStorage.setItem('checkout_progress', JSON.stringify(checkoutState))
+    }
+  }, [currentStep, fulfillmentType, selectedAddressId, paymentMethod, success])
+
+  // Clear checkout progress on successful completion
+  useEffect(() => {
+    if (success && typeof window !== 'undefined') {
+      sessionStorage.removeItem('checkout_progress')
+    }
+  }, [success])
+
+  // Load user profile and addresses if authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadUserData()
+    }
+  }, [isAuthenticated])
+
+  const loadUserData = async () => {
+    try {
+      setLoadingAddresses(true)
+      const [profileResponse, addressesResponse] = await Promise.all([
+        clientApi.getProfile().catch(() => null),
+        clientApi.getAddresses().catch(() => ({ data: [] })),
+      ])
+
+      if (profileResponse?.data) {
+        setUserProfile(profileResponse.data)
+      }
+
+      if (addressesResponse?.data) {
+        setAddresses(addressesResponse.data)
+        // Select default address if available
+        const defaultAddress = addressesResponse.data.find((addr: any) => addr.isDefault)
+        if (defaultAddress) {
+          setSelectedAddressId(defaultAddress.id.toString())
+        } else if (addressesResponse.data.length > 0) {
+          setSelectedAddressId(addressesResponse.data[0].id.toString())
+        }
+      }
+    } catch (error) {
+      console.error('Error loading user data:', error)
+    } finally {
+      setLoadingAddresses(false)
+    }
+  }
 
   const handleAddAddress = () => {
     // Handle add address modal/form
@@ -77,34 +167,136 @@ export default function CheckoutPage() {
     }
 
     try {
-      // For now, using mock data - in real implementation, get address details from selectedAddressId
-      const response = await checkout({
-        customer: {
-          email: 'customer@example.com',
-          firstName: 'Customer',
-          lastName: 'Name',
-          phone: '08025908063',
-        },
-        shippingAddress:
-          fulfillmentType === 'delivery'
-            ? {
-                firstName: 'Customer',
-                lastName: 'Name',
-                addressLine1: '124.rd Cross. D S Croad. Kanakapura',
-                addressLine2: '',
-                city: 'Bangalore',
-                state: 'Karnataka',
-                postalCode: '560078',
-                country: 'India',
-                phone: '08025908063',
-              }
-            : undefined,
-        billingAddress: undefined,
-        paymentMethod: paymentMethod === 'card' || paymentMethod === 'mobile_money' ? 'mock' : paymentMethod,
-        notes: fulfillmentType === 'pickup' ? 'Pickup order' : '',
-      })
+      // Get customer data from authenticated user or use form data
+      let customerData
+      let shippingAddressData
 
-      setSuccess({ orderNumber: response.orderNumber, paymentStatus: response.paymentStatus })
+      if (isAuthenticated && userProfile) {
+        // Use authenticated user data
+        customerData = {
+          email: userProfile.email,
+          firstName: userProfile.firstName || user?.firstName || '',
+          lastName: userProfile.lastName || user?.lastName || '',
+          phone: userProfile.phone || '',
+        }
+
+        // Get selected address if delivery
+        if (fulfillmentType === 'delivery' && selectedAddressId) {
+          const selectedAddress = addresses.find(
+            (addr) => addr.id.toString() === selectedAddressId
+          )
+          if (selectedAddress) {
+            shippingAddressData = {
+              firstName: selectedAddress.firstName,
+              lastName: selectedAddress.lastName,
+              addressLine1: selectedAddress.addressLine1,
+              addressLine2: selectedAddress.addressLine2 || '',
+              city: selectedAddress.city,
+              state: selectedAddress.state || '',
+              postalCode: selectedAddress.postalCode,
+              country: selectedAddress.country,
+              phone: selectedAddress.phone || customerData.phone,
+            }
+          }
+        }
+      } else {
+        // Guest checkout - would need form data, for now using defaults
+        // TODO: Add guest checkout form
+        customerData = {
+          email: user?.email || 'guest@example.com',
+          firstName: user?.firstName || 'Guest',
+          lastName: user?.lastName || 'User',
+          phone: '',
+        }
+
+        if (fulfillmentType === 'delivery' && selectedAddressId) {
+          const selectedAddress = addresses.find(
+            (addr) => addr.id.toString() === selectedAddressId
+          )
+          if (selectedAddress) {
+            shippingAddressData = {
+              firstName: selectedAddress.firstName,
+              lastName: selectedAddress.lastName,
+              addressLine1: selectedAddress.addressLine1,
+              addressLine2: selectedAddress.addressLine2 || '',
+              city: selectedAddress.city,
+              state: selectedAddress.state || '',
+              postalCode: selectedAddress.postalCode,
+              country: selectedAddress.country,
+              phone: selectedAddress.phone || '',
+            }
+          }
+        }
+      }
+
+      // If no address selected for delivery, show error
+      if (fulfillmentType === 'delivery' && !shippingAddressData) {
+        setFormError('Please select a delivery address.')
+        return
+      }
+
+      // Map frontend payment method to backend payment method
+      let backendPaymentMethod = paymentMethod
+      if (paymentMethod === 'card') {
+        // Determine if it's credit or debit card (simplified - could be enhanced)
+        backendPaymentMethod = 'credit_card'
+      } else if (paymentMethod === 'cod') {
+        backendPaymentMethod = 'cash_on_delivery'
+      }
+
+      // Build checkout payload - only include payment details when relevant and valid
+      const checkoutPayload: any = {
+        customer: customerData,
+        shippingAddress: shippingAddressData,
+        billingAddress: undefined, // Use same as shipping for now
+        paymentMethod: backendPaymentMethod,
+        notes: fulfillmentType === 'pickup' ? 'Pickup order' : '',
+      }
+
+      // Only include cardDetails if payment method is card and details exist
+      if (backendPaymentMethod === 'credit_card' && paymentDetails.cardDetails) {
+        // Only include if it has either cardId or all required card fields
+        if (
+          paymentDetails.cardDetails.cardId ||
+          (paymentDetails.cardDetails.number &&
+            paymentDetails.cardDetails.expiryMonth &&
+            paymentDetails.cardDetails.expiryYear &&
+            paymentDetails.cardDetails.cvv &&
+            paymentDetails.cardDetails.cardholderName)
+        ) {
+          checkoutPayload.cardDetails = paymentDetails.cardDetails
+        }
+      }
+
+      // Only include mobileMoneyDetails if payment method is mobile_money and details exist
+      if (backendPaymentMethod === 'mobile_money' && paymentDetails.mobileMoneyDetails) {
+        // Only include if it has both provider and phoneNumber
+        if (paymentDetails.mobileMoneyDetails.provider && paymentDetails.mobileMoneyDetails.phoneNumber) {
+          checkoutPayload.mobileMoneyDetails = paymentDetails.mobileMoneyDetails
+        }
+      }
+
+      const response = await checkout(checkoutPayload)
+
+      // Handle payment redirect (for DPO gateway)
+      if (response.redirectUrl && response.requiresAction) {
+        // Store order info for return
+        if (typeof window !== 'undefined') {
+          sessionStorage.setItem('pendingOrder', JSON.stringify({
+            orderNumber: response.orderNumber,
+            orderId: response.orderId,
+          }))
+        }
+        // Redirect to payment gateway
+        window.location.href = response.redirectUrl
+        return
+      }
+
+      setSuccess({
+        orderNumber: response.orderNumber,
+        orderId: response.orderId,
+        paymentStatus: response.paymentStatus,
+      })
     } catch (err) {
       setFormError(err instanceof Error ? err.message : 'Checkout failed. Please try again.')
     }
@@ -125,7 +317,7 @@ export default function CheckoutPage() {
 
   if (loading) {
     return (
-      <div className='flex min-h-screen items-center justify-center bg-gray-50'>
+      <div className='flex min-h-screen items-center justify-center bg-[#f5f1e8]'>
         <div className='text-center'>
           <div className='mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-[var(--shreeji-primary)]'></div>
           <p className='mt-4 text-gray-600'>Loading your cart...</p>
@@ -135,11 +327,39 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className='min-h-screen bg-gray-50 pt-24'>
+    <div className='min-h-screen bg-[#f5f1e8] pt-24'>
       <div className='mx-auto max-w-7xl px-4 pb-8 sm:px-6 lg:px-8'>
         <CheckoutTitle currentStep={currentStep} />
 
-        <CheckoutAlerts cartError={cartError} formError={formError} success={success} />
+        {/* Recovery Message */}
+        {showRecoveryMessage && (
+          <div className='mb-4 rounded-md bg-blue-50 border border-blue-200 p-4 text-blue-800'>
+            <div className='flex items-start justify-between'>
+              <div>
+                <p className='font-semibold'>Welcome back!</p>
+                <p className='text-sm mt-1'>We've restored your checkout progress. You can continue where you left off.</p>
+              </div>
+              <button
+                onClick={() => setShowRecoveryMessage(false)}
+                className='ml-4 text-blue-600 hover:text-blue-800 text-sm font-medium'
+                aria-label='Dismiss message'
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+        )}
+
+        <CheckoutAlerts
+          cartError={cartError}
+          formError={formError}
+          success={success}
+          paymentMethod={paymentMethod}
+          onRetry={() => {
+            setFormError(null)
+            handlePayment()
+          }}
+        />
 
         <CheckoutSteps currentStep={currentStep} totalSteps={CHECKOUT_STEPS.length} steps={CHECKOUT_STEPS} />
 
@@ -149,13 +369,6 @@ export default function CheckoutPage() {
             {/* Step 1: Review Order */}
             {currentStep === 1 && (
               <div className='rounded-2xl bg-white p-6 shadow-sm'>
-                <div className='mb-6'>
-                  <div className='flex items-center gap-3'>
-                    <ShoppingBag className='h-5 w-5 text-[#544829]' />
-                    <h2 className='text-xl font-semibold text-gray-900'>Order Summary</h2>
-                  </div>
-                  <p className='mt-1 text-sm text-gray-500'>Review your order details before proceeding</p>
-                </div>
                 <OrderSummarySection />
               </div>
             )}
@@ -172,6 +385,9 @@ export default function CheckoutPage() {
                     selectedAddressId={selectedAddressId}
                     onAddressSelect={setSelectedAddressId}
                     onAddAddress={handleAddAddress}
+                    addresses={addresses}
+                    loading={loadingAddresses}
+                    isAuthenticated={isAuthenticated}
                   />
                 ) : (
                   <PickupLocationSection />
@@ -186,6 +402,7 @@ export default function CheckoutPage() {
                   paymentMethod={paymentMethod}
                   onPaymentMethodChange={setPaymentMethod}
                   onPayment={handlePayment}
+                  onPaymentDetailsChange={setPaymentDetails}
                   isProcessing={isCheckingOut}
                 />
               </div>
@@ -212,6 +429,19 @@ export default function CheckoutPage() {
           </div>
         </div>
       </div>
+
+      {/* Sticky Navigation */}
+      {!success && (
+        <StickyCheckoutNavigation
+          currentStep={currentStep}
+          totalSteps={CHECKOUT_STEPS.length}
+          onPrevious={handlePrevious}
+          onNext={handleNext}
+          canProceed={canProceedToNext()}
+          isLastStep={currentStep === CHECKOUT_STEPS.length}
+          isProcessing={isCheckingOut}
+        />
+      )}
     </div>
   )
 }

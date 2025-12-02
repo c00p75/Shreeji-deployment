@@ -57,7 +57,7 @@ export default function PortalProfilePage() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-[#f5f1e8]">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
       </div>
     )
@@ -68,7 +68,7 @@ export default function PortalProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#f5f1e8]">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">My Profile</h1>
 
@@ -101,7 +101,7 @@ export default function PortalProfilePage() {
                 type="email"
                 value={formData.email}
                 disabled
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-50 sm:text-sm"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-[#f5f1e8] sm:text-sm"
               />
               <p className="mt-1 text-sm text-gray-500">Email cannot be changed</p>
             </div>

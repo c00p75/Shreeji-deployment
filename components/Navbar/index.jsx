@@ -11,6 +11,15 @@ import "./style.scss";
 import ThemeBtn from "./ThemeBtn";
 import { ChevronDown } from "lucide-react";
 import CartButton from "./CartButton";
+import ProfileButton from "./ProfileButton";
+import NotificationBell from "@/app/components/notifications/NotificationBell";
+import { useClientAuth } from "@/app/contexts/ClientAuthContext";
+
+function NotificationBellWrapper() {
+  const { isAuthenticated } = useClientAuth();
+  if (!isAuthenticated) return null;
+  return <NotificationBell />;
+}
 
 const Navbar = () => {
   const pathname = usePathname();
@@ -182,7 +191,7 @@ const Navbar = () => {
                 <div className=" pt-5 absolute left-0 top-10" onMouseEnter={() => setIsProductMenuOpen(true)} onMouseLeave={() => setIsProductMenuOpen(false)}>
                   <div className="mega-menu">
                     {productCategories && productCategories.map(({ category, subcategories }, index) => (
-                      <div>                        
+                      <div key={`category-${index}-${category}`}>                        
                         <Link href={`/products/${encodeURIComponent(category)}`} className="font-medium cursor-pointer relative">
                           <h4 className="font-bold text-lg">{category}</h4>
                           <span className="absolute mt-1 h-[2px] w-full bg-[#dbd4c0] rounded-full" />
@@ -376,6 +385,8 @@ const Navbar = () => {
 
           <div className="ml-2 flex items-center gap-3">
             <CartButton />
+            <NotificationBellWrapper />
+            <ProfileButton />
             <ThemeBtn isScrolled={isScrolled} />
           </div>
           

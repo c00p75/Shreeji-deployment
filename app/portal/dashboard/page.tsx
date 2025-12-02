@@ -2,14 +2,21 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { useClientAuth } from '@/app/contexts/ClientAuthContext'
+import { useCart } from '@/app/contexts/CartContext'
 import clientApi from '@/app/lib/client/api'
+import { Package, DollarSign, TrendingUp, ShoppingCart } from 'lucide-react'
 
 export default function PortalDashboardPage() {
   const { user, loading: authLoading, isAuthenticated } = useClientAuth()
+  const { cart } = useCart()
   const router = useRouter()
   const [orders, setOrders] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  
+  const hasActiveCart = cart && cart.items && cart.items.length > 0
+  const cartItemCount = cart?.items?.reduce((sum, item) => sum + item.quantity, 0) || 0
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -20,6 +27,13 @@ export default function PortalDashboardPage() {
   useEffect(() => {
     if (isAuthenticated) {
       fetchOrders()
+      
+      // Refresh orders every 30 seconds
+      const interval = setInterval(() => {
+        fetchOrders()
+      }, 30000)
+      
+      return () => clearInterval(interval)
     }
   }, [isAuthenticated])
 
@@ -38,9 +52,15 @@ export default function PortalDashboardPage() {
     }
   }
 
+  const totalSpent = orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0)
+  const averageOrderValue = orders.length > 0 ? totalSpent / orders.length : 0
+  const pendingOrders = orders.filter((o: any) => 
+    ['pending', 'processing', 'confirmed'].includes(o.orderStatus?.toLowerCase())
+  ).length
+
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-[#f5f1e8]">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
       </div>
     )
@@ -51,7 +71,7 @@ export default function PortalDashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#f5f1e8]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">
@@ -60,30 +80,83 @@ export default function PortalDashboardPage() {
           <p className="mt-2 text-gray-600">Manage your account and orders</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        {/* Continue Checkout Banner */}
+        {hasActiveCart && (
+          <div className="mb-6 rounded-lg bg-gradient-to-r from-[var(--shreeji-primary)] to-[var(--shreeji-secondary)] p-4 text-white shadow-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <ShoppingCart className="h-6 w-6" />
+                <div>
+                  <p className="font-semibold">You have items in your cart</p>
+                  <p className="text-sm opacity-90">
+                    {cartItemCount} {cartItemCount === 1 ? 'item' : 'items'} ready to checkout
+                  </p>
+                </div>
+              </div>
+              <Link
+                href="/checkout"
+                className="rounded-lg bg-white px-6 py-2 text-[var(--shreeji-primary)] font-semibold hover:bg-gray-100 transition-colors"
+              >
+                Continue Checkout
+              </Link>
+            </div>
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-sm font-medium text-gray-500">Total Orders</h3>
-            <p className="mt-2 text-3xl font-bold text-gray-900">{orders.length}</p>
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-medium text-gray-500">Total Orders</h3>
+                <p className="mt-2 text-3xl font-bold text-gray-900">{orders.length}</p>
+              </div>
+              <Package className="h-8 w-8 text-[var(--shreeji-primary)]" />
+            </div>
           </div>
           <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-sm font-medium text-gray-500">Email</h3>
-            <p className="mt-2 text-lg text-gray-900">{user?.email}</p>
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-medium text-gray-500">Total Spent</h3>
+                <p className="mt-2 text-2xl font-bold text-gray-900">
+                  K{totalSpent.toLocaleString()}
+                </p>
+              </div>
+              <DollarSign className="h-8 w-8 text-green-600" />
+            </div>
           </div>
           <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-sm font-medium text-gray-500">Account Status</h3>
-            <p className="mt-2 text-lg text-gray-900">
-              {user?.blocked ? (
-                <span className="text-red-600">Blocked</span>
-              ) : (
-                <span className="text-green-600">Active</span>
-              )}
-            </p>
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-medium text-gray-500">Avg Order Value</h3>
+                <p className="mt-2 text-2xl font-bold text-gray-900">
+                  K{Math.round(averageOrderValue).toLocaleString()}
+                </p>
+              </div>
+              <TrendingUp className="h-8 w-8 text-blue-600" />
+            </div>
+          </div>
+          <div className="bg-white rounded-lg shadow p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-medium text-gray-500">Pending Orders</h3>
+                <p className="mt-2 text-3xl font-bold text-gray-900">{pendingOrders}</p>
+              </div>
+              <Package className="h-8 w-8 text-yellow-600" />
+            </div>
           </div>
         </div>
 
         <div className="bg-white rounded-lg shadow">
-          <div className="px-6 py-4 border-b border-gray-200">
+          <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
             <h2 className="text-lg font-semibold text-gray-900">Recent Orders</h2>
+            {orders.length > 0 && (
+              <Link
+                href="/portal/orders"
+                className="text-sm text-[var(--shreeji-primary)] hover:text-[var(--shreeji-secondary)]"
+              >
+                View all orders →
+              </Link>
+            )}
           </div>
           <div className="p-6">
             {orders.length === 0 ? (
@@ -91,7 +164,11 @@ export default function PortalDashboardPage() {
             ) : (
               <div className="space-y-4">
                 {orders.map((order: any) => (
-                  <div key={order.id} className="border-b border-gray-200 pb-4 last:border-0">
+                  <Link
+                    key={order.id}
+                    href={`/portal/orders/${order.id}`}
+                    className="block border-b border-gray-200 pb-4 last:border-0 hover:bg-gray-50 -mx-6 px-6 transition-colors"
+                  >
                     <div className="flex justify-between items-start">
                       <div>
                         <p className="font-medium text-gray-900">Order #{order.orderNumber || order.id}</p>
@@ -112,7 +189,7 @@ export default function PortalDashboardPage() {
                         </span>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             )}

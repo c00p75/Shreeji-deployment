@@ -12,10 +12,11 @@ import {
   CogIcon,
   Bars3Icon,
   XMarkIcon,
-  BellIcon,
   CubeIcon,
-  ArrowRightOnRectangleIcon
+  ArrowRightOnRectangleIcon,
+  CurrencyDollarIcon
 } from '@heroicons/react/24/outline'
+import NotificationBell from '../notifications/NotificationBell'
 
 interface LayoutProps {
   children: React.ReactNode
@@ -27,6 +28,7 @@ const navigation = [
   { name: 'Products', href: '/admin/products', icon: ShoppingBagIcon, current: false },
   { name: 'Inventory', href: '/admin/inventory', icon: CubeIcon, current: false },
   { name: 'Orders', href: '/admin/orders', icon: ChartBarIcon, current: false },
+  { name: 'Payments', href: '/admin/payments', icon: CurrencyDollarIcon, current: false },
   { name: 'Customers', href: '/admin/customers', icon: UsersIcon, current: false },
   { name: 'Settings', href: '/admin/settings', icon: CogIcon, current: false },
 ]
@@ -44,7 +46,7 @@ export default function Layout({ children, currentPage = 'Dashboard' }: LayoutPr
   }
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-[#f5f1e8]">
       {/* Sidebar */}
       <div className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}>
         <div className="flex items-center justify-center h-16 px-4 border-b border-gray-200">
@@ -100,9 +102,7 @@ export default function Layout({ children, currentPage = 'Dashboard' }: LayoutPr
             </div>
             
             <div className="flex items-center space-x-4">
-              <button className="p-2 text-gray-400 hover:text-gray-500 hover:bg-gray-100 rounded-md">
-                <BellIcon className="w-6 h-6" />
-              </button>
+              <NotificationBell />
               
               <div className="relative">
                 <button
@@ -146,7 +146,7 @@ export default function Layout({ children, currentPage = 'Dashboard' }: LayoutPr
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-[#f5f1e8]">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
             {children}
           </div>

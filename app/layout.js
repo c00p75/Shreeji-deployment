@@ -2,6 +2,7 @@ import "./globals.css";
 import ConditionalLayout from "@/components/ConditionalLayout";
 import siteMetadata from "@/siteMetaData";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import { Toaster } from "react-hot-toast";
 
 export const metadata = {
   metadataBase: new URL(siteMetadata.siteUrl),
@@ -44,6 +45,31 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <GoogleAnalytics gaId="G-1W93H38B5W" />
       <body className="antialiased light-theme">
+        <Toaster 
+          position="top-right"
+          toastOptions={{
+            duration: 4000,
+            style: {
+              background: '#fff',
+              color: '#333',
+              border: '1px solid #e5e7eb',
+              borderRadius: '8px',
+              padding: '12px 16px',
+            },
+            success: {
+              iconTheme: {
+                primary: '#10b981',
+                secondary: '#fff',
+              },
+            },
+            error: {
+              iconTheme: {
+                primary: '#ef4444',
+                secondary: '#fff',
+              },
+            },
+          }}
+        />
         <ConditionalLayout>
           {children}
         </ConditionalLayout>

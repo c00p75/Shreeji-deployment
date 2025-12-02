@@ -1,7 +1,5 @@
-// Client Authentication utilities
-import axios from 'axios';
-
-const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
+// Client Authentication utilities - NestJS Backend
+const API_URL = process.env.NEXT_PUBLIC_ECOM_API_URL?.replace(/\/$/, '') || 'http://localhost:4000';
 
 export interface ClientUser {
   id: number;
@@ -9,14 +7,15 @@ export interface ClientUser {
   firstName?: string;
   lastName?: string;
   username?: string;
-  confirmed: boolean;
-  blocked: boolean;
-  createdAt: string;
-  updatedAt: string;
+  phone?: string;
+  confirmed?: boolean;
+  blocked?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface ClientAuthResponse {
-  jwt: string;
+  access_token: string;
   user: ClientUser;
 }
 
@@ -25,33 +24,86 @@ export interface ClientLoginCredentials {
   password: string;
 }
 
+export interface ClientRegisterCredentials {
+  email: string;
+  password: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+}
+
 class ClientAuth {
   private baseURL: string;
 
   constructor() {
-    this.baseURL = `${STRAPI_URL}/api`;
+    this.baseURL = API_URL;
   }
 
-  // Login with email and password using Strapi Customer API
+  // Login with email and password using NestJS backend
   async login(credentials: ClientLoginCredentials): Promise<ClientAuthResponse> {
     try {
-      const response = await axios.post(`${this.baseURL}/auth/local`, {
-        identifier: credentials.email,
-        password: credentials.password,
+      const response = await fetch(`${this.baseURL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(credentials),
       });
 
-      const { jwt, user } = response.data;
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({ message: 'Login failed' }));
+        throw new Error(error.message || 'Login failed');
+      }
+
+      const data = await response.json();
 
       // Store JWT in localStorage with client-specific key
       if (typeof window !== 'undefined') {
-        localStorage.setItem('strapi_client_jwt', jwt);
-        localStorage.setItem('strapi_client_user', JSON.stringify(user));
+        localStorage.setItem('client_jwt', data.access_token);
+        localStorage.setItem('client_user', JSON.stringify(data.user));
       }
 
-      return { jwt, user };
+      return {
+        access_token: data.access_token,
+        user: data.user,
+      };
     } catch (error: any) {
       console.error('Client login error:', error);
-      throw new Error(error.response?.data?.error?.message || error.response?.data?.message || error.message || 'Client login failed');
+      throw new Error(error.message || 'Client login failed');
+    }
+  }
+
+  // Register new user with NestJS backend
+  async register(credentials: ClientRegisterCredentials): Promise<ClientAuthResponse> {
+    try {
+      const response = await fetch(`${this.baseURL}/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(credentials),
+      });
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({ message: 'Registration failed' }));
+        throw new Error(error.message || 'Registration failed');
+      }
+
+      const data = await response.json();
+
+      // Store JWT in localStorage
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('client_jwt', data.access_token);
+        localStorage.setItem('client_user', JSON.stringify(data.user));
+      }
+
+      return {
+        access_token: data.access_token,
+        user: data.user,
+      };
+    } catch (error: any) {
+      console.error('Client registration error:', error);
+      throw new Error(error.message || 'Client registration failed');
     }
   }
 
@@ -61,13 +113,19 @@ class ClientAuth {
       const jwt = this.getStoredToken();
       if (!jwt) return null;
 
-      const response = await axios.get(`${this.baseURL}/users/me`, {
+      const response = await fetch(`${this.baseURL}/auth/me`, {
         headers: {
           Authorization: `Bearer ${jwt}`,
         },
       });
 
-      return response.data;
+      if (!response.ok) {
+        this.logout(); // Clear invalid token
+        return null;
+      }
+
+      const user = await response.json();
+      return user;
     } catch (error) {
       console.error('Get current user error:', error);
       this.logout(); // Clear invalid token
@@ -81,13 +139,13 @@ class ClientAuth {
       const jwt = this.getStoredToken();
       if (!jwt) return false;
 
-      const response = await axios.get(`${this.baseURL}/users/me`, {
+      const response = await fetch(`${this.baseURL}/auth/me`, {
         headers: {
           Authorization: `Bearer ${jwt}`,
         },
       });
 
-      return response.status === 200;
+      return response.ok;
     } catch (error) {
       return false;
     }
@@ -96,21 +154,21 @@ class ClientAuth {
   // Get stored JWT token
   getStoredToken(): string | null {
     if (typeof window === 'undefined') return null;
-    return localStorage.getItem('strapi_client_jwt');
+    return localStorage.getItem('client_jwt');
   }
 
   // Get stored user data
   getStoredUser(): ClientUser | null {
     if (typeof window === 'undefined') return null;
-    const userStr = localStorage.getItem('strapi_client_user');
+    const userStr = localStorage.getItem('client_user');
     return userStr ? JSON.parse(userStr) : null;
   }
 
   // Logout user
   logout(): void {
     if (typeof window !== 'undefined') {
-      localStorage.removeItem('strapi_client_jwt');
-      localStorage.removeItem('strapi_client_user');
+      localStorage.removeItem('client_jwt');
+      localStorage.removeItem('client_user');
     }
   }
 

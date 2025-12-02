@@ -14,6 +14,7 @@ import {
 import api from '@/app/lib/admin/api';
 import { processProductImages } from '@/app/lib/admin/image-mapping';
 import Layout from './Layout'
+import EditInventoryModal from './EditInventoryModal'
 
 interface Product {
   id: number;
@@ -21,7 +22,7 @@ interface Product {
   name: string;
   brand?: string | null;
   category?: string | null;
-  price: string;
+  price: string | number;
   images: Array<{ url: string; alt: string; isMain?: boolean }>;
   SKU?: string | null;
   stockQuantity: number;
@@ -46,7 +47,11 @@ export default function InventoryManagement() {
   const [filterStatus, setFilterStatus] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedSubcategory, setSelectedSubcategory] = useState('');
+  const [selectedBrand, setSelectedBrand] = useState('');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [stats, setStats] = useState({
     totalProducts: 0,
     lowStock: 0,
@@ -62,66 +67,111 @@ export default function InventoryManagement() {
   useEffect(() => {
     filterProducts();
     calculateStats();
-  }, [products, searchTerm, selectedCategory, selectedSubcategory, filterStatus]);
+  }, [products, searchTerm, selectedCategory, selectedSubcategory, selectedBrand, filterStatus]);
+
+  const parsePrice = (rawPrice: string | number | undefined | null): number => {
+    if (rawPrice == null) return 0;
+    if (typeof rawPrice === 'number') return rawPrice;
+    const cleaned = rawPrice.toString().replace(/[^0-9.]/g, '');
+    const parsed = parseFloat(cleaned);
+    return Number.isNaN(parsed) ? 0 : parsed;
+  };
+
+  const computeStockStatus = (quantity: number, minLevel: number, existingStatus?: string | null): string => {
+    if (existingStatus) return existingStatus;
+    if (quantity <= 0) return 'out-of-stock';
+    if (minLevel > 0 && quantity <= minLevel) return 'low-stock';
+    return 'in-stock';
+  };
 
   const fetchProducts = async () => {
     try {
       setLoading(true);
+      setError(null);
       
       // Fetch products from backend API
       const response = await api.getProducts({ pagination: { page: 1, pageSize: 100 } });
       
       // Transform backend data to match our interface
       const transformedProducts: Product[] = (response.data || []).map((product: any) => {
-        // Handle backend structure - products are returned directly
         const productData = product;
-        
+
         // Use enhanced image processing that prioritizes local images
         const images = processProductImages(productData);
 
+        // Extract brand name (handle both string and object)
+        const brand =
+          typeof productData.brand === 'object' && productData.brand !== null
+            ? (productData.brand.name || String(productData.brand))
+            : productData.brand || null;
+
+        // Extract category name (handle both string and object)
+        const category =
+          typeof productData.category === 'object' && productData.category !== null
+            ? (productData.category.name || String(productData.category))
+            : productData.category || null;
+
+        // Extract subcategory name (handle both string and object)
+        const subcategory =
+          typeof productData.subcategory === 'object' && productData.subcategory !== null
+            ? (productData.subcategory.name || String(productData.subcategory))
+            : productData.subcategory || null;
+
+        const rawPrice: string | number | undefined =
+          (productData as any).price ?? (productData as any).sellingPrice;
+
+        const stockQuantity = productData.stockQuantity ?? 0;
+        const minStockLevel = productData.minStockLevel ?? 0;
+        const maxStockLevel = productData.maxStockLevel ?? Math.max(stockQuantity, minStockLevel, 1);
+
+        const stockStatus = computeStockStatus(
+          stockQuantity,
+          minStockLevel,
+          productData.stockStatus || null
+        );
+
         return {
-          id: product.id || productData.id,
+          id:
+            typeof product.id === 'number'
+              ? product.id
+              : typeof product.id === 'string'
+                ? parseInt(product.id, 10)
+                : typeof productData.id === 'number'
+                  ? productData.id
+                  : parseInt(productData.id || '0', 10),
           documentId: product.documentId || productData.documentId,
           name: productData.name || '',
-          brand: productData.brand || null,
-          category: productData.category || null,
-          price: productData.price || '',
-          images: images,
+          brand,
+          category,
+          price: rawPrice ?? 0,
+          images,
           SKU: productData.SKU || productData.sku || null,
-          stockQuantity: productData.stockQuantity || 0,
-          minStockLevel: productData.minStockLevel || 0,
-          maxStockLevel: productData.maxStockLevel || 0,
-          stockStatus: productData.stockStatus || 'in-stock',
-          costPrice: productData.costPrice || 0,
-          weight: productData.weight || 0,
-          Dimensions: productData.Dimensions || productData.dimensions || { length: 0, width: 0, height: 0, unit: 'cm' },
-          subcategory: productData.subcategory || null
+          stockQuantity,
+          minStockLevel,
+          maxStockLevel,
+          stockStatus,
+          costPrice: productData.costPrice ?? 0,
+          weight: productData.weight ?? 0,
+          Dimensions:
+            productData.Dimensions ||
+            productData.dimensions || {
+              length: 0,
+              width: 0,
+              height: 0,
+              unit: 'cm',
+            },
+          subcategory,
         };
       }).filter((p: Product) => p.name); // Filter out products without a name
-      
+
       setProducts(transformedProducts);
-    } catch (error) {
-      console.error('Error fetching products:', error);
-      // Fallback to mock data
-      const mockProducts: Product[] = [
-        {
-          id: 2,
-          documentId: "qrvoxut4vvgb4y7ly5n7hk2n",
-          name: "HP Envy MOVE",
-          brand: "HP",
-          category: "Computers",
-          price: "K30,000",
-          SKU: "HP-HPENVY-665",
-          stockQuantity: 40,
-          minStockLevel: 12,
-          maxStockLevel: 80,
-          stockStatus: "in-stock",
-          costPrice: 21000,
-          weight: 15.5,
-          Dimensions: { length: 60, width: 40, height: 15, unit: "cm" }
-        }
-      ];
-      setProducts(mockProducts);
+    } catch (err: any) {
+      console.error('Error fetching products:', err);
+      const message =
+        err?.message ||
+        'Failed to load inventory. Please check your connection or try again later.';
+      setError(message);
+      setProducts([]);
     } finally {
       setLoading(false);
     }
@@ -147,6 +197,10 @@ export default function InventoryManagement() {
       filtered = filtered.filter(product => product.subcategory === selectedSubcategory);
     }
 
+    if (selectedBrand) {
+      filtered = filtered.filter(product => product.brand === selectedBrand);
+    }
+
     if (filterStatus) {
       filtered = filtered.filter(product => product.stockStatus === filterStatus);
     }
@@ -160,8 +214,8 @@ export default function InventoryManagement() {
     const outOfStock = products.filter(p => p.stockStatus === 'out-of-stock').length;
     
     const totalValue = products.reduce((sum, product) => {
-      const price = parseFloat(product.price.replace(/[^0-9.]/g, '')) || 0;
-      return sum + (price * product.stockQuantity);
+      const price = parsePrice(product.price);
+      return sum + price * product.stockQuantity;
     }, 0);
     
     const totalCost = products.reduce((sum, product) => {
@@ -216,6 +270,23 @@ export default function InventoryManagement() {
   return (
     <Layout currentPage="Inventory">
     <div className="space-y-6">
+      {error && (
+        <div className="rounded-md bg-red-50 p-4">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
+            </div>
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-red-800">
+                There was a problem loading inventory data.
+              </h3>
+              <div className="mt-2 text-sm text-red-700">
+                <p>{error}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -271,66 +342,129 @@ export default function InventoryManagement() {
 
       {/* Filters */}
       <div className="bg-white shadow-sm rounded-lg p-6">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 md:gap-6">
           {/* Search */}
-          <div className="relative">
-            <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search products, SKU, brand, category..."
-              className="input-field pl-10"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+          <div className="md:flex-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Search
+            </label>
+            <div className="relative">
+              <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search products, SKU, brand, category..."
+                className="input-field pl-10"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
           </div>
 
           {/* Category Filter */}
-          <select
-            className="input-field"
-            value={selectedCategory}
-            onChange={(e) => {
-              setSelectedCategory(e.target.value)
-              setSelectedSubcategory('') // Reset subcategory when category changes
-            }}
-          >
-            <option value="">All Categories</option>
-            {Array.from(new Set(products.map(p => p.category))).map(category => (
-              <option key={category} value={category}>{category}</option>
-            ))}
-          </select>
+          <div className="md:w-40">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Category
+            </label>
+            <select
+              className="input-field"
+              value={selectedCategory}
+              onChange={(e) => {
+                setSelectedCategory(e.target.value)
+                setSelectedSubcategory('') // Reset subcategory when category changes
+              }}
+            >
+              <option value="">All Categories</option>
+              {Array.from(
+                new Set(
+                  products
+                    .map(p => p.category)
+                    .filter((category): category is string => typeof category === 'string' && category.trim().length > 0)
+                )
+              ).map(category => (
+                <option key={category} value={category}>{category}</option>
+              ))}
+            </select>
+          </div>
 
           {/* Subcategory Filter */}
-          <select
-            className="input-field"
-            value={selectedSubcategory}
-            onChange={(e) => setSelectedSubcategory(e.target.value)}
-            disabled={!selectedCategory}
-          >
-            <option value="">All Subcategories</option>
-            {Array.from(new Set(products.map(p => p.subcategory).filter(Boolean)))
-              .filter(sub => !selectedCategory || products.some(p => p.category === selectedCategory && p.subcategory === sub))
-              .map(subcategory => (
-                <option key={subcategory} value={subcategory}>{subcategory}</option>
+          <div className="md:w-48">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Subcategory
+            </label>
+            <select
+              className="input-field"
+              value={selectedSubcategory}
+              onChange={(e) => setSelectedSubcategory(e.target.value)}
+              disabled={!selectedCategory}
+            >
+              <option value="">All Subcategories</option>
+              {Array.from(
+                new Set(
+                  products
+                    .map(p => p.subcategory)
+                    .filter((sub): sub is string => typeof sub === 'string' && sub.trim().length > 0)
+                )
+              )
+                .filter(sub =>
+                  !selectedCategory ||
+                  products.some(p => p.category === selectedCategory && p.subcategory === sub)
+                )
+                .map(subcategory => (
+                  <option key={subcategory} value={subcategory}>{subcategory}</option>
+                ))}
+            </select>
+          </div>
+
+          {/* Brand Filter */}
+          <div className="md:w-40">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Brand
+            </label>
+            <select
+              className="input-field"
+              value={selectedBrand}
+              onChange={(e) => setSelectedBrand(e.target.value)}
+            >
+              <option value="">All Brands</option>
+              {Array.from(
+                new Set(
+                  products
+                    .map(p => p.brand)
+                    .filter((brand): brand is string => typeof brand === 'string' && brand.trim().length > 0)
+                )
+              ).map(brand => (
+                <option key={brand} value={brand}>{brand}</option>
               ))}
-          </select>
+            </select>
+          </div>
 
           {/* Status Filter */}
-          <select
-            className="input-field"
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
-          >
-            <option value="">All Stock Status</option>
-            <option value="in-stock">In Stock</option>
-            <option value="low-stock">Low Stock</option>
-            <option value="out-of-stock">Out of Stock</option>
-          </select>
+          <div className="md:w-40">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Stock Status
+            </label>
+            <select
+              className="input-field"
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+            >
+              <option value="">All Stock Status</option>
+              <option value="in-stock">In Stock</option>
+              <option value="low-stock">Low Stock</option>
+              <option value="out-of-stock">Out of Stock</option>
+            </select>
+          </div>
 
           {/* Export Button */}
-          <button className="btn-secondary">
-            <ChartBarIcon className="w-5 h-5 mr-2" />
-            Export Report
-          </button>
+          <div className="md:w-40">
+            <label className="block text-sm font-medium text-gray-700 mb-1 opacity-0 select-none">
+              Export
+            </label>
+            <button className="btn-secondary w-full md:w-auto h-[42px] flex items-center justify-center">
+              <ChartBarIcon className="w-5 h-5 mr-2" />
+              Export Report
+            </button>
+          </div>
         </div>
       </div>
 
@@ -347,12 +481,18 @@ export default function InventoryManagement() {
                 <th className="table-header">Cost Price</th>
                 <th className="table-header">Inventory Value</th>
                 <th className="table-header">Weight</th>
-                <th className="table-header">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredProducts.map((product) => (
-                <tr key={product.id} className="hover:bg-gray-50">
+                <tr
+                  key={product.id}
+                  className="hover:bg-gray-50 cursor-pointer"
+                  onClick={() => {
+                    setEditingProduct(product);
+                    setIsEditModalOpen(true);
+                  }}
+                >
                   <td className="table-cell">
                     <div className="flex items-center">
                       <img
@@ -402,16 +542,6 @@ export default function InventoryManagement() {
                     K{(product.costPrice * product.stockQuantity).toLocaleString()}
                   </td>
                   <td className="table-cell">{product.weight} kg</td>
-                  <td className="table-cell">
-                    <div className="flex space-x-2">
-                      <button className="text-primary-600 hover:text-primary-900 text-sm">
-                        Adjust Stock
-                      </button>
-                      <button className="text-gray-600 hover:text-gray-900 text-sm">
-                        Edit
-                      </button>
-                    </div>
-                  </td>
                 </tr>
               ))}
             </tbody>
@@ -428,6 +558,20 @@ export default function InventoryManagement() {
           </div>
         )}
       </div>
+
+      {/* Edit Inventory Modal */}
+      <EditInventoryModal
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setEditingProduct(null);
+        }}
+        product={editingProduct}
+        onSave={() => {
+          // Refresh products after save
+          fetchProducts();
+        }}
+      />
     </div>
     </Layout>
   );

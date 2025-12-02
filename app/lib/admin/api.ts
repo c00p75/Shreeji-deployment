@@ -103,6 +103,7 @@ class ApiClient {
     // Transform data to match NestJS DTO format
     const productData = {
       name: data.name,
+      slug: data.slug || data.name,
       sku: data.SKU || data.sku,
       category: data.category,
       subcategoryId: data.subcategory ? (typeof data.subcategory === 'object' ? data.subcategory.id : data.subcategory) : undefined,
@@ -115,7 +116,9 @@ class ApiClient {
       dimensions: data.Dimensions || data.dimensions,
       sellingPrice: parseFloat(data.price || data.sellingPrice || 0),
       basePrice: parseFloat(data.basePrice || 0),
-      discountedPrice: data.discountedPrice ? parseFloat(data.discountedPrice) : undefined,
+      discountedPrice: data.discountedPrice !== undefined && data.discountedPrice !== null 
+        ? parseFloat(data.discountedPrice) 
+        : 0,
       taxRate: data.taxRate ? parseFloat(data.taxRate) : undefined,
       weight: data.weight ? parseFloat(data.weight) : undefined,
       stockQuantity: parseInt(data.stockQuantity || 0),
@@ -136,12 +139,39 @@ class ApiClient {
 
     if (productData.name !== undefined) updateData.name = productData.name;
     if (productData.SKU !== undefined || productData.sku !== undefined) updateData.sku = productData.SKU || productData.sku;
+    if (productData.slug !== undefined) updateData.slug = productData.slug;
     if (productData.category !== undefined) updateData.category = productData.category;
+    // Handle subcategoryId - allow null to clear the relation
     if (productData.subcategory !== undefined) {
-      updateData.subcategoryId = typeof productData.subcategory === 'object' ? productData.subcategory.id : productData.subcategory;
+      const subcategoryValue =
+        typeof productData.subcategory === 'object'
+          ? productData.subcategory.id
+          : productData.subcategory;
+
+      if (subcategoryValue !== undefined && subcategoryValue !== null && subcategoryValue !== '') {
+        const numValue = Number(subcategoryValue);
+        if (!isNaN(numValue)) {
+          updateData.subcategoryId = numValue;
+        }
+      } else if (productData.subcategory === null || productData.subcategory === '') {
+        // Explicitly set to null to clear the relation
+        updateData.subcategoryId = null;
+      }
     }
+    // Handle brandId - allow null to clear the relation
     if (productData.brand !== undefined) {
-      updateData.brandId = typeof productData.brand === 'object' ? productData.brand.id : productData.brand;
+      const brandValue =
+        typeof productData.brand === 'object' ? productData.brand.id : productData.brand;
+
+      if (brandValue !== undefined && brandValue !== null && brandValue !== '') {
+        const numValue = Number(brandValue);
+        if (!isNaN(numValue)) {
+          updateData.brandId = numValue;
+        }
+      } else if (productData.brand === null || productData.brand === '') {
+        // Explicitly set to null to clear the relation
+        updateData.brandId = null;
+      }
     }
     if (productData.tagline !== undefined) updateData.tagline = productData.tagline;
     if (productData.description !== undefined) updateData.description = productData.description;
@@ -155,13 +185,23 @@ class ApiClient {
       updateData.sellingPrice = parseFloat(productData.price || productData.sellingPrice);
     }
     if (productData.basePrice !== undefined) updateData.basePrice = parseFloat(productData.basePrice);
-    if (productData.discountedPrice !== undefined) updateData.discountedPrice = parseFloat(productData.discountedPrice);
+    // Always send discountedPrice as a number (including 0) if it's defined
+    if (productData.discountedPrice !== undefined) {
+      const discountedPriceNum = typeof productData.discountedPrice === 'number' 
+        ? productData.discountedPrice 
+        : parseFloat(productData.discountedPrice);
+      // Explicitly send 0 if the value is 0 or NaN (to allow clearing discount)
+      updateData.discountedPrice = isNaN(discountedPriceNum) ? 0 : discountedPriceNum;
+    }
     if (productData.taxRate !== undefined) updateData.taxRate = parseFloat(productData.taxRate);
     if (productData.weight !== undefined) updateData.weight = parseFloat(productData.weight);
     if (productData.stockQuantity !== undefined) updateData.stockQuantity = parseInt(productData.stockQuantity);
     if (productData.minStockLevel !== undefined) updateData.minStockLevel = parseInt(productData.minStockLevel);
     if (productData.maxStockLevel !== undefined) updateData.maxStockLevel = parseInt(productData.maxStockLevel);
     if (productData.isActive !== undefined) updateData.isActive = productData.isActive;
+
+    // Debug: Log the update payload
+    console.log('[API] Update payload:', JSON.stringify(updateData, null, 2));
 
     return this.request<{ data: any }>(`/admin/products/${id}`, {
       method: 'PUT',
@@ -250,10 +290,20 @@ class ApiClient {
     const formData = new FormData();
     formData.append('file', file);
 
+    // Get headers with auth token (but don't set Content-Type for FormData)
+    const headers: Record<string, string> = {};
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('admin_jwt');
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+    }
+
     // Use Next.js API route for file uploads
     const response = await fetch('/api/upload', {
       method: 'POST',
-      body: formData,
+      headers: headers, // Include Authorization header
+      body: formData, // Don't set Content-Type - browser will set it with boundary
     });
 
     if (!response.ok) {
@@ -311,8 +361,10 @@ class ApiClient {
   }
 
   async updateCustomer(id: string, data: any) {
-    // TODO: Implement customer update endpoint in NestJS
-    throw new Error('Customer update not yet implemented');
+    return this.request<{ data: any }>(`/admin/customers/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
   }
 
   // Orders API
@@ -328,10 +380,18 @@ class ApiClient {
       searchParams.append('pageSize', params.pagination.pageSize.toString());
     }
 
+    if (params?.filters) {
+      Object.entries(params.filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+          searchParams.append(key, value.toString());
+        }
+      });
+    }
+
     const queryString = searchParams.toString();
     const endpoint = `/admin/orders${queryString ? `?${queryString}` : ''}`;
 
-    return this.request<{ data: any[] }>(endpoint);
+    return this.request<{ data: any[]; meta: any }>(endpoint);
   }
 
   async createOrder(data: any) {
@@ -340,8 +400,10 @@ class ApiClient {
   }
 
   async updateOrder(id: string, data: any) {
-    // TODO: Implement order update endpoint in NestJS
-    throw new Error('Order update not yet implemented');
+    return this.request<{ data: any }>(`/admin/orders/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
   }
 
   // Payments API
@@ -349,24 +411,75 @@ class ApiClient {
     pagination?: { page: number; pageSize: number };
     filters?: Record<string, any>;
   }) {
-    // TODO: Implement payments endpoint in NestJS
-    return { data: [], meta: { pagination: { total: 0 } } };
+    const searchParams = new URLSearchParams();
+
+    if (params?.pagination) {
+      searchParams.append('page', params.pagination.page.toString());
+      searchParams.append('pageSize', params.pagination.pageSize.toString());
+    }
+
+    if (params?.filters) {
+      Object.entries(params.filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+          searchParams.append(key, value.toString());
+        }
+      });
+    }
+
+    const queryString = searchParams.toString();
+    const endpoint = `/admin/payments${queryString ? `?${queryString}` : ''}`;
+
+    return this.request<{ data: any[]; meta: any }>(endpoint);
   }
 
-  // Coupons API - Not yet implemented
+  // Coupons API
   async getCoupons(params?: {
     pagination?: { page: number; pageSize: number };
     filters?: Record<string, any>;
   }) {
-    return { data: [], meta: { pagination: { total: 0 } } };
+    const searchParams = new URLSearchParams();
+
+    if (params?.pagination) {
+      searchParams.append('page', params.pagination.page.toString());
+      searchParams.append('pageSize', params.pagination.pageSize.toString());
+    }
+
+    if (params?.filters) {
+      Object.entries(params.filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+          searchParams.append(key, value.toString());
+        }
+      });
+    }
+
+    const queryString = searchParams.toString();
+    const endpoint = `/admin/coupons${queryString ? `?${queryString}` : ''}`;
+
+    return this.request<{ data: any[]; meta: any }>(endpoint);
+  }
+
+  async getCoupon(id: string | number) {
+    return this.request<{ data: any }>(`/admin/coupons/${id}`);
   }
 
   async createCoupon(data: any) {
-    throw new Error('Coupons not yet implemented');
+    return this.request('/admin/coupons', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
   }
 
   async updateCoupon(id: string, data: any) {
-    throw new Error('Coupons not yet implemented');
+    return this.request<{ data: any }>(`/admin/coupons/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteCoupon(id: string | number) {
+    return this.request(`/admin/coupons/${id}`, {
+      method: 'DELETE',
+    });
   }
 
   // Dashboard Statistics
