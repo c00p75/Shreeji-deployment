@@ -37,7 +37,7 @@ export default function CheckoutPage() {
   const [userProfile, setUserProfile] = useState<any>(null)
   const [paymentMethod, setPaymentMethod] = useState('card')
   const [paymentDetails, setPaymentDetails] = useState<{
-    cardDetails?: { cardId?: string; number?: string; expiryMonth?: string; expiryYear?: string; cvv?: string; cardholderName?: string }
+    cardDetails?: { cardId?: string; number?: string; expiryMonth?: string; expiryYear?: string; cvv?: string; cardholderName?: string; saveCard?: boolean }
     mobileMoneyDetails?: { provider: 'mtn' | 'airtel' | 'zamtel' | 'orange'; phoneNumber: string }
   }>({})
   const [showRecoveryMessage, setShowRecoveryMessage] = useState(false)
@@ -425,7 +425,7 @@ export default function CheckoutPage() {
 
           {/* Right Column - Order Details Sidebar */}
           <div className='order-first lg:order-last lg:sticky lg:top-20 lg:self-start'>
-            <OrderDetailsSidebar />
+            <OrderDetailsSidebar fulfillmentType={fulfillmentType} currentStep={currentStep} />
           </div>
         </div>
       </div>

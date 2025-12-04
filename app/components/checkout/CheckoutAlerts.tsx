@@ -1,8 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { CheckCircle, XCircle, Clock, AlertCircle } from 'lucide-react'
+import { getBankDetails, type BankDetails } from '@/app/lib/ecommerce/api'
 
 interface CheckoutAlertsProps {
   cartError: string | null
@@ -13,6 +14,23 @@ interface CheckoutAlertsProps {
 }
 
 export default function CheckoutAlerts({ cartError, formError, success, paymentMethod, onRetry }: CheckoutAlertsProps) {
+  const [bankDetails, setBankDetails] = useState<BankDetails | null>(null)
+  const [loadingBankDetails, setLoadingBankDetails] = useState(false)
+
+  useEffect(() => {
+    if (paymentMethod === 'bank_transfer' && success?.paymentStatus === 'pending') {
+      setLoadingBankDetails(true)
+      getBankDetails()
+        .then(setBankDetails)
+        .catch((error) => {
+          console.error('Failed to fetch bank details:', error)
+        })
+        .finally(() => {
+          setLoadingBankDetails(false)
+        })
+    }
+  }, [paymentMethod, success?.paymentStatus])
+
   const getPaymentStatusMessage = (status: string) => {
     switch (status.toLowerCase()) {
       case 'approved':
@@ -26,6 +44,12 @@ export default function CheckoutAlerts({ cartError, formError, success, paymentM
       default:
         return { icon: AlertCircle, color: 'gray', message: `Payment status: ${status}` }
     }
+  }
+
+  const calculateDeadline = (hours: number) => {
+    const deadline = new Date()
+    deadline.setHours(deadline.getHours() + hours)
+    return deadline
   }
 
   return (
@@ -78,13 +102,37 @@ export default function CheckoutAlerts({ cartError, formError, success, paymentM
                 <div className='mt-3 rounded bg-white p-3 text-sm'>
                   <p className='font-semibold'>Bank Transfer Instructions:</p>
                   <p className='mt-1'>Please transfer the order amount to:</p>
-                  <ul className='mt-2 list-inside list-disc space-y-1'>
-                    <li>Bank: [Your Bank Name]</li>
-                    <li>Account Number: [Account Number]</li>
-                    <li>Account Name: Shreeji</li>
-                    <li>Reference: {success.orderNumber}</li>
-                  </ul>
-                  <p className='mt-2 text-xs'>Complete the transfer within 24 hours to confirm your order.</p>
+                  {loadingBankDetails ? (
+                    <p className='mt-2 text-xs text-gray-500'>Loading bank details...</p>
+                  ) : bankDetails ? (
+                    <>
+                      <ul className='mt-2 list-inside list-disc space-y-1'>
+                        <li><strong>Bank Name:</strong> {bankDetails.bankName}</li>
+                        <li><strong>Account Number:</strong> {bankDetails.accountNumber}</li>
+                        <li><strong>Account Name:</strong> {bankDetails.accountName}</li>
+                        {bankDetails.swiftCode && (
+                          <li><strong>SWIFT Code:</strong> {bankDetails.swiftCode}</li>
+                        )}
+                        {bankDetails.iban && (
+                          <li><strong>IBAN:</strong> {bankDetails.iban}</li>
+                        )}
+                        <li><strong>Reference:</strong> {success.orderNumber}</li>
+                      </ul>
+                      <p className='mt-2 text-xs text-amber-600'>
+                        ⚠️ Complete the transfer within {bankDetails.deadlineHours} hours (by {calculateDeadline(bankDetails.deadlineHours).toLocaleString()}) to confirm your order.
+                      </p>
+                      <p className='mt-2 text-xs text-gray-600'>
+                        After completing the transfer, you can upload proof of payment in your order details page.
+                      </p>
+                    </>
+                  ) : (
+                    <ul className='mt-2 list-inside list-disc space-y-1'>
+                      <li>Bank: [Loading...]</li>
+                      <li>Account Number: [Loading...]</li>
+                      <li>Account Name: Shreeji</li>
+                      <li>Reference: {success.orderNumber}</li>
+                    </ul>
+                  )}
                 </div>
               )}
 

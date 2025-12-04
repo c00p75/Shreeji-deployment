@@ -229,6 +229,8 @@ export default function OrderSummarySection() {
           )
         })}
       </div>
+
+    
     </div>
   )
 }

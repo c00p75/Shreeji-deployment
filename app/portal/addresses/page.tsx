@@ -73,8 +73,11 @@ export default function AddressesPage() {
   const handleOpenModal = (address?: Address) => {
     if (address) {
       setEditingAddress(address)
+      const addressType = address.type as 'shipping' | 'billing' | 'both' | undefined
       setFormData({
-        type: address.type || 'shipping',
+        type: (addressType && ['shipping', 'billing', 'both'].includes(addressType)) 
+          ? addressType 
+          : 'shipping',
         firstName: address.firstName || '',
         lastName: address.lastName || '',
         company: address.company || '',

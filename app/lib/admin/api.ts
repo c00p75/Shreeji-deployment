@@ -115,11 +115,12 @@ class ApiClient {
       images: data.images || [],
       dimensions: data.Dimensions || data.dimensions,
       sellingPrice: parseFloat(data.price || data.sellingPrice || 0),
-      basePrice: parseFloat(data.basePrice || 0),
+      basePrice: parseFloat(data.costPrice || data.basePrice || 0),
       discountedPrice: data.discountedPrice !== undefined && data.discountedPrice !== null 
         ? parseFloat(data.discountedPrice) 
         : 0,
       taxRate: data.taxRate ? parseFloat(data.taxRate) : undefined,
+      discountPercent: data.discountPercent !== undefined ? parseFloat(data.discountPercent) : undefined,
       weight: data.weight ? parseFloat(data.weight) : undefined,
       stockQuantity: parseInt(data.stockQuantity || 0),
       minStockLevel: data.minStockLevel ? parseInt(data.minStockLevel) : undefined,
@@ -184,7 +185,9 @@ class ApiClient {
     if (productData.price !== undefined || productData.sellingPrice !== undefined) {
       updateData.sellingPrice = parseFloat(productData.price || productData.sellingPrice);
     }
-    if (productData.basePrice !== undefined) updateData.basePrice = parseFloat(productData.basePrice);
+    if (productData.costPrice !== undefined || productData.basePrice !== undefined) {
+      updateData.basePrice = parseFloat(productData.costPrice || productData.basePrice);
+    }
     // Always send discountedPrice as a number (including 0) if it's defined
     if (productData.discountedPrice !== undefined) {
       const discountedPriceNum = typeof productData.discountedPrice === 'number' 
@@ -194,6 +197,7 @@ class ApiClient {
       updateData.discountedPrice = isNaN(discountedPriceNum) ? 0 : discountedPriceNum;
     }
     if (productData.taxRate !== undefined) updateData.taxRate = parseFloat(productData.taxRate);
+    if (productData.discountPercent !== undefined) updateData.discountPercent = parseFloat(productData.discountPercent);
     if (productData.weight !== undefined) updateData.weight = parseFloat(productData.weight);
     if (productData.stockQuantity !== undefined) updateData.stockQuantity = parseInt(productData.stockQuantity);
     if (productData.minStockLevel !== undefined) updateData.minStockLevel = parseInt(productData.minStockLevel);
@@ -482,8 +486,45 @@ class ApiClient {
     });
   }
 
+  // Settings API
+  async getAllSettings() {
+    return this.request<Record<string, any>>('/admin/settings');
+  }
+
+  async getSettingsByCategory(category: string) {
+    return this.request<Record<string, any>>(`/admin/settings/${category}`);
+  }
+
+  async updateSetting(category: string, key: string, value: any, type?: string) {
+    return this.request(`/admin/settings/${category}/${key}`, {
+      method: 'PUT',
+      body: JSON.stringify({ value, type }),
+    });
+  }
+
+  async updateSettings(category: string, settings: Record<string, any>) {
+    return this.request(`/admin/settings/${category}`, {
+      method: 'PUT',
+      body: JSON.stringify(settings),
+    });
+  }
+
+  async initializeSettings() {
+    return this.request('/admin/settings/initialize', {
+      method: 'POST',
+    });
+  }
+
   // Dashboard Statistics
-  async getDashboardStats() {
+  async getDashboardStats(): Promise<{
+    totalProducts: number;
+    totalCustomers: number;
+    totalOrders: number;
+    totalRevenue: number;
+    inventoryValue: number;
+    lowStockProducts: number;
+    outOfStockProducts: number;
+  }> {
     return this.request('/admin/dashboard/stats');
   }
 }

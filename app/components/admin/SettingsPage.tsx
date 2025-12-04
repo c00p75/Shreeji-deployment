@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { 
   UserIcon, 
   CogIcon, 
@@ -9,10 +9,12 @@ import {
   PaintBrushIcon,
   GlobeAltIcon,
   KeyIcon,
-  DocumentTextIcon
+  DocumentTextIcon,
+  BanknotesIcon,
 } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import Layout from './Layout'
+import api from '@/app/lib/admin/api';
 
 const settingsSections = [
   {
@@ -56,6 +58,12 @@ const settingsSections = [
     name: 'API Settings',
     icon: KeyIcon,
     description: 'Configure API keys and access tokens'
+  },
+  {
+    id: 'payments',
+    name: 'Payments',
+    icon: BanknotesIcon,
+    description: 'Configure payment gateways and bank transfer details'
   },
   {
     id: 'backup',
@@ -103,6 +111,92 @@ export default function SettingsPage() {
     webhookUrl: 'https://example.com/webhook',
     rateLimit: '1000'
   });
+  const [bankSettings, setBankSettings] = useState({
+    bankName: '',
+    accountNumber: '',
+    accountName: '',
+    swiftCode: '',
+    iban: '',
+    deadlineHours: 24,
+    isEnabled: true,
+  });
+  const [mobileMoneySettings, setMobileMoneySettings] = useState({
+    isEnabled: true,
+  });
+  const [cardSettings, setCardSettings] = useState({
+    isEnabled: true,
+  });
+  const [codSettings, setCodSettings] = useState({
+    isEnabled: true,
+  });
+  const [dpoSettings, setDpoSettings] = useState({
+    companyToken: '',
+    apiUrl: 'https://secure.3gdirectpay.com/payv3.php',
+    serviceType: '5525',
+    redirectUrl: '',
+    backUrl: '',
+    isEnabled: false,
+  });
+  const [paymentLoading, setPaymentLoading] = useState(true);
+  const [paymentSaving, setPaymentSaving] = useState(false);
+  const [paymentStatus, setPaymentStatus] = useState<{ type: 'idle' | 'success' | 'error'; message?: string }>({
+    type: 'idle',
+  });
+
+  useEffect(() => {
+    let mounted = true;
+    const fetchSettings = async () => {
+      try {
+        setPaymentLoading(true);
+        const [bank, dpo, mobileMoney, card, cod] = await Promise.all([
+          api.getSettingsByCategory('payment_bank_transfer'),
+          api.getSettingsByCategory('payment_dpo'),
+          api.getSettingsByCategory('payment_mobile_money'),
+          api.getSettingsByCategory('payment_card'),
+          api.getSettingsByCategory('payment_cod'),
+        ]);
+        if (!mounted) return;
+        setBankSettings({
+          bankName: bank?.bankName ?? '',
+          accountNumber: bank?.accountNumber ?? '',
+          accountName: bank?.accountName ?? '',
+          swiftCode: bank?.swiftCode ?? '',
+          iban: bank?.iban ?? '',
+          deadlineHours: bank?.deadlineHours ?? 24,
+          isEnabled: bank?.isEnabled ?? true,
+        });
+        setDpoSettings({
+          companyToken: dpo?.companyToken ?? '',
+          apiUrl: dpo?.apiUrl ?? 'https://secure.3gdirectpay.com/payv3.php',
+          serviceType: dpo?.serviceType ?? '5525',
+          redirectUrl: dpo?.redirectUrl ?? '',
+          backUrl: dpo?.backUrl ?? '',
+          isEnabled: dpo?.isEnabled ?? false,
+        });
+        setMobileMoneySettings({
+          isEnabled: mobileMoney?.isEnabled ?? true,
+        });
+        setCardSettings({
+          isEnabled: card?.isEnabled ?? true,
+        });
+        setCodSettings({
+          isEnabled: cod?.isEnabled ?? true,
+        });
+      } catch (error) {
+        console.error('Failed to load payment settings', error);
+        if (mounted) {
+          setPaymentStatus({ type: 'error', message: (error as Error).message || 'Failed to load payment settings.' });
+        }
+      } finally {
+        if (mounted) setPaymentLoading(false);
+      }
+    };
+
+    fetchSettings();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({
@@ -446,6 +540,330 @@ export default function SettingsPage() {
     </div>
   );
 
+  const handleSavePaymentSettings = async () => {
+    setPaymentSaving(true);
+    setPaymentStatus({ type: 'idle' });
+    try {
+      await Promise.all([
+        api.updateSettings('payment_bank_transfer', {
+          bankName: bankSettings.bankName,
+          accountNumber: bankSettings.accountNumber,
+          accountName: bankSettings.accountName,
+          swiftCode: bankSettings.swiftCode,
+          iban: bankSettings.iban,
+          deadlineHours: Number(bankSettings.deadlineHours) || 24,
+          isEnabled: bankSettings.isEnabled,
+        }),
+        api.updateSettings('payment_dpo', {
+          companyToken: dpoSettings.companyToken,
+          apiUrl: dpoSettings.apiUrl,
+          serviceType: dpoSettings.serviceType,
+          redirectUrl: dpoSettings.redirectUrl,
+          backUrl: dpoSettings.backUrl,
+          isEnabled: dpoSettings.isEnabled,
+        }),
+        api.updateSettings('payment_mobile_money', {
+          isEnabled: mobileMoneySettings.isEnabled,
+        }),
+        api.updateSettings('payment_card', {
+          isEnabled: cardSettings.isEnabled,
+        }),
+        api.updateSettings('payment_cod', {
+          isEnabled: codSettings.isEnabled,
+        }),
+      ]);
+      setPaymentStatus({ type: 'success', message: 'Payment settings updated successfully.' });
+    } catch (error) {
+      console.error('Failed to save payment settings', error);
+      setPaymentStatus({
+        type: 'error',
+        message: (error as Error).message || 'Failed to update payment settings.',
+      });
+    } finally {
+      setPaymentSaving(false);
+    }
+  };
+
+  const renderPaymentSettings = () => {
+    if (paymentLoading) {
+      return (
+        <div className="flex items-center justify-center py-12">
+          <p className="text-sm text-gray-500">Loading payment settings...</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-8">
+        <div>
+          <h3 className="text-lg font-medium text-gray-900">Payment Configuration</h3>
+          <p className="mt-1 text-sm text-gray-500">Enable or disable payment methods and configure payment gateway settings.</p>
+        </div>
+
+        {/* Payment Method Toggles */}
+        <div className="bg-white border rounded-lg p-6 space-y-6">
+          <h4 className="text-md font-semibold text-gray-900">Payment Methods</h4>
+          
+          {/* Card Payments */}
+          <div className="flex items-center justify-between border-b pb-4">
+            <div>
+              <h5 className="text-sm font-medium text-gray-900">Credit / Debit Card</h5>
+              <p className="text-sm text-gray-500">Enable card payments via DPO gateway</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setCardSettings((prev) => ({ ...prev, isEnabled: !prev.isEnabled }))}
+              className={clsx(
+                'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2',
+                cardSettings.isEnabled ? 'bg-primary-600' : 'bg-gray-200'
+              )}
+            >
+              <span
+                className={clsx(
+                  'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
+                  cardSettings.isEnabled ? 'translate-x-5' : 'translate-x-0'
+                )}
+              />
+            </button>
+          </div>
+
+          {/* Mobile Money */}
+          <div className="flex items-center justify-between border-b pb-4">
+            <div>
+              <h5 className="text-sm font-medium text-gray-900">Mobile Money</h5>
+              <p className="text-sm text-gray-500">Enable mobile money payments (MTN, Airtel, Zamtel, Orange)</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setMobileMoneySettings((prev) => ({ ...prev, isEnabled: !prev.isEnabled }))}
+              className={clsx(
+                'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2',
+                mobileMoneySettings.isEnabled ? 'bg-primary-600' : 'bg-gray-200'
+              )}
+            >
+              <span
+                className={clsx(
+                  'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
+                  mobileMoneySettings.isEnabled ? 'translate-x-5' : 'translate-x-0'
+                )}
+              />
+            </button>
+          </div>
+
+          {/* Bank Transfer */}
+          <div className="flex items-center justify-between border-b pb-4">
+            <div>
+              <h5 className="text-sm font-medium text-gray-900">Bank Transfer</h5>
+              <p className="text-sm text-gray-500">Enable bank transfer payments</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setBankSettings((prev) => ({ ...prev, isEnabled: !prev.isEnabled }))}
+              className={clsx(
+                'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2',
+                bankSettings.isEnabled ? 'bg-primary-600' : 'bg-gray-200'
+              )}
+            >
+              <span
+                className={clsx(
+                  'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
+                  bankSettings.isEnabled ? 'translate-x-5' : 'translate-x-0'
+                )}
+              />
+            </button>
+          </div>
+
+          {/* Cash on Delivery */}
+          <div className="flex items-center justify-between">
+            <div>
+              <h5 className="text-sm font-medium text-gray-900">Cash on Delivery</h5>
+              <p className="text-sm text-gray-500">Enable cash on delivery payments</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setCodSettings((prev) => ({ ...prev, isEnabled: !prev.isEnabled }))}
+              className={clsx(
+                'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2',
+                codSettings.isEnabled ? 'bg-primary-600' : 'bg-gray-200'
+              )}
+            >
+              <span
+                className={clsx(
+                  'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
+                  codSettings.isEnabled ? 'translate-x-5' : 'translate-x-0'
+                )}
+              />
+            </button>
+          </div>
+        </div>
+
+        {paymentStatus.type !== 'idle' && (
+          <div
+            className={clsx(
+              'rounded-md p-4',
+              paymentStatus.type === 'success' ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'
+            )}
+          >
+            <p className="text-sm font-medium">{paymentStatus.message}</p>
+          </div>
+        )}
+
+        <div className="bg-gray-50 border rounded-lg p-6 space-y-6">
+          <div>
+            <h4 className="text-md font-semibold text-gray-900">Bank Transfer Configuration</h4>
+            <p className="text-sm text-gray-500">Information shown to customers who choose bank transfer.</p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Bank Name</label>
+              <input
+                type="text"
+                value={bankSettings.bankName}
+                onChange={(e) => setBankSettings({ ...bankSettings, bankName: e.target.value })}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Account Number</label>
+              <input
+                type="text"
+                value={bankSettings.accountNumber}
+                onChange={(e) => setBankSettings({ ...bankSettings, accountNumber: e.target.value })}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Account Name</label>
+              <input
+                type="text"
+                value={bankSettings.accountName}
+                onChange={(e) => setBankSettings({ ...bankSettings, accountName: e.target.value })}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">SWIFT Code</label>
+              <input
+                type="text"
+                value={bankSettings.swiftCode}
+                onChange={(e) => setBankSettings({ ...bankSettings, swiftCode: e.target.value })}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">IBAN</label>
+              <input
+                type="text"
+                value={bankSettings.iban}
+                onChange={(e) => setBankSettings({ ...bankSettings, iban: e.target.value })}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Payment Deadline (hours)</label>
+              <input
+                type="number"
+                min={1}
+                value={bankSettings.deadlineHours}
+                onChange={(e) =>
+                  setBankSettings({ ...bankSettings, deadlineHours: Number(e.target.value) || 1 })
+                }
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-gray-50 border rounded-lg p-6 space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="text-md font-semibold text-gray-900">DPO Gateway</h4>
+              <p className="text-sm text-gray-500">Configure Direct Pay Online credentials.</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setDpoSettings((prev) => ({ ...prev, isEnabled: !prev.isEnabled }))}
+              className={clsx(
+                'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2',
+                dpoSettings.isEnabled ? 'bg-primary-600' : 'bg-gray-200'
+              )}
+            >
+              <span
+                className={clsx(
+                  'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
+                  dpoSettings.isEnabled ? 'translate-x-5' : 'translate-x-0'
+                )}
+              />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Company Token</label>
+              <input
+                type="text"
+                value={dpoSettings.companyToken}
+                onChange={(e) => setDpoSettings({ ...dpoSettings, companyToken: e.target.value })}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">API URL</label>
+              <input
+                type="text"
+                value={dpoSettings.apiUrl}
+                onChange={(e) => setDpoSettings({ ...dpoSettings, apiUrl: e.target.value })}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Service Type</label>
+              <input
+                type="text"
+                value={dpoSettings.serviceType}
+                onChange={(e) => setDpoSettings({ ...dpoSettings, serviceType: e.target.value })}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Redirect URL</label>
+              <input
+                type="url"
+                value={dpoSettings.redirectUrl}
+                onChange={(e) => setDpoSettings({ ...dpoSettings, redirectUrl: e.target.value })}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Back URL</label>
+              <input
+                type="url"
+                value={dpoSettings.backUrl}
+                onChange={(e) => setDpoSettings({ ...dpoSettings, backUrl: e.target.value })}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-end">
+          <button
+            type="button"
+            onClick={handleSavePaymentSettings}
+            disabled={paymentSaving}
+            className={clsx(
+              'inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white',
+              paymentSaving ? 'bg-primary-300 cursor-not-allowed' : 'bg-primary-600 hover:bg-primary-700'
+            )}
+          >
+            {paymentSaving ? 'Saving...' : 'Save Payment Settings'}
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   const renderSectionContent = () => {
     switch (activeSection) {
       case 'profile':
@@ -460,6 +878,8 @@ export default function SettingsPage() {
         return renderAppearanceSettings();
       case 'api':
         return renderApiSettings();
+      case 'payments':
+        return renderPaymentSettings();
       default:
         return (
           <div className="text-center py-12">
@@ -480,7 +900,7 @@ export default function SettingsPage() {
 
       <div className="lg:grid lg:grid-cols-12 lg:gap-x-5">
         {/* Sidebar */}
-        <aside className="py-6 px-2 sm:px-6 lg:py-0 lg:px-0 lg:col-span-3">
+        <aside className="py-6 px-2 sm:px-6 lg:py-0 lg:px-0 lg:col-span-3 lg:sticky lg:top-6 lg:self-start">
           <nav className="space-y-1">
             {settingsSections.map((section) => (
               <button

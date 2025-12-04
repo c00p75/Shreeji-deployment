@@ -1,0 +1,534 @@
+# Shreeji Deployment - Cursor Rules
+
+## Project Overview
+This is a Next.js 15 e-commerce application with an admin portal, customer portal, and CMS integration using Strapi. The project uses React 19, TypeScript (with JavaScript support), Tailwind CSS, and SCSS.
+
+**Development Approach**: This project follows **Test-Driven Development (TDD)** principles. Always write tests before implementing features. See the TDD section for detailed guidelines.
+
+## Tech Stack
+- **Framework**: Next.js 15.1.5 (App Router)
+- **React**: 19.0.0
+- **TypeScript**: Enabled but not strict (allowJs: true, strict: false)
+- **Styling**: Tailwind CSS + DaisyUI + SCSS
+- **CMS**: Strapi
+- **State Management**: React Context API
+- **Forms**: react-hook-form
+- **HTTP Client**: Axios
+- **Icons**: Lucide React, Heroicons
+
+## File Organization
+
+### Directory Structure
+- `app/` - Next.js App Router pages and routes
+  - `app/components/` - Component library (admin, checkout, portal, products, notifications)
+  - `app/contexts/` - React Context providers
+  - `app/lib/` - Utility libraries and API clients
+- `components/` - Shared UI components (home, products, services, about, etc.)
+- `src/` - Backend services and utilities (checkout, orders, payments, etc.)
+- `public/` - Static assets (images, logos, videos, backgrounds)
+- `data/` - JSON data files and product mappings
+- `utils/` - Utility functions
+- `scripts/` - Build and migration scripts
+
+### File Naming Conventions
+- Use PascalCase for React components: `OrderSummarySection.tsx`
+- Use kebab-case for directories: `about-us/`, `contact-us/`
+- Use camelCase for utility files: `email-handler.js`, `strapi-client.js`
+- Component files match component name exactly
+- SCSS files: `style.scss` or component-specific names
+
+## Code Style Guidelines
+
+### React Components
+- Always use functional components with hooks
+- Add `'use client'` directive at the top for client components
+- Use TypeScript for new components when possible (.tsx), but .jsx is acceptable
+- Export default for page components and named exports for utilities
+- Use React 19 patterns and hooks (useState, useEffect, useContext, useCallback, useMemo)
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+import { useCart } from '@/app/contexts/CartContext'
+
+export default function MyComponent() {
+  const { cart } = useCart()
+  // component logic
+}
+```
+
+### TypeScript Guidelines
+- TypeScript is not strict - use types where helpful but don't force strict typing
+- Use interfaces for props and context values
+- Use type assertions (`as`) when needed for flexible data structures
+- Prefer `interface` over `type` for object shapes
+- Allow `any` when dealing with dynamic CMS data or third-party APIs
+
+```tsx
+interface CartItem {
+  id: string
+  quantity: number
+  productSnapshot: ProductSnapshot
+}
+
+const item = cartItem as any // Acceptable for flexible data
+```
+
+### Import Organization
+- Group imports: React/Next.js first, then third-party, then local components, then utilities
+- Use path alias `@/*` for absolute imports
+- Import types when needed: `import type { Cart } from '@/app/lib/ecommerce/api'`
+
+```tsx
+import { useState, useEffect } from 'react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { ShoppingBag } from 'lucide-react'
+import { useCart } from '@/app/contexts/CartContext'
+import { currencyFormatter } from './currency-formatter'
+```
+
+### Styling Guidelines
+
+#### Tailwind CSS (Primary)
+- Use Tailwind utility classes for most styling
+- Prefer Tailwind over inline styles
+- Use DaisyUI components when appropriate
+- Custom colors from `var(--shreeji-primary)` or Tailwind config colors
+- Use responsive classes: `sm:`, `md:`, `lg:`, `xl:`
+
+```tsx
+<div className='space-y-4 rounded-lg border border-gray-200 bg-white p-4'>
+  <h2 className='text-xl font-semibold text-gray-900'>Title</h2>
+</div>
+```
+
+#### SCSS (Legacy/Complex Styles)
+- Use SCSS for complex animations or component-specific styles
+- Keep SCSS files next to components: `component/style.scss`
+- Import SCSS in component: `import './style.scss'`
+- Use CSS variables for theming when needed
+
+### Image Handling
+- Use Next.js `Image` component for optimized images
+- Normalize image URLs (camelCase to kebab-case for product images)
+- Handle image loading errors gracefully with fallbacks
+- Use `unoptimized` prop for external URLs or when needed
+- Store product images in `public/products/`
+
+```tsx
+<Image
+  src={normalizeImageUrl(imageUrl)}
+  alt={product.name}
+  fill
+  className='object-cover'
+  unoptimized={imageUrl.startsWith('http')}
+  onError={(e) => {
+    const target = e.target as HTMLImageElement
+    target.style.display = 'none'
+  }}
+/>
+```
+
+### API Integration
+- Use API clients from `app/lib/` directories:
+  - `app/lib/ecommerce/api.ts` - E-commerce operations
+  - `app/lib/admin/api.ts` - Admin operations
+  - `app/lib/client/api.ts` - Client operations
+- Use async/await for API calls
+- Handle loading and error states properly
+- Store API responses in context or state as needed
+- **IMPORTANT**: When modifying API calls or data structures, ensure backend is updated accordingly (see Backend Coordination section)
+
+```tsx
+const { cart, addItem, updateItem, removeItem } = useCart()
+
+const handleAdd = async (productId: string) => {
+  try {
+    await addItem(productId, 1)
+  } catch (error) {
+    console.error('Failed to add item:', error)
+  }
+}
+```
+
+### Context Usage
+- Use existing contexts when available:
+  - `CartContext` - Cart management
+  - `ClientAuthContext` - Client authentication
+  - `AuthContext` - Admin authentication
+  - `NotificationContext` - Notifications
+- Access context via custom hooks: `useCart()`, `useClientAuth()`
+
+### Form Handling
+- Use `react-hook-form` for complex forms
+- Use controlled components for simple forms
+- Validate on submit, show errors clearly
+- Use EmailJS for contact forms when appropriate
+
+### Error Handling
+- Use try-catch blocks for async operations
+- Log errors to console for debugging
+- Show user-friendly error messages (use toast notifications)
+- Handle API errors gracefully with fallback UI
+
+```tsx
+try {
+  await updateItem(itemId, quantity)
+} catch (error) {
+  console.error('Failed to update item:', error)
+  toast.error('Failed to update item. Please try again.')
+}
+```
+
+### State Management
+- Use `useState` for local component state
+- Use `useContext` for shared state (cart, auth, notifications)
+- Use `useCallback` and `useMemo` for performance optimization
+- Prefer derived state over storing redundant data
+
+## Component Patterns
+
+### Page Components
+- Place in `app/[route]/page.tsx` or `app/[route]/page.jsx`
+- Use server components by default, add `'use client'` only when needed
+- Export default function matching route name
+
+### Modal/Dialog Components
+- Use Headless UI or custom modal implementations
+- Handle open/close state with useState
+- Use portals for proper z-index handling
+- Include backdrop and close button
+
+### List/Grid Components
+- Map over arrays with proper keys
+- Handle empty states gracefully
+- Show loading skeletons while fetching
+- Implement pagination for large lists
+
+### Form Components
+- Group related fields in sections
+- Use semantic HTML form elements
+- Provide clear validation feedback
+- Disable submit button during submission
+
+## Best Practices
+
+### Performance
+- Use Next.js Image optimization
+- Lazy load components when appropriate
+- Memoize expensive computations
+- Optimize re-renders with useCallback/useMemo
+
+### Accessibility
+- Use semantic HTML elements
+- Include proper ARIA labels
+- Ensure keyboard navigation works
+- Maintain proper color contrast
+
+### SEO
+- Use proper meta tags in layouts
+- Implement proper heading hierarchy (h1, h2, h3)
+- Use semantic HTML
+- Optimize images with alt text
+
+### Code Quality
+- Keep components focused and single-purpose
+- Extract reusable logic into custom hooks
+- Use meaningful variable and function names
+- Add comments for complex logic
+- Remove console.logs before committing (or use proper logging)
+- **Always update `docs/PENDING-IMPLEMENTATION.md` when completing features**
+- **Always update backend when frontend changes require it** (see Backend Coordination section)
+
+### Test-Driven Development (TDD)
+- **CRITICAL: Always use Test-Driven Development workflow**
+- Write tests BEFORE implementing features
+- Follow the Red-Green-Refactor cycle:
+  1. **Red**: Write a failing test that describes the desired behavior
+  2. **Green**: Write the minimum code to make the test pass
+  3. **Refactor**: Improve the code while keeping tests green
+- Write tests for:
+  - ✅ New features and functionality
+  - ✅ Bug fixes (test the bug first, then fix it)
+  - ✅ API endpoints and integrations
+  - ✅ Complex business logic
+  - ✅ Utility functions and helpers
+  - ✅ Component behavior and interactions
+  - ✅ Edge cases and error handling
+- Test both frontend and backend:
+  - **Frontend**: Use Jest, React Testing Library, or Next.js testing utilities
+  - **Backend**: Use Jest with NestJS testing utilities (unit tests, integration tests, e2e tests)
+- Maintain test coverage:
+  - Aim for meaningful coverage, not just high percentages
+  - Focus on testing behavior, not implementation details
+  - Test user interactions and outcomes
+- Test structure:
+  - Unit tests for isolated functions/components
+  - Integration tests for component/service interactions
+  - End-to-end tests for critical user flows
+  - API tests for backend endpoints
+- Running tests:
+  ```bash
+  # Frontend
+  npm run test          # Run tests
+  npm run test:watch    # Watch mode
+  
+  # Backend
+  cd ../shreeji-ecommerce-backend
+  npm run test          # Unit tests
+  npm run test:e2e      # E2E tests
+  npm run test:cov      # Coverage report
+  ```
+- Before committing:
+  - ✅ All tests must pass
+  - ✅ New features must have corresponding tests
+  - ✅ Fix bugs by writing a test first, then fixing
+- Benefits of TDD:
+  - ✅ Better code design and architecture
+  - ✅ Immediate feedback on functionality
+  - ✅ Confidence in refactoring
+  - ✅ Documentation through tests
+  - ✅ Prevents regressions
+- TDD Workflow Example:
+  ```tsx
+  // 1. Write failing test
+  describe('CartContext', () => {
+    it('should add item to cart', async () => {
+      const { result } = renderHook(() => useCart())
+      await act(async () => {
+        await result.current.addItem('product-123', 2)
+      })
+      expect(result.current.cart?.items).toHaveLength(1)
+      expect(result.current.cart?.items[0].quantity).toBe(2)
+    })
+  })
+  
+  // 2. Implement minimum code to pass
+  // 3. Refactor if needed
+  ```
+
+### Data Fetching
+- Use Next.js server components for initial data fetching when possible
+- Fetch data on client side for user interactions
+- Handle loading and error states
+- Cache API responses when appropriate
+
+## Common Patterns
+
+### Currency Formatting
+```tsx
+import { currencyFormatter } from './currency-formatter'
+const formatted = currencyFormatter(price, currency)
+```
+
+### Cart Operations
+```tsx
+const { cart, addItem, updateItem, removeItem } = useCart()
+```
+
+### Authentication
+```tsx
+const { user, isAuthenticated, login, logout } = useClientAuth()
+```
+
+### Toast Notifications
+```tsx
+import toast from 'react-hot-toast'
+toast.success('Item added to cart!')
+toast.error('Something went wrong')
+```
+
+## Strapi CMS Integration
+- API base URL should be configurable
+- Handle Strapi image format (objects with url property or strings)
+- Normalize image URLs when displaying
+- Use proper content-type relations
+
+## Admin Portal Guidelines
+- Admin routes are in `app/admin/`
+- Protect admin routes with authentication
+- Use consistent table/list patterns for data display
+- Provide clear actions (edit, delete, view)
+- Show loading states and handle errors
+
+## Customer Portal Guidelines
+- Customer routes are in `app/portal/`
+- Protect customer routes with authentication
+- Personalize content based on user data
+- Provide clear navigation and feedback
+
+## Checkout Flow
+- Multi-step checkout process
+- Validate each step before proceeding
+- Store progress in context or session
+- Handle payment integration carefully
+- Send order confirmation emails
+
+## What to Avoid
+- Don't mix server and client component patterns incorrectly
+- Don't hardcode API URLs or configuration
+- Don't ignore error states
+- Don't skip loading states
+- Don't use inline styles when Tailwind classes work
+- Don't create deeply nested component trees
+- Don't store sensitive data in client-side code
+- Don't skip writing tests - always use TDD approach
+- Don't implement features without tests first
+
+## When in Doubt
+- Follow existing patterns in similar components
+- Check `app/lib/` for existing utilities before creating new ones
+- Use TypeScript types from existing API clients
+- Maintain consistency with the existing codebase style
+- **Write tests FIRST** - follow TDD workflow (Red-Green-Refactor)
+- Test changes in the browser to ensure they work correctly
+- Check existing tests for similar features to understand testing patterns
+
+## Backend Coordination
+
+### CRITICAL: Always Update Backend When Frontend Changes Require It
+
+**Backend Location**: `/Users/yxzuji/Desktop/Projects/shreeji-ecommerce-backend`
+
+**Backend Stack**: NestJS (TypeScript), TypeORM, PostgreSQL, JWT Authentication
+
+**Required Actions**:
+
+1. **Before Making Frontend Changes That Affect APIs**:
+   - ✅ Check if the backend already supports the required functionality
+   - ✅ Review existing backend controllers, services, and DTOs in the backend repository
+   - ✅ Identify which backend modules/services need updates (cart, checkout, orders, catalog, customers, etc.)
+   - ✅ Plan both frontend and backend changes together
+
+2. **When Frontend Changes Require Backend Updates**:
+   - ✅ **API Endpoints**: If adding new API calls or modifying existing ones, update/create corresponding controllers in backend
+   - ✅ **DTOs (Data Transfer Objects)**: Update backend DTOs to match frontend request/response shapes
+   - ✅ **Validation**: Ensure backend validates all incoming data properly using class-validator
+   - ✅ **Database Schema**: If data structure changes, update entities and migrations
+   - ✅ **Business Logic**: Implement or update service methods in backend
+   - ✅ **Error Handling**: Ensure backend returns appropriate error responses
+
+3. **When Backend Changes Are Needed**:
+   - ✅ **New Features**: Create new endpoints, DTOs, services, and controllers in backend
+   - ✅ **Modified Data Structures**: Update entities, DTOs, and database migrations
+   - ✅ **New Validations**: Add validation decorators to DTOs
+   - ✅ **Security**: Ensure proper authentication/authorization guards are in place
+   - ✅ **Error Responses**: Ensure consistent error response format
+
+4. **Backend Module Structure** (for reference):
+   ```
+   src/
+   ├── cart/          - Cart operations
+   ├── checkout/      - Checkout process
+   ├── catalog/       - Product catalog
+   ├── orders/        - Order management
+   ├── customers/     - Customer operations
+   ├── auth/          - Authentication & authorization
+   ├── payments/      - Payment processing
+   ├── coupons/       - Coupon management
+   └── email/         - Email services
+   ```
+
+5. **Common Backend Update Scenarios**:
+   - **Adding new fields to forms**: Update DTOs and validation in backend
+   - **Changing API request/response**: Update controllers and DTOs
+   - **New features requiring data**: Create entities, migrations, services
+   - **Changing business rules**: Update service methods
+   - **New authentication requirements**: Update guards and strategies
+
+6. **Testing Backend Changes** (TDD Approach):
+   - ✅ **Write tests FIRST** before implementing backend changes
+   - ✅ Write unit tests for services and business logic
+   - ✅ Write integration tests for API endpoints
+   - ✅ Write E2E tests for critical workflows
+   - ✅ Test backend endpoints directly (Postman/Thunder Client)
+   - ✅ Ensure frontend can successfully call updated endpoints
+   - ✅ Verify error handling works correctly
+   - ✅ Check validation errors are properly returned
+   - ✅ All tests must pass before committing
+
+7. **Backend Development Workflow**:
+   ```bash
+   # Navigate to backend directory
+   cd /Users/yxzuji/Desktop/Projects/shreeji-ecommerce-backend
+   
+   # Start backend development server
+   npm run start:dev
+   
+   # Build backend
+   npm run build
+   ```
+
+8. **Backend Code Patterns**:
+   - Use NestJS decorators: `@Controller()`, `@Get()`, `@Post()`, `@Body()`, `@Param()`
+   - Use DTOs with class-validator for request validation
+   - Use TypeORM entities for database models
+   - Use services for business logic
+   - Return consistent response formats
+
+9. **Important Considerations**:
+   - ✅ **Never skip backend updates** when frontend requires them
+   - ✅ **Keep DTOs in sync** between frontend types and backend DTOs
+   - ✅ **Test end-to-end** after making changes to both frontend and backend
+   - ✅ **Update API clients** in `app/lib/` if backend API changes
+   - ✅ **Document breaking changes** if API contracts change
+   - ✅ **Maintain backward compatibility** when possible
+
+10. **When Frontend Only Changes Are Needed**:
+    - ✅ UI/UX improvements that don't change API calls
+    - ✅ Styling changes
+    - ✅ Client-side validation (but still validate on backend)
+    - ✅ Frontend-only state management
+
+**Remember**: Frontend and backend are separate repositories but must work together. Always ensure backend supports what the frontend needs!
+
+## Pending Implementation Documentation
+
+### CRITICAL: Always Reference and Update PENDING-IMPLEMENTATION.md
+
+**Location**: `docs/PENDING-IMPLEMENTATION.md`
+
+**Required Actions**:
+1. **Before Starting Work**: Always check `docs/PENDING-IMPLEMENTATION.md` to see if the feature you're working on is documented there
+2. **During Implementation**: Reference the document to understand:
+   - What has been completed (✅)
+   - What is pending (🔄)
+   - Implementation details and requirements
+   - Dependencies between tasks
+3. **After Completing Work**: **MUST UPDATE** the document by:
+   - Moving completed tasks from "🔄 Pending" to "✅ Completed"
+   - Adding checkmarks `[x]` to completed sub-tasks
+   - Adding any new tasks discovered during implementation
+   - Updating implementation notes if needed
+   - Updating the "Last Updated" date at the bottom
+
+**Examples of When to Update**:
+- ✅ When you complete a feature listed in the document
+- ✅ When you discover a new requirement or task
+- ✅ When you identify dependencies between tasks
+- ✅ When you change the implementation approach
+- ✅ When you add new features not yet documented
+
+**Update Format**:
+```markdown
+### ✅ Completed
+- [x] Feature name
+  - [x] Sub-task 1
+  - [x] Sub-task 2
+
+### 🔄 Pending
+- [ ] Remaining feature
+  - [ ] Sub-task 1
+  - [ ] Sub-task 2
+```
+
+**Priority**: This document serves as the single source of truth for all pending work. Keeping it updated ensures:
+- No tasks are forgotten
+- Progress is tracked accurately
+- Future development is well-planned
+- Team members stay aligned
+
+**Remember**: If you implement a feature, you MUST update this document. It's not optional.
+

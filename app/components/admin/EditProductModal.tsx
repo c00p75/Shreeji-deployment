@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { 
   XMarkIcon,
@@ -10,7 +10,9 @@ import {
   ExclamationTriangleIcon,
   CheckIcon,
   PencilIcon,
-  ChevronDownIcon
+  ChevronDownIcon,
+  CloudArrowUpIcon,
+  LinkIcon
 } from '@heroicons/react/24/outline';
 import { processProductImages } from '@/app/lib/admin/image-mapping';
 import api from '@/app/lib/admin/api';
@@ -22,7 +24,7 @@ interface Product {
   name: string;
   slug: string;
   category: string | number; // Can be category ID (number) or legacy string
-  subcategory: string | number; // Can be subcategory ID (number) or legacy string
+  subcategory?: string | number | null; // Can be subcategory ID (number) or legacy string, optional
   brand: string | number; // Can be brand ID (number) or legacy string
   price: string;
   discountedPrice?: string;
@@ -37,6 +39,8 @@ interface Product {
   maxStockLevel?: number;
   stockStatus?: string;
   costPrice?: number;
+  taxRate?: number;
+  discountPercent?: number;
   weight?: number;
   Dimensions?: any;
 }
@@ -128,6 +132,8 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
     maxStockLevel: 100,
     stockStatus: 'in-stock',
     costPrice: 0,
+    taxRate: 16, // Default VAT 16%
+    discountPercent: 0,
     weight: 0,
     Dimensions: { length: 0, width: 0, height: 0, unit: 'cm' }
   });
@@ -136,6 +142,14 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
   const [loading, setLoading] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [mainImageIndex, setMainImageIndex] = useState<number>(0);
+  
+  // Image upload/URL modal states
+  const [showAddImageModal, setShowAddImageModal] = useState(false);
+  const [imageUploadMode, setImageUploadMode] = useState<'upload' | 'url' | null>(null);
+  const [pastedImageUrl, setPastedImageUrl] = useState('');
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<{ current: number; total: number; fileName: string } | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   // Modal states for adding/editing category/brand/subcategory
   const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
@@ -228,6 +242,22 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
         subcategoryValue = product.subcategory;
       }
 
+      // Calculate discount percent from existing prices
+      const sellingPrice = parseFloat(String(product.price || 0).replace(/[^0-9.]/g, ''));
+      const discountPrice = product.discountedPrice ? parseFloat(String(product.discountedPrice).replace(/[^0-9.]/g, '')) : 0;
+      const calculatedDiscountPercent = sellingPrice > 0 && discountPrice > 0 
+        ? ((sellingPrice - discountPrice) / sellingPrice) * 100 
+        : 0;
+
+      // Get taxRate from product if available, or calculate from basePrice and sellingPrice
+      let taxRateValue = (product as any).taxRate || 16;
+      if (!taxRateValue && (product as any).costPrice && sellingPrice > 0) {
+        const basePrice = (product as any).costPrice || 0;
+        if (basePrice > 0) {
+          taxRateValue = ((sellingPrice - basePrice) / basePrice) * 100;
+        }
+      }
+
       setFormData({
         ...product,
         brand: brandValue,
@@ -241,6 +271,8 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
         discountedPrice: product.discountedPrice !== undefined && product.discountedPrice !== null 
           ? String(product.discountedPrice) 
           : '0',
+        taxRate: taxRateValue,
+        discountPercent: calculatedDiscountPercent,
       });
       setErrors({});
       // Find the main image index or default to 0
@@ -530,13 +562,108 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
   };
 
   const addImage = () => {
+    setShowAddImageModal(true);
+    setImageUploadMode(null);
+    setPastedImageUrl('');
+  };
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    // Filter only image files
+    const imageFiles = files.filter(file => file.type.startsWith('image/'));
+    if (imageFiles.length === 0) {
+      setErrors(prev => ({ ...prev, imageUpload: 'Please select valid image files' }));
+      return;
+    }
+
+    // For now, handle one file at a time
+    const file = imageFiles[0];
+    setUploadingImage(true);
+    setUploadProgress({ current: 1, total: 1, fileName: file.name });
+
+    try {
+      const uploadResult = await api.uploadImage(file);
+      
+      // Add the uploaded image to the form data
+      const newImage = {
+        url: uploadResult.url,
+        alt: formData.name || 'Product image',
+        isMain: formData.images.length === 0
+      };
+
+      setFormData(prev => ({
+        ...prev,
+        images: [...prev.images, newImage]
+      }));
+
+      // Update main image index if this is the first image
+      if (formData.images.length === 0) {
+        setMainImageIndex(0);
+      }
+
+      // Close modal and reset
+      setShowAddImageModal(false);
+      setImageUploadMode(null);
+      setUploadProgress(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    } catch (error: any) {
+      console.error('Error uploading image:', error);
+      setErrors(prev => ({ 
+        ...prev, 
+        imageUpload: error.message || 'Failed to upload image. Please try again.' 
+      }));
+    } finally {
+      setUploadingImage(false);
+      setUploadProgress(null);
+    }
+  };
+
+  const handlePasteUrl = () => {
+    const trimmedUrl = pastedImageUrl.trim();
+    
+    if (!trimmedUrl) {
+      setErrors(prev => ({ ...prev, imageUrl: 'Please enter an image URL' }));
+      return;
+    }
+
+    // Basic URL validation
+    try {
+      new URL(trimmedUrl);
+    } catch {
+      setErrors(prev => ({ ...prev, imageUrl: 'Please enter a valid URL' }));
+      return;
+    }
+
+    // Add the image URL to the form data
+    const newImage = {
+      url: trimmedUrl,
+      alt: formData.name || 'Product image',
+      isMain: formData.images.length === 0
+    };
+
     setFormData(prev => ({
       ...prev,
-      images: [
-        ...prev.images,
-        { url: '', alt: prev.name || 'Product image', isMain: prev.images.length === 0 }
-      ]
+      images: [...prev.images, newImage]
     }));
+
+    // Update main image index if this is the first image
+    if (formData.images.length === 0) {
+      setMainImageIndex(0);
+    }
+
+    // Close modal and reset
+    setShowAddImageModal(false);
+    setImageUploadMode(null);
+    setPastedImageUrl('');
+    setErrors(prev => {
+      const newErrors = { ...prev };
+      delete newErrors.imageUrl;
+      return newErrors;
+    });
   };
 
   const removeImage = (index: number) => {
@@ -1099,9 +1226,8 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
       newErrors.brand = 'Brand is required';
     }
 
-    const priceString = (formData.price ?? '').toString();
-    if (!priceString.trim()) {
-      newErrors.price = 'Price is required';
+    if (!formData.costPrice || formData.costPrice <= 0) {
+      newErrors.costPrice = 'Base Price is required and must be greater than 0';
     }
 
     if (formData.stockQuantity !== undefined && formData.stockQuantity < 0) {
@@ -1134,11 +1260,23 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
         console.warn('documentId missing from formData, using product.documentId');
       }
 
+      // Calculate prices
+      const basePrice = formData.costPrice || 0;
+      const vatPercent = formData.taxRate || 16;
+      const sellingPrice = basePrice * (1 + vatPercent / 100);
+      const discountPercent = formData.discountPercent || 0;
+      const discountPrice = discountPercent > 0 ? sellingPrice * (1 - discountPercent / 100) : 0;
+
       // Update slug based on name
       const updatedProduct = {
         ...formData,
         documentId: formData.documentId || product?.documentId,
-        slug: formData.name.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').replace(/^-+|-+$/g, '')
+        slug: formData.name.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').replace(/^-+|-+$/g, ''),
+        price: sellingPrice.toString(), // Selling price = Base Price + VAT
+        discountedPrice: discountPrice > 0 ? discountPrice.toString() : '0',
+        costPrice: basePrice, // Base price (formerly cost price)
+        taxRate: vatPercent,
+        discountPercent: discountPercent
       };
 
       console.log('Saving product:', updatedProduct);
@@ -1173,38 +1311,34 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
   if (!isOpen || !product) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-gray-100">
-      <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={onClose}></div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-[0.93]" onClick={onClose}>
+      <div 
+        className="bg-white rounded-xl shadow-2xl w-[95%] md:w-[85%] h-[95%] md:h-[85%] flex flex-col md:flex-row relative overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Close button - visible on mobile and desktop */}
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute top-3 right-3 z-10 p-2 rounded-full bg-[whitesmoke] text-black hover:bg-gray-200"
+        >
+          <XMarkIcon className="h-6 w-6" />
+        </button>
 
-        <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-7xl sm:w-full max-h-[95vh] overflow-y-auto">
-          <form onSubmit={handleSubmit} className="relative">
-            {/* Header */}
-            <div className="bg-white px-6 py-4 border-b border-gray-200">
-              <div className="flex items-center justify-between">
-                <h3 className="text-xl font-bold text-gray-900">Edit Product</h3>
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="text-gray-400 hover:text-gray-500"
-                >
-                  <XMarkIcon className="h-6 w-6" />
-                </button>
-              </div>
-              </div>
-
-          <div className="bg-white px-6 pt-6 pb-6">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Left Column - Sticky */}
-                <div className="space-y-6 lg:sticky lg:top-6 lg:self-start">
+        {/* Left Column - Images with gradient background */}
+        <div 
+          className="flex-1 h-full px-8 md:px-16 flex items-center justify-center py-20 md:py-0 relative"
+          style={{
+            background: 'radial-gradient(#a78d55, #87703f, #87703f, #68542c)'
+          }}
+        >
+          <div className="space-y-6 w-full max-w-md">
                   {/* Upload Img Card */}
-                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                    <h4 className="text-lg font-bold text-gray-900 mb-6">Upload Img</h4>
-                    
+                  <div className="rounded-lg shadow-sm p-6">
                     {/* Main Product Image */}
                     <div className="mb-4">
                       {mainImageUrl ? (
-                        <div className="relative w-full bg-gray-100 rounded-lg overflow-hidden border border-gray-200 group">
+                        <div className="relative w-full rounded-lg overflow-hidden group">
                           <img
                             src={mainImageUrl}
                             alt={formData.images[mainImageIndex]?.alt || "Main product image"}
@@ -1260,18 +1394,30 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
                       {displayImages.length < 4 && (
                         <div
                           onClick={addImage}
-                          className="aspect-square rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-primary-500 hover:bg-primary-50 transition-colors"
+                          className="group relative aspect-square rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-primary-500 hover:bg-primary-50 transition-colors"
                         >
                           <PlusIcon className="h-6 w-6 text-primary-600" />
+                          {/* Tooltip */}
+                          <span className="pointer-events-none absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1.5 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50">
+                            Add image
+                            <span className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900"></span>
+                          </span>
                         </div>
                       )}
                     </div>
                   </div>
-                </div>
+          </div>
+        </div>
 
-                {/* Right Column */}
-                <div className="space-y-6">
-                  {/* General Information Card */}
+        {/* Right Column - Form with scrolling */}
+        <div className="md:overflow-auto flex-1 p-8">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <h2 className="text-3xl font-semibold text-center mb-6">
+              Edit Product
+            </h2>
+            
+            <div className="space-y-6">
+              {/* General Information Card */}
                   <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                     <h4 className="text-lg font-bold text-gray-900 mb-6">General Information</h4>
                     
@@ -1602,47 +1748,123 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
                   <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                     <h4 className="text-lg font-bold text-gray-900 mb-6">Pricing And Stock</h4>
                     
-                    <div className="space-y-5">
-                      {/* Base Pricing */}
-                  <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Base Pricing *</label>
-                    <input
-                      type="text"
-                      value={formData.price}
-                      onChange={(e) => handleInputChange('price', e.target.value)}
-                          className={`w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.price ? 'border-red-500' : ''}`}
-                          placeholder="e.g., K30,000 or 30000"
-                    />
-                    {errors.price && <p className="mt-1 text-sm text-red-600">{errors.price}</p>}
-                  </div>
+                    {(() => {
+                      // Computed values
+                      const basePrice = formData.costPrice || 0;
+                      const vatPercent = formData.taxRate || 16;
+                      const sellingPrice = basePrice * (1 + vatPercent / 100);
+                      const discountPercent = formData.discountPercent || 0;
+                      const discountPrice = sellingPrice * (1 - discountPercent / 100);
 
-                      {/* Discounted Price */}
-                  <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Discounted Price</label>
-                    <input
-                      type="text"
-                      value={formData.discountedPrice || '0'}
-                      onChange={(e) => handleInputChange('discountedPrice', e.target.value)}
-                          className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                          placeholder="e.g., K25,000 or 25000"
-                    />
-                  </div>
+                      return (
+                        <div className="space-y-5">
+                          {/* Base Price (formerly Cost Price) */}
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Base Price *</label>
+                            <input
+                              type="number"
+                              value={formData.costPrice || ''}
+                              onChange={(e) => {
+                                const value = parseFloat(e.target.value) || 0;
+                                handleInputChange('costPrice', value);
+                                // Auto-update selling price
+                                const newSellingPrice = value * (1 + (formData.taxRate || 16) / 100);
+                                handleInputChange('price', newSellingPrice.toFixed(2));
+                                // Auto-update discount price if discount percent exists
+                                if (formData.discountPercent) {
+                                  const newDiscountPrice = newSellingPrice * (1 - (formData.discountPercent || 0) / 100);
+                                  handleInputChange('discountedPrice', newDiscountPrice.toFixed(2));
+                                }
+                              }}
+                              className={`w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.costPrice ? 'border-red-500' : ''}`}
+                              placeholder="0.00"
+                              min="0"
+                              step="0.01"
+                            />
+                            {errors.costPrice && <p className="mt-1 text-sm text-red-600">{errors.costPrice}</p>}
+                          </div>
 
-                      {/* Cost Price */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Cost Price</label>
-                        <input
-                          type="number"
-                          value={formData.costPrice || ''}
-                          onChange={(e) => handleInputChange('costPrice', parseFloat(e.target.value) || 0)}
-                          className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                          placeholder="0.00"
-                          min="0"
-                          step="0.01"
-                        />
-                </div>
+                          {/* VAT */}
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Value Added Tax (VAT) (%)</label>
+                            <input
+                              type="number"
+                              value={formData.taxRate || 16}
+                              onChange={(e) => {
+                                const value = parseFloat(e.target.value) || 16;
+                                handleInputChange('taxRate', value);
+                                // Auto-update selling price
+                                const basePriceValue = formData.costPrice || 0;
+                                const newSellingPrice = basePriceValue * (1 + value / 100);
+                                handleInputChange('price', newSellingPrice.toFixed(2));
+                                // Auto-update discount price if discount percent exists
+                                if (formData.discountPercent) {
+                                  const newDiscountPrice = newSellingPrice * (1 - (formData.discountPercent || 0) / 100);
+                                  handleInputChange('discountedPrice', newDiscountPrice.toFixed(2));
+                                }
+                              }}
+                              className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                              placeholder="16"
+                              min="0"
+                              max="100"
+                              step="0.01"
+                            />
+                          </div>
 
-                      {/* SKU */}
+                          {/* Selling Price (computed) */}
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Selling Price</label>
+                            <input
+                              type="text"
+                              value={sellingPrice.toFixed(2)}
+                              readOnly
+                              className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-100 text-gray-600 focus:outline-none cursor-not-allowed"
+                              placeholder="Calculated automatically"
+                            />
+                            <p className="mt-1 text-xs text-gray-500">Calculated from Base Price + VAT</p>
+                          </div>
+
+                          {/* Discount Percent */}
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Discount Percent (%)</label>
+                            <input
+                              type="number"
+                              value={formData.discountPercent || ''}
+                              onChange={(e) => {
+                                const value = parseFloat(e.target.value) || 0;
+                                handleInputChange('discountPercent', value);
+                                // Auto-update discount price
+                                const basePriceValue = formData.costPrice || 0;
+                                const vatPercentValue = formData.taxRate || 16;
+                                const currentSellingPrice = basePriceValue * (1 + vatPercentValue / 100);
+                                const newDiscountPrice = currentSellingPrice * (1 - value / 100);
+                                handleInputChange('discountedPrice', newDiscountPrice.toFixed(2));
+                              }}
+                              className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                              placeholder="0"
+                              min="0"
+                              max="100"
+                              step="0.01"
+                            />
+                          </div>
+
+                          {/* Discount Price (computed) */}
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Discount Price</label>
+                            <input
+                              type="text"
+                              value={discountPrice > 0 ? discountPrice.toFixed(2) : '0.00'}
+                              readOnly
+                              className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-100 text-gray-600 focus:outline-none cursor-not-allowed"
+                              placeholder="Calculated automatically"
+                            />
+                            <p className="mt-1 text-xs text-gray-500">Calculated from Selling Price - Discount %</p>
+                          </div>
+                        </div>
+                      );
+                    })()}
+
+                    {/* SKU */}
                   <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">SKU</label>
                     <input
@@ -1723,114 +1945,110 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
                     />
                   </div>
                 </div>
-              </div>
 
                   {/* Specifications Card */}
                   <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                     <h4 className="text-lg font-bold text-gray-900 mb-6">Specifications</h4>
                     
                     <div className="space-y-2">
-                    {Object.entries(formData.specs || {}).map(([key, value], index) => {
-                      // Use index as stable key to prevent remounting when key changes
-                      return (
-                        <SpecInput
-                          key={`spec-${index}`}
-                          specKey={key}
-                          specValue={value}
-                          onKeyChange={(oldKey, newKey) => {
-                            const newSpecs = { ...formData.specs };
-                            if (newKey && newKey.trim() !== '') {
-                              delete newSpecs[oldKey];
-                              newSpecs[newKey.trim()] = value;
-                            } else {
-                              delete newSpecs[oldKey];
-                            }
-                            setFormData(prev => ({ ...prev, specs: newSpecs }));
-                          }}
-                          onValueChange={(specKey, newValue) => {
-                            handleSpecsChange(specKey, newValue);
-                          }}
-                        />
-                      );
-                    })}
-                    <button
-                      type="button"
+                      {Object.entries(formData.specs || {}).map(([key, value], index) => {
+                        // Use index as stable key to prevent remounting when key changes
+                        return (
+                          <SpecInput
+                            key={`spec-${index}`}
+                            specKey={key}
+                            specValue={value}
+                            onKeyChange={(oldKey, newKey) => {
+                              const newSpecs = { ...formData.specs };
+                              if (newKey && newKey.trim() !== '') {
+                                delete newSpecs[oldKey];
+                                newSpecs[newKey.trim()] = value;
+                              } else {
+                                delete newSpecs[oldKey];
+                              }
+                              setFormData(prev => ({ ...prev, specs: newSpecs }));
+                            }}
+                            onValueChange={(specKey, newValue) => {
+                              handleSpecsChange(specKey, newValue);
+                            }}
+                          />
+                        );
+                      })}
+                      <button
+                        type="button"
                         onClick={() => {
                           const newKey = `spec_${Date.now()}`;
                           handleSpecsChange(newKey, '');
                         }}
                         className="flex items-center text-sm text-primary-600 hover:text-primary-500 mt-2"
-                    >
-                      <PlusIcon className="h-4 w-4 mr-1" />
-                      Add Specification
-                    </button>
-                </div>
-                </div>
+                      >
+                        <PlusIcon className="h-4 w-4 mr-1" />
+                        Add Specification
+                      </button>
+                    </div>
+                  </div>
 
-              {/* Status */}
+                  {/* Status */}
                   <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id="isActive"
-                    checked={formData.isActive}
-                    onChange={(e) => handleInputChange('isActive', e.target.checked)}
-                    className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-                  />
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        id="isActive"
+                        checked={formData.isActive}
+                        onChange={(e) => handleInputChange('isActive', e.target.checked)}
+                        className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                      />
                       <label htmlFor="isActive" className="ml-2 block text-sm text-gray-700">
-                    Product is active
-                  </label>
-                          </div>
-                      </div>
-                </div>
-                </div>
+                        Product is active
+                      </label>
+                    </div>
+                  </div>
+            </div>
 
-              {/* Error Message */}
-              {errors.submit && (
-                <div className="mt-4 px-6 flex items-center text-red-600">
-                  <ExclamationTriangleIcon className="h-5 w-5 mr-2" />
-                  <span className="text-sm">{errors.submit}</span>
-                </div>
-              )}
-
-              <div className="sticky bottom-4 z-20 mt-6 flex justify-end">
-                <div className="flex flex-wrap items-center justify-end gap-3 rounded-2xl p-3">
-                  <button
-                    type="button"
-                    onClick={() => setIsPreviewOpen(true)}
-                    className="inline-flex items-center rounded-xl border border-primary-200 bg-white px-5 py-3 text-sm font-semibold text-primary-700 shadow-sm hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-primary-200 focus:ring-offset-2"
-                  >
-                    Preview
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="inline-flex items-center rounded-xl bg-primary-600 px-6 py-3 text-sm font-semibold text-white shadow-md shadow-primary-500/40 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-                    <CheckIcon className="mr-2 h-4 w-4" />
-                    {loading ? 'Saving...' : 'Save Changes'}
-                  </button>
-                </div>
+            {/* Error Message */}
+            {errors.submit && (
+              <div className="mt-4 flex items-center text-red-600">
+                <ExclamationTriangleIcon className="h-5 w-5 mr-2" />
+                <span className="text-sm">{errors.submit}</span>
               </div>
-                      </div>
+            )}
+
+            <div className="sticky bottom-4 z-20 mt-6 flex justify-end">
+              <div className="flex flex-wrap items-center justify-end gap-3 rounded-2xl p-3">
+                <button
+                  type="button"
+                  onClick={() => setIsPreviewOpen(true)}
+                  className="inline-flex items-center rounded-xl border border-primary-200 bg-white px-5 py-3 text-sm font-semibold text-primary-700 shadow-sm hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-primary-200 focus:ring-offset-2"
+                >
+                  Preview
+                </button>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="inline-flex items-center rounded-xl bg-primary-600 px-6 py-3 text-sm font-semibold text-white shadow-md shadow-primary-500/40 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  <CheckIcon className="mr-2 h-4 w-4" />
+                  {loading ? 'Saving...' : 'Save Changes'}
+                </button>
+              </div>
+            </div>
           </form>
         </div>
       </div>
+    {isPreviewOpen && (
+      <ProductPreviewOverlay
+        product={formData}
+        breadcrumbs={[
+          typeof formData.category === 'string' ? formData.category : '',
+          typeof formData.subcategory === 'string' ? formData.subcategory : '',
+          formData.name,
+        ].filter(Boolean)}
+        onClose={() => setIsPreviewOpen(false)}
+      />
+    )}
 
-      {isPreviewOpen && (
-        <ProductPreviewOverlay
-          product={formData}
-          breadcrumbs={[
-            typeof formData.category === 'string' ? formData.category : '',
-            typeof formData.subcategory === 'string' ? formData.subcategory : '',
-            formData.name,
-          ].filter(Boolean)}
-          onClose={() => setIsPreviewOpen(false)}
-        />
-      )}
-
-      {/* Add New Category Modal */}
-      {showAddCategoryModal && (
+    {/* Add New Category Modal */}
+    {showAddCategoryModal && (
         <div className="fixed inset-0 z-[60] overflow-y-auto">
           <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={() => {
             setShowAddCategoryModal(false);
@@ -1917,10 +2135,10 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
             </div>
           </div>
         </div>
-      )}
+    )}
 
-      {/* Edit Category Modal */}
-      {showEditCategoryModal && editingCategory && (
+    {/* Edit Category Modal */}
+    {showEditCategoryModal && editingCategory && (
         <div className="fixed inset-0 z-[60] overflow-y-auto">
           <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={() => {
             setShowEditCategoryModal(false);
@@ -2020,10 +2238,10 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
               </div>
           </div>
         </div>
-      )}
+    )}
 
-      {/* Add New Subcategory Modal */}
-      {showAddSubcategoryModal && (
+    {/* Add New Subcategory Modal */}
+    {showAddSubcategoryModal && (
         <div className="fixed inset-0 z-[60] overflow-y-auto">
           <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={() => {
             setShowAddSubcategoryModal(false);
@@ -2129,10 +2347,10 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
             </div>
           </div>
         </div>
-      )}
+    )}
 
-      {/* Edit Subcategory Modal */}
-      {showEditSubcategoryModal && editingSubcategory && (
+    {/* Edit Subcategory Modal */}
+    {showEditSubcategoryModal && editingSubcategory && (
         <div className="fixed inset-0 z-[60] overflow-y-auto">
           <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={() => {
             setShowEditSubcategoryModal(false);
@@ -2246,10 +2464,10 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
             </div>
           </div>
         </div>
-      )}
+    )}
 
-      {/* Add New Brand Modal */}
-      {showAddBrandModal && (
+    {/* Add New Brand Modal */}
+    {showAddBrandModal && (
         <div className="fixed inset-0 z-[60] overflow-y-auto">
           <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={() => {
             setShowAddBrandModal(false);
@@ -2369,10 +2587,10 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
         </div>
       </div>
         </div>
-      )}
+    )}
 
-      {/* Edit Brand Modal */}
-      {showEditBrandModal && editingBrand && (
+    {/* Edit Brand Modal */}
+    {showEditBrandModal && editingBrand && (
         <div className="fixed inset-0 z-[60] overflow-y-auto">
           <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={() => {
             setShowEditBrandModal(false);
@@ -2506,7 +2724,193 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
         </div>
       </div>
         </div>
-      )}
+    )}
+
+    {/* Add Image Modal */}
+    {showAddImageModal && (
+      <div className="fixed inset-0 z-[60] overflow-y-auto">
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={() => {
+          setShowAddImageModal(false);
+          setImageUploadMode(null);
+          setPastedImageUrl('');
+          setErrors(prev => {
+            const newErrors = { ...prev };
+            delete newErrors.imageUpload;
+            delete newErrors.imageUrl;
+            return newErrors;
+          });
+        }}></div>
+        <div className="flex items-center justify-center min-h-screen px-4 py-4">
+          <div className="relative bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-white px-4 pt-5 pb-4 sm:p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-gray-900">Add Image</h3>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowAddImageModal(false);
+                    setImageUploadMode(null);
+                    setPastedImageUrl('');
+                    setErrors(prev => {
+                      const newErrors = { ...prev };
+                      delete newErrors.imageUpload;
+                      delete newErrors.imageUrl;
+                      return newErrors;
+                    });
+                  }}
+                  className="text-gray-400 hover:text-gray-500"
+                >
+                  <XMarkIcon className="h-6 w-6" />
+                </button>
+              </div>
+
+              {!imageUploadMode ? (
+                <div className="space-y-3">
+                  <p className="text-sm text-gray-600 mb-4">Choose how you want to add the image:</p>
+                  
+                  <button
+                    type="button"
+                    onClick={() => setImageUploadMode('upload')}
+                    className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg border-2 border-gray-300 hover:border-primary-500 hover:bg-primary-50 transition-colors text-left"
+                  >
+                    <CloudArrowUpIcon className="h-6 w-6 text-primary-600" />
+                    <div className="flex-1">
+                      <div className="font-medium text-gray-900">Upload File</div>
+                      <div className="text-sm text-gray-500">Upload an image from your computer</div>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setImageUploadMode('url')}
+                    className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg border-2 border-gray-300 hover:border-primary-500 hover:bg-primary-50 transition-colors text-left"
+                  >
+                    <LinkIcon className="h-6 w-6 text-primary-600" />
+                    <div className="flex-1">
+                      <div className="font-medium text-gray-900">Paste URL</div>
+                      <div className="text-sm text-gray-500">Enter an image URL link</div>
+                    </div>
+                  </button>
+                </div>
+              ) : imageUploadMode === 'upload' ? (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Select Image File</label>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileSelect}
+                      className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      disabled={uploadingImage}
+                    />
+                    {errors.imageUpload && <p className="mt-1 text-sm text-red-600">{errors.imageUpload}</p>}
+                    
+                    {uploadProgress && (
+                      <div className="mt-2">
+                        <div className="flex items-center justify-between text-sm text-gray-600 mb-1">
+                          <span>Uploading {uploadProgress.fileName}...</span>
+                          <span>{uploadProgress.current} / {uploadProgress.total}</span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div 
+                            className="bg-primary-600 h-2 rounded-full transition-all duration-300"
+                            style={{ width: `${(uploadProgress.current / uploadProgress.total) * 100}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    )}
+
+                    {uploadingImage && (
+                      <p className="mt-2 text-sm text-gray-500">Please wait while we upload your image...</p>
+                    )}
+                  </div>
+
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setImageUploadMode(null);
+                        setErrors(prev => {
+                          const newErrors = { ...prev };
+                          delete newErrors.imageUpload;
+                          return newErrors;
+                        });
+                      }}
+                      className="flex-1 px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition-colors"
+                      disabled={uploadingImage}
+                    >
+                      Back
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
+                    <input
+                      type="url"
+                      value={pastedImageUrl}
+                      onChange={(e) => {
+                        setPastedImageUrl(e.target.value);
+                        if (errors.imageUrl) {
+                          setErrors(prev => {
+                            const newErrors = { ...prev };
+                            delete newErrors.imageUrl;
+                            return newErrors;
+                          });
+                        }
+                      }}
+                      onPaste={(e) => {
+                        const pastedUrl = e.clipboardData.getData('text');
+                        setPastedImageUrl(pastedUrl);
+                        if (errors.imageUrl) {
+                          setErrors(prev => {
+                            const newErrors = { ...prev };
+                            delete newErrors.imageUrl;
+                            return newErrors;
+                          });
+                        }
+                      }}
+                      placeholder="https://example.com/image.jpg"
+                      className={`w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.imageUrl ? 'border-red-500' : ''}`}
+                      autoFocus
+                    />
+                    {errors.imageUrl && <p className="mt-1 text-sm text-red-600">{errors.imageUrl}</p>}
+                    <p className="mt-1 text-xs text-gray-500">Paste or enter the image URL</p>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setImageUploadMode(null);
+                        setPastedImageUrl('');
+                        setErrors(prev => {
+                          const newErrors = { ...prev };
+                          delete newErrors.imageUrl;
+                          return newErrors;
+                        });
+                      }}
+                      className="flex-1 px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition-colors"
+                    >
+                      Back
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handlePasteUrl}
+                      className="flex-1 px-4 py-2 rounded-lg bg-primary-500 text-white hover:bg-primary-600 transition-colors"
+                    >
+                      Add Image
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
     </div>
   );
 }

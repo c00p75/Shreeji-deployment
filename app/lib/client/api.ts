@@ -129,8 +129,13 @@ class ClientApiClient {
     }>(`/orders/me${searchParams.toString() ? `?${searchParams.toString()}` : ''}`);
 
     // Transform response to match expected format
+    // Handle both array response and object with data property
+    const dataArray = Array.isArray(response) 
+      ? response 
+      : (response.data || []);
+    
     return {
-      data: (response.data || response || []).map((item: any) => ({
+      data: dataArray.map((item: any) => ({
         id: item.id,
         orderNumber: item.orderNumber || item.order_number,
         orderStatus: item.status || item.orderStatus || 'pending',

@@ -13,10 +13,10 @@ export default function NotificationBell() {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 text-gray-600 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded-full"
+        className="relative flex items-center justify-center rounded-full border p-2 transition-colors hover:bg-[var(--primary)] hover:text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
         aria-label="Notifications"
       >
-        <Bell className="h-6 w-6" />
+        <Bell className="h-5 w-5" />
         {unreadCount > 0 && (
           <span className="absolute top-0 right-0 block h-5 w-5 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center">
             {unreadCount > 9 ? '9+' : unreadCount}

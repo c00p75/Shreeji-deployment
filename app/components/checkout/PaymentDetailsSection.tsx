@@ -4,7 +4,7 @@ import { CreditCard, X } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import React from 'react'
 
-import { CheckoutCardDetails, CheckoutMobileMoneyDetails } from '@/app/lib/ecommerce/api'
+import { CheckoutCardDetails, CheckoutMobileMoneyDetails, getBankDetails, getEnabledPaymentMethods, type BankDetails } from '@/app/lib/ecommerce/api'
 
 interface PaymentDetailsSectionProps {
   paymentMethod: string
@@ -49,6 +49,10 @@ export default function PaymentDetailsSection({
   const [selectedMobileProvider, setSelectedMobileProvider] = useState<string>('mtn')
   const [mobileNumber, setMobileNumber] = useState<string>('')
   const [showNewCardForm, setShowNewCardForm] = useState(false)
+  const [bankDetails, setBankDetails] = useState<BankDetails | null>(null)
+  const [loadingBankDetails, setLoadingBankDetails] = useState(false)
+  const [enabledMethods, setEnabledMethods] = useState<string[]>(['card', 'mobile_money', 'bank_transfer', 'cod'])
+  const [loadingMethods, setLoadingMethods] = useState(true)
   const [newCardData, setNewCardData] = useState({
     number: '',
     expiryMonth: '',
@@ -58,12 +62,51 @@ export default function PaymentDetailsSection({
     saveCard: false,
   })
 
-  const paymentMethods = [
+  // Load enabled payment methods on mount
+  useEffect(() => {
+    setLoadingMethods(true)
+    getEnabledPaymentMethods()
+      .then((data) => {
+        setEnabledMethods(data.enabledMethods || ['card', 'mobile_money', 'bank_transfer', 'cod'])
+        // If current payment method is disabled, switch to first enabled method
+        if (data.enabledMethods && data.enabledMethods.length > 0 && !data.enabledMethods.includes(paymentMethod)) {
+          onPaymentMethodChange(data.enabledMethods[0])
+        }
+      })
+      .catch((error) => {
+        console.error('Failed to fetch enabled payment methods:', error)
+        // Fallback to all methods if API fails
+        setEnabledMethods(['card', 'mobile_money', 'bank_transfer', 'cod'])
+      })
+      .finally(() => {
+        setLoadingMethods(false)
+      })
+  }, [])
+
+  // Load bank details when bank transfer is selected
+  useEffect(() => {
+    if (paymentMethod === 'bank_transfer' && !bankDetails && !loadingBankDetails) {
+      setLoadingBankDetails(true)
+      getBankDetails()
+        .then(setBankDetails)
+        .catch((error) => {
+          console.error('Failed to fetch bank details:', error)
+        })
+        .finally(() => {
+          setLoadingBankDetails(false)
+        })
+    }
+  }, [paymentMethod, bankDetails, loadingBankDetails])
+
+  const allPaymentMethods = [
     { value: 'card', label: 'Credit / Debit Card (Visa, MasterCard, AmEx, Diners)' },
     { value: 'mobile_money', label: 'Mobile Money' },
     { value: 'bank_transfer', label: 'Bank Transfer' },
     { value: 'cod', label: 'Cash on Delivery' },
   ]
+
+  // Filter payment methods based on enabled methods
+  const paymentMethods = allPaymentMethods.filter((method) => enabledMethods.includes(method.value))
 
   // Validate mobile number format (Zambian format: 09XX XXX XXX or +260 XXX XXX XXX)
   const validateMobileNumber = (number: string): boolean => {
@@ -84,6 +127,7 @@ export default function PaymentDetailsSection({
             expiryYear: newCardData.expiryYear,
             cvv: newCardData.cvv,
             cardholderName: newCardData.cardholderName,
+            saveCard: newCardData.saveCard,
           },
         })
       } else if (selectedCardId) {
@@ -124,8 +168,17 @@ export default function PaymentDetailsSection({
         <h2 className='text-xl font-semibold text-gray-900'>Payment Details</h2>
       </div>
 
-      <div className='space-y-3'>
-        {paymentMethods.map((method) => (
+      {loadingMethods ? (
+        <div className='rounded-lg border border-gray-200 bg-gray-50 p-4 text-center text-sm text-gray-600'>
+          Loading payment methods...
+        </div>
+      ) : paymentMethods.length === 0 ? (
+        <div className='rounded-lg border border-red-200 bg-red-50 p-4 text-center text-sm text-red-600'>
+          No payment methods are currently available. Please contact support.
+        </div>
+      ) : (
+        <div className='space-y-3'>
+          {paymentMethods.map((method) => (
           <label
             key={method.value}
             className={`flex cursor-pointer items-center gap-3 rounded-lg border-2 p-3 transition-all ${
@@ -144,8 +197,9 @@ export default function PaymentDetailsSection({
             />
             <span className='text-sm font-medium text-gray-900'>{method.label}</span>
           </label>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {paymentMethod === 'card' && (
         <div className='space-y-4'>
@@ -385,9 +439,31 @@ export default function PaymentDetailsSection({
 
       {paymentMethod === 'bank_transfer' && (
         <div className='rounded-lg border border-gray-200 bg-gray-50 p-4'>
-          <p className='text-sm text-gray-600'>
-            You will receive bank transfer instructions after placing your order. Please complete the transfer within 24 hours to confirm your order.
-          </p>
+          {loadingBankDetails ? (
+            <p className='text-sm text-gray-600'>Loading bank details...</p>
+          ) : bankDetails ? (
+            <div className='space-y-3'>
+              <p className='text-sm font-medium text-gray-900'>Bank Transfer Details:</p>
+              <div className='space-y-1 text-sm text-gray-700'>
+                <p><strong>Bank:</strong> {bankDetails.bankName}</p>
+                <p><strong>Account Number:</strong> {bankDetails.accountNumber}</p>
+                <p><strong>Account Name:</strong> {bankDetails.accountName}</p>
+                {bankDetails.swiftCode && (
+                  <p><strong>SWIFT Code:</strong> {bankDetails.swiftCode}</p>
+                )}
+                {bankDetails.iban && (
+                  <p><strong>IBAN:</strong> {bankDetails.iban}</p>
+                )}
+              </div>
+              <p className='text-xs text-amber-600 mt-2'>
+                ⚠️ You will receive detailed instructions via email after placing your order. Please complete the transfer within {bankDetails.deadlineHours} hours to confirm your order.
+              </p>
+            </div>
+          ) : (
+            <p className='text-sm text-gray-600'>
+              You will receive bank transfer instructions after placing your order. Please complete the transfer within 24 hours to confirm your order.
+            </p>
+          )}
         </div>
       )}
 

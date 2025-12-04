@@ -9,6 +9,14 @@ const nextConfig = {
       },
     ],
   },
+  eslint: {
+    // Disable ESLint during builds to avoid serialization errors
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    // Keep TypeScript checking enabled
+    ignoreBuildErrors: false,
+  },
 };
 
 export default nextConfig;

@@ -28,12 +28,12 @@ export default function ConditionalLayout({ children }) {
   return (
     <ClientAuthProvider>
       <NotificationProvider>
-        <CartProvider>
-          <Navbar />
-          <main className="text-lg text-center md:text-start">{children}</main>
-          <ContactCard />
-          <Footer />
-        </CartProvider>
+      <CartProvider>
+        <Navbar />
+        <main className="text-lg text-center md:text-start">{children}</main>
+        <ContactCard />
+        <Footer />
+      </CartProvider>
       </NotificationProvider>
     </ClientAuthProvider>
   )

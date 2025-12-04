@@ -82,6 +82,39 @@ export class OrdersService {
     });
   }
 
+  async setPaymentDeadline(orderId: number, hours: number) {
+    const deadline = new Date();
+    deadline.setHours(deadline.getHours() + hours);
+    
+    await this.strapi.put(`/orders/${orderId}`, {
+      data: {
+        paymentDeadline: deadline.toISOString(),
+      },
+    });
+  }
+
+  async cancelOrder(orderId: number, reason?: string) {
+    await this.strapi.put(`/orders/${orderId}`, {
+      data: {
+        status: 'cancelled',
+        paymentStatus: 'cancelled',
+        cancellationReason: reason,
+      },
+    });
+  }
+
+  async getOrdersWithExpiredPaymentDeadline(): Promise<StrapiEntity<OrderAttributes>[]> {
+    const now = new Date().toISOString();
+    const response = await this.strapi.get<{ data: StrapiEntity<OrderAttributes>[] }>('/orders', {
+      params: {
+        'filters[paymentStatus][$eq]': 'pending',
+        'filters[paymentMethod][$eq]': 'bank_transfer',
+        'filters[paymentDeadline][$lt]': now,
+      },
+    });
+    return response.data || [];
+  }
+
   private async updateInventory(productId: number, quantityPurchased: number) {
     const productResponse = await this.strapi.get<StrapiSingleResponse<{ stockQuantity: number }>>(
       `/products/${productId}`,

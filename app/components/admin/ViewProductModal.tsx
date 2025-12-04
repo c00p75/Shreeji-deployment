@@ -19,9 +19,9 @@ interface Product {
   documentId?: string;
   name: string;
   slug: string;
-  category: string;
-  subcategory?: string | null;
-  brand: string;
+  category: string | number; // Can be category ID (number) or legacy string
+  subcategory?: string | number | null; // Can be subcategory ID (number) or legacy string, optional
+  brand: string | number; // Can be brand ID (number) or legacy string
   price: string;
   discountedPrice?: string;
   tagline?: string;
@@ -35,8 +35,10 @@ interface Product {
   maxStockLevel?: number;
   stockStatus?: string;
   costPrice?: number;
+  taxRate?: number;
+  discountPercent?: number;
   weight?: number;
-  Dimensions?: { length: number; width: number; height: number; unit: string };
+  Dimensions?: { length: number; width: number; height: number; unit: string } | any;
 }
 
 interface ViewProductModalProps {

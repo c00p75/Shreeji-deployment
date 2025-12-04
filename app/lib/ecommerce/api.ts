@@ -63,6 +63,7 @@ export interface CheckoutCardDetails {
   expiryYear?: string;
   cvv?: string;
   cardholderName?: string;
+  saveCard?: boolean; // Save card for future purchases
 }
 
 export interface CheckoutMobileMoneyDetails {
@@ -199,4 +200,25 @@ export async function checkoutCart(payload: CheckoutRequest): Promise<CheckoutRe
     method: 'POST',
     body: JSON.stringify(payload),
   });
+}
+
+export interface BankDetails {
+  bankName: string;
+  accountNumber: string;
+  accountName: string;
+  swiftCode?: string;
+  iban?: string;
+  deadlineHours: number;
+}
+
+export async function getBankDetails(): Promise<BankDetails> {
+  return request<BankDetails>('/payments/bank-details');
+}
+
+export interface EnabledPaymentMethods {
+  enabledMethods: string[];
+}
+
+export async function getEnabledPaymentMethods(): Promise<EnabledPaymentMethods> {
+  return request<EnabledPaymentMethods>('/payments/enabled-methods');
 }

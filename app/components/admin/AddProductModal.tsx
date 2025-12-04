@@ -28,6 +28,7 @@ interface Product {
   discountedPrice?: string;
   costPrice?: number;
   taxRate?: number;
+  discountPercent?: number;
   tagline?: string;
   description?: string;
   specs?: any;
@@ -62,7 +63,8 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
     price: '',
     discountedPrice: '0',
     costPrice: 0,
-    taxRate: 0,
+    taxRate: 16, // Default VAT 16%
+    discountPercent: 0,
     tagline: '',
     description: '',
     specs: {},
@@ -763,10 +765,20 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
         category: formData.category,
         subcategory: formData.subcategory || null,
         brand: brandId,
-        price: parseFloat(formData.price.replace(/[^0-9.]/g, '')) || 0,
-        discountedPrice: formData.discountedPrice ? parseFloat(formData.discountedPrice.replace(/[^0-9.]/g, '')) : 0,
+        price: (() => {
+          const basePrice = formData.costPrice || 0;
+          const vatPercent = formData.taxRate || 16;
+          return basePrice * (1 + vatPercent / 100);
+        })(),
+        discountedPrice: (() => {
+          const basePrice = formData.costPrice || 0;
+          const vatPercent = formData.taxRate || 16;
+          const sellingPrice = basePrice * (1 + vatPercent / 100);
+          const discountPercent = formData.discountPercent || 0;
+          return discountPercent > 0 ? sellingPrice * (1 - discountPercent / 100) : 0;
+        })(),
         costPrice: formData.costPrice || null,
-        taxRate: formData.taxRate || 0,
+        taxRate: formData.taxRate || 16,
         tagline: formData.tagline || null,
         description: formData.description || null,
         specs: formData.specs || null,
@@ -810,8 +822,8 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
       newErrors.brand = 'Brand is required';
     }
 
-    if (!formData.price.trim()) {
-      newErrors.price = 'Price is required';
+    if (!formData.costPrice || formData.costPrice <= 0) {
+      newErrors.costPrice = 'Base Price is required and must be greater than 0';
     }
 
     if (!formData.sku?.trim()) {
@@ -890,6 +902,13 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
         uploadedImages = await uploadImages();
       }
 
+      // Calculate prices
+      const basePrice = formData.costPrice || 0;
+      const vatPercent = formData.taxRate || 16;
+      const sellingPrice = basePrice * (1 + vatPercent / 100);
+      const discountPercent = formData.discountPercent || 0;
+      const discountPrice = discountPercent > 0 ? sellingPrice * (1 - discountPercent / 100) : 0;
+
       // Prepare product data matching backend schema
       const productData = {
         name: formData.name,
@@ -897,10 +916,10 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
         category: formData.category,
         subcategory: formData.subcategory || null,
         brand: formData.brand || null,
-        price: parseFloat(formData.price.replace(/[^0-9.]/g, '')) || 0,
-        discountedPrice: formData.discountedPrice ? parseFloat(formData.discountedPrice.replace(/[^0-9.]/g, '')) : 0,
-        costPrice: formData.costPrice || null,
-        taxRate: formData.taxRate || 0,
+        price: sellingPrice, // Selling price = Base Price + VAT
+        discountedPrice: discountPrice > 0 ? discountPrice : null,
+        costPrice: basePrice, // Base price (formerly cost price)
+        taxRate: vatPercent,
         tagline: formData.tagline || null,
         description: formData.description || null,
         specs: formData.specs || null,
@@ -932,7 +951,8 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
         price: '',
         discountedPrice: '0',
         costPrice: 0,
-        taxRate: 0,
+        taxRate: 16, // Default VAT 16%
+        discountPercent: 0,
         tagline: '',
         description: '',
         specs: {},
@@ -1205,15 +1225,15 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
                 {/* Left Column - Sticky */}
                 <div className="space-y-6 lg:sticky lg:top-6 lg:self-start">
                   {/* Upload Img Card */}
-                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                    <h4 className="text-lg font-bold text-gray-900 mb-6">Upload Img</h4>
+                  <div className="rounded-lg shadow-sm border p-6">
+                    <h4 className="text-lg font-bold text-white mb-6">Upload Img</h4>
                     
                     {/* Main Product Image */}
                     <div className="mb-4">
                       {mainImageUrl ? (
                         <div
                           onClick={() => fileInputRef.current?.click()}
-                          className="relative w-full aspect-square bg-gray-100 rounded-lg overflow-hidden border border-gray-200 cursor-pointer group hover:border-primary-500 transition-colors"
+                          className="relative w-full aspect-square rounded-lg overflow-hidden border cursor-pointer group hover:border-primary-500 transition-colors"
                         >
                           <img
                             src={mainImageUrl}
@@ -1646,62 +1666,123 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
                   <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                     <h4 className="text-lg font-bold text-gray-900 mb-6">Pricing And Stock</h4>
                     
-                    <div className="space-y-5">
-                      {/* Base Pricing */}
-                  <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Base Pricing *</label>
-                    <input
-                      type="text"
-                      value={formData.price}
-                      onChange={(e) => handleInputChange('price', e.target.value)}
-                          className={`w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.price ? 'border-red-500' : ''}`}
-                          placeholder="e.g., K30,000 or 30000"
-                    />
-                    {errors.price && <p className="mt-1 text-sm text-red-600">{errors.price}</p>}
-                  </div>
+                    {(() => {
+                      // Computed values
+                      const basePrice = formData.costPrice || 0;
+                      const vatPercent = formData.taxRate || 16;
+                      const sellingPrice = basePrice * (1 + vatPercent / 100);
+                      const discountPercent = formData.discountPercent || 0;
+                      const discountPrice = sellingPrice * (1 - discountPercent / 100);
 
-                      {/* Discounted Price */}
-                  <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Discounted Price</label>
-                    <input
-                      type="text"
-                      value={formData.discountedPrice || '0'}
-                      onChange={(e) => handleInputChange('discountedPrice', e.target.value)}
-                          className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                          placeholder="e.g., K25,000 or 25000"
-                    />
-                  </div>
+                      return (
+                        <div className="space-y-5">
+                          {/* Base Price (formerly Cost Price) */}
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Base Price *</label>
+                            <input
+                              type="number"
+                              value={formData.costPrice || ''}
+                              onChange={(e) => {
+                                const value = parseFloat(e.target.value) || 0;
+                                handleInputChange('costPrice', value);
+                                // Auto-update selling price
+                                const newSellingPrice = value * (1 + (formData.taxRate || 16) / 100);
+                                handleInputChange('price', newSellingPrice.toFixed(2));
+                                // Auto-update discount price if discount percent exists
+                                if (formData.discountPercent) {
+                                  const newDiscountPrice = newSellingPrice * (1 - (formData.discountPercent || 0) / 100);
+                                  handleInputChange('discountedPrice', newDiscountPrice.toFixed(2));
+                                }
+                              }}
+                              className={`w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.costPrice ? 'border-red-500' : ''}`}
+                              placeholder="0.00"
+                              min="0"
+                              step="0.01"
+                            />
+                            {errors.costPrice && <p className="mt-1 text-sm text-red-600">{errors.costPrice}</p>}
+                          </div>
 
-                      {/* Cost Price */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Cost Price</label>
-                        <input
-                          type="number"
-                          value={formData.costPrice || ''}
-                          onChange={(e) => handleInputChange('costPrice', parseFloat(e.target.value) || 0)}
-                          className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                          placeholder="0.00"
-                          min="0"
-                          step="0.01"
-                        />
-                </div>
+                          {/* VAT */}
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Value Added Tax (VAT) (%)</label>
+                            <input
+                              type="number"
+                              value={formData.taxRate || 16}
+                              onChange={(e) => {
+                                const value = parseFloat(e.target.value) || 16;
+                                handleInputChange('taxRate', value);
+                                // Auto-update selling price
+                                const basePriceValue = formData.costPrice || 0;
+                                const newSellingPrice = basePriceValue * (1 + value / 100);
+                                handleInputChange('price', newSellingPrice.toFixed(2));
+                                // Auto-update discount price if discount percent exists
+                                if (formData.discountPercent) {
+                                  const newDiscountPrice = newSellingPrice * (1 - (formData.discountPercent || 0) / 100);
+                                  handleInputChange('discountedPrice', newDiscountPrice.toFixed(2));
+                                }
+                              }}
+                              className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                              placeholder="16"
+                              min="0"
+                              max="100"
+                              step="0.01"
+                            />
+                          </div>
 
-                      {/* Tax Rate */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Tax Rate (%)</label>
-                        <input
-                          type="number"
-                          value={formData.taxRate || ''}
-                          onChange={(e) => handleInputChange('taxRate', parseFloat(e.target.value) || 0)}
-                          className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                          placeholder="0"
-                          min="0"
-                          max="100"
-                          step="0.01"
-                        />
-                      </div>
+                          {/* Selling Price (computed) */}
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Selling Price</label>
+                            <input
+                              type="text"
+                              value={sellingPrice.toFixed(2)}
+                              readOnly
+                              className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-100 text-gray-600 focus:outline-none cursor-not-allowed"
+                              placeholder="Calculated automatically"
+                            />
+                            <p className="mt-1 text-xs text-gray-500">Calculated from Base Price + VAT</p>
+                          </div>
 
-                      {/* SKU */}
+                          {/* Discount Percent */}
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Discount Percent (%)</label>
+                            <input
+                              type="number"
+                              value={formData.discountPercent || ''}
+                              onChange={(e) => {
+                                const value = parseFloat(e.target.value) || 0;
+                                handleInputChange('discountPercent', value);
+                                // Auto-update discount price
+                                const basePriceValue = formData.costPrice || 0;
+                                const vatPercentValue = formData.taxRate || 16;
+                                const currentSellingPrice = basePriceValue * (1 + vatPercentValue / 100);
+                                const newDiscountPrice = currentSellingPrice * (1 - value / 100);
+                                handleInputChange('discountedPrice', newDiscountPrice.toFixed(2));
+                              }}
+                              className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                              placeholder="0"
+                              min="0"
+                              max="100"
+                              step="0.01"
+                            />
+                          </div>
+
+                          {/* Discount Price (computed) */}
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Discount Price</label>
+                            <input
+                              type="text"
+                              value={discountPrice > 0 ? discountPrice.toFixed(2) : '0.00'}
+                              readOnly
+                              className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-100 text-gray-600 focus:outline-none cursor-not-allowed"
+                              placeholder="Calculated automatically"
+                            />
+                            <p className="mt-1 text-xs text-gray-500">Calculated from Selling Price - Discount %</p>
+                          </div>
+                        </div>
+                      );
+                    })()}
+
+                    {/* SKU */}
                   <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">SKU *</label>
                     <input
@@ -1782,35 +1863,34 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
                       step="0.1"
                     />
                   </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-                </div>
-                </div>
 
-              {/* Error Message */}
-              {errors.submit && (
-                <div className="mt-4 px-6 flex items-center text-red-600">
-                  <ExclamationTriangleIcon className="h-5 w-5 mr-2" />
-                  <span className="text-sm">{errors.submit}</span>
-                </div>
-              )}
+            {/* Error Message */}
+            {errors.submit && (
+              <div className="mt-4 px-6 flex items-center text-red-600">
+                <ExclamationTriangleIcon className="h-5 w-5 mr-2" />
+                <span className="text-sm">{errors.submit}</span>
+              </div>
+            )}
 
-              <div className="sticky bottom-4 z-20 mt-6 flex justify-end">
-                <div className="flex flex-col items-end gap-2 rounded-2xl p-3">
-                  <button
-                    type="submit"
-                    disabled={loading || savingDraft || uploadingImages}
-                    className="inline-flex items-center rounded-xl bg-primary-600 px-6 py-3 text-sm font-semibold text-white shadow-md shadow-primary-500/40 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-                    <CheckIcon className="mr-2 h-4 w-4" />
-                    {uploadingImages ? 'Uploading...' : loading ? 'Adding...' : 'Add Product'}
-                  </button>
-                </div>
+            <div className="sticky bottom-4 z-20 mt-6 flex justify-end">
+              <div className="flex flex-col items-end gap-2 rounded-2xl p-3">
+                <button
+                  type="submit"
+                  disabled={loading || savingDraft || uploadingImages}
+                  className="inline-flex items-center rounded-xl bg-primary-600 px-6 py-3 text-sm font-semibold text-white shadow-md shadow-primary-500/40 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  <CheckIcon className="mr-2 h-4 w-4" />
+                  {uploadingImages ? 'Uploading...' : loading ? 'Adding...' : 'Add Product'}
+                </button>
               </div>
             </div>
           </form>
         </div>
-                </div>
+      </div>
 
       {/* Add New Category Modal */}
       {showAddCategoryModal && (

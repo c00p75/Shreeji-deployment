@@ -111,12 +111,14 @@ export default function Layout({ children, currentPage = 'Dashboard' }: LayoutPr
                 >
                   <div className="w-8 h-8 bg-primary-600 rounded-full flex items-center justify-center">
                     <span className="text-sm font-medium text-white">
-                      {user?.username?.charAt(0).toUpperCase() || 'A'}
+                      {user?.firstName?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || 'A'}
                     </span>
                   </div>
                   <div className="hidden sm:block">
                     <p className="text-sm font-medium text-gray-900">
-                      {user?.username || 'Admin User'}
+                      {user?.firstName && user?.lastName 
+                        ? `${user.firstName} ${user.lastName}` 
+                        : user?.firstName || user?.email || 'Admin User'}
                     </p>
                     <p className="text-xs text-gray-500">
                       {user?.email || 'admin@shreeji.com'}
@@ -128,7 +130,11 @@ export default function Layout({ children, currentPage = 'Dashboard' }: LayoutPr
                 {showUserMenu && (
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
                     <div className="px-4 py-2 border-b border-gray-100">
-                      <p className="text-sm font-medium text-gray-900">{user?.username}</p>
+                      <p className="text-sm font-medium text-gray-900">
+                        {user?.firstName && user?.lastName 
+                          ? `${user.firstName} ${user.lastName}` 
+                          : user?.firstName || user?.email || 'Admin User'}
+                      </p>
                       <p className="text-xs text-gray-500">{user?.email}</p>
                     </div>
                     <button

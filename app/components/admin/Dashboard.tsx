@@ -35,7 +35,7 @@ export default function Dashboard() {
         api.getProducts({ pagination: { page: 1, pageSize: 5 } })
       ])
 
-        setStats(statsData)
+      setStats(statsData)
         
         // Transform orders data
         const transformedOrders = ordersData.data?.map((order: any) => ({

@@ -21,9 +21,9 @@ interface Product {
   documentId?: string
   name: string
   slug: string
-  category: string
-  subcategory?: string | null
-  brand: string
+  category: string | number // Can be category ID (number) or legacy string
+  subcategory?: string | number | null // Can be subcategory ID (number) or legacy string, optional
+  brand: string | number // Can be brand ID (number) or legacy string
   price: string
   discountedPrice?: string
   tagline?: string
@@ -35,10 +35,12 @@ interface Product {
   stockQuantity?: number
   minStockLevel?: number
   maxStockLevel?: number
-  stockStatus?: 'in-stock' | 'low-stock' | 'out-of-stock' | 'discontinued'
+  stockStatus?: 'in-stock' | 'low-stock' | 'out-of-stock' | 'discontinued' | string
   costPrice?: number
+  taxRate?: number
+  discountPercent?: number
   weight?: number
-  Dimensions?: { length: number; width: number; height: number; unit: string }
+  Dimensions?: { length: number; width: number; height: number; unit: string } | any
 }
 
 export default function ProductManagement() {
@@ -108,9 +110,10 @@ export default function ProductManagement() {
                   ? productData.id
                   : parseInt(productData.id || '0', 10);
 
-            return {
+            const documentIdValue = product.documentId || productData.documentId || productId.toString();
+            const transformed: Product = {
               id: productId,
-              documentId: product.documentId || productData.documentId || productId.toString(),
+              ...(documentIdValue && { documentId: documentIdValue }),
               name: productData.name,
               slug: productData.slug,
               category: productData.category || '',
@@ -132,6 +135,7 @@ export default function ProductManagement() {
               weight: productData.weight,
               Dimensions: productData.Dimensions || productData.dimensions
             };
+            return transformed;
           } catch (error) {
             console.error('Error transforming product:', product, error);
             return null;
@@ -187,11 +191,12 @@ export default function ProductManagement() {
     let filtered = products
 
     if (searchTerm) {
+      const searchLower = searchTerm.toLowerCase()
       filtered = filtered.filter(product =>
-        product.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.brand?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.category?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.subcategory?.toLowerCase().includes(searchTerm.toLowerCase())
+        product.name?.toLowerCase().includes(searchLower) ||
+        (typeof product.brand === 'string' ? product.brand.toLowerCase() : String(product.brand)).includes(searchLower) ||
+        (typeof product.category === 'string' ? product.category.toLowerCase() : String(product.category)).includes(searchLower) ||
+        (product.subcategory && (typeof product.subcategory === 'string' ? product.subcategory.toLowerCase() : String(product.subcategory)).includes(searchLower))
       )
     }
 
