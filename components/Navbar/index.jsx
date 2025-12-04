@@ -381,9 +381,23 @@ const Navbar = () => {
             <li>
               <Link href="/contact-us" className={`${pathname === "/contact-us" ? "active-link" : ""}`} onClick={() => setIsMobileMenuOpen(false)}>Contact Us</Link>
             </li>
+            
+            {/* Mobile Action Buttons */}
+            <li className="lg:hidden mobile-link">
+              <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-white/20">
+                <div onClick={() => setIsMobileMenuOpen(false)}>
+                  <CartButton />
+                </div>
+                <NotificationBellWrapper />
+                <div onClick={() => setIsMobileMenuOpen(false)}>
+                  <ProfileButton />
+                </div>
+                <ThemeBtn isScrolled={isScrolled} />
+              </div>
+            </li>
           </ul>
 
-          <div className="ml-2 flex items-center gap-3">
+          <div className="ml-2 hidden lg:flex items-center gap-3">
             <CartButton />
             <NotificationBellWrapper />
             <ProfileButton />

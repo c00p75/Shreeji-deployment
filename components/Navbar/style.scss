@@ -328,6 +328,43 @@ nav {
     div:last-child ul {
       padding-bottom: 1.5rem;
     }
+
+    // Mobile action buttons styling
+    .mobile-link {
+      padding-inline: 0 !important;
+      
+      > div {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+        margin-top: 1rem;
+      }
+
+      a, button {
+        color: white !important;
+        border-color: white !important;
+        
+        &:hover,
+        &:focus {
+          background-color: rgba(255, 255, 255, 0.2) !important;
+          border-color: white !important;
+          color: white !important;
+        }
+      }
+
+      // Ensure buttons are properly sized for mobile
+      button,
+      a {
+        min-width: 44px;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
   }
 }
 .mobile-menu-closed {

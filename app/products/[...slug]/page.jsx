@@ -61,7 +61,7 @@ const ProductPage = async ({ params }) => {
   // Dedicated hero layout for individual product view
   if (product && productDetails) {
     return (
-      <section className="products-main-section relative z-[1] h-fit min-h-screen gap-5 pb-[2rem] pl-1 pr-1 text-white md:pr-8">
+      <section className="products-main-section product-details-page relative z-[1] h-fit min-h-screen gap-5 pb-[2rem] pl-1 pr-1 text-white md:pr-8">
         <SideGrid />
         <section className="main-grid relative flex flex-[3] flex-col gap-5 overflow-visible">
           <Breadcrumbs breadcrumbs={[categoryName, subcategoryName, productName]} />
