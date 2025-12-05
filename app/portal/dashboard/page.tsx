@@ -71,18 +71,16 @@ export default function PortalDashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f5f1e8]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
+    <div className="space-y-8">
+      <div className="flex items-center justify-between">
+        <div className="text-sm text-gray-500">
             Welcome, {user?.firstName || user?.email || 'Customer'}
-          </h1>
-          <p className="mt-2 text-gray-600">Manage your account and orders</p>
+        </div>
         </div>
 
         {/* Continue Checkout Banner */}
         {hasActiveCart && (
-          <div className="mb-6 rounded-lg bg-gradient-to-r from-[var(--shreeji-primary)] to-[var(--shreeji-secondary)] p-4 text-white shadow-lg">
+          <div className="mb-6 rounded-lg bg-gradient-to-r from-[var(--shreeji-primary)] to-[var(--shreeji-secondary)] p-4 text-white shadow">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <ShoppingCart className="h-6 w-6" />
@@ -103,8 +101,8 @@ export default function PortalDashboardPage() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow p-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="bg-white rounded-3xl p-6 shadow-[0_0_20px_0_rgba(0,0,0,0.1)]">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-medium text-gray-500">Total Orders</h3>
@@ -113,7 +111,7 @@ export default function PortalDashboardPage() {
               <Package className="h-8 w-8 text-[var(--shreeji-primary)]" />
             </div>
           </div>
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-white rounded-3xl p-6 shadow-[0_0_20px_0_rgba(0,0,0,0.1)]">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-medium text-gray-500">Total Spent</h3>
@@ -124,7 +122,7 @@ export default function PortalDashboardPage() {
               <DollarSign className="h-8 w-8 text-green-600" />
             </div>
           </div>
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-white rounded-3xl p-6 shadow-[0_0_20px_0_rgba(0,0,0,0.1)]">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-medium text-gray-500">Avg Order Value</h3>
@@ -135,7 +133,7 @@ export default function PortalDashboardPage() {
               <TrendingUp className="h-8 w-8 text-blue-600" />
             </div>
           </div>
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-white rounded-3xl p-6 shadow-[0_0_20px_0_rgba(0,0,0,0.1)]">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-medium text-gray-500">Pending Orders</h3>
@@ -146,7 +144,7 @@ export default function PortalDashboardPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow">
+        <div className="bg-white rounded-3xl shadow-[0_0_20px_0_rgba(0,0,0,0.1)]">
           <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
             <h2 className="text-lg font-semibold text-gray-900">Recent Orders</h2>
             {orders.length > 0 && (
@@ -193,7 +191,6 @@ export default function PortalDashboardPage() {
                 ))}
               </div>
             )}
-          </div>
         </div>
       </div>
     </div>

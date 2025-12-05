@@ -103,12 +103,8 @@ export default function PaymentManagement() {
   }
 
   return (
-    <Layout currentPage="Payments">
+    <Layout currentPage="Payments" pageTitle="Payment Management">
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-900">Payment Management</h1>
-        </div>
-
         {/* Filters */}
         <div className="bg-white p-4 rounded-lg shadow">
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4">

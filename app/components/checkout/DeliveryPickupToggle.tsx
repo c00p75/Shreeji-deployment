@@ -12,7 +12,7 @@ export default function DeliveryPickupToggle({
   onFulfillmentTypeChange,
 }: DeliveryPickupToggleProps) {
   return (
-    <div className='space-y-4'>
+    <div className='space-y-4 rounded-lg border-t-4 border-[var(--shreeji-primary)] bg-white p-6 shadow-sm'>
       <div className='flex items-center gap-3'>
         <Truck className='h-5 w-5 text-[#544829]' />
         <h2 className='text-xl font-semibold text-gray-900'>Fulfillment Method</h2>

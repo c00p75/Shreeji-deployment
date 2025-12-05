@@ -503,10 +503,24 @@ class ApiClient {
   }
 
   async updateSettings(category: string, settings: Record<string, any>) {
-    return this.request(`/admin/settings/${category}`, {
-      method: 'PUT',
-      body: JSON.stringify(settings),
-    });
+    const endpoint = `/admin/settings/${category}`;
+    const url = `${this.baseURL}${endpoint}`;
+    
+    console.log(`📤 [API] PUT ${url}`);
+    console.log(`📤 [API] Request body:`, JSON.stringify(settings, null, 2));
+    console.log(`📤 [API] isEnabled value:`, settings.isEnabled, `(type: ${typeof settings.isEnabled})`);
+    
+    try {
+      const response = await this.request(endpoint, {
+        method: 'PUT',
+        body: JSON.stringify(settings),
+      });
+      console.log(`📥 [API] Response for ${category}:`, response);
+      return response;
+    } catch (error) {
+      console.error(`❌ [API] Error for ${category}:`, error);
+      throw error;
+    }
   }
 
   async initializeSettings() {

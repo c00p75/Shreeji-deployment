@@ -59,11 +59,8 @@ export default function PortalOrdersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f5f1e8]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">My Orders</h1>
-
-        <div className="bg-white rounded-lg shadow overflow-hidden">
+    <div className="space-y-6">
+      <div className="bg-white rounded-3xl shadow-[0_0_20px_0_rgba(0,0,0,0.1)] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-[#f5f1e8]">
@@ -124,7 +121,6 @@ export default function PortalOrdersPage() {
                 )}
               </tbody>
             </table>
-          </div>
         </div>
       </div>
     </div>

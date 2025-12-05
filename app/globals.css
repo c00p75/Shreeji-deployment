@@ -235,7 +235,8 @@ a:hover {cursor: pointer;}
   }
   
   .card {
-    @apply bg-white rounded-lg shadow-sm border border-gray-200;
+    @apply bg-white rounded-3xl;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.1);
   }
   
   .btn-primary {
@@ -259,7 +260,8 @@ a:hover {cursor: pointer;}
   }
   
   .stat-card {
-    @apply bg-white p-6 rounded-lg shadow-sm border border-gray-200;
+    @apply bg-white p-6 rounded-3xl;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.1);
   }
   
   .stat-value {

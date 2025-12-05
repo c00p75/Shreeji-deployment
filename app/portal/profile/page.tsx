@@ -68,51 +68,48 @@ export default function PortalProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f5f1e8]">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">My Profile</h1>
-
-        <div className="bg-white rounded-lg shadow p-6">
+    <div className="space-y-6">
+      <div className="bg-white rounded-3xl shadow-[0_0_20px_0_rgba(0,0,0,0.1)] p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700">First Name</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
                 <input
                   type="text"
                   value={formData.firstName}
                   onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                className="block w-full rounded-2xl border border-[#dddddd] shadow-sm focus:border-[var(--shreeji-primary)] focus:ring-[var(--shreeji-primary)] sm:text-sm px-4 py-3"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Last Name</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
                 <input
                   type="text"
                   value={formData.lastName}
                   onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                className="block w-full rounded-2xl border border-[#dddddd] shadow-sm focus:border-[var(--shreeji-primary)] focus:ring-[var(--shreeji-primary)] sm:text-sm px-4 py-3"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">Email</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
               <input
                 type="email"
                 value={formData.email}
                 disabled
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-[#f5f1e8] sm:text-sm"
+              className="block w-full rounded-2xl border border-[#dddddd] shadow-sm bg-gray-50 sm:text-sm px-4 py-3"
               />
               <p className="mt-1 text-sm text-gray-500">Email cannot be changed</p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">Phone</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
               <input
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+              className="block w-full rounded-2xl border border-[#dddddd] shadow-sm focus:border-[var(--shreeji-primary)] focus:ring-[var(--shreeji-primary)] sm:text-sm px-4 py-3"
               />
             </div>
 
@@ -124,24 +121,23 @@ export default function PortalProfilePage() {
               </div>
             )}
 
-            <div className="flex justify-between">
+          <div className="flex justify-between pt-4">
               <button
                 type="submit"
                 disabled={saving}
-                className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:opacity-50"
+              className="px-8 py-4 bg-[var(--shreeji-primary)] text-white rounded-2xl hover:opacity-90 disabled:opacity-50 shadow-lg transition-all"
               >
                 {saving ? 'Saving...' : 'Save Changes'}
               </button>
               <button
                 type="button"
                 onClick={handleLogout}
-                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
+              className="px-8 py-4 bg-gray-200 text-gray-700 rounded-2xl hover:bg-gray-300 shadow-md transition-all"
               >
                 Logout
               </button>
             </div>
           </form>
-        </div>
       </div>
     </div>
   )

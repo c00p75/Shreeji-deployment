@@ -16,6 +16,7 @@ const ProductDetails = ({product}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [quantity, setQuantity] = useState(1)
   const [addingToCart, setAddingToCart] = useState(false)
+  const [brandLogoError, setBrandLogoError] = useState(false)
   const { addItem } = useCart()
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
@@ -36,20 +37,65 @@ const ProductDetails = ({product}) => {
         </Link>
       </div>
     );
-  } 
+  }
+  
+  // Brand logo path mapping - maps incorrect paths to actual file paths
+  const mapBrandLogoPath = (path) => {
+    if (!path || typeof path !== 'string') return path;
+    
+    const brandLogoMap = {
+      '/logos/HP.png': '/logos/HP-Logo.png',
+      '/logos/Lenovo.png': '/products/brand logos/lenovo.svg',
+      '/logos/Dell.png': '/products/brand logos/dell.png',
+      '/logos/Asus.png': '/products/brand logos/Asus.png',
+      '/logos/APC.png': '/products/brand logos/APC.svg',
+      '/logos/LG.png': '/products/brand logos/LG.png',
+      '/logos/Huawei.png': '/products/brand logos/huawei.png',
+      '/logos/XPG.png': '/products/brand logos/xpg-logo.svg',
+      '/logos/TPLink.png': '/products/brand logos/tp-link.png',
+    };
+    
+    // Return mapped path if exists, otherwise return original
+    return brandLogoMap[path] || path;
+  };
+  
+  // Helper to normalize brand logo URL - handles both object and string formats
+  const getBrandLogoUrl = () => {
+    const brandLogo = product['brand logo'];
+    if (!brandLogo) return null;
+    
+    // If it's an object with url property (Strapi format)
+    if (typeof brandLogo === 'object' && brandLogo !== null) {
+      const url = brandLogo.url || brandLogo.logoUrl || null;
+      return url ? mapBrandLogoPath(url) : null;
+    }
+    
+    // If it's a string, map it to correct path
+    if (typeof brandLogo === 'string' && brandLogo.trim()) {
+      return mapBrandLogoPath(brandLogo);
+    }
+    
+    return null;
+  };
+  
+  const brandLogoUrl = getBrandLogoUrl();
   
   return (
     <div className="pl-5 md:pl-10 pr-5 text-black h-full pt-5 product-details">
-      {product['brand logo'] && (
+      {brandLogoUrl && !brandLogoError && (
         <div className='w-full h-fit flex-center mb-5'>
           <Image 
-            src={product['brand logo']} 
+            src={brandLogoUrl} 
             quality={100} 
-            alt={product['name']} 
+            alt={product['name'] || 'Brand logo'} 
             width={150}
             height={64}
-            className='w-auto h-16 z-[1] object-cover' 
-            unoptimized={typeof product['brand logo'] === 'string' && product['brand logo'].startsWith('http')}
+            className='w-auto h-16 z-[1] object-contain' 
+            unoptimized={typeof brandLogoUrl === 'string' && brandLogoUrl.startsWith('http')}
+            onError={() => {
+              console.warn('Brand logo image failed to load:', brandLogoUrl);
+              setBrandLogoError(true);
+            }}
           />
         </div>
       )}
@@ -137,18 +183,35 @@ const ProductDetails = ({product}) => {
                   try {
                     await addItem(productIdentifier, quantity)
                     toast.success((t) => (
-                      <div className="flex flex-col items-center gap-3">
-                        <span>Added to cart!</span>
+                      <div className="flex flex-col items-center gap-4 p-2 animate-pulse">
+                        <div className="text-2xl font-bold text-green-600">✓ Added to Cart!</div>
+                        <p className="text-base text-gray-700 font-medium">Item successfully added to your shopping cart</p>
                         <Link
                           href="/checkout"
                           onClick={() => toast.dismiss(t.id)}
-                          className="px-4 py-2 bg-[var(--shreeji-primary)] text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+                          className="px-6 py-3 bg-[var(--shreeji-primary)] text-white rounded-xl text-base font-bold hover:opacity-90 transition-all hover:scale-105 shadow-lg"
                         >
-                          Proceed to Checkout
+                          Proceed to Checkout →
                         </Link>
                       </div>
                     ), {
-                      duration: 5000,
+                      duration: 8000,
+                      position: 'top-center',
+                      style: {
+                        background: '#fff',
+                        color: '#000',
+                        padding: '20px',
+                        borderRadius: '16px',
+                        boxShadow: '0 10px 40px rgba(0, 0, 0, 0.2)',
+                        border: '2px solid #10b981',
+                        fontSize: '16px',
+                        minWidth: '320px',
+                        maxWidth: '400px',
+                      },
+                      iconTheme: {
+                        primary: '#10b981',
+                        secondary: '#fff',
+                      },
                     })
                   } catch (err) {
                     console.error('Add to cart error:', err)

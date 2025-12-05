@@ -7,6 +7,37 @@ import clientApi from '@/app/lib/client/api'
 import { ArrowLeft, Package, MapPin, CreditCard, Truck } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { getMainProductImage } from '@/app/lib/admin/image-mapping'
+import { currencyFormatter } from '@/app/components/checkout/currency-formatter'
+
+// Process image URL to ensure it's properly formatted for Next.js Image component
+// Handles filenames with spaces by encoding them properly
+function processImageUrl(url: string): string {
+  if (!url) return url
+  
+  // If it's already an absolute URL, return as-is
+  if (url.startsWith('http')) return url
+  
+  // Handle relative paths
+  if (!url.startsWith('/')) {
+    url = `/${url}`
+  }
+  
+  // Remove leading double slashes
+  url = url.replace(/^\/\//, '/')
+  
+  // If filename contains spaces, encode them properly (%20)
+  if (url.includes(' ') && !url.includes('%20')) {
+    const urlParts = url.split('/')
+    const filename = urlParts[urlParts.length - 1]
+    if (filename && filename.includes(' ')) {
+      urlParts[urlParts.length - 1] = encodeURIComponent(filename)
+      url = urlParts.join('/')
+    }
+  }
+  
+  return url
+}
 
 export default function OrderDetailsPage() {
   const { id } = useParams()
@@ -96,7 +127,7 @@ export default function OrderDetailsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f5f1e8]">
+    <div className="min-h-screen">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Link
           href="/portal/orders"
@@ -106,7 +137,7 @@ export default function OrderDetailsPage() {
           Back to Orders
         </Link>
 
-        <div className="bg-white rounded-lg shadow mb-6">
+        <div className="bg-white rounded-lg shadow-[0_0_20px_0_rgba(0,0,0,0.1)] mb-6">
           <div className="px-6 py-4 border-b border-gray-200">
             <div className="flex justify-between items-start">
               <div>
@@ -132,38 +163,130 @@ export default function OrderDetailsPage() {
           <div className="p-6">
             {/* Order Items */}
             <div className="mb-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <Package className="h-5 w-5" />
-                Order Items
-              </h2>
+              <div className="mb-4">
+                <div className="flex items-center gap-3">
+                  <Package className="h-5 w-5 text-[var(--shreeji-primary)]" />
+                  <h2 className="text-xl font-semibold text-gray-900">Order Items</h2>
+                </div>
+              </div>
+
+              {/* Column Headers */}
+              <div className="hidden sm:flex items-center gap-4 border-b border-gray-200 bg-white px-4 py-3 mb-4">
+                <div className="w-16 flex-shrink-0"></div>
+                <div className="flex-1">
+                  <span className="text-sm font-medium text-gray-700">Product</span>
+                </div>
+                <div className="text-center min-w-[100px]">
+                  <span className="text-sm font-medium text-gray-700">Unit Price</span>
+                </div>
+                <div className="text-center min-w-[60px]">
+                  <span className="text-sm font-medium text-gray-700">Quantity</span>
+                </div>
+                <div className="text-right min-w-[100px]">
+                  <span className="text-sm font-medium text-gray-700">Total Price</span>
+                </div>
+              </div>
+
               <div className="space-y-4">
                 {order.orderItems && order.orderItems.length > 0 ? (
                   order.orderItems.map((item: any, index: number) => {
                     const product = item.product || item.productSnapshot || {}
-                    const imageUrl = product.images?.[0]?.url || product.imageUrl
+                    
+                    // Get image URL with proper handling
+                    let imageUrl: string | null = null
+                    
+                    // Try to get image from mapping first
+                    if (product.name) {
+                      const mappedImageUrl = getMainProductImage(product.name)
+                      if (mappedImageUrl && mappedImageUrl !== '/public/products/placeholder.png') {
+                        imageUrl = mappedImageUrl
+                      }
+                    }
+                    
+                    // Fallback to product images if mapping doesn't have it
+                    if (!imageUrl) {
+                      const productImages = product.images || []
+                      const mainImage = productImages.find((img: any) => img?.isMain) || productImages[0]
+                      
+                      // Handle different image formats - could be object with url property or string
+                      if (mainImage) {
+                        if (typeof mainImage === 'string') {
+                          imageUrl = mainImage
+                        } else if (mainImage?.url) {
+                          imageUrl = mainImage.url
+                        }
+                      }
+                    }
+                    
+                    // Fallback to product.imageUrl if still no image
+                    if (!imageUrl) {
+                      imageUrl = product.imageUrl || null
+                    }
+                    
+                    // Process and format the image URL for Next.js Image component
+                    if (imageUrl) {
+                      imageUrl = processImageUrl(imageUrl)
+                    }
+                    
+                    const unitPrice = item.unitPrice || item.price || 0
+                    const totalPrice = (item.quantity || 1) * unitPrice
+                    const productSubtitle = product.sku || 'Shreeji'
+                    
                     return (
-                      <div key={index} className="flex gap-4 p-4 border border-gray-200 rounded-lg">
-                        {imageUrl && (
-                          <div className="relative h-20 w-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
+                      <div 
+                        key={index} 
+                        className="flex items-center gap-4 bg-white px-4 py-5"
+                      >
+                        {/* Product Image - Small thumbnail */}
+                        <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100">
+                          {imageUrl ? (
                             <Image
                               src={imageUrl}
                               alt={product.name || 'Product'}
                               fill
                               className="object-cover"
-                              unoptimized={imageUrl.startsWith('http')}
+                              unoptimized={imageUrl.startsWith('http') || imageUrl.startsWith('/products/')}
+                              sizes="64px"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement
+                                target.style.display = 'none'
+                              }}
                             />
-                          </div>
-                        )}
-                        <div className="flex-1">
-                          <h3 className="font-medium text-gray-900">{product.name || 'Product'}</h3>
-                          <p className="text-sm text-gray-500">SKU: {product.sku || 'N/A'}</p>
-                          <p className="text-sm text-gray-500 mt-1">
-                            Quantity: {item.quantity} × K{item.unitPrice?.toLocaleString() || item.price?.toLocaleString() || '0'}
+                          ) : (
+                            <div className="flex h-full w-full items-center justify-center bg-gray-200 text-xs text-gray-400">
+                              No Image
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Product Information - Left Side */}
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-bold text-gray-900 text-base leading-tight">
+                            {product.name || 'Product'}
+                          </h3>
+                          <p className="text-sm text-gray-500 mt-0.5">
+                            {productSubtitle}
                           </p>
                         </div>
+
+                        {/* Unit Price - Middle */}
+                        <div className="text-center min-w-[100px]">
+                          <p className="text-sm font-semibold text-gray-900">
+                            {currencyFormatter(unitPrice, order.currency || 'ZMW')}
+                          </p>
+                        </div>
+
+                        {/* Quantity - Middle */}
+                        <div className="flex items-center justify-center min-w-[60px]">
+                          <span className="text-sm font-medium text-gray-900">
+                            {item.quantity}
+                          </span>
+                        </div>
+
+                        {/* Total Price - Right Side */}
                         <div className="text-right">
-                          <p className="font-semibold text-gray-900">
-                            K{((item.quantity || 1) * (item.unitPrice || item.price || 0)).toLocaleString()}
+                          <p className="font-bold text-gray-900 text-base">
+                            {currencyFormatter(totalPrice, order.currency || 'ZMW')}
                           </p>
                         </div>
                       </div>

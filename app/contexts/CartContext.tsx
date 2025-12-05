@@ -136,6 +136,52 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   }, [ensureCartExists])
 
+  // Cross-tab synchronization: Listen for changes in other tabs
+  useEffect(() => {
+    if (!cart?.id) return
+
+    // Listen for storage events (when localStorage changes in other tabs)
+    const handleStorageChange = (e: StorageEvent) => {
+      const storageKey = isAuthenticated && user?.id 
+        ? `${USER_CART_STORAGE_KEY}_${user.id}` 
+        : CART_STORAGE_KEY
+      
+      if (e.key === storageKey && e.newValue) {
+        // Cart ID changed in another tab, refresh cart
+        refreshCart()
+      }
+    }
+
+    // Listen for visibility change (when user switches back to this tab)
+    const handleVisibilityChange = () => {
+      if (!document.hidden && cart?.id) {
+        // Tab became visible, refresh cart to get latest data
+        refreshCart()
+      }
+    }
+
+    // Listen for focus events (when tab regains focus)
+    const handleFocus = () => {
+      if (cart?.id) {
+        refreshCart()
+      }
+    }
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('storage', handleStorageChange)
+      document.addEventListener('visibilitychange', handleVisibilityChange)
+      window.addEventListener('focus', handleFocus)
+    }
+
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('storage', handleStorageChange)
+        document.removeEventListener('visibilitychange', handleVisibilityChange)
+        window.removeEventListener('focus', handleFocus)
+      }
+    }
+  }, [refreshCart, cart?.id, isAuthenticated, user?.id])
+
   const addItem = useCallback(
     async (productId: number | string, quantity = 1) => {
       setUpdating(true)
@@ -161,7 +207,27 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       try {
         const cartId = await ensureCartExists()
         const updated = await updateCartItem(cartId, itemId, quantity)
+        
+        // Preserve original item order by mapping old order to new items
+        if (cart?.items && updated.items) {
+          const itemOrderMap = new Map(cart.items.map((item, index) => [item.id, index]))
+          const sortedItems = [...updated.items].sort((a, b) => {
+            const aIndex = itemOrderMap.get(a.id) ?? Infinity
+            const bIndex = itemOrderMap.get(b.id) ?? Infinity
+            return aIndex - bIndex
+          })
+          
+          // If new items exist (shouldn't happen on update, but handle it)
+          updated.items.forEach((newItem) => {
+            if (!itemOrderMap.has(newItem.id)) {
+              sortedItems.push(newItem)
+            }
+          })
+          
+          setCart({ ...updated, items: sortedItems })
+        } else {
         setCart(updated)
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Unable to update item')
         throw err
@@ -169,7 +235,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         setUpdating(false)
       }
     },
-    [ensureCartExists],
+    [ensureCartExists, cart?.items],
   )
 
   const removeItem = useCallback(

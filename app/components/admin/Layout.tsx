@@ -1,9 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
+import clsx from 'clsx'
 import { useAuth } from '@/app/contexts/AuthContext'
+import api from '@/app/lib/admin/api'
 import { 
   HomeIcon, 
   ShoppingBagIcon, 
@@ -21,6 +23,7 @@ import NotificationBell from '../notifications/NotificationBell'
 interface LayoutProps {
   children: React.ReactNode
   currentPage?: string
+  pageTitle?: string
 }
 
 const navigation = [
@@ -33,11 +36,82 @@ const navigation = [
   { name: 'Settings', href: '/admin/settings', icon: CogIcon, current: false },
 ]
 
-export default function Layout({ children, currentPage = 'Dashboard' }: LayoutProps) {
+export default function Layout({ children, currentPage = 'Dashboard', pageTitle }: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [showUserMenu, setShowUserMenu] = useState(false)
   const { user, logout } = useAuth()
   const router = useRouter()
+  const [theme, setTheme] = useState<'light' | 'dark' | 'auto'>('light')
+
+  // Apply theme to HTML element
+  const applyTheme = (themeValue: 'light' | 'dark' | 'auto') => {
+    if (typeof window === 'undefined') return
+    
+    const htmlElement = document.documentElement
+    
+    if (themeValue === 'dark') {
+      htmlElement.classList.add('dark')
+    } else if (themeValue === 'light') {
+      htmlElement.classList.remove('dark')
+    } else if (themeValue === 'auto') {
+      // Use system preference
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+      if (prefersDark) {
+        htmlElement.classList.add('dark')
+      } else {
+        htmlElement.classList.remove('dark')
+      }
+    }
+  }
+
+  // Load theme from settings and apply it
+  useEffect(() => {
+    const loadTheme = async () => {
+      try {
+        const generalSettings = await api.getSettingsByCategory('general')
+        const savedTheme = (generalSettings?.data || generalSettings)?.theme || 'light'
+        setTheme(savedTheme)
+        applyTheme(savedTheme)
+      } catch (error) {
+        console.error('Failed to load theme:', error)
+        applyTheme('light')
+      }
+    }
+
+    loadTheme()
+  }, [])
+
+  // Listen for theme changes from settings
+  useEffect(() => {
+    const handleThemeChange = (event: CustomEvent) => {
+      const newTheme = event.detail as 'light' | 'dark' | 'auto'
+      setTheme(newTheme)
+      applyTheme(newTheme)
+    }
+
+    window.addEventListener('themeChanged' as any, handleThemeChange as EventListener)
+    return () => {
+      window.removeEventListener('themeChanged' as any, handleThemeChange as EventListener)
+    }
+  }, [])
+
+  // Listen for system theme changes when in auto mode
+  useEffect(() => {
+    if (theme === 'auto') {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+      const handleChange = (e: MediaQueryListEvent) => {
+        const htmlElement = document.documentElement
+        if (e.matches) {
+          htmlElement.classList.add('dark')
+        } else {
+          htmlElement.classList.remove('dark')
+        }
+      }
+
+      mediaQuery.addEventListener('change', handleChange)
+      return () => mediaQuery.removeEventListener('change', handleChange)
+    }
+  }, [theme])
 
   const handleLogout = () => {
     logout()
@@ -46,10 +120,10 @@ export default function Layout({ children, currentPage = 'Dashboard' }: LayoutPr
   }
 
   return (
-    <div className="flex h-screen bg-[#f5f1e8]">
+    <div className="flex h-screen bg-[whitesmoke] dark:bg-[#131313]">
       {/* Sidebar */}
-      <div className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}>
-        <div className="flex items-center justify-center h-16 px-4 border-b border-gray-200">
+      <div className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} fixed inset-y-0 left-0 z-50 w-64 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}>
+        <div className="flex items-center justify-center h-16 px-4  dark:border-gray-800">
           <div className="flex items-center space-x-3">
             <Image
               src="/images/Shreeji icon.png"
@@ -58,7 +132,7 @@ export default function Layout({ children, currentPage = 'Dashboard' }: LayoutPr
               height={32}
               className="object-contain"
             />
-            <h1 className="text-xl font-bold text-gray-900">Shreeji Admin</h1>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white">Shreeji Admin</h1>
           </div>
         </div>
         
@@ -72,9 +146,17 @@ export default function Layout({ children, currentPage = 'Dashboard' }: LayoutPr
                 <a
                   key={item.name}
                   href={item.href}
-                  className={`sidebar-item ${isActive ? 'active' : ''}`}
+                  className={clsx(
+                    'group flex items-center px-4 py-3 text-sm font-medium rounded-2xl transition-all duration-200',
+                    isActive
+                      ? 'bg-[var(--shreeji-primary)] text-white shadow-md'
+                      : 'text-gray-700 dark:text-white/70 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5'
+                  )}
                 >
-                  <Icon className="w-5 h-5 mr-3" />
+                  <Icon className={clsx(
+                    'w-5 h-5 mr-3 flex-shrink-0',
+                    isActive ? 'text-white' : 'text-gray-500 dark:text-white/60 group-hover:text-gray-700 dark:group-hover:text-white/80'
+                  )} />
                   {item.name}
                 </a>
               )
@@ -84,20 +166,22 @@ export default function Layout({ children, currentPage = 'Dashboard' }: LayoutPr
       </div>
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden rounded-2xl m-2 ml-0">
+        {/* Page content */}
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-white dark:bg-[whitesmoke]">
         {/* Header */}
-        <header className="bg-white shadow-sm border-b border-gray-200">
+        <header className="shadow-sm">
           <div className="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
             <div className="flex items-center">
               <button
                 type="button"
-                className="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100"
+                className="lg:hidden p-2 rounded-xl text-gray-400 hover:text-gray-500 hover:bg-gray-100"
                 onClick={() => setSidebarOpen(true)}
               >
                 <Bars3Icon className="w-6 h-6" />
               </button>
               <h2 className="ml-4 text-lg font-semibold text-gray-900 lg:ml-0">
-                {currentPage}
+                {pageTitle || currentPage}
               </h2>
             </div>
             
@@ -107,9 +191,9 @@ export default function Layout({ children, currentPage = 'Dashboard' }: LayoutPr
               <div className="relative">
                 <button
                   onClick={() => setShowUserMenu(!showUserMenu)}
-                  className="flex items-center space-x-3 hover:bg-gray-100 rounded-md p-2"
+                  className="flex items-center space-x-3 hover:bg-gray-100 rounded-2xl p-2 transition-all"
                 >
-                  <div className="w-8 h-8 bg-primary-600 rounded-full flex items-center justify-center">
+                  <div className="w-8 h-8 bg-[var(--shreeji-primary)] rounded-full flex items-center justify-center">
                     <span className="text-sm font-medium text-white">
                       {user?.firstName?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || 'A'}
                     </span>
@@ -128,7 +212,7 @@ export default function Layout({ children, currentPage = 'Dashboard' }: LayoutPr
 
                 {/* User dropdown menu */}
                 {showUserMenu && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-lg py-1 z-50">
                     <div className="px-4 py-2 border-b border-gray-100">
                       <p className="text-sm font-medium text-gray-900">
                         {user?.firstName && user?.lastName 
@@ -139,7 +223,7 @@ export default function Layout({ children, currentPage = 'Dashboard' }: LayoutPr
                     </div>
                     <button
                       onClick={handleLogout}
-                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg"
                     >
                       <ArrowRightOnRectangleIcon className="w-4 h-4 mr-3" />
                       Sign out
@@ -150,9 +234,6 @@ export default function Layout({ children, currentPage = 'Dashboard' }: LayoutPr
             </div>
           </div>
         </header>
-
-        {/* Page content */}
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-[#f5f1e8]">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
             {children}
           </div>

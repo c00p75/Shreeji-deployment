@@ -168,13 +168,11 @@ export default function AddressesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f5f1e8]">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">My Addresses</h1>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
           <button
             onClick={() => handleOpenModal()}
-            className="flex items-center gap-2 px-4 py-2 bg-[var(--shreeji-primary)] text-white rounded-lg hover:opacity-90 transition"
+          className="flex items-center gap-2 px-8 py-4 bg-[var(--shreeji-primary)] text-white rounded-2xl hover:opacity-90 transition-all shadow-lg"
           >
             <Plus className="h-5 w-5" />
             Add Address
@@ -182,13 +180,13 @@ export default function AddressesPage() {
         </div>
 
         {addresses.length === 0 ? (
-          <div className="bg-white rounded-lg shadow p-12 text-center">
+        <div className="bg-white rounded-3xl shadow-[0_0_20px_0_rgba(0,0,0,0.1)] p-12 text-center">
             <MapPin className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">No addresses saved</h3>
             <p className="text-gray-500 mb-6">Add your first address to get started</p>
             <button
               onClick={() => handleOpenModal()}
-              className="px-4 py-2 bg-[var(--shreeji-primary)] text-white rounded-lg hover:opacity-90 transition"
+            className="px-8 py-4 bg-[var(--shreeji-primary)] text-white rounded-2xl hover:opacity-90 transition-all shadow-lg"
             >
               Add Address
             </button>
@@ -198,7 +196,7 @@ export default function AddressesPage() {
             {addresses.map((address) => (
               <div
                 key={address.id}
-                className="bg-white rounded-lg shadow p-6 relative"
+              className="bg-white rounded-3xl shadow-[0_0_20px_0_rgba(0,0,0,0.1)] p-6 relative"
               >
                 {address.isDefault && (
                   <span className="absolute top-4 right-4 inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
@@ -228,7 +226,7 @@ export default function AddressesPage() {
                 <div className="mt-4 flex gap-2">
                   <button
                     onClick={() => handleOpenModal(address)}
-                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
+                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm text-gray-700 bg-gray-100 rounded-2xl hover:bg-gray-200 transition-all"
                   >
                     <Edit2 className="h-4 w-4" />
                     Edit
@@ -236,7 +234,7 @@ export default function AddressesPage() {
                   {!address.isDefault && (
                     <button
                       onClick={() => handleSetDefault(address.id)}
-                      className="px-3 py-2 text-sm text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
+                  className="px-3 py-2 text-sm text-gray-700 bg-gray-100 rounded-2xl hover:bg-gray-200 transition-all"
                       title="Set as default"
                     >
                       <Check className="h-4 w-4" />
@@ -244,7 +242,7 @@ export default function AddressesPage() {
                   )}
                   <button
                     onClick={() => handleDelete(address.id)}
-                    className="px-3 py-2 text-sm text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition"
+                className="px-3 py-2 text-sm text-red-600 bg-red-50 rounded-2xl hover:bg-red-100 transition-all"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
@@ -257,16 +255,16 @@ export default function AddressesPage() {
         {/* Add/Edit Address Modal */}
         {isModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+        <div className="bg-white rounded-3xl shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
               <div className="p-6 border-b border-gray-200">
                 <h2 className="text-xl font-bold text-gray-900">
                   {editingAddress ? 'Edit Address' : 'Add New Address'}
                 </h2>
               </div>
-              <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <form onSubmit={handleSubmit} className="p-8 space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                       First Name *
                     </label>
                     <input
@@ -274,11 +272,11 @@ export default function AddressesPage() {
                       required
                       value={formData.firstName}
                       onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--shreeji-primary)] focus:border-transparent"
+                  className="w-full px-4 py-3 border border-[#dddddd] rounded-2xl focus:ring-2 focus:ring-[var(--shreeji-primary)] focus:border-[var(--shreeji-primary)]"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                       Last Name *
                     </label>
                     <input
@@ -286,25 +284,25 @@ export default function AddressesPage() {
                       required
                       value={formData.lastName}
                       onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--shreeji-primary)] focus:border-transparent"
+                  className="w-full px-4 py-3 border border-[#dddddd] rounded-2xl focus:ring-2 focus:ring-[var(--shreeji-primary)] focus:border-[var(--shreeji-primary)]"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                     Company (Optional)
                   </label>
                   <input
                     type="text"
                     value={formData.company}
                     onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--shreeji-primary)] focus:border-transparent"
+                className="w-full px-4 py-3 border border-[#dddddd] rounded-2xl focus:ring-2 focus:ring-[var(--shreeji-primary)] focus:border-[var(--shreeji-primary)]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                     Address Line 1 *
                   </label>
                   <input
@@ -312,25 +310,25 @@ export default function AddressesPage() {
                     required
                     value={formData.addressLine1}
                     onChange={(e) => setFormData({ ...formData, addressLine1: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--shreeji-primary)] focus:border-transparent"
+                className="w-full px-4 py-3 border border-[#dddddd] rounded-2xl focus:ring-2 focus:ring-[var(--shreeji-primary)] focus:border-[var(--shreeji-primary)]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                     Address Line 2 (Optional)
                   </label>
                   <input
                     type="text"
                     value={formData.addressLine2}
                     onChange={(e) => setFormData({ ...formData, addressLine2: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--shreeji-primary)] focus:border-transparent"
+                className="w-full px-4 py-3 border border-[#dddddd] rounded-2xl focus:ring-2 focus:ring-[var(--shreeji-primary)] focus:border-[var(--shreeji-primary)]"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                       City *
                     </label>
                     <input
@@ -338,22 +336,22 @@ export default function AddressesPage() {
                       required
                       value={formData.city}
                       onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--shreeji-primary)] focus:border-transparent"
+                  className="w-full px-4 py-3 border border-[#dddddd] rounded-2xl focus:ring-2 focus:ring-[var(--shreeji-primary)] focus:border-[var(--shreeji-primary)]"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                       State/Province
                     </label>
                     <input
                       type="text"
                       value={formData.state}
                       onChange={(e) => setFormData({ ...formData, state: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--shreeji-primary)] focus:border-transparent"
+                  className="w-full px-4 py-3 border border-[#dddddd] rounded-2xl focus:ring-2 focus:ring-[var(--shreeji-primary)] focus:border-[var(--shreeji-primary)]"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                       Postal Code *
                     </label>
                     <input
@@ -361,14 +359,14 @@ export default function AddressesPage() {
                       required
                       value={formData.postalCode}
                       onChange={(e) => setFormData({ ...formData, postalCode: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--shreeji-primary)] focus:border-transparent"
+                  className="w-full px-4 py-3 border border-[#dddddd] rounded-2xl focus:ring-2 focus:ring-[var(--shreeji-primary)] focus:border-[var(--shreeji-primary)]"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                       Country *
                     </label>
                     <input
@@ -376,18 +374,18 @@ export default function AddressesPage() {
                       required
                       value={formData.country}
                       onChange={(e) => setFormData({ ...formData, country: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--shreeji-primary)] focus:border-transparent"
+                  className="w-full px-4 py-3 border border-[#dddddd] rounded-2xl focus:ring-2 focus:ring-[var(--shreeji-primary)] focus:border-[var(--shreeji-primary)]"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                       Phone
                     </label>
                     <input
                       type="tel"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--shreeji-primary)] focus:border-transparent"
+                  className="w-full px-4 py-3 border border-[#dddddd] rounded-2xl focus:ring-2 focus:ring-[var(--shreeji-primary)] focus:border-[var(--shreeji-primary)]"
                     />
                   </div>
                 </div>
@@ -409,13 +407,13 @@ export default function AddressesPage() {
                   <button
                     type="button"
                     onClick={handleCloseModal}
-                    className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
+                className="px-8 py-4 text-gray-700 bg-gray-100 rounded-2xl hover:bg-gray-200 transition-all shadow-md"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 bg-[var(--shreeji-primary)] text-white rounded-lg hover:opacity-90 transition"
+                className="px-8 py-4 bg-[var(--shreeji-primary)] text-white rounded-2xl hover:opacity-90 transition-all shadow-lg"
                   >
                     {editingAddress ? 'Update Address' : 'Add Address'}
                   </button>
@@ -424,7 +422,6 @@ export default function AddressesPage() {
             </div>
           </div>
         )}
-      </div>
     </div>
   )
 }

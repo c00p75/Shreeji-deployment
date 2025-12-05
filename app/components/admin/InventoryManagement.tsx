@@ -268,7 +268,7 @@ export default function InventoryManagement() {
   }
 
   return (
-    <Layout currentPage="Inventory">
+    <Layout currentPage="Inventory" pageTitle="Inventory Management">
     <div className="space-y-6">
       {error && (
         <div className="rounded-md bg-red-50 p-4">
@@ -290,7 +290,6 @@ export default function InventoryManagement() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Inventory Management</h1>
           <p className="mt-1 text-sm text-gray-500">
             Monitor stock levels and inventory value ({filteredProducts.length} products)
           </p>
@@ -299,7 +298,7 @@ export default function InventoryManagement() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="bg-white shadow-sm rounded-lg p-5">
+        <div className="bg-white shadow rounded-lg p-5">
           <div className="flex items-center">
             <CubeIcon className="h-8 w-8 text-primary-600" />
             <div className="ml-4">
@@ -309,7 +308,7 @@ export default function InventoryManagement() {
           </div>
         </div>
 
-        <div className="bg-white shadow-sm rounded-lg p-5">
+        <div className="bg-white shadow rounded-lg p-5">
           <div className="flex items-center">
             <ExclamationTriangleIcon className="h-8 w-8 text-yellow-500" />
             <div className="ml-4">
@@ -319,7 +318,7 @@ export default function InventoryManagement() {
           </div>
         </div>
 
-        <div className="bg-white shadow-sm rounded-lg p-5">
+        <div className="bg-white shadow rounded-lg p-5">
           <div className="flex items-center">
             <XCircleIcon className="h-8 w-8 text-red-500" />
             <div className="ml-4">
@@ -329,7 +328,7 @@ export default function InventoryManagement() {
           </div>
         </div>
 
-        <div className="bg-white shadow-sm rounded-lg p-5">
+        <div className="bg-white shadow rounded-lg p-5">
           <div className="flex items-center">
             <CurrencyDollarIcon className="h-8 w-8 text-green-500" />
             <div className="ml-4">

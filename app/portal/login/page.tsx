@@ -19,7 +19,18 @@ export default function PortalLoginPage() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      router.replace('/portal/dashboard');
+      // Check if there's a return URL stored in sessionStorage
+      const returnUrl = typeof window !== 'undefined' 
+        ? sessionStorage.getItem('returnUrl') 
+        : null;
+      
+      // Clear the return URL from sessionStorage
+      if (typeof window !== 'undefined' && returnUrl) {
+        sessionStorage.removeItem('returnUrl');
+      }
+      
+      // Redirect to return URL if it exists, otherwise go to dashboard
+      router.replace(returnUrl || '/portal/dashboard');
     }
   }, [isAuthenticated, router]);
 

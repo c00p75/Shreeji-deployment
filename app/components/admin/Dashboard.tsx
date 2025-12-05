@@ -101,10 +101,9 @@ export default function Dashboard() {
   }
 
   return (
-    <Layout currentPage="Dashboard">
+    <Layout currentPage="Dashboard" pageTitle="Dashboard">
       <div className="space-y-8">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
           <div className="text-sm text-gray-500">
             Last updated: {new Date().toLocaleString()}
           </div>
@@ -184,7 +183,7 @@ export default function Dashboard() {
         {/* Charts and Tables */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Sales Chart */}
-          <div className="card p-6">
+          <div className="card p-6 pb-14">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-semibold text-gray-900">Sales Statistics</h3>
               <div className="flex space-x-2">

@@ -138,17 +138,31 @@ export default function SettingsPage() {
     isEnabled: false,
   });
   const [paymentLoading, setPaymentLoading] = useState(true);
+  const [settingsLoading, setSettingsLoading] = useState(true);
   const [paymentSaving, setPaymentSaving] = useState(false);
+  const [settingsSaving, setSettingsSaving] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState<{ type: 'idle' | 'success' | 'error'; message?: string }>({
     type: 'idle',
   });
+  const [settingsStatus, setSettingsStatus] = useState<{ type: 'idle' | 'success' | 'error'; message?: string }>({
+    type: 'idle',
+  });
 
+  // Store initial state for cancel functionality
+  const [initialFormData, setInitialFormData] = useState(formData);
+  const [initialBankSettings, setInitialBankSettings] = useState(bankSettings);
+  const [initialMobileMoneySettings, setInitialMobileMoneySettings] = useState(mobileMoneySettings);
+  const [initialCardSettings, setInitialCardSettings] = useState(cardSettings);
+  const [initialCodSettings, setInitialCodSettings] = useState(codSettings);
+  const [initialDpoSettings, setInitialDpoSettings] = useState(dpoSettings);
+
+  // Load payment settings
   useEffect(() => {
     let mounted = true;
-    const fetchSettings = async () => {
+    const fetchPaymentSettings = async () => {
       try {
         setPaymentLoading(true);
-        const [bank, dpo, mobileMoney, card, cod] = await Promise.all([
+        const [bankResponse, dpoResponse, mobileMoneyResponse, cardResponse, codResponse] = await Promise.all([
           api.getSettingsByCategory('payment_bank_transfer'),
           api.getSettingsByCategory('payment_dpo'),
           api.getSettingsByCategory('payment_mobile_money'),
@@ -156,6 +170,14 @@ export default function SettingsPage() {
           api.getSettingsByCategory('payment_cod'),
         ]);
         if (!mounted) return;
+        
+        // Handle response structure - check if wrapped in 'data' property
+        const bank = bankResponse?.data || bankResponse;
+        const dpo = dpoResponse?.data || dpoResponse;
+        const mobileMoney = mobileMoneyResponse?.data || mobileMoneyResponse;
+        const card = cardResponse?.data || cardResponse;
+        const cod = codResponse?.data || codResponse;
+        
         setBankSettings({
           bankName: bank?.bankName ?? '',
           accountNumber: bank?.accountNumber ?? '',
@@ -163,7 +185,8 @@ export default function SettingsPage() {
           swiftCode: bank?.swiftCode ?? '',
           iban: bank?.iban ?? '',
           deadlineHours: bank?.deadlineHours ?? 24,
-          isEnabled: bank?.isEnabled ?? true,
+          // Preserve false values - only default to true if undefined/null
+          isEnabled: bank?.isEnabled !== undefined && bank?.isEnabled !== null ? bank.isEnabled : true,
         });
         setDpoSettings({
           companyToken: dpo?.companyToken ?? '',
@@ -171,16 +194,48 @@ export default function SettingsPage() {
           serviceType: dpo?.serviceType ?? '5525',
           redirectUrl: dpo?.redirectUrl ?? '',
           backUrl: dpo?.backUrl ?? '',
-          isEnabled: dpo?.isEnabled ?? false,
+          // Preserve false values - only default to false if undefined/null
+          isEnabled: dpo?.isEnabled !== undefined && dpo?.isEnabled !== null ? dpo.isEnabled : false,
         });
         setMobileMoneySettings({
-          isEnabled: mobileMoney?.isEnabled ?? true,
+          // Preserve false values - only default to true if undefined/null
+          isEnabled: mobileMoney?.isEnabled !== undefined && mobileMoney?.isEnabled !== null ? mobileMoney.isEnabled : true,
         });
         setCardSettings({
-          isEnabled: card?.isEnabled ?? true,
+          // Preserve false values - only default to true if undefined/null
+          isEnabled: card?.isEnabled !== undefined && card?.isEnabled !== null ? card.isEnabled : true,
         });
         setCodSettings({
-          isEnabled: cod?.isEnabled ?? true,
+          // Preserve false values - only default to true if undefined/null
+          isEnabled: cod?.isEnabled !== undefined && cod?.isEnabled !== null ? cod.isEnabled : true,
+        });
+
+        // Store initial payment settings after loading
+        setInitialBankSettings({
+          bankName: bank?.bankName ?? '',
+          accountNumber: bank?.accountNumber ?? '',
+          accountName: bank?.accountName ?? '',
+          swiftCode: bank?.swiftCode ?? '',
+          iban: bank?.iban ?? '',
+          deadlineHours: bank?.deadlineHours ?? 24,
+          isEnabled: bank?.isEnabled !== undefined && bank?.isEnabled !== null ? bank.isEnabled : true,
+        });
+        setInitialDpoSettings({
+          companyToken: dpo?.companyToken ?? '',
+          apiUrl: dpo?.apiUrl ?? 'https://secure.3gdirectpay.com/payv3.php',
+          serviceType: dpo?.serviceType ?? '5525',
+          redirectUrl: dpo?.redirectUrl ?? '',
+          backUrl: dpo?.backUrl ?? '',
+          isEnabled: dpo?.isEnabled !== undefined && dpo?.isEnabled !== null ? dpo.isEnabled : false,
+        });
+        setInitialMobileMoneySettings({
+          isEnabled: mobileMoney?.isEnabled !== undefined && mobileMoney?.isEnabled !== null ? mobileMoney.isEnabled : true,
+        });
+        setInitialCardSettings({
+          isEnabled: card?.isEnabled !== undefined && card?.isEnabled !== null ? card.isEnabled : true,
+        });
+        setInitialCodSettings({
+          isEnabled: cod?.isEnabled !== undefined && cod?.isEnabled !== null ? cod.isEnabled : true,
         });
       } catch (error) {
         console.error('Failed to load payment settings', error);
@@ -192,7 +247,82 @@ export default function SettingsPage() {
       }
     };
 
-    fetchSettings();
+    fetchPaymentSettings();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  // Load all other settings
+  useEffect(() => {
+    let mounted = true;
+    const fetchAllSettings = async () => {
+      try {
+        setSettingsLoading(true);
+        const [generalResponse, notificationResponse] = await Promise.all([
+          api.getSettingsByCategory('general'),
+          api.getSettingsByCategory('notification'),
+        ]);
+        if (!mounted) return;
+        
+        // Handle response structure
+        const general = generalResponse?.data || generalResponse;
+        const notification = notificationResponse?.data || notificationResponse;
+        
+        // Update formData with loaded settings
+        setFormData(prev => {
+          const updated = {
+            ...prev,
+            // Profile settings (stored in general)
+            firstName: general?.firstName ?? prev.firstName,
+            lastName: general?.lastName ?? prev.lastName,
+            email: general?.email ?? prev.email,
+            phone: general?.phone ?? prev.phone,
+            timezone: general?.timezone ?? prev.timezone,
+            
+            // General settings
+            companyName: general?.companyName ?? prev.companyName,
+            currency: general?.currency ?? prev.currency,
+            dateFormat: general?.dateFormat ?? prev.dateFormat,
+            timeFormat: general?.timeFormat ?? prev.timeFormat,
+            
+            // Security settings (stored in general)
+            twoFactorEnabled: general?.twoFactorEnabled !== undefined && general?.twoFactorEnabled !== null ? general.twoFactorEnabled : prev.twoFactorEnabled,
+            sessionTimeout: general?.sessionTimeout ?? prev.sessionTimeout,
+            passwordExpiry: general?.passwordExpiry ?? prev.passwordExpiry,
+            
+            // Appearance settings (stored in general)
+            theme: general?.theme ?? prev.theme,
+            sidebarCollapsed: general?.sidebarCollapsed !== undefined && general?.sidebarCollapsed !== null ? general.sidebarCollapsed : prev.sidebarCollapsed,
+            compactMode: general?.compactMode !== undefined && general?.compactMode !== null ? general.compactMode : prev.compactMode,
+            
+            // API settings (stored in general)
+            apiKey: general?.apiKey ?? prev.apiKey,
+            webhookUrl: general?.webhookUrl ?? prev.webhookUrl,
+            rateLimit: general?.rateLimit ?? prev.rateLimit,
+            
+            // Notification settings
+            emailNotifications: notification?.emailNotifications !== undefined && notification?.emailNotifications !== null ? notification.emailNotifications : prev.emailNotifications,
+            smsNotifications: notification?.smsNotifications !== undefined && notification?.smsNotifications !== null ? notification.smsNotifications : prev.smsNotifications,
+            pushNotifications: notification?.pushNotifications !== undefined && notification?.pushNotifications !== null ? notification.pushNotifications : prev.pushNotifications,
+            orderAlerts: notification?.orderAlerts !== undefined && notification?.orderAlerts !== null ? notification.orderAlerts : prev.orderAlerts,
+            inventoryAlerts: notification?.inventoryAlerts !== undefined && notification?.inventoryAlerts !== null ? notification.inventoryAlerts : prev.inventoryAlerts,
+          };
+          // Store initial state after loading
+          setInitialFormData(updated);
+          return updated;
+        });
+      } catch (error) {
+        console.error('Failed to load settings', error);
+        if (mounted) {
+          setSettingsStatus({ type: 'error', message: (error as Error).message || 'Failed to load settings.' });
+        }
+      } finally {
+        if (mounted) setSettingsLoading(false);
+      }
+    };
+
+    fetchAllSettings();
     return () => {
       mounted = false;
     };
@@ -203,28 +333,154 @@ export default function SettingsPage() {
       ...prev,
       [field]: value
     }));
+    
+    // Apply theme immediately when changed (before saving)
+    if (field === 'theme' && typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('themeChanged', { detail: value }))
+    }
   };
 
-  const handleSave = () => {
-    // Handle save logic here
-    console.log('Saving settings:', formData);
+  const handleCancel = () => {
+    // Restore formData
+    setFormData(initialFormData);
+    
+    // Restore payment settings if on payments section
+    if (activeSection === 'payments') {
+      setBankSettings(initialBankSettings);
+      setMobileMoneySettings(initialMobileMoneySettings);
+      setCardSettings(initialCardSettings);
+      setCodSettings(initialCodSettings);
+      setDpoSettings(initialDpoSettings);
+    }
+    
+    // Revert theme if it was changed
+    if (initialFormData.theme && typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('themeChanged', { detail: initialFormData.theme }));
+    }
+    
+    // Clear any status messages
+    setSettingsStatus({ type: 'idle' });
+    setPaymentStatus({ type: 'idle' });
+  };
+
+  const handleSave = async () => {
+    console.log('🔵 handleSave called, activeSection:', activeSection);
+    // If on payments section, use the payment-specific save handler
+    if (activeSection === 'payments') {
+      console.log('🔵 Routing to handleSavePaymentSettings...');
+      await handleSavePaymentSettings();
+      return;
+    }
+    
+    // Handle save logic for other sections
+    setSettingsSaving(true);
+    setSettingsStatus({ type: 'idle' });
+    
+    try {
+      if (activeSection === 'profile') {
+        // Save profile settings to general category
+        await api.updateSettings('general', {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          phone: formData.phone,
+          timezone: formData.timezone,
+        });
+      } else if (activeSection === 'general') {
+        // Save general settings
+        await api.updateSettings('general', {
+          companyName: formData.companyName,
+          currency: formData.currency,
+          dateFormat: formData.dateFormat,
+          timeFormat: formData.timeFormat,
+        });
+      } else if (activeSection === 'security') {
+        // Save security settings to general category
+        await api.updateSettings('general', {
+          twoFactorEnabled: formData.twoFactorEnabled,
+          sessionTimeout: formData.sessionTimeout,
+          passwordExpiry: formData.passwordExpiry,
+        });
+      } else if (activeSection === 'notifications') {
+        // Save notification settings
+        await api.updateSettings('notification', {
+          emailNotifications: formData.emailNotifications,
+          smsNotifications: formData.smsNotifications,
+          pushNotifications: formData.pushNotifications,
+          orderAlerts: formData.orderAlerts,
+          inventoryAlerts: formData.inventoryAlerts,
+        });
+      } else if (activeSection === 'appearance') {
+        // Save appearance settings to general category
+        await api.updateSettings('general', {
+          theme: formData.theme,
+          sidebarCollapsed: formData.sidebarCollapsed,
+          compactMode: formData.compactMode,
+        });
+        
+        // Dispatch theme change event to apply immediately
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('themeChanged', { detail: formData.theme }))
+        }
+      } else if (activeSection === 'api') {
+        // Save API settings to general category
+        await api.updateSettings('general', {
+          apiKey: formData.apiKey,
+          webhookUrl: formData.webhookUrl,
+          rateLimit: formData.rateLimit,
+        });
+      }
+      
+      // Update initial state after successful save
+      setInitialFormData(formData);
+      
+      setSettingsStatus({ type: 'success', message: 'Settings updated successfully.' });
+      
+      // Reload settings after a short delay to verify persistence
+      setTimeout(async () => {
+        try {
+          const [generalResponse, notificationResponse] = await Promise.all([
+            api.getSettingsByCategory('general'),
+            api.getSettingsByCategory('notification'),
+          ]);
+          
+          const general = generalResponse?.data || generalResponse;
+          const notification = notificationResponse?.data || notificationResponse;
+          
+          console.log('🟡 Reloaded settings from backend:', {
+            general,
+            notification,
+          });
+        } catch (reloadError) {
+          console.error('❌ Error reloading settings:', reloadError);
+        }
+      }, 1500);
+    } catch (error) {
+      console.error('❌ Failed to save settings', error);
+      setSettingsStatus({
+        type: 'error',
+        message: (error as Error).message || 'Failed to update settings.',
+      });
+    } finally {
+      setSettingsSaving(false);
+    }
   };
 
   const renderProfileSettings = () => (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-medium text-gray-900">Personal Information</h3>
-        <p className="mt-1 text-sm text-gray-500">Update your personal details and contact information.</p>
+        <h3 className="text-xl font-semibold text-gray-900">Personal Information</h3>
+        <p className="mt-2 text-sm text-gray-500">Update your personal details and contact information.</p>
       </div>
       
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
         <div>
-          <label className="block text-sm font-medium text-gray-700">First Name</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
           <input
             type="text"
             value={formData.firstName}
             onChange={(e) => handleInputChange('firstName', e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+            className="block w-full rounded-2xl border border-[#dddddd] shadow-sm focus:border-[var(--shreeji-primary)] focus:ring-[var(--shreeji-primary)] sm:text-sm px-4 py-3"
           />
         </div>
         <div>
@@ -233,7 +489,7 @@ export default function SettingsPage() {
             type="text"
             value={formData.lastName}
             onChange={(e) => handleInputChange('lastName', e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+            className="block w-full rounded-2xl border border-[#dddddd] shadow-sm focus:border-[var(--shreeji-primary)] focus:ring-[var(--shreeji-primary)] sm:text-sm px-4 py-3"
           />
         </div>
         <div>
@@ -242,7 +498,7 @@ export default function SettingsPage() {
             type="email"
             value={formData.email}
             onChange={(e) => handleInputChange('email', e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+            className="block w-full rounded-2xl border border-[#dddddd] shadow-sm focus:border-[var(--shreeji-primary)] focus:ring-[var(--shreeji-primary)] sm:text-sm px-4 py-3"
           />
         </div>
         <div>
@@ -251,7 +507,7 @@ export default function SettingsPage() {
             type="tel"
             value={formData.phone}
             onChange={(e) => handleInputChange('phone', e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+            className="block w-full rounded-2xl border border-[#dddddd] shadow-sm focus:border-[var(--shreeji-primary)] focus:ring-[var(--shreeji-primary)] sm:text-sm px-4 py-3"
           />
         </div>
         <div className="sm:col-span-2">
@@ -259,7 +515,7 @@ export default function SettingsPage() {
           <select
             value={formData.timezone}
             onChange={(e) => handleInputChange('timezone', e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+            className="block w-full rounded-2xl border border-[#dddddd] shadow-sm focus:border-[var(--shreeji-primary)] focus:ring-[var(--shreeji-primary)] sm:text-sm px-4 py-3"
           >
             <option value="UTC">UTC</option>
             <option value="America/New_York">Eastern Time</option>
@@ -275,8 +531,8 @@ export default function SettingsPage() {
   const renderGeneralSettings = () => (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-medium text-gray-900">General Settings</h3>
-        <p className="mt-1 text-sm text-gray-500">Configure general application preferences.</p>
+        <h3 className="text-xl font-semibold text-gray-900">General Settings</h3>
+        <p className="mt-2 text-sm text-gray-500">Configure general application preferences.</p>
       </div>
       
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -286,7 +542,7 @@ export default function SettingsPage() {
             type="text"
             value={formData.companyName}
             onChange={(e) => handleInputChange('companyName', e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+            className="block w-full rounded-2xl border border-[#dddddd] shadow-sm focus:border-[var(--shreeji-primary)] focus:ring-[var(--shreeji-primary)] sm:text-sm px-4 py-3"
           />
         </div>
         <div>
@@ -294,7 +550,7 @@ export default function SettingsPage() {
           <select
             value={formData.currency}
             onChange={(e) => handleInputChange('currency', e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+            className="block w-full rounded-2xl border border-[#dddddd] shadow-sm focus:border-[var(--shreeji-primary)] focus:ring-[var(--shreeji-primary)] sm:text-sm px-4 py-3"
           >
             <option value="ZMW">ZMW - Zambian Kwacha</option>
             <option value="EUR">EUR - Euro</option>
@@ -307,7 +563,7 @@ export default function SettingsPage() {
           <select
             value={formData.dateFormat}
             onChange={(e) => handleInputChange('dateFormat', e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+            className="block w-full rounded-2xl border border-[#dddddd] shadow-sm focus:border-[var(--shreeji-primary)] focus:ring-[var(--shreeji-primary)] sm:text-sm px-4 py-3"
           >
             <option value="MM/DD/YYYY">MM/DD/YYYY</option>
             <option value="DD/MM/YYYY">DD/MM/YYYY</option>
@@ -319,7 +575,7 @@ export default function SettingsPage() {
           <select
             value={formData.timeFormat}
             onChange={(e) => handleInputChange('timeFormat', e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+            className="block w-full rounded-2xl border border-[#dddddd] shadow-sm focus:border-[var(--shreeji-primary)] focus:ring-[var(--shreeji-primary)] sm:text-sm px-4 py-3"
           >
             <option value="12h">12-hour</option>
             <option value="24h">24-hour</option>
@@ -332,8 +588,8 @@ export default function SettingsPage() {
   const renderSecuritySettings = () => (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-medium text-gray-900">Security Settings</h3>
-        <p className="mt-1 text-sm text-gray-500">Manage your account security and authentication preferences.</p>
+        <h3 className="text-xl font-semibold text-gray-900">Security Settings</h3>
+        <p className="mt-2 text-sm text-gray-500">Manage your account security and authentication preferences.</p>
       </div>
       
       <div className="space-y-4">
@@ -346,8 +602,8 @@ export default function SettingsPage() {
             type="button"
             onClick={() => handleInputChange('twoFactorEnabled', !formData.twoFactorEnabled)}
             className={clsx(
-              'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2',
-              formData.twoFactorEnabled ? 'bg-primary-600' : 'bg-gray-200'
+              'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[var(--shreeji-primary)] focus:ring-offset-2',
+              formData.twoFactorEnabled ? 'bg-[var(--shreeji-primary)]' : 'bg-gray-200'
             )}
           >
             <span
@@ -364,7 +620,7 @@ export default function SettingsPage() {
           <select
             value={formData.sessionTimeout}
             onChange={(e) => handleInputChange('sessionTimeout', e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+            className="block w-full rounded-2xl border border-[#dddddd] shadow-sm focus:border-[var(--shreeji-primary)] focus:ring-[var(--shreeji-primary)] sm:text-sm px-4 py-3"
           >
             <option value="15">15 minutes</option>
             <option value="30">30 minutes</option>
@@ -378,7 +634,7 @@ export default function SettingsPage() {
           <select
             value={formData.passwordExpiry}
             onChange={(e) => handleInputChange('passwordExpiry', e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+            className="block w-full rounded-2xl border border-[#dddddd] shadow-sm focus:border-[var(--shreeji-primary)] focus:ring-[var(--shreeji-primary)] sm:text-sm px-4 py-3"
           >
             <option value="30">30 days</option>
             <option value="60">60 days</option>
@@ -394,8 +650,8 @@ export default function SettingsPage() {
   const renderNotificationSettings = () => (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-medium text-gray-900">Notification Preferences</h3>
-        <p className="mt-1 text-sm text-gray-500">Choose how you want to receive notifications.</p>
+        <h3 className="text-xl font-semibold text-gray-900">Notification Preferences</h3>
+        <p className="mt-2 text-sm text-gray-500">Choose how you want to receive notifications.</p>
       </div>
       
       <div className="space-y-4">
@@ -415,8 +671,8 @@ export default function SettingsPage() {
               type="button"
               onClick={() => handleInputChange(key, !formData[key as keyof typeof formData])}
               className={clsx(
-                'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2',
-                formData[key as keyof typeof formData] ? 'bg-primary-600' : 'bg-gray-200'
+                'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[var(--shreeji-primary)] focus:ring-offset-2',
+                formData[key as keyof typeof formData] ? 'bg-[var(--shreeji-primary)]' : 'bg-gray-200'
               )}
             >
               <span
@@ -435,8 +691,8 @@ export default function SettingsPage() {
   const renderAppearanceSettings = () => (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-medium text-gray-900">Appearance Settings</h3>
-        <p className="mt-1 text-sm text-gray-500">Customize the look and feel of your dashboard.</p>
+        <h3 className="text-xl font-semibold text-gray-900">Appearance Settings</h3>
+        <p className="mt-2 text-sm text-gray-500">Customize the look and feel of your dashboard.</p>
       </div>
       
       <div className="space-y-4">
@@ -455,7 +711,7 @@ export default function SettingsPage() {
                   value={option.value}
                   checked={formData.theme === option.value}
                   onChange={(e) => handleInputChange('theme', e.target.value)}
-                  className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300"
+                  className="h-4 w-4 text-[var(--shreeji-primary)] focus:ring-[var(--shreeji-primary)] border-gray-300"
                 />
                 <span className="ml-2 text-sm text-gray-700">{option.label}</span>
               </label>
@@ -472,8 +728,8 @@ export default function SettingsPage() {
             type="button"
             onClick={() => handleInputChange('compactMode', !formData.compactMode)}
             className={clsx(
-              'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2',
-              formData.compactMode ? 'bg-primary-600' : 'bg-gray-200'
+              'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[var(--shreeji-primary)] focus:ring-offset-2',
+              formData.compactMode ? 'bg-[var(--shreeji-primary)]' : 'bg-gray-200'
             )}
           >
             <span
@@ -503,7 +759,7 @@ export default function SettingsPage() {
               type="text"
               value={formData.apiKey}
               onChange={(e) => handleInputChange('apiKey', e.target.value)}
-              className="flex-1 rounded-none rounded-l-md border-gray-300 focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+              className="flex-1 rounded-none rounded-l-md border border-[#dddddd] focus:border-[var(--shreeji-primary)] focus:ring-[var(--shreeji-primary)] sm:text-sm"
               readOnly
             />
             <button className="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm hover:bg-gray-100">
@@ -518,7 +774,7 @@ export default function SettingsPage() {
             type="url"
             value={formData.webhookUrl}
             onChange={(e) => handleInputChange('webhookUrl', e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+            className="block w-full rounded-2xl border border-[#dddddd] shadow-sm focus:border-[var(--shreeji-primary)] focus:ring-[var(--shreeji-primary)] sm:text-sm px-4 py-3"
           />
         </div>
         
@@ -527,7 +783,7 @@ export default function SettingsPage() {
           <select
             value={formData.rateLimit}
             onChange={(e) => handleInputChange('rateLimit', e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+            className="block w-full rounded-2xl border border-[#dddddd] shadow-sm focus:border-[var(--shreeji-primary)] focus:ring-[var(--shreeji-primary)] sm:text-sm px-4 py-3"
           >
             <option value="100">100</option>
             <option value="500">500</option>
@@ -541,11 +797,20 @@ export default function SettingsPage() {
   );
 
   const handleSavePaymentSettings = async () => {
+    console.log('🔵 handleSavePaymentSettings called');
+    console.log('🔵 Current payment settings state:', {
+      bank: { isEnabled: bankSettings.isEnabled, type: typeof bankSettings.isEnabled },
+      dpo: { isEnabled: dpoSettings.isEnabled, type: typeof dpoSettings.isEnabled },
+      mobileMoney: { isEnabled: mobileMoneySettings.isEnabled, type: typeof mobileMoneySettings.isEnabled },
+      card: { isEnabled: cardSettings.isEnabled, type: typeof cardSettings.isEnabled },
+      cod: { isEnabled: codSettings.isEnabled, type: typeof codSettings.isEnabled },
+    });
+    
     setPaymentSaving(true);
     setPaymentStatus({ type: 'idle' });
     try {
-      await Promise.all([
-        api.updateSettings('payment_bank_transfer', {
+      const payloads = {
+        bank_transfer: {
           bankName: bankSettings.bankName,
           accountNumber: bankSettings.accountNumber,
           accountName: bankSettings.accountName,
@@ -553,28 +818,78 @@ export default function SettingsPage() {
           iban: bankSettings.iban,
           deadlineHours: Number(bankSettings.deadlineHours) || 24,
           isEnabled: bankSettings.isEnabled,
-        }),
-        api.updateSettings('payment_dpo', {
+        },
+        dpo: {
           companyToken: dpoSettings.companyToken,
           apiUrl: dpoSettings.apiUrl,
           serviceType: dpoSettings.serviceType,
           redirectUrl: dpoSettings.redirectUrl,
           backUrl: dpoSettings.backUrl,
           isEnabled: dpoSettings.isEnabled,
-        }),
-        api.updateSettings('payment_mobile_money', {
+        },
+        mobile_money: {
           isEnabled: mobileMoneySettings.isEnabled,
-        }),
-        api.updateSettings('payment_card', {
+        },
+        card: {
           isEnabled: cardSettings.isEnabled,
-        }),
-        api.updateSettings('payment_cod', {
+        },
+        cod: {
           isEnabled: codSettings.isEnabled,
-        }),
+        },
+      };
+      
+      console.log('🔵 Sending payment settings to backend:', JSON.stringify(payloads, null, 2));
+      
+      const results = await Promise.all([
+        api.updateSettings('payment_bank_transfer', payloads.bank_transfer),
+        api.updateSettings('payment_dpo', payloads.dpo),
+        api.updateSettings('payment_mobile_money', payloads.mobile_money),
+        api.updateSettings('payment_card', payloads.card),
+        api.updateSettings('payment_cod', payloads.cod),
       ]);
+      
+      console.log('🟢 Backend response received:', results);
+      
+      // Update initial payment settings after successful save
+      setInitialBankSettings(bankSettings);
+      setInitialMobileMoneySettings(mobileMoneySettings);
+      setInitialCardSettings(cardSettings);
+      setInitialCodSettings(codSettings);
+      setInitialDpoSettings(dpoSettings);
+      
       setPaymentStatus({ type: 'success', message: 'Payment settings updated successfully.' });
+      
+      // Reload settings after a short delay to verify persistence
+      setTimeout(async () => {
+        console.log('🟡 Reloading settings to verify persistence...');
+        try {
+          const [bank, dpo, mobileMoney, card, cod] = await Promise.all([
+            api.getSettingsByCategory('payment_bank_transfer'),
+            api.getSettingsByCategory('payment_dpo'),
+            api.getSettingsByCategory('payment_mobile_money'),
+            api.getSettingsByCategory('payment_card'),
+            api.getSettingsByCategory('payment_cod'),
+          ]);
+          
+          const bankData = bank?.data || bank;
+          const dpoData = dpo?.data || dpo;
+          const mobileMoneyData = mobileMoney?.data || mobileMoney;
+          const cardData = card?.data || card;
+          const codData = cod?.data || cod;
+          
+          console.log('🟡 Reloaded settings from backend:', {
+            bank: { isEnabled: bankData?.isEnabled, type: typeof bankData?.isEnabled },
+            dpo: { isEnabled: dpoData?.isEnabled, type: typeof dpoData?.isEnabled },
+            mobileMoney: { isEnabled: mobileMoneyData?.isEnabled, type: typeof mobileMoneyData?.isEnabled },
+            card: { isEnabled: cardData?.isEnabled, type: typeof cardData?.isEnabled },
+            cod: { isEnabled: codData?.isEnabled, type: typeof codData?.isEnabled },
+          });
+        } catch (reloadError) {
+          console.error('❌ Error reloading settings:', reloadError);
+        }
+      }, 1500);
     } catch (error) {
-      console.error('Failed to save payment settings', error);
+      console.error('❌ Failed to save payment settings', error);
       setPaymentStatus({
         type: 'error',
         message: (error as Error).message || 'Failed to update payment settings.',
@@ -601,8 +916,8 @@ export default function SettingsPage() {
         </div>
 
         {/* Payment Method Toggles */}
-        <div className="bg-white border rounded-lg p-6 space-y-6">
-          <h4 className="text-md font-semibold text-gray-900">Payment Methods</h4>
+        <div className="bg-white rounded-3xl p-8 space-y-6 shadow-[0_0_20px_0_rgba(0,0,0,0.1)]">
+          <h4 className="text-lg font-semibold text-gray-900">Payment Methods</h4>
           
           {/* Card Payments */}
           <div className="flex items-center justify-between border-b pb-4">
@@ -614,8 +929,8 @@ export default function SettingsPage() {
               type="button"
               onClick={() => setCardSettings((prev) => ({ ...prev, isEnabled: !prev.isEnabled }))}
               className={clsx(
-                'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2',
-                cardSettings.isEnabled ? 'bg-primary-600' : 'bg-gray-200'
+                'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[var(--shreeji-primary)] focus:ring-offset-2',
+                cardSettings.isEnabled ? 'bg-[var(--shreeji-primary)]' : 'bg-gray-200'
               )}
             >
               <span
@@ -637,8 +952,8 @@ export default function SettingsPage() {
               type="button"
               onClick={() => setMobileMoneySettings((prev) => ({ ...prev, isEnabled: !prev.isEnabled }))}
               className={clsx(
-                'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2',
-                mobileMoneySettings.isEnabled ? 'bg-primary-600' : 'bg-gray-200'
+                'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[var(--shreeji-primary)] focus:ring-offset-2',
+                mobileMoneySettings.isEnabled ? 'bg-[var(--shreeji-primary)]' : 'bg-gray-200'
               )}
             >
               <span
@@ -660,8 +975,8 @@ export default function SettingsPage() {
               type="button"
               onClick={() => setBankSettings((prev) => ({ ...prev, isEnabled: !prev.isEnabled }))}
               className={clsx(
-                'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2',
-                bankSettings.isEnabled ? 'bg-primary-600' : 'bg-gray-200'
+              'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[var(--shreeji-primary)] focus:ring-offset-2',
+              bankSettings.isEnabled ? 'bg-[var(--shreeji-primary)]' : 'bg-gray-200'
               )}
             >
               <span
@@ -683,8 +998,8 @@ export default function SettingsPage() {
               type="button"
               onClick={() => setCodSettings((prev) => ({ ...prev, isEnabled: !prev.isEnabled }))}
               className={clsx(
-                'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2',
-                codSettings.isEnabled ? 'bg-primary-600' : 'bg-gray-200'
+                'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[var(--shreeji-primary)] focus:ring-offset-2',
+                codSettings.isEnabled ? 'bg-[var(--shreeji-primary)]' : 'bg-gray-200'
               )}
             >
               <span
@@ -700,18 +1015,18 @@ export default function SettingsPage() {
         {paymentStatus.type !== 'idle' && (
           <div
             className={clsx(
-              'rounded-md p-4',
-              paymentStatus.type === 'success' ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'
+              'rounded-2xl p-4 mb-6',
+              paymentStatus.type === 'success' ? 'bg-[#7FB06F]/10 text-[#7FB06F] border border-[#7FB06F]/20' : 'bg-[#D96C6C]/10 text-[#D96C6C] border border-[#D96C6C]/20'
             )}
           >
             <p className="text-sm font-medium">{paymentStatus.message}</p>
           </div>
         )}
 
-        <div className="bg-gray-50 border rounded-lg p-6 space-y-6">
+        <div className="bg-gray-50 rounded-3xl p-8 space-y-6 shadow-[0_0_20px_0_rgba(0,0,0,0.1)]">
           <div>
-            <h4 className="text-md font-semibold text-gray-900">Bank Transfer Configuration</h4>
-            <p className="text-sm text-gray-500">Information shown to customers who choose bank transfer.</p>
+            <h4 className="text-lg font-semibold text-gray-900">Bank Transfer Configuration</h4>
+            <p className="text-sm text-gray-500 mt-1">Information shown to customers who choose bank transfer.</p>
           </div>
 
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -721,7 +1036,7 @@ export default function SettingsPage() {
                 type="text"
                 value={bankSettings.bankName}
                 onChange={(e) => setBankSettings({ ...bankSettings, bankName: e.target.value })}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                className="block w-full rounded-2xl border border-[#dddddd] shadow-sm focus:border-[var(--shreeji-primary)] focus:ring-[var(--shreeji-primary)] sm:text-sm px-4 py-3"
               />
             </div>
             <div>
@@ -730,7 +1045,7 @@ export default function SettingsPage() {
                 type="text"
                 value={bankSettings.accountNumber}
                 onChange={(e) => setBankSettings({ ...bankSettings, accountNumber: e.target.value })}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                className="block w-full rounded-2xl border border-[#dddddd] shadow-sm focus:border-[var(--shreeji-primary)] focus:ring-[var(--shreeji-primary)] sm:text-sm px-4 py-3"
               />
             </div>
             <div>
@@ -739,7 +1054,7 @@ export default function SettingsPage() {
                 type="text"
                 value={bankSettings.accountName}
                 onChange={(e) => setBankSettings({ ...bankSettings, accountName: e.target.value })}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                className="block w-full rounded-2xl border border-[#dddddd] shadow-sm focus:border-[var(--shreeji-primary)] focus:ring-[var(--shreeji-primary)] sm:text-sm px-4 py-3"
               />
             </div>
             <div>
@@ -748,7 +1063,7 @@ export default function SettingsPage() {
                 type="text"
                 value={bankSettings.swiftCode}
                 onChange={(e) => setBankSettings({ ...bankSettings, swiftCode: e.target.value })}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                className="block w-full rounded-2xl border border-[#dddddd] shadow-sm focus:border-[var(--shreeji-primary)] focus:ring-[var(--shreeji-primary)] sm:text-sm px-4 py-3"
               />
             </div>
             <div>
@@ -757,7 +1072,7 @@ export default function SettingsPage() {
                 type="text"
                 value={bankSettings.iban}
                 onChange={(e) => setBankSettings({ ...bankSettings, iban: e.target.value })}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                className="block w-full rounded-2xl border border-[#dddddd] shadow-sm focus:border-[var(--shreeji-primary)] focus:ring-[var(--shreeji-primary)] sm:text-sm px-4 py-3"
               />
             </div>
             <div>
@@ -769,24 +1084,24 @@ export default function SettingsPage() {
                 onChange={(e) =>
                   setBankSettings({ ...bankSettings, deadlineHours: Number(e.target.value) || 1 })
                 }
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                className="block w-full rounded-2xl border border-[#dddddd] shadow-sm focus:border-[var(--shreeji-primary)] focus:ring-[var(--shreeji-primary)] sm:text-sm px-4 py-3"
               />
             </div>
           </div>
         </div>
 
-        <div className="bg-gray-50 border rounded-lg p-6 space-y-6">
+        <div className="bg-gray-50 rounded-3xl p-8 space-y-6 shadow-[0_0_20px_0_rgba(0,0,0,0.1)]">
           <div className="flex items-center justify-between">
             <div>
-              <h4 className="text-md font-semibold text-gray-900">DPO Gateway</h4>
+              <h4 className="text-lg font-semibold text-gray-900">DPO Gateway</h4>
               <p className="text-sm text-gray-500">Configure Direct Pay Online credentials.</p>
             </div>
             <button
               type="button"
               onClick={() => setDpoSettings((prev) => ({ ...prev, isEnabled: !prev.isEnabled }))}
               className={clsx(
-                'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2',
-                dpoSettings.isEnabled ? 'bg-primary-600' : 'bg-gray-200'
+                'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[var(--shreeji-primary)] focus:ring-offset-2',
+                dpoSettings.isEnabled ? 'bg-[var(--shreeji-primary)]' : 'bg-gray-200'
               )}
             >
               <span
@@ -805,7 +1120,7 @@ export default function SettingsPage() {
                 type="text"
                 value={dpoSettings.companyToken}
                 onChange={(e) => setDpoSettings({ ...dpoSettings, companyToken: e.target.value })}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                className="block w-full rounded-2xl border border-[#dddddd] shadow-sm focus:border-[var(--shreeji-primary)] focus:ring-[var(--shreeji-primary)] sm:text-sm px-4 py-3"
               />
             </div>
             <div>
@@ -814,7 +1129,7 @@ export default function SettingsPage() {
                 type="text"
                 value={dpoSettings.apiUrl}
                 onChange={(e) => setDpoSettings({ ...dpoSettings, apiUrl: e.target.value })}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                className="block w-full rounded-2xl border border-[#dddddd] shadow-sm focus:border-[var(--shreeji-primary)] focus:ring-[var(--shreeji-primary)] sm:text-sm px-4 py-3"
               />
             </div>
             <div>
@@ -823,7 +1138,7 @@ export default function SettingsPage() {
                 type="text"
                 value={dpoSettings.serviceType}
                 onChange={(e) => setDpoSettings({ ...dpoSettings, serviceType: e.target.value })}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                className="block w-full rounded-2xl border border-[#dddddd] shadow-sm focus:border-[var(--shreeji-primary)] focus:ring-[var(--shreeji-primary)] sm:text-sm px-4 py-3"
               />
             </div>
             <div>
@@ -832,7 +1147,7 @@ export default function SettingsPage() {
                 type="url"
                 value={dpoSettings.redirectUrl}
                 onChange={(e) => setDpoSettings({ ...dpoSettings, redirectUrl: e.target.value })}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                className="block w-full rounded-2xl border border-[#dddddd] shadow-sm focus:border-[var(--shreeji-primary)] focus:ring-[var(--shreeji-primary)] sm:text-sm px-4 py-3"
               />
             </div>
             <div>
@@ -841,24 +1156,10 @@ export default function SettingsPage() {
                 type="url"
                 value={dpoSettings.backUrl}
                 onChange={(e) => setDpoSettings({ ...dpoSettings, backUrl: e.target.value })}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                className="block w-full rounded-2xl border border-[#dddddd] shadow-sm focus:border-[var(--shreeji-primary)] focus:ring-[var(--shreeji-primary)] sm:text-sm px-4 py-3"
               />
             </div>
           </div>
-        </div>
-
-        <div className="flex justify-end">
-          <button
-            type="button"
-            onClick={handleSavePaymentSettings}
-            disabled={paymentSaving}
-            className={clsx(
-              'inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white',
-              paymentSaving ? 'bg-primary-300 cursor-not-allowed' : 'bg-primary-600 hover:bg-primary-700'
-            )}
-          >
-            {paymentSaving ? 'Saving...' : 'Save Payment Settings'}
-          </button>
         </div>
       </div>
     );
@@ -891,32 +1192,31 @@ export default function SettingsPage() {
   };
 
   return (
-    <Layout currentPage="Settings">
-    <div className="space-y-6">
+    <Layout currentPage="Settings" pageTitle="Settings">
+    <div className="space-y-6 pb-24">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-        <p className="mt-1 text-sm text-gray-500">Manage your account settings and preferences.</p>
+        <p className="text-sm text-gray-500">Manage your account settings and preferences.</p>
       </div>
 
-      <div className="lg:grid lg:grid-cols-12 lg:gap-x-5">
+      <div className="lg:grid lg:grid-cols-12 lg:gap-x-6">
         {/* Sidebar */}
         <aside className="py-6 px-2 sm:px-6 lg:py-0 lg:px-0 lg:col-span-3 lg:sticky lg:top-6 lg:self-start">
-          <nav className="space-y-1">
+          <nav className="space-y-2">
             {settingsSections.map((section) => (
               <button
                 key={section.id}
                 onClick={() => setActiveSection(section.id)}
                 className={clsx(
-                  'group w-full flex items-center pl-2 py-2 text-sm font-medium rounded-md',
+                  'group w-full flex items-center px-4 py-3 text-sm font-medium rounded-2xl transition-all duration-200',
                   activeSection === section.id
-                    ? 'bg-primary-50 text-primary-700'
+                    ? 'bg-[var(--shreeji-primary)] text-white shadow-md'
                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                 )}
               >
                 <section.icon
                   className={clsx(
                     'mr-3 flex-shrink-0 h-6 w-6',
-                    activeSection === section.id ? 'text-primary-500' : 'text-gray-400 group-hover:text-gray-500'
+                    activeSection === section.id ? 'text-white' : 'text-gray-400 group-hover:text-gray-500'
                   )}
                 />
                 {section.name}
@@ -927,27 +1227,49 @@ export default function SettingsPage() {
 
         {/* Main content */}
         <div className="space-y-6 sm:px-6 lg:px-0 lg:col-span-9">
-          <div className="bg-white shadow sm:rounded-lg">
-            <div className="px-4 py-5 sm:p-6">
+          <div className="bg-white shadow-[0_0_20px_0_rgba(113,103,103,0.1)] rounded-3xl">
+            <div className="px-6 py-8 sm:p-8">
               {renderSectionContent()}
               
-              <div className="mt-6 flex justify-end space-x-3">
+              {/* Settings Status Messages */}
+              {settingsStatus.type !== 'idle' && activeSection !== 'payments' && (
+                <div
+                  className={clsx(
+                    'mt-6 rounded-2xl p-4',
+                    settingsStatus.type === 'success' ? 'bg-[#7FB06F]/10 text-[#7FB06F] border border-[#7FB06F]/20' : 'bg-[#D96C6C]/10 text-[#D96C6C] border border-[#D96C6C]/20'
+                  )}
+                >
+                  <p className="text-sm font-medium">{settingsStatus.message}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Floating Action Buttons */}
+      <div className="fixed bottom-5 left-0 right-0 z-50 px-4 py-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto flex justify-end space-x-3">
                 <button
                   type="button"
-                  className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                  onClick={handleCancel}
+            className="inline-flex items-center px-8 py-4 border border-gray-300 shadow-lg text-sm font-medium rounded-2xl text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--shreeji-primary)] transition-all"
                 >
                   Cancel
                 </button>
                 <button
                   type="button"
                   onClick={handleSave}
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                >
-                  Save Changes
+            disabled={(activeSection === 'payments' && paymentSaving) || (activeSection !== 'payments' && settingsSaving)}
+            className={clsx(
+              'inline-flex items-center px-8 py-4 border border-transparent text-sm font-medium rounded-2xl shadow-lg text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--shreeji-primary)] transition-all',
+              ((activeSection === 'payments' && paymentSaving) || (activeSection !== 'payments' && settingsSaving))
+                ? 'bg-[var(--shreeji-primary)]/50 cursor-not-allowed'
+                : 'bg-[var(--shreeji-primary)] hover:opacity-90'
+            )}
+          >
+            {(activeSection === 'payments' && paymentSaving) || (activeSection !== 'payments' && settingsSaving) ? 'Saving...' : 'Save Changes'}
                 </button>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>

@@ -348,12 +348,11 @@ export default function ProductManagement() {
   }
 
   return (
-    <Layout currentPage="Products">
+    <Layout currentPage="Products" pageTitle="Product Management">
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Products</h1>
             <p className="mt-1 text-sm text-gray-500">
               Manage your product catalog ({filteredProducts.length} products)
             </p>

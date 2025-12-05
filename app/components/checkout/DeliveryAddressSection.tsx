@@ -54,7 +54,7 @@ export default function DeliveryAddressSection({
 
   if (loading) {
     return (
-      <div className='space-y-4'>
+      <div className='space-y-4 rounded-lg border-t-4 border-[var(--shreeji-primary)] bg-white p-6 shadow-sm'>
         <div className='flex items-center gap-3'>
           <Package className='h-5 w-5 text-[#544829]' />
           <h2 className='text-xl font-semibold text-gray-900'>Delivery address</h2>
@@ -68,7 +68,7 @@ export default function DeliveryAddressSection({
 
   if (!isAuthenticated) {
     return (
-      <div className='space-y-4'>
+      <div className='space-y-4 rounded-lg border-t-4 border-[var(--shreeji-primary)] bg-white p-6 shadow-sm'>
         <div className='flex items-center gap-3'>
           <Package className='h-5 w-5 text-[#544829]' />
           <h2 className='text-xl font-semibold text-gray-900'>Delivery address</h2>
@@ -77,7 +77,13 @@ export default function DeliveryAddressSection({
           <p className='text-gray-600 mb-4'>
             Please{' '}
             <button
-              onClick={() => router.push('/portal/login')}
+              onClick={() => {
+                // Store the return URL so we can redirect back after login
+                if (typeof window !== 'undefined') {
+                  sessionStorage.setItem('returnUrl', '/checkout')
+                }
+                router.push('/portal/login')
+              }}
               className='text-[var(--shreeji-primary)] hover:underline font-medium'
             >
               log in
@@ -96,7 +102,7 @@ export default function DeliveryAddressSection({
   }
 
   return (
-    <div className='space-y-4'>
+    <div className='space-y-4 rounded-lg border-t-4 border-[var(--shreeji-primary)] bg-white p-6 shadow-sm'>
       <div className='flex items-center gap-3'>
         <Package className='h-5 w-5 text-[#544829]' />
         <h2 className='text-xl font-semibold text-gray-900'>Delivery address</h2>

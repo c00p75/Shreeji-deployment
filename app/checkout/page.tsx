@@ -2,7 +2,7 @@
 
 import { useCart } from '@/app/contexts/CartContext'
 import { useClientAuth } from '@/app/contexts/ClientAuthContext'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import CheckoutTopBar from '@/app/components/checkout/CheckoutTopBar'
 import CheckoutTitle from '@/app/components/checkout/CheckoutTitle'
 import CheckoutAlerts from '@/app/components/checkout/CheckoutAlerts'
@@ -15,6 +15,7 @@ import PickupLocationSection from '@/app/components/checkout/PickupLocationSecti
 import OrderSummarySection from '@/app/components/checkout/OrderSummarySection'
 import PaymentDetailsSection from '@/app/components/checkout/PaymentDetailsSection'
 import OrderDetailsSidebar from '@/app/components/checkout/OrderDetailsSidebar'
+import AddressModal from '@/app/components/checkout/AddressModal'
 import { ShoppingBag } from 'lucide-react'
 import clientApi from '@/app/lib/client/api'
 
@@ -26,7 +27,7 @@ const CHECKOUT_STEPS = [
 
 export default function CheckoutPage() {
   const { cart, loading, checkout, isCheckingOut, error: cartError } = useCart()
-  const { user, isAuthenticated } = useClientAuth()
+  const { user, isAuthenticated, loading: authLoading } = useClientAuth()
   const [currentStep, setCurrentStep] = useState(1)
   const [formError, setFormError] = useState<string | null>(null)
   const [success, setSuccess] = useState<{ orderNumber: string; orderId: number; paymentStatus: string; redirectUrl?: string; requiresAction?: boolean } | null>(null)
@@ -41,6 +42,7 @@ export default function CheckoutPage() {
     mobileMoneyDetails?: { provider: 'mtn' | 'airtel' | 'zamtel' | 'orange'; phoneNumber: string }
   }>({})
   const [showRecoveryMessage, setShowRecoveryMessage] = useState(false)
+  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false)
 
   // Restore checkout progress on mount
   useEffect(() => {
@@ -84,14 +86,7 @@ export default function CheckoutPage() {
     }
   }, [success])
 
-  // Load user profile and addresses if authenticated
-  useEffect(() => {
-    if (isAuthenticated) {
-      loadUserData()
-    }
-  }, [isAuthenticated])
-
-  const loadUserData = async () => {
+  const loadUserData = useCallback(async () => {
     try {
       setLoadingAddresses(true)
       const [profileResponse, addressesResponse] = await Promise.all([
@@ -118,11 +113,33 @@ export default function CheckoutPage() {
     } finally {
       setLoadingAddresses(false)
     }
-  }
+  }, [])
+
+  // Load user profile and addresses if authenticated
+  // This will automatically trigger when auth state changes (e.g., after login)
+  useEffect(() => {
+    // Wait for auth loading to complete before checking auth state
+    if (!authLoading) {
+      if (isAuthenticated) {
+        loadUserData()
+      } else {
+        // Clear user data if not authenticated
+        setAddresses([])
+        setUserProfile(null)
+        setSelectedAddressId(null)
+      }
+    }
+  }, [isAuthenticated, authLoading, loadUserData])
 
   const handleAddAddress = () => {
-    // Handle add address modal/form
-    console.log('Add address clicked')
+    setIsAddressModalOpen(true)
+  }
+
+  const handleAddressAdded = async () => {
+    // Reload addresses after successful creation
+    if (isAuthenticated) {
+      await loadUserData()
+    }
   }
 
   const handleNext = () => {
@@ -368,14 +385,13 @@ export default function CheckoutPage() {
           <div className='space-y-8'>
             {/* Step 1: Review Order */}
             {currentStep === 1 && (
-              <div className='rounded-2xl bg-white p-6 shadow-sm'>
                 <OrderSummarySection />
-              </div>
+              
             )}
 
             {/* Step 2: Fulfillment & Address */}
             {currentStep === 2 && (
-              <div className='space-y-6 rounded-2xl bg-white p-6 shadow-sm'>
+              <div className='space-y-6'>
                 <DeliveryPickupToggle
                   fulfillmentType={fulfillmentType}
                   onFulfillmentTypeChange={setFulfillmentType}
@@ -397,7 +413,6 @@ export default function CheckoutPage() {
 
             {/* Step 3: Payment */}
             {currentStep === 3 && (
-              <div className='rounded-2xl bg-white p-6 shadow-sm'>
                 <PaymentDetailsSection
                   paymentMethod={paymentMethod}
                   onPaymentMethodChange={setPaymentMethod}
@@ -405,7 +420,6 @@ export default function CheckoutPage() {
                   onPaymentDetailsChange={setPaymentDetails}
                   isProcessing={isCheckingOut}
                 />
-              </div>
             )}
 
             {/* Navigation */}
@@ -442,6 +456,13 @@ export default function CheckoutPage() {
           isProcessing={isCheckingOut}
         />
       )}
+
+      {/* Address Modal */}
+      <AddressModal
+        isOpen={isAddressModalOpen}
+        onClose={() => setIsAddressModalOpen(false)}
+        onSuccess={handleAddressAdded}
+      />
     </div>
   )
 }
