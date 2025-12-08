@@ -19,7 +19,8 @@ const paymentMethodLabels = {
   debit_card: 'Debit Card',
   bank_transfer: 'Bank Transfer',
   mobile_money: 'Mobile Money',
-  cash_on_delivery: 'Cash on Delivery',
+  cash_on_delivery: 'Cash on Pick Up', // Backward compatibility
+  cash_on_pickup: 'Cash on Pick Up',
 };
 
 export default function PaymentManagement() {
@@ -149,7 +150,7 @@ export default function PaymentManagement() {
                 <option value="debit_card">Debit Card</option>
                 <option value="bank_transfer">Bank Transfer</option>
                 <option value="mobile_money">Mobile Money</option>
-                <option value="cash_on_delivery">Cash on Delivery</option>
+                <option value="cash_on_pickup">Cash on Pick Up</option>
               </select>
             </div>
             <div>

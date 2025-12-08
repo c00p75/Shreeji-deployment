@@ -56,7 +56,7 @@ export default function PaymentDetailsSection({
   const [defaultCardType, setDefaultCardType] = useState<'visa' | 'mastercard' | 'amex' | 'diners'>('visa')
   const [bankDetails, setBankDetails] = useState<BankDetails | null>(null)
   const [loadingBankDetails, setLoadingBankDetails] = useState(false)
-  const [enabledMethods, setEnabledMethods] = useState<string[]>(['card', 'mobile_money', 'bank_transfer', 'cod'])
+  const [enabledMethods, setEnabledMethods] = useState<string[]>(['card', 'mobile_money', 'bank_transfer', 'cop'])
   const [loadingMethods, setLoadingMethods] = useState(true)
   const [newCardData, setNewCardData] = useState({
     number: '',
@@ -73,7 +73,7 @@ export default function PaymentDetailsSection({
     setLoadingMethods(true)
     getEnabledPaymentMethods()
       .then((data) => {
-        setEnabledMethods(data.enabledMethods || ['card', 'mobile_money', 'bank_transfer', 'cod'])
+        setEnabledMethods(data.enabledMethods || ['card', 'mobile_money', 'bank_transfer', 'cop'])
         // If current payment method is disabled, switch to first enabled method
         if (data.enabledMethods && data.enabledMethods.length > 0 && !data.enabledMethods.includes(paymentMethod)) {
           onPaymentMethodChange(data.enabledMethods[0])
@@ -82,7 +82,7 @@ export default function PaymentDetailsSection({
       .catch((error) => {
         console.error('Failed to fetch enabled payment methods:', error)
         // Fallback to all methods if API fails
-        setEnabledMethods(['card', 'mobile_money', 'bank_transfer', 'cod'])
+        setEnabledMethods(['card', 'mobile_money', 'bank_transfer', 'cop'])
       })
       .finally(() => {
         setLoadingMethods(false)
@@ -108,7 +108,7 @@ export default function PaymentDetailsSection({
     { value: 'card', label: 'Credit / Debit Card (Visa, MasterCard, AmEx, Diners)' },
     { value: 'mobile_money', label: 'Mobile Money' },
     { value: 'bank_transfer', label: 'Bank Transfer' },
-    { value: 'cod', label: 'Cash on Delivery' },
+    { value: 'cop', label: 'Cash on Pick Up' },
   ]
 
   // Filter payment methods based on enabled methods

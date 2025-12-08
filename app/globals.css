@@ -284,3 +284,25 @@ a:hover {cursor: pointer;}
     @apply text-red-600;
   }
 }
+
+/* Disable toast animations for no-animation-toast class */
+.no-animation-toast {
+  animation: none !important;
+  transition: none !important;
+}
+
+.no-animation-toast[data-animate] {
+  animation: none !important;
+}
+
+.no-animation-toast[data-enter] {
+  animation: none !important;
+  transform: none !important;
+  opacity: 1 !important;
+}
+
+.no-animation-toast[data-exit] {
+  animation: none !important;
+  transform: none !important;
+  opacity: 1 !important;
+}

@@ -398,12 +398,16 @@ class ApiClient {
     return this.request<{ data: any[]; meta: any }>(endpoint);
   }
 
+  async getOrder(id: string | number) {
+    return this.request<{ data: any }>(`/admin/orders/${id}`);
+  }
+
   async createOrder(data: any) {
     // Orders are created via checkout, not directly in admin
     throw new Error('Use checkout endpoint to create orders');
   }
 
-  async updateOrder(id: string, data: any) {
+  async updateOrder(id: string | number, data: any) {
     return this.request<{ data: any }>(`/admin/orders/${id}`, {
       method: 'PUT',
       body: JSON.stringify(data),

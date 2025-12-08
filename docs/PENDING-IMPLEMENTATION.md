@@ -20,7 +20,7 @@ This document tracks all pending tasks and next steps required to make the ecomm
 
 ### ✅ Completed
 - [x] Basic checkout flow implementation
-- [x] Payment method selection (Card, Mobile Money, Bank Transfer, COD)
+- [x] Payment method selection (Card, Mobile Money, Bank Transfer, COP)
 - [x] Payment gateway integration (DPO)
 - [x] Order creation and confirmation
 - [x] VAT percentage display in order details
@@ -121,21 +121,30 @@ This document tracks all pending tasks and next steps required to make the ecomm
 - [x] Order status tracking
 - [x] Order items association
 
-### 🔄 Pending
-- [ ] **Order Status Workflow**
-  - [ ] Implement complete order status lifecycle:
+### ✅ Completed
+- [x] **Order Status Workflow**
+  - [x] Implement complete order status lifecycle:
     - `pending` → `confirmed` → `processing` → `shipped` → `delivered`
     - `pending` → `cancelled` (customer/admin)
     - `pending` → `refunded`
-  - [ ] Status transition validation
-  - [ ] Status change notifications
+  - [x] Status transition validation (OrderStatusTransitionService)
+  - [x] Status change notifications (email, SMS, in-app)
+  - [x] Admin-only status update endpoint (`PUT /orders/admin/:orderId/status`)
+  - [x] OrderStatusWorkflowService for managing status transitions
+  - [x] SMS service integration for status notifications
+  - [x] Enhanced notification preferences with SMS support
+
+### 🔄 Pending
 
 - [ ] **Order Tracking**
-  - [ ] Add tracking number field to orders
+  - [x] Add tracking number field to orders
   - [ ] Integration with shipping providers (if applicable)
-  - [ ] Tracking number input in admin panel
-  - [ ] Display tracking info in customer portal
-  - [ ] Email tracking updates to customers
+  - [x] Tracking number input in admin panel
+  - [x] Display tracking info in customer portal
+  - [x] Email tracking updates to customers
+  - [x] Auto-set shippedAt timestamp when tracking is added
+  - [x] Enhanced shipping notification email template
+  - [x] Edit order modal for admin to manage tracking
 
 - [ ] **Order Cancellation**
   - [ ] Customer-initiated cancellation (within time limit)
@@ -276,6 +285,9 @@ This document tracks all pending tasks and next steps required to make the ecomm
 - [x] Order confirmation emails
 - [x] Payment confirmation notifications
 - [x] In-app notifications
+- [x] Order status change notifications (email, SMS, in-app)
+- [x] SMS service with Twilio/AWS SNS support (mock implementation ready)
+- [x] Notification preferences with SMS support
 
 ### 🔄 Pending
 - [ ] **Email Templates**
@@ -287,11 +299,13 @@ This document tracks all pending tasks and next steps required to make the ecomm
   - [ ] Password reset email
   - [ ] Welcome email for new customers
 
-- [ ] **SMS Notifications**
-  - [ ] Order confirmation SMS
-  - [ ] Shipping updates SMS
+- [ ] **SMS Notifications** (Backend implemented, needs frontend integration)
+  - [x] SMS service with phone validation
+  - [x] Order status change SMS notifications
+  - [ ] Order confirmation SMS (frontend integration)
+  - [ ] Shipping updates SMS (frontend integration)
   - [ ] Payment reminders SMS
-  - [ ] Delivery notifications SMS
+  - [ ] Delivery notifications SMS (frontend integration)
 
 - [ ] **Push Notifications**
   - [ ] Browser push notifications
@@ -474,7 +488,7 @@ This document tracks all pending tasks and next steps required to make the ecomm
 
 ### 🔴 High Priority (Critical for Launch)
 1. Payment Gateway Webhooks
-2. Order Status Workflow
+2. ~~Order Status Workflow~~ ✅ Completed
 3. Email Templates
 4. Security Enhancements
 5. Basic Testing Suite
@@ -504,12 +518,34 @@ This document tracks all pending tasks and next steps required to make the ecomm
 
 ---
 
-**Last Updated:** December 4, 2024
+**Last Updated:** December 5, 2024
 **Maintained By:** Development Team
 
 ---
 
 ## Recent Updates
+
+### December 5, 2024 - Order Tracking Implementation
+- ✅ Implemented Order Tracking feature:
+  - Added shippedAt field to Order entity and UpdateOrderDto
+  - Created EditOrderModal component for admin to manage order tracking
+  - Integrated tracking number input in admin panel (OrderManagement)
+  - Added tracking number column to orders table
+  - Enhanced shipping notification email template with better formatting and order summary
+  - Auto-set shippedAt timestamp and order status to "shipped" when tracking is added
+  - Email notifications sent when tracking is added or updated
+  - Customer portal already displays tracking information (existing feature)
+
+### December 5, 2024
+- ✅ Implemented Order Status Workflow (TDD approach):
+  - Created OrderStatusTransitionService with complete transition validation
+  - Implemented OrderStatusWorkflowService for managing status updates
+  - Added SMS service with phone validation and multi-provider support
+  - Enhanced NotificationsService with order status change notifications (email, SMS, in-app)
+  - Added admin endpoint `PUT /orders/admin/:orderId/status` for status updates
+  - Added SMS support to NotificationPreference entity
+  - Comprehensive unit tests for all services (28 tests passing)
+  - E2E test structure created (Jest config needs adjustment for uuid module)
 
 ### December 4, 2024
 - ✅ Implemented Saved Cards backend functionality:

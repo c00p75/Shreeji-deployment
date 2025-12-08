@@ -5,6 +5,7 @@ import { PlusIcon, EyeIcon, PencilIcon, TrashIcon, MagnifyingGlassIcon } from '@
 import clsx from 'clsx';
 import Layout from './Layout'
 import api from '@/app/lib/admin/api'
+import EditOrderModal from './EditOrderModal'
 
 const statusColors = {
   pending: 'bg-yellow-100 text-yellow-800',
@@ -42,6 +43,8 @@ export default function OrderManagement() {
     pageSize: 100,
     total: 0,
   });
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<any>(null);
 
   const fetchOrders = useCallback(async () => {
     try {
@@ -68,6 +71,7 @@ export default function OrderManagement() {
         return {
           id: order.orderNumber || `#${order.id}`,
           orderId: order.id,
+          orderNumber: order.orderNumber || `#${order.id}`,
           customer: customer.firstName && customer.lastName
             ? `${customer.firstName} ${customer.lastName}`
             : customer.email || 'Unknown Customer',
@@ -76,6 +80,7 @@ export default function OrderManagement() {
           total: order.totalAmount || 0,
           status: order.status || order.orderStatus || 'pending',
           paymentStatus: order.paymentStatus || 'pending',
+          trackingNumber: order.trackingNumber || '',
           items: order.orderItems?.length || 0,
           date: order.createdAt ? new Date(order.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
           shippingAddress: shippingAddress.addressLine1 
@@ -394,6 +399,9 @@ export default function OrderManagement() {
                   Payment
                 </th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Tracking
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Date
                 </th>
                 <th scope="col" className="relative px-6 py-3">
@@ -404,7 +412,7 @@ export default function OrderManagement() {
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredOrders.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-6 py-8 text-center text-gray-500">
+                  <td colSpan={9} className="px-6 py-8 text-center text-gray-500">
                     No orders found
                   </td>
                 </tr>
@@ -444,18 +452,44 @@ export default function OrderManagement() {
                       {order.paymentStatus.charAt(0).toUpperCase() + order.paymentStatus.slice(1)}
                     </span>
                   </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {order.trackingNumber ? (
+                      <span className="font-mono text-xs">{order.trackingNumber}</span>
+                    ) : (
+                      <span className="text-gray-400">—</span>
+                    )}
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {new Date(order.date).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex items-center justify-end space-x-2">
-                      <button className="text-primary-600 hover:text-primary-900">
+                      <button 
+                        onClick={() => {
+                          // View order details (can be implemented later)
+                        }}
+                        className="text-primary-600 hover:text-primary-900"
+                        title="View Details"
+                      >
                         <EyeIcon className="h-4 w-4" />
                       </button>
-                      <button className="text-gray-600 hover:text-gray-900">
+                      <button 
+                        onClick={() => {
+                          setSelectedOrder(order);
+                          setIsEditModalOpen(true);
+                        }}
+                        className="text-gray-600 hover:text-gray-900"
+                        title="Edit Order"
+                      >
                         <PencilIcon className="h-4 w-4" />
                       </button>
-                      <button className="text-red-600 hover:text-red-900">
+                      <button 
+                        onClick={() => {
+                          // Delete order (can be implemented later)
+                        }}
+                        className="text-red-600 hover:text-red-900"
+                        title="Delete Order"
+                      >
                         <TrashIcon className="h-4 w-4" />
                       </button>
                     </div>
@@ -522,6 +556,19 @@ export default function OrderManagement() {
           </div>
         )}
       </div>
+
+      {/* Edit Order Modal */}
+      <EditOrderModal
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setSelectedOrder(null);
+        }}
+        order={selectedOrder}
+        onSave={() => {
+          fetchOrders();
+        }}
+      />
     </div>
     </Layout>
   );

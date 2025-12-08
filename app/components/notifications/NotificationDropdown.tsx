@@ -7,9 +7,10 @@ import { useEffect, useRef } from 'react';
 
 interface NotificationDropdownProps {
   onClose: () => void;
+  onShowAll?: () => void;
 }
 
-export default function NotificationDropdown({ onClose }: NotificationDropdownProps) {
+export default function NotificationDropdown({ onClose, onShowAll }: NotificationDropdownProps) {
   const { notifications, loading, markAllAsRead } = useNotifications();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -76,13 +77,18 @@ export default function NotificationDropdown({ onClose }: NotificationDropdownPr
 
       {notifications.length > 0 && (
         <div className="p-4 border-t border-gray-200 text-center">
-          <a
-            href="/portal/notifications"
-            className="text-sm text-primary-600 hover:text-primary-700"
-            onClick={onClose}
+          <button
+            onClick={() => {
+              if (onShowAll) {
+                onShowAll();
+              } else {
+                onClose();
+              }
+            }}
+            className="text-sm text-primary-600 hover:text-primary-700 font-medium transition-colors"
           >
             View all notifications
-          </a>
+          </button>
         </div>
       )}
     </div>

@@ -383,7 +383,8 @@ export default function OrderDetailsPage() {
                       debit_card: 'Debit Card',
                       bank_transfer: 'Bank Transfer',
                       mobile_money: 'Mobile Money',
-                      cash_on_delivery: 'Cash on Delivery',
+                      cash_on_delivery: 'Cash on Pick Up', // Backward compatibility
+                      cash_on_pickup: 'Cash on Pick Up',
                     };
 
                     const paymentMethod = paymentMethodLabels[payment.paymentMethod] || payment.paymentMethod || 'Unknown';

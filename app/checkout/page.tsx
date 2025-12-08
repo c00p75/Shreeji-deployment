@@ -36,7 +36,7 @@ export default function CheckoutPage() {
   const [addresses, setAddresses] = useState<any[]>([])
   const [loadingAddresses, setLoadingAddresses] = useState(false)
   const [userProfile, setUserProfile] = useState<any>(null)
-  const [paymentMethod, setPaymentMethod] = useState('card')
+  const [paymentMethod, setPaymentMethod] = useState('cop')
   const [paymentDetails, setPaymentDetails] = useState<{
     cardDetails?: { cardId?: string; number?: string; expiryMonth?: string; expiryYear?: string; cvv?: string; cardholderName?: string; saveCard?: boolean }
     mobileMoneyDetails?: { provider: 'mtn' | 'airtel' | 'zamtel' | 'orange'; phoneNumber: string }
@@ -56,7 +56,7 @@ export default function CheckoutPage() {
             setCurrentStep(state.currentStep)
             setFulfillmentType(state.fulfillmentType || 'pickup')
             setSelectedAddressId(state.selectedAddressId || null)
-            setPaymentMethod(state.paymentMethod || 'card')
+            setPaymentMethod(state.paymentMethod || 'cop')
           }
         } catch (err) {
           console.error('Failed to restore checkout state', err)
@@ -257,8 +257,8 @@ export default function CheckoutPage() {
       if (paymentMethod === 'card') {
         // Determine if it's credit or debit card (simplified - could be enhanced)
         backendPaymentMethod = 'credit_card'
-      } else if (paymentMethod === 'cod') {
-        backendPaymentMethod = 'cash_on_delivery'
+      } else if (paymentMethod === 'cop') {
+        backendPaymentMethod = 'cash_on_pickup'
       }
 
       // Build checkout payload - only include payment details when relevant and valid

@@ -1850,7 +1850,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
 
                           {/* Discount Price (computed) */}
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Discount Price</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Discounted Price</label>
                             <input
                               type="text"
                               value={discountPrice > 0 ? discountPrice.toFixed(2) : '0.00'}

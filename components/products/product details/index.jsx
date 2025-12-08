@@ -11,6 +11,7 @@ import { useState } from 'react';
 import { useCart } from '@/app/contexts/CartContext';
 import toast from 'react-hot-toast';
 import QuantityInput from '../QuantityInput';
+import { ToastWithProgress } from '@/app/components/ToastWithProgress';
 
 const ProductDetails = ({product}) => {  
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -132,7 +133,7 @@ const ProductDetails = ({product}) => {
               <div className='fadeDown fadeDown3' />
               <div className='fadeDown fadeDown4' />
               <div className='fadeDown fadeDown5' />
-              <ul className='scroll-container text-xl flex flex-col gap-2'>                          
+              <ul className='scroll-container text-xl flex flex-col gap-2' style={{ minHeight: 'fit-content' }}>                          
                 {Object.entries(product.specs).map(([key, value]) => (
                   <li key={key}>
                     <strong className='text-[#544829] capitalize'>{key.replace(/-/g, ' ')}:</strong>{" "}              
@@ -183,34 +184,24 @@ const ProductDetails = ({product}) => {
                   try {
                     await addItem(productIdentifier, quantity)
                     toast.success((t) => (
-                      <div className="flex flex-col items-center gap-4 p-2 animate-pulse">
-                        <div className="text-2xl font-bold text-green-600">✓ Added to Cart!</div>
-                        <p className="text-base text-gray-700 font-medium">Item successfully added to your shopping cart</p>
-                        <Link
-                          href="/checkout"
-                          onClick={() => toast.dismiss(t.id)}
-                          className="px-6 py-3 bg-[var(--shreeji-primary)] text-white rounded-xl text-base font-bold hover:opacity-90 transition-all hover:scale-105 shadow-lg"
-                        >
-                          Proceed to Checkout →
-                        </Link>
-                      </div>
+                      <ToastWithProgress t={t} duration={8000} />
                     ), {
                       duration: 8000,
                       position: 'top-center',
+                      className: 'animation-toast',
+                      icon: null,
                       style: {
                         background: '#fff',
                         color: '#000',
                         padding: '20px',
+                        paddingBottom: '0',
                         borderRadius: '16px',
                         boxShadow: '0 10px 40px rgba(0, 0, 0, 0.2)',
-                        border: '2px solid #10b981',
                         fontSize: '16px',
                         minWidth: '320px',
                         maxWidth: '400px',
-                      },
-                      iconTheme: {
-                        primary: '#10b981',
-                        secondary: '#fff',
+                        position: 'relative',
+                        overflow: 'hidden',
                       },
                     })
                   } catch (err) {

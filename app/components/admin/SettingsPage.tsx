@@ -126,7 +126,7 @@ export default function SettingsPage() {
   const [cardSettings, setCardSettings] = useState({
     isEnabled: true,
   });
-  const [codSettings, setCodSettings] = useState({
+  const [copSettings, setCopSettings] = useState({
     isEnabled: true,
   });
   const [dpoSettings, setDpoSettings] = useState({
@@ -153,7 +153,7 @@ export default function SettingsPage() {
   const [initialBankSettings, setInitialBankSettings] = useState(bankSettings);
   const [initialMobileMoneySettings, setInitialMobileMoneySettings] = useState(mobileMoneySettings);
   const [initialCardSettings, setInitialCardSettings] = useState(cardSettings);
-  const [initialCodSettings, setInitialCodSettings] = useState(codSettings);
+  const [initialCopSettings, setInitialCopSettings] = useState(copSettings);
   const [initialDpoSettings, setInitialDpoSettings] = useState(dpoSettings);
 
   // Load payment settings
@@ -162,12 +162,12 @@ export default function SettingsPage() {
     const fetchPaymentSettings = async () => {
       try {
         setPaymentLoading(true);
-        const [bankResponse, dpoResponse, mobileMoneyResponse, cardResponse, codResponse] = await Promise.all([
+        const [bankResponse, dpoResponse, mobileMoneyResponse, cardResponse, copResponse] = await Promise.all([
           api.getSettingsByCategory('payment_bank_transfer'),
           api.getSettingsByCategory('payment_dpo'),
           api.getSettingsByCategory('payment_mobile_money'),
           api.getSettingsByCategory('payment_card'),
-          api.getSettingsByCategory('payment_cod'),
+          api.getSettingsByCategory('payment_cop'),
         ]);
         if (!mounted) return;
         
@@ -176,7 +176,7 @@ export default function SettingsPage() {
         const dpo = dpoResponse?.data || dpoResponse;
         const mobileMoney = mobileMoneyResponse?.data || mobileMoneyResponse;
         const card = cardResponse?.data || cardResponse;
-        const cod = codResponse?.data || codResponse;
+        const cop = copResponse?.data || copResponse;
         
         setBankSettings({
           bankName: bank?.bankName ?? '',
@@ -205,9 +205,9 @@ export default function SettingsPage() {
           // Preserve false values - only default to true if undefined/null
           isEnabled: card?.isEnabled !== undefined && card?.isEnabled !== null ? card.isEnabled : true,
         });
-        setCodSettings({
+        setCopSettings({
           // Preserve false values - only default to true if undefined/null
-          isEnabled: cod?.isEnabled !== undefined && cod?.isEnabled !== null ? cod.isEnabled : true,
+          isEnabled: cop?.isEnabled !== undefined && cop?.isEnabled !== null ? cop.isEnabled : true,
         });
 
         // Store initial payment settings after loading
@@ -234,8 +234,8 @@ export default function SettingsPage() {
         setInitialCardSettings({
           isEnabled: card?.isEnabled !== undefined && card?.isEnabled !== null ? card.isEnabled : true,
         });
-        setInitialCodSettings({
-          isEnabled: cod?.isEnabled !== undefined && cod?.isEnabled !== null ? cod.isEnabled : true,
+        setInitialCopSettings({
+          isEnabled: cop?.isEnabled !== undefined && cop?.isEnabled !== null ? cop.isEnabled : true,
         });
       } catch (error) {
         console.error('Failed to load payment settings', error);
@@ -349,7 +349,7 @@ export default function SettingsPage() {
       setBankSettings(initialBankSettings);
       setMobileMoneySettings(initialMobileMoneySettings);
       setCardSettings(initialCardSettings);
-      setCodSettings(initialCodSettings);
+      setCopSettings(initialCopSettings);
       setDpoSettings(initialDpoSettings);
     }
     
@@ -803,7 +803,7 @@ export default function SettingsPage() {
       dpo: { isEnabled: dpoSettings.isEnabled, type: typeof dpoSettings.isEnabled },
       mobileMoney: { isEnabled: mobileMoneySettings.isEnabled, type: typeof mobileMoneySettings.isEnabled },
       card: { isEnabled: cardSettings.isEnabled, type: typeof cardSettings.isEnabled },
-      cod: { isEnabled: codSettings.isEnabled, type: typeof codSettings.isEnabled },
+      cop: { isEnabled: copSettings.isEnabled, type: typeof copSettings.isEnabled },
     });
     
     setPaymentSaving(true);
@@ -833,8 +833,8 @@ export default function SettingsPage() {
         card: {
           isEnabled: cardSettings.isEnabled,
         },
-        cod: {
-          isEnabled: codSettings.isEnabled,
+        cop: {
+          isEnabled: copSettings.isEnabled,
         },
       };
       
@@ -845,7 +845,7 @@ export default function SettingsPage() {
         api.updateSettings('payment_dpo', payloads.dpo),
         api.updateSettings('payment_mobile_money', payloads.mobile_money),
         api.updateSettings('payment_card', payloads.card),
-        api.updateSettings('payment_cod', payloads.cod),
+        api.updateSettings('payment_cop', payloads.cop),
       ]);
       
       console.log('🟢 Backend response received:', results);
@@ -854,7 +854,7 @@ export default function SettingsPage() {
       setInitialBankSettings(bankSettings);
       setInitialMobileMoneySettings(mobileMoneySettings);
       setInitialCardSettings(cardSettings);
-      setInitialCodSettings(codSettings);
+      setInitialCopSettings(copSettings);
       setInitialDpoSettings(dpoSettings);
       
       setPaymentStatus({ type: 'success', message: 'Payment settings updated successfully.' });
@@ -863,26 +863,26 @@ export default function SettingsPage() {
       setTimeout(async () => {
         console.log('🟡 Reloading settings to verify persistence...');
         try {
-          const [bank, dpo, mobileMoney, card, cod] = await Promise.all([
+          const [bank, dpo, mobileMoney, card, cop] = await Promise.all([
             api.getSettingsByCategory('payment_bank_transfer'),
             api.getSettingsByCategory('payment_dpo'),
             api.getSettingsByCategory('payment_mobile_money'),
             api.getSettingsByCategory('payment_card'),
-            api.getSettingsByCategory('payment_cod'),
+            api.getSettingsByCategory('payment_cop'),
           ]);
           
           const bankData = bank?.data || bank;
           const dpoData = dpo?.data || dpo;
           const mobileMoneyData = mobileMoney?.data || mobileMoney;
           const cardData = card?.data || card;
-          const codData = cod?.data || cod;
+          const copData = cop?.data || cop;
           
           console.log('🟡 Reloaded settings from backend:', {
             bank: { isEnabled: bankData?.isEnabled, type: typeof bankData?.isEnabled },
             dpo: { isEnabled: dpoData?.isEnabled, type: typeof dpoData?.isEnabled },
             mobileMoney: { isEnabled: mobileMoneyData?.isEnabled, type: typeof mobileMoneyData?.isEnabled },
             card: { isEnabled: cardData?.isEnabled, type: typeof cardData?.isEnabled },
-            cod: { isEnabled: codData?.isEnabled, type: typeof codData?.isEnabled },
+            cop: { isEnabled: copData?.isEnabled, type: typeof copData?.isEnabled },
           });
         } catch (reloadError) {
           console.error('❌ Error reloading settings:', reloadError);
@@ -988,24 +988,24 @@ export default function SettingsPage() {
             </button>
           </div>
 
-          {/* Cash on Delivery */}
+          {/* Cash on Pick Up */}
           <div className="flex items-center justify-between">
             <div>
-              <h5 className="text-sm font-medium text-gray-900">Cash on Delivery</h5>
-              <p className="text-sm text-gray-500">Enable cash on delivery payments</p>
+              <h5 className="text-sm font-medium text-gray-900">Cash on Pick Up</h5>
+              <p className="text-sm text-gray-500">Enable cash on pick up payments</p>
             </div>
             <button
               type="button"
-              onClick={() => setCodSettings((prev) => ({ ...prev, isEnabled: !prev.isEnabled }))}
+              onClick={() => setCopSettings((prev) => ({ ...prev, isEnabled: !prev.isEnabled }))}
               className={clsx(
                 'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[var(--shreeji-primary)] focus:ring-offset-2',
-                codSettings.isEnabled ? 'bg-[var(--shreeji-primary)]' : 'bg-gray-200'
+                copSettings.isEnabled ? 'bg-[var(--shreeji-primary)]' : 'bg-gray-200'
               )}
             >
               <span
                 className={clsx(
                   'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
-                  codSettings.isEnabled ? 'translate-x-5' : 'translate-x-0'
+                  copSettings.isEnabled ? 'translate-x-5' : 'translate-x-0'
                 )}
               />
             </button>

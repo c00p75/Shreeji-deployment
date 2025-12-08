@@ -136,10 +136,10 @@ export default function CheckoutAlerts({ cartError, formError, success, paymentM
                 </div>
               )}
 
-              {paymentMethod === 'cod' && success.paymentStatus === 'pending' && (
+              {paymentMethod === 'cop' && success.paymentStatus === 'pending' && (
                 <div className='mt-3 rounded bg-white p-3 text-sm'>
-                  <p className='font-semibold'>Cash on Delivery Confirmed</p>
-                  <p className='mt-1'>Please have the exact amount ready when your order arrives.</p>
+                  <p className='font-semibold'>Cash on Pick Up Confirmed</p>
+                  <p className='mt-1'>Please have the exact amount ready when you pick up your order.</p>
                 </div>
               )}
 
