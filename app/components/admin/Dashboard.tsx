@@ -147,7 +147,7 @@ export default function Dashboard() {
             transformedProducts = productsData.data?.map((product: any) => ({
               name: product.name,
               price: product.price,
-              revenue: `K${((product.stockQuantity || 0) * (product.costPrice || 0)).toLocaleString()}`,
+              revenue: `K${((product.stockQuantity || 0) * (product.basePrice || 0)).toLocaleString()}`,
               sold: product.stockQuantity || 0,
               stockStatus: product.stockStatus
             })) || []
@@ -159,7 +159,7 @@ export default function Dashboard() {
           transformedProducts = productsData.data?.map((product: any) => ({
             name: product.name,
             price: product.price,
-            revenue: `K${((product.stockQuantity || 0) * (product.costPrice || 0)).toLocaleString()}`,
+            revenue: `K${((product.stockQuantity || 0) * (product.basePrice || 0)).toLocaleString()}`,
             sold: product.stockQuantity || 0,
             stockStatus: product.stockStatus
           })) || []

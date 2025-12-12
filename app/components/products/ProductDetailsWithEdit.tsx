@@ -117,7 +117,7 @@ export default function ProductDetailsWithEdit({
         ...(updatedProduct.minStockLevel !== undefined && updatedProduct.minStockLevel !== null && { minStockLevel: updatedProduct.minStockLevel }),
         ...(updatedProduct.maxStockLevel !== undefined && updatedProduct.maxStockLevel !== null && { maxStockLevel: updatedProduct.maxStockLevel }),
         ...(updatedProduct.stockStatus && { stockStatus: updatedProduct.stockStatus }),
-        ...(updatedProduct.costPrice !== undefined && updatedProduct.costPrice !== null && { costPrice: updatedProduct.costPrice }),
+        ...(updatedProduct.basePrice !== undefined && updatedProduct.basePrice !== null && { basePrice: updatedProduct.basePrice }),
         ...(updatedProduct.weight !== undefined && updatedProduct.weight !== null && { weight: updatedProduct.weight }),
         ...(updatedProduct.Dimensions && { dimensions: updatedProduct.Dimensions }),
       };

@@ -34,7 +34,7 @@ interface Product {
   minStockLevel?: number;
   maxStockLevel?: number;
   stockStatus?: string;
-  costPrice?: number;
+  basePrice?: number;
   taxRate?: number;
   discountPercent?: number;
   weight?: number;
@@ -300,11 +300,11 @@ export default function ViewProductModal({
                         </dd>
                       </div>
                     )}
-                    {product.costPrice !== undefined && product.costPrice !== null && (
+                    {product.basePrice !== undefined && product.basePrice !== null && (
                       <div>
-                        <dt className="text-sm text-gray-500">Cost price</dt>
+                        <dt className="text-sm text-gray-500">Base price</dt>
                         <dd className="mt-1 text-base font-medium text-gray-900">
-                          {product.costPrice}
+                          {product.basePrice}
                         </dd>
                       </div>
                     )}

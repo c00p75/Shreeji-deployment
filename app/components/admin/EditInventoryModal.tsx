@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { XMarkIcon, ExclamationTriangleIcon, PlusIcon, MinusIcon } from '@heroicons/react/24/outline';
 import api from '@/app/lib/admin/api';
+import toast from 'react-hot-toast';
 
 interface Product {
   id: number;
@@ -15,7 +16,7 @@ interface Product {
   minStockLevel: number;
   maxStockLevel: number;
   stockStatus: string;
-  costPrice: number;
+  basePrice: number;
   weight: number;
   images?: Array<{ url: string; alt: string; isMain?: boolean }>;
 }
@@ -25,6 +26,9 @@ interface EditInventoryModalProps {
   onClose: () => void;
   product: Product | null;
   onSave: () => void;
+  warehouseId?: number | null;
+  warehouses?: Array<{ id: number; name: string }>;
+  onTransfer?: (product: Product) => void;
 }
 
 export default function EditInventoryModal({
@@ -32,33 +36,55 @@ export default function EditInventoryModal({
   onClose,
   product,
   onSave,
+  warehouseId,
+  warehouses = [],
+  onTransfer,
 }: EditInventoryModalProps) {
   const [formData, setFormData] = useState({
     stockQuantity: 0,
     minStockLevel: 0,
     maxStockLevel: 0,
     stockStatus: 'in-stock',
-    costPrice: 0,
+    basePrice: 0,
     weight: 0,
+    adjustmentType: 'INCREASE' as 'INCREASE' | 'DECREASE' | 'SET',
+    adjustQuantity: 0,
+    adjustNotes: '',
+    adjustWarehouseId: null as number | null,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (product && isOpen) {
+      // Preselect warehouse: use provided warehouseId, or find "Shreeji House", or null
+      let defaultWarehouseId = warehouseId ?? null;
+      if (!defaultWarehouseId && warehouses.length > 0) {
+        const shreejiHouse = warehouses.find(wh => 
+          wh.name.toLowerCase().includes('shreeji house')
+        );
+        if (shreejiHouse) {
+          defaultWarehouseId = shreejiHouse.id;
+        }
+      }
+
       setFormData({
         stockQuantity: product.stockQuantity || 0,
         minStockLevel: product.minStockLevel || 0,
         maxStockLevel: product.maxStockLevel || 0,
-        stockStatus: product.stockStatus || 'in-stock',
-        costPrice: product.costPrice || 0,
+        stockStatus: product.stockStatus && product.stockStatus.trim() ? product.stockStatus : 'in-stock',
+        basePrice: product.basePrice || 0,
         weight: product.weight || 0,
+        adjustmentType: 'INCREASE',
+        adjustQuantity: 0,
+        adjustNotes: '',
+        adjustWarehouseId: defaultWarehouseId,
       });
       setErrors({});
     }
-  }, [product, isOpen]);
+  }, [product, isOpen, warehouseId, warehouses]);
 
-  const handleInputChange = (field: string, value: string | number) => {
+  const handleInputChange = (field: string, value: string | number | null) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     // Clear error for this field
     if (errors[field]) {
@@ -101,8 +127,8 @@ export default function EditInventoryModal({
       newErrors.minStockLevel = 'Min stock level must be less than max stock level';
     }
 
-    if (formData.costPrice < 0) {
-      newErrors.costPrice = 'Cost price cannot be negative';
+    if (formData.basePrice < 0) {
+      newErrors.basePrice = 'Base price cannot be negative';
     }
 
     if (formData.weight < 0) {
@@ -132,19 +158,45 @@ export default function EditInventoryModal({
         calculatedStockStatus = 'in-stock';
       }
 
-      await api.updateProduct(product.id, {
-        stockQuantity: formData.stockQuantity,
-        minStockLevel: formData.minStockLevel,
-        maxStockLevel: formData.maxStockLevel,
-        stockStatus: calculatedStockStatus,
-        costPrice: formData.costPrice,
-        weight: formData.weight,
-      });
+      // Update product inventory fields
+      // Note: stockStatus is calculated automatically by backend based on stockQuantity and minStockLevel
+      const updatePayload = {
+        stockQuantity: Number(formData.stockQuantity) || 0,
+        minStockLevel: Number(formData.minStockLevel) || 0,
+        maxStockLevel: Number(formData.maxStockLevel) || 0,
+        basePrice: Number(formData.basePrice) || 0,
+        weight: Number(formData.weight) || 0,
+      };
+      
+      console.log('[EditInventoryModal] Sending update payload:', updatePayload);
+      
+      await api.updateProduct(product.id, updatePayload);
+
+      // If adjustment fields are filled, also perform stock adjustment
+      if (formData.adjustQuantity > 0 && formData.adjustWarehouseId) {
+        try {
+          await api.adjustStock({
+            productId: product.id,
+            warehouseId: formData.adjustWarehouseId,
+            adjustmentType: formData.adjustmentType,
+            quantity: formData.adjustQuantity,
+            notes: formData.adjustNotes || undefined,
+          });
+          toast.success('Inventory updated and stock adjusted successfully');
+        } catch (adjustError: any) {
+          // If adjustment fails, still show success for inventory update
+          console.error('Error adjusting stock:', adjustError);
+          toast.error(`Inventory updated but stock adjustment failed: ${adjustError.message || 'Unknown error'}`);
+        }
+      } else {
+        toast.success('Inventory updated successfully');
+      }
 
       onSave();
       onClose();
     } catch (error: any) {
       console.error('Error updating inventory:', error);
+      toast.error(error.message || 'Failed to update inventory. Please try again.');
       setErrors({
         submit: error.message || 'Failed to update inventory. Please try again.',
       });
@@ -152,6 +204,7 @@ export default function EditInventoryModal({
       setLoading(false);
     }
   };
+
 
   if (!isOpen || !product) return null;
 
@@ -225,7 +278,74 @@ export default function EditInventoryModal({
                 </div>
               </div>
 
-              {/* Right: Form fields */}
+              
+              {/* Stock Adjustment */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-4">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h3 className="text-base font-semibold text-gray-900">Stock Adjustment</h3>
+                    <p className="text-xs text-gray-500">Adjust quantity and record a reason.</p>
+                  </div>
+                  {onTransfer && (
+                    <button
+                      type="button"
+                      className="text-sm text-purple-600 hover:text-purple-700"
+                      onClick={() => onTransfer(product)}
+                    >
+                      Transfer Stock
+                    </button>
+                  )}
+                </div>
+
+                {/* Adjustment Type */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Adjustment Type</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {(['INCREASE', 'DECREASE', 'SET'] as const).map((type) => (
+                      <button
+                        key={type}
+                        type="button"
+                        onClick={() => handleInputChange('adjustmentType', type)}
+                        className={`px-4 py-2 text-sm font-medium rounded-md border transition ${
+                          formData.adjustmentType === type
+                            ? 'bg-primary-600 text-white border-primary-600'
+                            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                        }`}
+                      >
+                        {type === 'INCREASE' ? 'Increase' : type === 'DECREASE' ? 'Decrease' : 'Set Exact'}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Adjustment Quantity */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Adjustment Quantity
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={formData.adjustQuantity}
+                    onChange={(e) => {
+                      const value = Number(e.target.value);
+                      handleInputChange('adjustQuantity', value);
+                      if (errors.adjustQuantity) {
+                        setErrors((prev) => {
+                          const next = { ...prev };
+                          delete next.adjustQuantity;
+                          return next;
+                        });
+                      }
+                    }}
+                    className="input-field"
+                  />
+                  {errors.adjustQuantity && (
+                    <p className="mt-1 text-sm text-red-600">{errors.adjustQuantity}</p>
+                  )}
+                </div>
+                  
+                  {/* Right: Form fields */}
               <div className="space-y-8">
               {/* Stock Status - First Field */}
               <div>
@@ -399,49 +519,49 @@ export default function EditInventoryModal({
 
               {/* Cost & weight */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Cost Price */}
+              {/* Base Price */}
               <div>
                 <label
-                  htmlFor="costPrice"
+                  htmlFor="basePrice"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
-                  Cost Price (K)
+                  Base Price (K)
                 </label>
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
-                    onClick={() => handleDecrement('costPrice', 1)}
+                    onClick={() => handleDecrement('basePrice', 1)}
                     className="flex-shrink-0 w-10 h-10 rounded-full border border-gray-300 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 flex items-center justify-center transition-colors"
                   >
                     <MinusIcon className="h-5 w-5 text-gray-600" />
                   </button>
                   <input
                     type="number"
-                    id="costPrice"
-                    name="costPrice"
+                    id="basePrice"
+                    name="basePrice"
                     min="0"
                     step="0.01"
-                    value={formData.costPrice}
+                    value={formData.basePrice}
                     onChange={(e) =>
-                      handleInputChange('costPrice', parseFloat(e.target.value) || 0)
+                      handleInputChange('basePrice', parseFloat(e.target.value) || 0)
                     }
                     className={`flex-1 px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 sm:text-sm text-center ${
-                      errors.costPrice ? 'border-red-500' : 'border-gray-300'
+                      errors.basePrice ? 'border-red-500' : 'border-gray-300'
                     }`}
                   />
                   <button
                     type="button"
-                    onClick={() => handleIncrement('costPrice', 1)}
+                    onClick={() => handleIncrement('basePrice', 1)}
                     className="flex-shrink-0 w-10 h-10 rounded-full border border-gray-300 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 flex items-center justify-center transition-colors"
                   >
                     <PlusIcon className="h-5 w-5 text-gray-600" />
                   </button>
                 </div>
-                {errors.costPrice && (
-                  <p className="mt-1 text-sm text-red-600">{errors.costPrice}</p>
+                {errors.basePrice && (
+                  <p className="mt-1 text-sm text-red-600">{errors.basePrice}</p>
                 )}
                 <p className="mt-1 text-xs text-gray-500">
-                  Cost per unit for inventory valuation
+                  Base price per unit for inventory valuation
                 </p>
               </div>
 
@@ -487,6 +607,42 @@ export default function EditInventoryModal({
                   <p className="mt-1 text-sm text-red-600">{errors.weight}</p>
                 )}
               </div>
+              </div>
+
+                {/* Warehouse Selection */}
+                {warehouses.length > 0 && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Warehouse
+                    </label>
+                    <select
+                      value={formData.adjustWarehouseId || ''}
+                      onChange={(e) =>
+                        handleInputChange('adjustWarehouseId', e.target.value ? parseInt(e.target.value, 10) : null)
+                      }
+                      className="input-field"
+                    >
+                      {warehouses.map((wh) => (
+                        <option key={wh.id} value={wh.id}>
+                          {wh.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                {/* Notes */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                  <textarea
+                    className="input-field"
+                    rows={3}
+                    value={formData.adjustNotes}
+                    onChange={(e) => handleInputChange('adjustNotes', e.target.value)}
+                    placeholder="Optional notes for this adjustment"
+                  />
+                </div>
+
               </div>
               </div>
             </div>

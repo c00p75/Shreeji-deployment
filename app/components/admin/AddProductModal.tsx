@@ -26,7 +26,7 @@ interface Product {
   brand?: string | number; // Can be brand ID (number) or legacy string
   price: string;
   discountedPrice?: string;
-  costPrice?: number;
+  basePrice?: number;
   taxRate?: number;
   discountPercent?: number;
   tagline?: string;
@@ -62,7 +62,7 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
     brand: '',
     price: '',
     discountedPrice: '0',
-    costPrice: 0,
+    basePrice: 0,
     taxRate: 16, // Default VAT 16%
     discountPercent: 0,
     tagline: '',
@@ -766,18 +766,18 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
         subcategory: formData.subcategory || null,
         brand: brandId,
         price: (() => {
-          const basePrice = formData.costPrice || 0;
+          const basePrice = formData.basePrice || 0;
           const vatPercent = formData.taxRate || 16;
           return basePrice * (1 + vatPercent / 100);
         })(),
         discountedPrice: (() => {
-          const basePrice = formData.costPrice || 0;
+          const basePrice = formData.basePrice || 0;
           const vatPercent = formData.taxRate || 16;
           const sellingPrice = basePrice * (1 + vatPercent / 100);
           const discountPercent = formData.discountPercent || 0;
           return discountPercent > 0 ? sellingPrice * (1 - discountPercent / 100) : 0;
         })(),
-        costPrice: formData.costPrice || null,
+        basePrice: formData.basePrice || null,
         taxRate: formData.taxRate || 16,
         tagline: formData.tagline || null,
         description: formData.description || null,
@@ -822,8 +822,8 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
       newErrors.brand = 'Brand is required';
     }
 
-    if (!formData.costPrice || formData.costPrice <= 0) {
-      newErrors.costPrice = 'Base Price is required and must be greater than 0';
+    if (!formData.basePrice || formData.basePrice <= 0) {
+      newErrors.basePrice = 'Base Price is required and must be greater than 0';
     }
 
     if (!formData.sku?.trim()) {
@@ -903,7 +903,7 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
       }
 
       // Calculate prices
-      const basePrice = formData.costPrice || 0;
+      const basePrice = formData.basePrice || 0;
       const vatPercent = formData.taxRate || 16;
       const sellingPrice = basePrice * (1 + vatPercent / 100);
       const discountPercent = formData.discountPercent || 0;
@@ -918,7 +918,7 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
         brand: formData.brand || null,
         price: sellingPrice, // Selling price = Base Price + VAT
         discountedPrice: discountPrice > 0 ? discountPrice : null,
-        costPrice: basePrice, // Base price (formerly cost price)
+        basePrice: basePrice, // Base price (formerly cost price)
         taxRate: vatPercent,
         tagline: formData.tagline || null,
         description: formData.description || null,
@@ -950,7 +950,7 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
         brand: '',
         price: '',
         discountedPrice: '0',
-        costPrice: 0,
+        basePrice: 0,
         taxRate: 16, // Default VAT 16%
         discountPercent: 0,
         tagline: '',
@@ -1668,7 +1668,7 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
                     
                     {(() => {
                       // Computed values
-                      const basePrice = formData.costPrice || 0;
+                      const basePrice = formData.basePrice || 0;
                       const vatPercent = formData.taxRate || 16;
                       const sellingPrice = basePrice * (1 + vatPercent / 100);
                       const discountPercent = formData.discountPercent || 0;
@@ -1681,10 +1681,10 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
                             <label className="block text-sm font-medium text-gray-700 mb-2">Base Price *</label>
                             <input
                               type="number"
-                              value={formData.costPrice || ''}
+                              value={formData.basePrice || ''}
                               onChange={(e) => {
                                 const value = parseFloat(e.target.value) || 0;
-                                handleInputChange('costPrice', value);
+                                handleInputChange('basePrice', value);
                                 // Auto-update selling price
                                 const newSellingPrice = value * (1 + (formData.taxRate || 16) / 100);
                                 handleInputChange('price', newSellingPrice.toFixed(2));
@@ -1694,12 +1694,12 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
                                   handleInputChange('discountedPrice', newDiscountPrice.toFixed(2));
                                 }
                               }}
-                              className={`w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.costPrice ? 'border-red-500' : ''}`}
+                              className={`w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.basePrice ? 'border-red-500' : ''}`}
                               placeholder="0.00"
                               min="0"
                               step="0.01"
                             />
-                            {errors.costPrice && <p className="mt-1 text-sm text-red-600">{errors.costPrice}</p>}
+                            {errors.basePrice && <p className="mt-1 text-sm text-red-600">{errors.basePrice}</p>}
                           </div>
 
                           {/* VAT */}
@@ -1712,7 +1712,7 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
                                 const value = parseFloat(e.target.value) || 16;
                                 handleInputChange('taxRate', value);
                                 // Auto-update selling price
-                                const basePriceValue = formData.costPrice || 0;
+                                const basePriceValue = formData.basePrice || 0;
                                 const newSellingPrice = basePriceValue * (1 + value / 100);
                                 handleInputChange('price', newSellingPrice.toFixed(2));
                                 // Auto-update discount price if discount percent exists
@@ -1752,7 +1752,7 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
                                 const value = parseFloat(e.target.value) || 0;
                                 handleInputChange('discountPercent', value);
                                 // Auto-update discount price
-                                const basePriceValue = formData.costPrice || 0;
+                                const basePriceValue = formData.basePrice || 0;
                                 const vatPercentValue = formData.taxRate || 16;
                                 const currentSellingPrice = basePriceValue * (1 + vatPercentValue / 100);
                                 const newDiscountPrice = currentSellingPrice * (1 - value / 100);

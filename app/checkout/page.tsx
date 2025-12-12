@@ -16,7 +16,7 @@ import OrderSummarySection from '@/app/components/checkout/OrderSummarySection'
 import PaymentDetailsSection from '@/app/components/checkout/PaymentDetailsSection'
 import OrderDetailsSidebar from '@/app/components/checkout/OrderDetailsSidebar'
 import AddressModal from '@/app/components/checkout/AddressModal'
-import { ShoppingBag } from 'lucide-react'
+import { ShoppingBag, Gift } from 'lucide-react'
 import clientApi from '@/app/lib/client/api'
 
 const CHECKOUT_STEPS = [
@@ -43,6 +43,10 @@ export default function CheckoutPage() {
   }>({})
   const [showRecoveryMessage, setShowRecoveryMessage] = useState(false)
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false)
+  const [availablePoints, setAvailablePoints] = useState<number>(0)
+  const [pointsToRedeem, setPointsToRedeem] = useState<number>(0)
+  const [loadingPoints, setLoadingPoints] = useState(false)
+  const [pointsError, setPointsError] = useState<string | null>(null)
 
   // Restore checkout progress on mount
   useEffect(() => {
@@ -115,6 +119,21 @@ export default function CheckoutPage() {
     }
   }, [])
 
+  const loadLoyaltyPoints = useCallback(async () => {
+    if (!isAuthenticated) return
+    try {
+      setLoadingPoints(true)
+      const res = await clientApi.getLoyaltyPoints()
+      setAvailablePoints(res.data?.points || 0)
+      setPointsError(null)
+    } catch (error) {
+      console.error('Error loading loyalty points:', error)
+      setPointsError('Failed to load loyalty points')
+    } finally {
+      setLoadingPoints(false)
+    }
+  }, [isAuthenticated])
+
   // Load user profile and addresses if authenticated
   // This will automatically trigger when auth state changes (e.g., after login)
   useEffect(() => {
@@ -122,14 +141,17 @@ export default function CheckoutPage() {
     if (!authLoading) {
       if (isAuthenticated) {
         loadUserData()
+        loadLoyaltyPoints()
       } else {
         // Clear user data if not authenticated
         setAddresses([])
         setUserProfile(null)
         setSelectedAddressId(null)
+        setAvailablePoints(0)
+        setPointsToRedeem(0)
       }
     }
-  }, [isAuthenticated, authLoading, loadUserData])
+  }, [isAuthenticated, authLoading, loadUserData, loadLoyaltyPoints])
 
   const handleAddAddress = () => {
     setIsAddressModalOpen(true)
@@ -261,6 +283,9 @@ export default function CheckoutPage() {
         backendPaymentMethod = 'cash_on_pickup'
       }
 
+      const maxPointsAllowed = cart?.total ? Math.floor(cart.total * 100) : availablePoints
+      const pointsToUse = Math.max(0, Math.min(pointsToRedeem, availablePoints, maxPointsAllowed))
+
       // Build checkout payload - only include payment details when relevant and valid
       const checkoutPayload: any = {
         customer: customerData,
@@ -268,6 +293,10 @@ export default function CheckoutPage() {
         billingAddress: undefined, // Use same as shipping for now
         paymentMethod: backendPaymentMethod,
         notes: fulfillmentType === 'pickup' ? 'Pickup order' : '',
+      }
+
+      if (pointsToUse > 0) {
+        checkoutPayload.pointsToRedeem = pointsToUse
       }
 
       // Only include cardDetails if payment method is card and details exist
@@ -420,6 +449,35 @@ export default function CheckoutPage() {
 
             {/* Step 3: Payment */}
             {currentStep === 3 && (
+              <div className='space-y-4'>
+                <div className='rounded-2xl border border-gray-200 bg-white p-4 shadow-sm'>
+                  <div className='flex items-center justify-between'>
+                    <div>
+                      <p className='text-sm font-medium text-gray-900'>Use loyalty points</p>
+                      <p className='text-xs text-gray-500'>Available: {availablePoints} points (ZMW {(availablePoints / 100).toFixed(2)})</p>
+                    </div>
+                    <Gift className='h-5 w-5 text-[var(--shreeji-primary)]' />
+                  </div>
+                  <div className='mt-3 grid grid-cols-1 gap-3 md:grid-cols-3'>
+                    <div className='md:col-span-2'>
+                      <label className='block text-xs font-medium text-gray-700'>Points to redeem</label>
+                      <input
+                        type='number'
+                        min={0}
+                        value={pointsToRedeem}
+                        onChange={(e) => setPointsToRedeem(Math.max(0, Number(e.target.value)))}
+                        className='mt-1 w-full rounded-lg border border-gray-300 px-3 py-2'
+                        disabled={loadingPoints}
+                      />
+                    </div>
+                    <div className='flex flex-col justify-end rounded-lg bg-gray-50 p-3 text-sm text-gray-700'>
+                      <span className='font-semibold'>Discount preview</span>
+                      <span>ZMW {(pointsToRedeem / 100).toFixed(2)}</span>
+                    </div>
+                  </div>
+                  {pointsError && <p className='mt-2 text-xs text-red-600'>{pointsError}</p>}
+                </div>
+
                 <PaymentDetailsSection
                   paymentMethod={paymentMethod}
                   onPaymentMethodChange={setPaymentMethod}
@@ -427,6 +485,7 @@ export default function CheckoutPage() {
                   onPaymentDetailsChange={setPaymentDetails}
                   isProcessing={isCheckingOut}
                 />
+              </div>
             )}
 
             {/* Navigation */}

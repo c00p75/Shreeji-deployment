@@ -1,5 +1,6 @@
 "use client";
 
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import {
   PlusIcon,
@@ -9,10 +10,12 @@ import {
   MapPinIcon,
   CheckCircleIcon,
   XCircleIcon,
+  ArrowLeftIcon,
 } from '@heroicons/react/24/outline';
 import api from '@/app/lib/admin/api';
 import Layout from './Layout';
 import WarehouseForm from './WarehouseForm';
+import InventoryMovementHistory from './InventoryMovementHistory';
 import toast from 'react-hot-toast';
 import { TableSkeleton } from '@/app/components/ui/Skeletons';
 
@@ -50,7 +53,7 @@ export default function WarehouseManagement() {
       if (filterActive !== undefined) {
         filters.isActive = filterActive;
       }
-      const response = await api.getWarehouses(filters);
+      const response = await api.getWarehouses(filters) as { data?: Warehouse[] };
       setWarehouses(response.data || []);
     } catch (err: any) {
       console.error('Error fetching warehouses:', err);
@@ -127,14 +130,16 @@ export default function WarehouseManagement() {
         )}
 
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Warehouses</h1>
-            <p className="mt-1 text-sm text-gray-500">
-              Manage warehouse locations and inventory distribution ({warehouses.length} warehouses)
-            </p>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+          <div className="flex items-start flex-col gap-1">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">Warehouses</h1>
+              <p className="mt-1 text-sm text-gray-500">
+                Manage warehouse locations and inventory distribution ({warehouses.length} warehouses)
+              </p>
+            </div>
           </div>
-          <div className="mt-4 sm:mt-0 flex gap-3">
+          <div className="flex gap-3">
             <select
               className="input-field"
               value={filterActive === undefined ? 'all' : filterActive ? 'active' : 'inactive'}
@@ -147,9 +152,9 @@ export default function WarehouseManagement() {
               <option value="active">Active Only</option>
               <option value="inactive">Inactive Only</option>
             </select>
-            <button onClick={handleCreate} className="btn-primary flex items-center">
+            <button onClick={handleCreate} className="btn-primary flex items-center w-fit">
               <PlusIcon className="w-5 h-5 mr-2" />
-              Add Warehouse
+              <span className='w-max'>Add Warehouse</span>
             </button>
           </div>
         </div>
@@ -242,6 +247,11 @@ export default function WarehouseManagement() {
             </div>
           </div>
         )}
+
+        <br />
+
+        {/* Movement History */}
+        <InventoryMovementHistory />
 
         {/* Warehouse Form Modal */}
         {isFormOpen && (

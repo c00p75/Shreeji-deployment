@@ -6,7 +6,10 @@ import {
   PlusIcon, 
   MagnifyingGlassIcon, 
   FunnelIcon,
-  PencilIcon
+  PencilIcon,
+  Squares2X2Icon,
+  Bars3Icon,
+  XMarkIcon
 } from '@heroicons/react/24/outline'
 import api from '@/app/lib/admin/api'
 import { processProductImages } from '@/app/lib/admin/image-mapping'
@@ -35,7 +38,7 @@ interface Product {
   minStockLevel?: number
   maxStockLevel?: number
   stockStatus?: 'in-stock' | 'low-stock' | 'out-of-stock' | 'discontinued' | string
-  costPrice?: number
+  basePrice?: number
   taxRate?: number
   discountPercent?: number
   weight?: number
@@ -133,11 +136,9 @@ export default function ProductManagement() {
               minStockLevel: productData.minStockLevel,
               maxStockLevel: productData.maxStockLevel,
               stockStatus: productData.stockStatus,
-              costPrice: productData.costPrice !== undefined && productData.costPrice !== null 
-                ? productData.costPrice 
-                : (productData.basePrice !== undefined && productData.basePrice !== null 
-                  ? productData.basePrice 
-                  : undefined),
+              basePrice: productData.basePrice !== undefined && productData.basePrice !== null 
+                ? productData.basePrice 
+                : undefined,
               weight: productData.weight,
               Dimensions: productData.Dimensions || productData.dimensions
             };
@@ -314,8 +315,22 @@ export default function ProductManagement() {
   const subcategories = Array.from(new Set(products.map(p => p.subcategory).filter(Boolean)))
   const brands = Array.from(new Set(products.map(p => p.brand).filter(Boolean)))
 
-  const handleDelete = (id: number) => {
-    setProducts(products.filter(p => p.id !== id))
+  const handleDelete = async (id: number) => {
+    try {
+      // Call the API to delete from backend
+      await api.deleteProduct(id);
+      
+      // Only update local state after successful API call
+      setProducts(products.filter(p => p.id !== id));
+      setFilteredProducts(filteredProducts.filter(p => p.id !== id));
+      
+      // Success notification is handled by EditProductModal
+    } catch (error: any) {
+      console.error('Error deleting product:', error);
+      toast.error(error?.message || 'Failed to delete product. Please try again.');
+      // Optionally refresh products list to ensure consistency
+      fetchProducts();
+    }
   }
 
   const toggleActive = (id: number) => {
@@ -380,7 +395,7 @@ export default function ProductManagement() {
         ...(updatedProduct.minStockLevel !== undefined && updatedProduct.minStockLevel !== null && { minStockLevel: updatedProduct.minStockLevel }),
         ...(updatedProduct.maxStockLevel !== undefined && updatedProduct.maxStockLevel !== null && { maxStockLevel: updatedProduct.maxStockLevel }),
         ...(updatedProduct.stockStatus && { stockStatus: updatedProduct.stockStatus }),
-        ...(updatedProduct.costPrice !== undefined && updatedProduct.costPrice !== null && { costPrice: updatedProduct.costPrice }),
+        ...(updatedProduct.basePrice !== undefined && updatedProduct.basePrice !== null && { basePrice: updatedProduct.basePrice }),
         ...(updatedProduct.weight !== undefined && updatedProduct.weight !== null && { weight: updatedProduct.weight }),
         ...(updatedProduct.Dimensions && { dimensions: updatedProduct.Dimensions }),
       }
@@ -564,32 +579,44 @@ export default function ProductManagement() {
 
             {/* View Mode and Clear Filters */}
             <div className="flex space-x-2">
-              <button
-                className={`px-3 py-2 rounded-lg ${viewMode === 'grid' ? 'bg-primary-100 text-primary-700' : 'bg-gray-100 text-gray-700'}`}
-                onClick={() => setViewMode('grid')}
-                title="Grid View"
-              >
-                Grid
-              </button>
-              <button
-                className={`px-3 py-2 rounded-lg ${viewMode === 'list' ? 'bg-primary-100 text-primary-700' : 'bg-gray-100 text-gray-700'}`}
-                onClick={() => setViewMode('list')}
-                title="List View"
-              >
-                List
-              </button>
-              <button
-                className="px-3 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200"
-                onClick={() => {
-                  setSearchTerm('')
-                  setSelectedCategory('')
-                  setSelectedSubcategory('')
-                  setSelectedBrand('')
-                }}
-                title="Clear All Filters"
-              >
-                Clear
-              </button>
+              <div className="relative group">
+                <button
+                  className={`px-3 py-2 rounded-lg flex items-center justify-center ${viewMode === 'grid' ? 'bg-primary-100 text-primary-700' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                  onClick={() => setViewMode('grid')}
+                >
+                  <Squares2X2Icon className="w-5 h-5" />
+                </button>
+                <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                  Grid View
+                </span>
+              </div>
+              <div className="relative group">
+                <button
+                  className={`px-3 py-2 rounded-lg flex items-center justify-center ${viewMode === 'list' ? 'bg-primary-100 text-primary-700' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                  onClick={() => setViewMode('list')}
+                >
+                  <Bars3Icon className="w-5 h-5" />
+                </button>
+                <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                  List View
+                </span>
+              </div>
+              <div className="relative group">
+                <button
+                  className="px-3 py-2 rounded-lg flex items-center justify-center bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  onClick={() => {
+                    setSearchTerm('')
+                    setSelectedCategory('')
+                    setSelectedSubcategory('')
+                    setSelectedBrand('')
+                  }}
+                >
+                  <XMarkIcon className="w-5 h-5" />
+                </button>
+                <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                  Clear All Filters
+                </span>
+              </div>
               
             </div>
           </div>

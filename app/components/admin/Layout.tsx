@@ -19,7 +19,8 @@ import {
   CurrencyDollarIcon,
   DocumentTextIcon,
   TagIcon,
-  PhotoIcon
+  PhotoIcon,
+  GiftIcon
 } from '@heroicons/react/24/outline'
 import { LayoutDashboard } from 'lucide-react'
 import NotificationBell from '../notifications/NotificationBell'
@@ -38,6 +39,7 @@ const navigation = [
   { name: 'Payments', href: '/admin/payments', icon: CurrencyDollarIcon, current: false },
   { name: 'Customers', href: '/admin/customers', icon: UsersIcon, current: false },
   { name: 'Coupons', href: '/admin/coupons', icon: TagIcon, current: false },
+  { name: 'Loyalty Program', href: '/admin/loyalty', icon: GiftIcon, current: false },
   { name: 'Reports', href: '/admin/reports', icon: DocumentTextIcon, current: false },
   { name: 'Content', href: '/admin/content', icon: PhotoIcon, current: false },
   { name: 'Users', href: '/admin/users', icon: UsersIcon, current: false },
@@ -194,9 +196,25 @@ export default function Layout({ children, currentPage = 'Dashboard', pageTitle 
               >
                 <Bars3Icon className="w-6 h-6" />
               </button>
-              <h2 className="ml-4 text-lg font-semibold text-gray-900 lg:ml-0">
-                {pageTitle || currentPage}
-              </h2>
+            <h2 className="ml-4 text-lg font-semibold text-gray-900 lg:ml-0">
+              {(() => {
+                const isWarehousePage =
+                  (pageTitle && pageTitle.toLowerCase().includes('warehouse')) ||
+                  currentPage === 'Warehouses'
+                if (isWarehousePage) {
+                  return (
+                    <span className="flex items-center gap-2">
+                      <Link href="/admin/inventory" className="text-[var(--shreeji-primary)] hover:underline">
+                        Inventory
+                      </Link>
+                      <span className="text-gray-400">/</span>
+                      <span className="text-gray-900">{pageTitle || 'Warehouse Management'}</span>
+                    </span>
+                  )
+                }
+                return pageTitle || currentPage
+              })()}
+            </h2>
             </div>
             
             <div className="flex items-center space-x-4">

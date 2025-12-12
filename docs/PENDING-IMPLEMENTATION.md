@@ -198,6 +198,9 @@ This document tracks all pending tasks and next steps required to make the ecomm
   - [x] Marketing email opt-in/opt-out (backend + frontend)
   - [x] Communication history log (backend + frontend)
 
+- [x] **Loyalty & Rewards**
+  - [x] Points/rewards system (backend + frontend: admin-configurable rules, customer portal balance/history, checkout redemption)
+
 ### 🔄 Pending
 - [ ] **Customer Portal Enhancements (Remaining)**
   - [ ] Subscription management (if applicable)
@@ -205,8 +208,7 @@ This document tracks all pending tasks and next steps required to make the ecomm
 - [ ] **Account Security (Remaining)**
   - [ ] SMS notification preferences (backend exists, frontend pending)
 
-- [ ] **Loyalty & Rewards**
-  - [ ] Points/rewards system (if applicable)
+- [ ] **Loyalty & Rewards (Remaining)**
   - [ ] Referral program (if applicable)
 
 ---
@@ -269,7 +271,7 @@ This document tracks all pending tasks and next steps required to make the ecomm
 - [x] **Advanced Inventory Features**
   - [x] Multi-location inventory (warehouses)
   - [x] Inventory reservations (hold stock during checkout)
-  - [x] Inventory movement history
+  - [x] Inventory movement history (fixed date filtering bug and response transformation - January 2025)
   - [x] Stock adjustment reasons
   - [x] Automated reorder points
 
@@ -710,5 +712,5 @@ This document tracks all pending tasks and next steps required to make the ecomm
 
 ---
 
-Last Updated: December 11, 2025
+Last Updated: December 12, 2025
 

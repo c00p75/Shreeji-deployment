@@ -137,6 +137,35 @@ export default function WarehouseForm({ warehouse, onClose, onSuccess }: Warehou
               </div>
             )}
 
+            {/* Active Status - toggle at top, matching product modal style */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <label htmlFor="isActive" className="block text-sm font-medium text-gray-700 mb-1">
+                    Warehouse Status
+                  </label>
+                  <p className="text-xs text-gray-500">
+                    {formData.isActive ? 'Warehouse is active and selectable' : 'Warehouse is inactive'}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={formData.isActive}
+                  onClick={() => handleInputChange('isActive', !formData.isActive)}
+                  className={`relative inline-flex h-7 w-14 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ${
+                    formData.isActive ? 'bg-primary-600' : 'bg-gray-300'
+                  }`}
+                >
+                  <span
+                    className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                      formData.isActive ? 'translate-x-7' : 'translate-x-0'
+                    }`}
+                  />
+                </button>
+              </div>
+            </div>
+
             <div className="space-y-4">
               {/* Name */}
               <div>
@@ -220,18 +249,6 @@ export default function WarehouseForm({ warehouse, onClose, onSuccess }: Warehou
                 {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
               </div>
 
-              {/* Active Status */}
-              <div>
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={formData.isActive}
-                    onChange={(e) => handleInputChange('isActive', e.target.checked)}
-                    className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-                  />
-                  <span className="ml-2 text-sm text-gray-700">Active</span>
-                </label>
-              </div>
             </div>
 
             {/* Footer */}

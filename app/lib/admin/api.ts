@@ -115,7 +115,7 @@ class ApiClient {
       images: data.images || [],
       dimensions: data.Dimensions || data.dimensions,
       sellingPrice: parseFloat(data.price || data.sellingPrice || 0),
-      basePrice: parseFloat(data.costPrice || data.basePrice || 0),
+      basePrice: parseFloat(data.basePrice || data.costPrice || 0),
       discountedPrice: data.discountedPrice !== undefined && data.discountedPrice !== null 
         ? parseFloat(data.discountedPrice) 
         : 0,
@@ -187,8 +187,9 @@ class ApiClient {
     if (productData.price !== undefined || productData.sellingPrice !== undefined) {
       updateData.sellingPrice = parseFloat(productData.price || productData.sellingPrice);
     }
-    if (productData.costPrice !== undefined || productData.basePrice !== undefined) {
-      updateData.basePrice = parseFloat(productData.costPrice || productData.basePrice);
+    if (productData.basePrice !== undefined || productData.costPrice !== undefined) {
+      const basePriceValue = parseFloat(productData.basePrice || productData.costPrice);
+      if (!isNaN(basePriceValue)) updateData.basePrice = basePriceValue;
     }
     // Always send discountedPrice as a number (including 0) if it's defined
     if (productData.discountedPrice !== undefined) {
@@ -200,10 +201,23 @@ class ApiClient {
     }
     if (productData.taxRate !== undefined) updateData.taxRate = parseFloat(productData.taxRate);
     if (productData.discountPercent !== undefined) updateData.discountPercent = parseFloat(productData.discountPercent);
-    if (productData.weight !== undefined) updateData.weight = parseFloat(productData.weight);
-    if (productData.stockQuantity !== undefined) updateData.stockQuantity = parseInt(productData.stockQuantity);
-    if (productData.minStockLevel !== undefined) updateData.minStockLevel = parseInt(productData.minStockLevel);
-    if (productData.maxStockLevel !== undefined) updateData.maxStockLevel = parseInt(productData.maxStockLevel);
+    if (productData.weight !== undefined) {
+      const weightValue = parseFloat(productData.weight);
+      if (!isNaN(weightValue)) updateData.weight = weightValue;
+    }
+    if (productData.stockQuantity !== undefined) {
+      const stockQty = parseInt(String(productData.stockQuantity), 10);
+      if (!isNaN(stockQty)) updateData.stockQuantity = stockQty;
+    }
+    if (productData.minStockLevel !== undefined) {
+      const minLevel = parseInt(String(productData.minStockLevel), 10);
+      if (!isNaN(minLevel)) updateData.minStockLevel = minLevel;
+    }
+    if (productData.maxStockLevel !== undefined) {
+      const maxLevel = parseInt(String(productData.maxStockLevel), 10);
+      if (!isNaN(maxLevel)) updateData.maxStockLevel = maxLevel;
+    }
+    // stockStatus is calculated automatically by backend based on stockQuantity and minStockLevel
     if (productData.isActive !== undefined) updateData.isActive = productData.isActive;
     // SEO fields
     if (productData.metaTitle !== undefined) updateData.metaTitle = productData.metaTitle;
@@ -705,6 +719,31 @@ class ApiClient {
 
   async deleteCoupon(id: string | number) {
     return this.request(`/admin/coupons/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // Loyalty Program API
+  async getLoyaltyRules() {
+    return this.request<{ data: any[] }>('/admin/loyalty/rules');
+  }
+
+  async createLoyaltyRule(rule: any) {
+    return this.request<{ data: any }>('/admin/loyalty/rules', {
+      method: 'POST',
+      body: JSON.stringify(rule),
+    });
+  }
+
+  async updateLoyaltyRule(id: number | string, rule: any) {
+    return this.request<{ data: any }>(`/admin/loyalty/rules/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(rule),
+    });
+  }
+
+  async deleteLoyaltyRule(id: number | string) {
+    return this.request<{ success: boolean }>(`/admin/loyalty/rules/${id}`, {
       method: 'DELETE',
     });
   }

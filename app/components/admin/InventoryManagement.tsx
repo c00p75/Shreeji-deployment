@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { 
   MagnifyingGlassIcon, 
@@ -11,16 +11,32 @@ import {
   CubeIcon,
   CurrencyDollarIcon,
   ChartBarIcon,
-  BuildingOfficeIcon
+  BuildingOfficeIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
+  ChevronRightIcon
 } from '@heroicons/react/24/outline';
 import api from '@/app/lib/admin/api';
 import { processProductImages } from '@/app/lib/admin/image-mapping';
 import Layout from './Layout'
 import EditInventoryModal from './EditInventoryModal'
-import StockAdjustmentModal from './StockAdjustmentModal'
 import InventoryTransferModal from './InventoryTransferModal'
-import InventoryMovementHistory from './InventoryMovementHistory'
 import { TableSkeleton, StatsSkeleton } from '@/app/components/ui/Skeletons'
+
+interface ProductVariant {
+  id: number;
+  sku: string;
+  attributes?: Record<string, string>;
+  specs?: Record<string, string>;
+  price?: number;
+  discountedPrice?: number;
+  stockQuantity: number;
+  stockStatus: string;
+  minStockLevel?: number;
+  maxStockLevel?: number;
+  images?: Array<{ url: string; alt?: string }>;
+  isActive: boolean;
+}
 
 interface Product {
   id: number;
@@ -35,7 +51,7 @@ interface Product {
   minStockLevel: number;
   maxStockLevel: number;
   stockStatus: string;
-  costPrice: number;
+  basePrice: number;
   weight: number;
   Dimensions: {
     length: number;
@@ -44,6 +60,7 @@ interface Product {
     unit: string;
   };
   subcategory?: string | null;
+  variants?: ProductVariant[];
 }
 
 export default function InventoryManagement() {
@@ -58,13 +75,13 @@ export default function InventoryManagement() {
   const [error, setError] = useState<string | null>(null);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [adjustingProduct, setAdjustingProduct] = useState<Product | null>(null);
-  const [isAdjustModalOpen, setIsAdjustModalOpen] = useState(false);
   const [transferringProduct, setTransferringProduct] = useState<Product | null>(null);
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
-  const [showMovementHistory, setShowMovementHistory] = useState(false);
   const [selectedWarehouse, setSelectedWarehouse] = useState<number | null>(null);
   const [warehouses, setWarehouses] = useState<any[]>([]);
+  const [warehouseInventory, setWarehouseInventory] = useState<Record<number, { quantity: number }>>({});
+  const [warehouseVariantInventory, setWarehouseVariantInventory] = useState<Record<string, { quantity: number }>>({});
+  const [expandedProducts, setExpandedProducts] = useState<Set<number>>(new Set());
   const [stats, setStats] = useState({
     totalProducts: 0,
     lowStock: 0,
@@ -72,25 +89,61 @@ export default function InventoryManagement() {
     totalValue: 0,
     totalCost: 0
   });
+  const [showMoreFilters, setShowMoreFilters] = useState(false);
 
   useEffect(() => {
     fetchProducts();
     fetchWarehouses();
   }, []);
 
+  useEffect(() => {
+    if (selectedWarehouse) {
+      fetchWarehouseInventory(selectedWarehouse);
+    } else {
+      setWarehouseInventory({});
+      setWarehouseVariantInventory({});
+    }
+  }, [selectedWarehouse]);
+
   const fetchWarehouses = async () => {
     try {
-      const response = await api.getWarehouses({ isActive: true });
+      const response = await api.getWarehouses({ isActive: true }) as { data?: any[] };
       setWarehouses(response.data || []);
     } catch (error) {
       console.error('Error fetching warehouses:', error);
     }
   };
 
+  const fetchWarehouseInventory = async (warehouseId: number) => {
+    try {
+      const response = await api.getWarehouseInventory(warehouseId) as { data?: Array<{ productId: number; variantId?: number; quantity: number }> };
+      const inventoryMap: Record<number, { quantity: number }> = {};
+      const variantInventoryMap: Record<string, { quantity: number }> = {};
+      
+      (response.data || []).forEach((item: any) => {
+        if (item.variantId) {
+          // Track variant inventory by "productId-variantId" key
+          const key = `${item.productId}-${item.variantId}`;
+          variantInventoryMap[key] = { quantity: item.quantity || 0 };
+        } else {
+          // Track product inventory
+          inventoryMap[item.productId] = { quantity: item.quantity || 0 };
+        }
+      });
+      
+      setWarehouseInventory(inventoryMap);
+      setWarehouseVariantInventory(variantInventoryMap);
+    } catch (error) {
+      console.error('Error fetching warehouse inventory:', error);
+      setWarehouseInventory({});
+      setWarehouseVariantInventory({});
+    }
+  };
+
   useEffect(() => {
     filterProducts();
     calculateStats();
-  }, [products, searchTerm, selectedCategory, selectedSubcategory, selectedBrand, filterStatus]);
+  }, [products, searchTerm, selectedCategory, selectedSubcategory, selectedBrand, filterStatus, selectedWarehouse, warehouseInventory, warehouseVariantInventory]);
 
   const parsePrice = (rawPrice: string | number | undefined | null): number => {
     if (rawPrice == null) return 0;
@@ -116,7 +169,7 @@ export default function InventoryManagement() {
       const response = await api.getProducts({ pagination: { page: 1, pageSize: 100 } });
       
       // Transform backend data to match our interface
-      const transformedProducts: Product[] = (response.data || []).map((product: any) => {
+      const transformedProducts: Product[] = await Promise.all((response.data || []).map(async (product: any) => {
         const productData = product;
 
         // Use enhanced image processing that prioritizes local images
@@ -153,15 +206,39 @@ export default function InventoryManagement() {
           productData.stockStatus || null
         );
 
+        const productId = typeof product.id === 'number'
+          ? product.id
+          : typeof product.id === 'string'
+            ? parseInt(product.id, 10)
+            : typeof productData.id === 'number'
+              ? productData.id
+              : parseInt(productData.id || '0', 10);
+
+        // Fetch variants for this product
+        let variants: ProductVariant[] = [];
+        try {
+          const variantsResponse = await api.getProductVariants(productId);
+          variants = (variantsResponse.data || []).map((variant: any) => ({
+            id: variant.id,
+            sku: variant.sku || variant.SKU || '',
+            attributes: variant.attributes || variant.specs || {},
+            specs: variant.specs || variant.attributes || {},
+            price: variant.price,
+            discountedPrice: variant.discountedPrice,
+            stockQuantity: variant.stockQuantity || 0,
+            stockStatus: variant.stockStatus || 'in-stock',
+            minStockLevel: variant.minStockLevel,
+            maxStockLevel: variant.maxStockLevel,
+            images: variant.images || [],
+            isActive: variant.isActive !== false,
+          }));
+        } catch (error) {
+          // Variants are optional, silently fail
+          console.debug(`No variants found for product ${productId}`);
+        }
+
         return {
-          id:
-            typeof product.id === 'number'
-              ? product.id
-              : typeof product.id === 'string'
-                ? parseInt(product.id, 10)
-                : typeof productData.id === 'number'
-                  ? productData.id
-                  : parseInt(productData.id || '0', 10),
+          id: productId,
           documentId: product.documentId || productData.documentId,
           name: productData.name || '',
           brand,
@@ -173,8 +250,8 @@ export default function InventoryManagement() {
           minStockLevel,
           maxStockLevel,
           stockStatus,
-          costPrice: productData.costPrice ?? 0,
-          weight: productData.weight ?? 0,
+          basePrice: parsePrice(productData.basePrice ?? 0),
+          weight: parsePrice(productData.weight ?? 0),
           Dimensions:
             productData.Dimensions ||
             productData.dimensions || {
@@ -184,10 +261,13 @@ export default function InventoryManagement() {
               unit: 'cm',
             },
           subcategory,
+          variants: variants.length > 0 ? variants : undefined,
         };
-      }).filter((p: Product) => p.name); // Filter out products without a name
+      }));
 
-      setProducts(transformedProducts);
+      const filteredProducts = transformedProducts.filter((p: Product) => p.name); // Filter out products without a name
+
+      setProducts(filteredProducts);
     } catch (err: any) {
       console.error('Error fetching products:', err);
       const message =
@@ -233,16 +313,91 @@ export default function InventoryManagement() {
 
   const calculateStats = () => {
     const totalProducts = products.length;
-    const lowStock = products.filter(p => p.stockStatus === 'low-stock').length;
-    const outOfStock = products.filter(p => p.stockStatus === 'out-of-stock').length;
+    
+    const getProductQuantity = (product: Product): number => {
+      // If product has variants, sum variant quantities
+      if (product.variants && product.variants.length > 0) {
+        return product.variants.reduce((sum, variant) => {
+          if (selectedWarehouse) {
+            const key = `${product.id}-${variant.id}`;
+            const variantQty = warehouseVariantInventory[key]?.quantity;
+            if (variantQty !== undefined) {
+              return sum + variantQty;
+            }
+          }
+          return sum + (variant.stockQuantity || 0);
+        }, 0);
+      }
+      
+      // Otherwise use product stock
+      if (selectedWarehouse && warehouseInventory[product.id]) {
+        return warehouseInventory[product.id].quantity;
+      }
+      return product.stockQuantity;
+    };
+
+    const getVariantQuantity = (product: Product, variant: ProductVariant): number => {
+      if (selectedWarehouse) {
+        const key = `${product.id}-${variant.id}`;
+        const variantQty = warehouseVariantInventory[key]?.quantity;
+        if (variantQty !== undefined) {
+          return variantQty;
+        }
+      }
+      return variant.stockQuantity || 0;
+    };
+
+    const lowStock = products.filter(p => {
+      if (p.variants && p.variants.length > 0) {
+        // Check if any variant is low stock
+        return p.variants.some(variant => {
+          const quantity = getVariantQuantity(p, variant);
+          const minLevel = variant.minStockLevel || p.minStockLevel;
+          return computeStockStatus(quantity, minLevel) === 'low-stock';
+        });
+      }
+      const quantity = getProductQuantity(p);
+      return computeStockStatus(quantity, p.minStockLevel) === 'low-stock';
+    }).length;
+    
+    const outOfStock = products.filter(p => {
+      if (p.variants && p.variants.length > 0) {
+        // Check if all variants are out of stock
+        return p.variants.every(variant => {
+          const quantity = getVariantQuantity(p, variant);
+          const minLevel = variant.minStockLevel || p.minStockLevel;
+          return computeStockStatus(quantity, minLevel) === 'out-of-stock';
+        });
+      }
+      const quantity = getProductQuantity(p);
+      return computeStockStatus(quantity, p.minStockLevel) === 'out-of-stock';
+    }).length;
     
     const totalValue = products.reduce((sum, product) => {
+      if (product.variants && product.variants.length > 0) {
+        // Sum variant values
+        return sum + product.variants.reduce((variantSum, variant) => {
+          const price = parsePrice(variant.price || product.price);
+          const quantity = getVariantQuantity(product, variant);
+          return variantSum + price * quantity;
+        }, 0);
+      }
       const price = parsePrice(product.price);
-      return sum + price * product.stockQuantity;
+      const quantity = getProductQuantity(product);
+      return sum + price * quantity;
     }, 0);
     
     const totalCost = products.reduce((sum, product) => {
-      return sum + (product.costPrice * product.stockQuantity);
+      if (product.variants && product.variants.length > 0) {
+        // Sum variant costs (use variant price or product basePrice)
+        return sum + product.variants.reduce((variantSum, variant) => {
+          const costPrice = parsePrice(variant.price || product.basePrice);
+          const quantity = getVariantQuantity(product, variant);
+          return variantSum + costPrice * quantity;
+        }, 0);
+      }
+      const quantity = getProductQuantity(product);
+      return sum + (product.basePrice * quantity);
     }, 0);
 
     setStats({
@@ -278,6 +433,25 @@ export default function InventoryManagement() {
       default:
         return 'bg-gray-100 text-gray-800';
     }
+  };
+
+  const toggleProductExpansion = (productId: number) => {
+    setExpandedProducts(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(productId)) {
+        newSet.delete(productId);
+      } else {
+        newSet.add(productId);
+      }
+      return newSet;
+    });
+  };
+
+  const formatVariantAttributes = (variant: ProductVariant): string => {
+    const attrs = variant.attributes || variant.specs || {};
+    return Object.entries(attrs)
+      .map(([key, value]) => `${key}: ${value}`)
+      .join(', ') || 'No attributes';
   };
 
   if (loading) {
@@ -327,13 +501,6 @@ export default function InventoryManagement() {
             <BuildingOfficeIcon className="w-5 h-5 mr-2" />
             Manage Warehouses
           </Link>
-          <button
-            onClick={() => setShowMovementHistory(!showMovementHistory)}
-            className="btn-secondary flex items-center"
-          >
-            <ChartBarIcon className="w-5 h-5 mr-2" />
-            {showMovementHistory ? 'Hide' : 'Show'} Movement History
-          </button>
         </div>
       </div>
 
@@ -455,76 +622,107 @@ export default function InventoryManagement() {
             </select>
           </div>
 
-          {/* Brand Filter */}
-          <div className="md:w-40">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Brand
+          {/* More Filters Button */}
+          <div className="md:w-auto">
+            <label className="block text-sm font-medium text-gray-700 mb-1 opacity-0 select-none absolute">
+              More Filters
             </label>
-            <select
-              className="input-field"
-              value={selectedBrand}
-              onChange={(e) => setSelectedBrand(e.target.value)}
-            >
-              <option value="">All Brands</option>
-              {Array.from(
-                new Set(
-                  products
-                    .map(p => p.brand)
-                    .filter((brand): brand is string => typeof brand === 'string' && brand.trim().length > 0)
-                )
-              ).map(brand => (
-                <option key={brand} value={brand}>{brand}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Warehouse Filter */}
-          <div className="md:w-48">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Warehouse
-            </label>
-            <select
-              className="input-field"
-              value={selectedWarehouse || ''}
-              onChange={(e) => setSelectedWarehouse(e.target.value ? parseInt(e.target.value, 10) : null)}
-            >
-              <option value="">All Warehouses</option>
-              {warehouses.map((warehouse) => (
-                <option key={warehouse.id} value={warehouse.id}>
-                  {warehouse.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Status Filter */}
-          <div className="md:w-40">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Stock Status
-            </label>
-            <select
-              className="input-field"
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-            >
-              <option value="">All Stock Status</option>
-              <option value="in-stock">In Stock</option>
-              <option value="low-stock">Low Stock</option>
-              <option value="out-of-stock">Out of Stock</option>
-            </select>
+            <div className="relative group">
+              <button
+                onClick={() => setShowMoreFilters(!showMoreFilters)}
+                className="btn-secondary w-full md:w-[42px] h-[42px] flex items-center justify-center p-0"
+              >
+                <FunnelIcon className="w-5 h-5" />
+              </button>
+              <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                More Filters
+              </span>
+            </div>
           </div>
 
           {/* Export Button */}
-          <div className="md:w-40">
+          <div className="md:w-auto">
             <label className="block text-sm font-medium text-gray-700 mb-1 opacity-0 select-none">
               Export
             </label>
-            <button className="btn-secondary w-full md:w-auto h-[42px] flex items-center justify-center">
-              <ChartBarIcon className="w-5 h-5 mr-2" />
-              Export Report
-            </button>
+            <div className="relative group">
+              <button 
+                className="btn-secondary w-full md:w-[42px] h-[42px] flex items-center justify-center p-0"
+              >
+                <ChartBarIcon className="w-5 h-5" />
+              </button>
+              <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                Export Report
+              </span>
+            </div>
           </div>
         </div>
+
+        {/* More Filters Section */}
+        {showMoreFilters && (
+          <div className="mt-6 pt-6 border-t border-gray-200">
+            <div className="flex flex-col md:flex-row md:items-end gap-4 md:gap-6">
+              {/* Brand Filter */}
+              <div className="md:w-40">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Brand
+                </label>
+                <select
+                  className="input-field"
+                  value={selectedBrand}
+                  onChange={(e) => setSelectedBrand(e.target.value)}
+                >
+                  <option value="">All Brands</option>
+                  {Array.from(
+                    new Set(
+                      products
+                        .map(p => p.brand)
+                        .filter((brand): brand is string => typeof brand === 'string' && brand.trim().length > 0)
+                    )
+                  ).map(brand => (
+                    <option key={brand} value={brand}>{brand}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Warehouse Filter */}
+              <div className="md:w-48">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Warehouse
+                </label>
+                <select
+                  className="input-field"
+                  value={selectedWarehouse || ''}
+                  onChange={(e) => setSelectedWarehouse(e.target.value ? parseInt(e.target.value, 10) : null)}
+                >
+                  <option value="">All Warehouses</option>
+                  {warehouses.map((warehouse) => (
+                    <option key={warehouse.id} value={warehouse.id}>
+                      {warehouse.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Status Filter */}
+              <div className="md:w-40">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Stock Status
+                </label>
+                <select
+                  className="input-field"
+                  value={filterStatus}
+                  onChange={(e) => setFilterStatus(e.target.value)}
+                >
+                  <option value="">All Stock Status</option>
+                  <option value="in-stock">In Stock</option>
+                  <option value="low-stock">Low Stock</option>
+                  <option value="out-of-stock">Out of Stock</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Inventory Table */}
@@ -537,108 +735,269 @@ export default function InventoryManagement() {
                 <th className="table-header">SKU</th>
                 <th className="table-header">Stock Level</th>
                 <th className="table-header">Status</th>
-                <th className="table-header">Cost Price</th>
+                <th className="table-header">Base Price</th>
                 <th className="table-header">Inventory Value</th>
                 <th className="table-header">Weight</th>
                 <th className="table-header">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredProducts.map((product) => (
-                <tr
-                  key={product.id}
-                  className="hover:bg-gray-50"
-                >
-                  <td className="table-cell">
-                    <div className="flex items-center">
-                      <img
-                        src={product.images && product.images.length > 0 ? product.images[0].url : 'https://via.placeholder.com/40x40?text=No+Image'}
-                        alt={product.images && product.images.length > 0 ? product.images[0].alt : product.name}
-                        className="w-10 h-10 rounded-lg object-cover mr-3"
-                        onError={(e) => {
-                          e.currentTarget.src = 'https://via.placeholder.com/40x40?text=Error';
-                        }}
-                      />
-                      <div>
-                        <p className="font-medium text-gray-900">{product.name}</p>
-                        <p className="text-sm text-gray-500">{product.brand} • {product.category}</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="table-cell font-mono text-sm">{product.SKU || 'N/A'}</td>
-                  <td className="table-cell">
-                    <div className="flex items-center">
-                      <div className="w-16 bg-gray-200 rounded-full h-2 mr-3">
-                        <div 
-                          className={`h-2 rounded-full ${
-                            product.stockStatus === 'out-of-stock' ? 'bg-red-500' :
-                            product.stockStatus === 'low-stock' ? 'bg-yellow-500' :
-                            'bg-green-500'
-                          }`}
-                          style={{
-                            width: `${Math.min(100, (product.stockQuantity / product.maxStockLevel) * 100)}%`
-                          }}
-                        ></div>
-                      </div>
-                      <span className="text-sm font-medium">
-                        {product.stockQuantity}/{product.maxStockLevel}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="table-cell">
-                    <div className="flex items-center">
-                      {getStatusIcon(product.stockStatus)}
-                      <span className={`ml-2 inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusClass(product.stockStatus)}`}>
-                        {product.stockStatus.replace('-', ' ')}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="table-cell">K{product.costPrice.toLocaleString()}</td>
-                  <td className="table-cell">
-                    K{(product.costPrice * product.stockQuantity).toLocaleString()}
-                  </td>
-                  <td className="table-cell">{product.weight} kg</td>
-                  <td className="table-cell">
-                    <div className="flex gap-2">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setEditingProduct(product);
-                          setIsEditModalOpen(true);
-                        }}
-                        className="text-primary-600 hover:text-primary-700 text-sm"
-                        title="Edit Inventory"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setAdjustingProduct(product);
-                          setIsAdjustModalOpen(true);
-                        }}
-                        className="text-blue-600 hover:text-blue-700 text-sm"
-                        title="Adjust Stock"
-                      >
-                        Adjust
-                      </button>
-                      {warehouses.length > 1 && (
+              {filteredProducts.map((product) => {
+                const hasVariants = product.variants && product.variants.length > 0;
+                const isExpanded = expandedProducts.has(product.id);
+                
+                // Calculate product quantity (sum of variants if has variants)
+                let quantity: number;
+                if (hasVariants) {
+                  quantity = product.variants!.reduce((sum, variant) => {
+                    if (selectedWarehouse) {
+                      const key = `${product.id}-${variant.id}`;
+                      const variantQty = warehouseVariantInventory[key]?.quantity;
+                      if (variantQty !== undefined) {
+                        return sum + variantQty;
+                      }
+                    }
+                    return sum + (variant.stockQuantity || 0);
+                  }, 0);
+                } else {
+                  quantity = selectedWarehouse && warehouseInventory[product.id] 
+                    ? warehouseInventory[product.id].quantity 
+                    : product.stockQuantity;
+                }
+                
+                const stockStatus = computeStockStatus(quantity, product.minStockLevel, product.stockStatus);
+                
+                return (
+                  <React.Fragment key={product.id}>
+                    {/* Main Product Row */}
+                    <tr
+                      className="hover:bg-gray-50"
+                    >
+                      <td className="table-cell max-w-xs">
+                        <div className="flex items-center">
+                          {hasVariants && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleProductExpansion(product.id);
+                              }}
+                              className="mr-2 p-1 hover:bg-gray-200 rounded"
+                            >
+                              {isExpanded ? (
+                                <ChevronDownIcon className="w-4 h-4 text-gray-600" />
+                              ) : (
+                                <ChevronRightIcon className="w-4 h-4 text-gray-600" />
+                              )}
+                            </button>
+                          )}
+                          <img
+                            src={product.images && product.images.length > 0 ? product.images[0].url : 'https://via.placeholder.com/40x40?text=No+Image'}
+                            alt={product.images && product.images.length > 0 ? product.images[0].alt : product.name}
+                            className="w-10 h-10 rounded-lg object-cover mr-3 flex-shrink-0"
+                            onError={(e) => {
+                              e.currentTarget.src = 'https://via.placeholder.com/40x40?text=Error';
+                            }}
+                          />
+                          <div className="min-w-0 flex-1">
+                            <p className="font-medium text-gray-900 truncate" title={product.name}>
+                              {product.name}
+                              {hasVariants && (
+                                <span className="ml-2 text-xs text-gray-500 font-normal">
+                                  ({product.variants!.length} variant{product.variants!.length !== 1 ? 's' : ''})
+                                </span>
+                              )}
+                            </p>
+                            <p className="text-sm text-gray-500 truncate">{product.brand} • {product.category}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="table-cell font-mono text-sm">
+                        {product.SKU || 'N/A'}
+                      </td>
+                      <td className="table-cell">
+                        <div className="flex items-center">
+                          <div className="w-16 bg-gray-200 rounded-full h-2 mr-3">
+                            <div 
+                              className={`h-2 rounded-full ${
+                                stockStatus === 'out-of-stock' ? 'bg-red-500' :
+                                stockStatus === 'low-stock' ? 'bg-yellow-500' :
+                                'bg-green-500'
+                              }`}
+                              style={{
+                                width: `${Math.min(100, (quantity / product.maxStockLevel) * 100)}%`
+                              }}
+                            ></div>
+                          </div>
+                          <span className="text-sm font-medium">
+                            {quantity}/{product.maxStockLevel}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="table-cell">
+                        <div className="flex items-center">
+                          {getStatusIcon(stockStatus)}
+                          <span className={`ml-2 inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusClass(stockStatus)}`}>
+                            {stockStatus.replace('-', ' ')}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="table-cell">K{product.basePrice.toLocaleString()}</td>
+                      <td className="table-cell">
+                        {hasVariants ? (
+                          <span className="text-sm text-gray-500">
+                            K{product.variants!.reduce((sum, variant) => {
+                              const variantQty = selectedWarehouse 
+                                ? warehouseVariantInventory[`${product.id}-${variant.id}`]?.quantity ?? variant.stockQuantity
+                                : variant.stockQuantity;
+                              const price = parsePrice(variant.price || product.basePrice);
+                              return sum + (price * variantQty);
+                            }, 0).toLocaleString()}
+                          </span>
+                        ) : (
+                          `K${(product.basePrice * quantity).toLocaleString()}`
+                        )}
+                      </td>
+                      <td className="table-cell">{product.weight > 0 ? `${product.weight} kg` : '-'}</td>
+                      <td className="table-cell">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            setTransferringProduct(product);
-                            setIsTransferModalOpen(true);
+                            setEditingProduct(product);
+                            setIsEditModalOpen(true);
                           }}
-                          className="text-purple-600 hover:text-purple-700 text-sm"
-                          title="Transfer Stock"
+                          className="text-primary-600 hover:text-primary-800 text-sm font-medium"
                         >
-                          Transfer
+                          Edit
                         </button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                      </td>
+                    </tr>
+                    
+                    {/* Variant Rows */}
+                    {hasVariants && isExpanded && product.variants!.map((variant) => {
+                      const variantQuantity = selectedWarehouse 
+                        ? warehouseVariantInventory[`${product.id}-${variant.id}`]?.quantity ?? variant.stockQuantity
+                        : variant.stockQuantity;
+                      const variantMinLevel = variant.minStockLevel || product.minStockLevel;
+                      const variantMaxLevel = variant.maxStockLevel || product.maxStockLevel;
+                      const variantStockStatus = computeStockStatus(variantQuantity, variantMinLevel, variant.stockStatus);
+                      const variantPrice = parsePrice(variant.price || product.basePrice);
+                      
+                      return (
+                        <tr
+                          key={`${product.id}-${variant.id}`}
+                          className="hover:bg-gray-50 bg-gray-25"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            // Create a temporary product object for variant editing
+                            const variantProduct: Product = {
+                              id: product.id,
+                              documentId: product.documentId,
+                              name: product.name,
+                              brand: product.brand,
+                              category: product.category,
+                              price: variant.price || product.price,
+                              images: (variant.images || product.images).map(img => ({
+                                url: img.url,
+                                alt: img.alt || product.name,
+                                isMain: (img as any).isMain,
+                              })),
+                              SKU: variant.sku,
+                              stockQuantity: variantQuantity,
+                              minStockLevel: variantMinLevel,
+                              maxStockLevel: variantMaxLevel,
+                              stockStatus: variantStockStatus,
+                              basePrice: variantPrice,
+                              weight: product.weight,
+                              Dimensions: product.Dimensions,
+                              subcategory: product.subcategory,
+                            };
+                            setEditingProduct(variantProduct);
+                            setIsEditModalOpen(true);
+                          }}
+                        >
+                          <td className="table-cell pl-12">
+                            <div className="flex items-center">
+                              <div className="min-w-0 flex-1">
+                                <p className="text-sm font-medium text-gray-700">
+                                  {formatVariantAttributes(variant)}
+                                </p>
+                                <p className="text-xs text-gray-500">Variant</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="table-cell font-mono text-sm">{variant.sku || 'N/A'}</td>
+                          <td className="table-cell">
+                            <div className="flex items-center">
+                              <div className="w-16 bg-gray-200 rounded-full h-2 mr-3">
+                                <div 
+                                  className={`h-2 rounded-full ${
+                                    variantStockStatus === 'out-of-stock' ? 'bg-red-500' :
+                                    variantStockStatus === 'low-stock' ? 'bg-yellow-500' :
+                                    'bg-green-500'
+                                  }`}
+                                  style={{
+                                    width: `${Math.min(100, (variantQuantity / variantMaxLevel) * 100)}%`
+                                  }}
+                                ></div>
+                              </div>
+                              <span className="text-sm font-medium">
+                                {variantQuantity}/{variantMaxLevel}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="table-cell">
+                            <div className="flex items-center">
+                              {getStatusIcon(variantStockStatus)}
+                              <span className={`ml-2 inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusClass(variantStockStatus)}`}>
+                                {variantStockStatus.replace('-', ' ')}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="table-cell">K{variantPrice.toLocaleString()}</td>
+                          <td className="table-cell">
+                            K{(variantPrice * variantQuantity).toLocaleString()}
+                          </td>
+                          <td className="table-cell">-</td>
+                          <td className="table-cell">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                const variantProduct: Product = {
+                                  id: product.id,
+                                  documentId: product.documentId,
+                                  name: product.name,
+                                  brand: product.brand,
+                                  category: product.category,
+                                  price: variant.price || product.price,
+                                  images: (variant.images || product.images).map(img => ({
+                                    url: img.url,
+                                    alt: img.alt || product.name,
+                                    isMain: (img as any).isMain,
+                                  })),
+                                  SKU: variant.sku,
+                                  stockQuantity: variantQuantity,
+                                  minStockLevel: variantMinLevel,
+                                  maxStockLevel: variantMaxLevel,
+                                  stockStatus: variantStockStatus,
+                                  basePrice: variantPrice,
+                                  weight: product.weight,
+                                  Dimensions: product.Dimensions,
+                                  subcategory: product.subcategory,
+                                };
+                                setEditingProduct(variantProduct);
+                                setIsEditModalOpen(true);
+                              }}
+                              className="text-primary-600 hover:text-primary-800 text-sm font-medium"
+                            >
+                              Edit
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </React.Fragment>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -654,13 +1013,6 @@ export default function InventoryManagement() {
         )}
       </div>
 
-      {/* Movement History */}
-      {showMovementHistory && (
-        <div className="mt-6">
-          <InventoryMovementHistory />
-        </div>
-      )}
-
       {/* Edit Inventory Modal */}
       <EditInventoryModal
         isOpen={isEditModalOpen}
@@ -669,21 +1021,20 @@ export default function InventoryManagement() {
           setEditingProduct(null);
         }}
         product={editingProduct}
-        onSave={() => {
-          fetchProducts();
-        }}
-      />
-
-      {/* Stock Adjustment Modal */}
-      <StockAdjustmentModal
-        isOpen={isAdjustModalOpen}
-        onClose={() => {
-          setIsAdjustModalOpen(false);
-          setAdjustingProduct(null);
-        }}
-        product={adjustingProduct}
         warehouseId={selectedWarehouse}
-        onSuccess={() => {
+        warehouses={warehouses}
+        onTransfer={(product) => {
+          if (product && editingProduct) {
+            // Ensure we pass the full product with all fields
+            const fullProduct: Product = {
+              ...editingProduct,
+              ...product,
+            };
+            setTransferringProduct(fullProduct);
+            setIsTransferModalOpen(true);
+          }
+        }}
+        onSave={() => {
           fetchProducts();
         }}
       />

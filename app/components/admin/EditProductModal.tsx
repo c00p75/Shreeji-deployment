@@ -45,7 +45,7 @@ interface Product {
   minStockLevel?: number;
   maxStockLevel?: number;
   stockStatus?: string;
-  costPrice?: number;
+  basePrice?: number;
   taxRate?: number;
   discountPercent?: number;
   weight?: number;
@@ -62,7 +62,7 @@ interface EditProductModalProps {
   onClose: () => void;
   product: Product | null;
   onSave: (updatedProduct: Product) => void;
-  onDelete: (id: number) => void;
+  onDelete: (id: number) => Promise<void>;
 }
 
 interface Category {
@@ -323,7 +323,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
     minStockLevel: 5,
     maxStockLevel: 100,
     stockStatus: 'in-stock',
-    costPrice: 0,
+    basePrice: 0,
     taxRate: 16, // Default VAT 16%
     discountPercent: 0,
     weight: 0,
@@ -445,8 +445,8 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
 
       // Get taxRate from product if available, or calculate from basePrice and sellingPrice
       let taxRateValue = (product as any).taxRate || 16;
-      if (!taxRateValue && (product as any).costPrice && sellingPrice > 0) {
-        const basePrice = (product as any).costPrice || 0;
+      if (!taxRateValue && (product as any).basePrice && sellingPrice > 0) {
+        const basePrice = (product as any).basePrice || 0;
         if (basePrice > 0) {
           taxRateValue = ((sellingPrice - basePrice) / basePrice) * 100;
         }
@@ -461,8 +461,8 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
         Dimensions: product.Dimensions || { length: 0, width: 0, height: 0, unit: 'cm' },
         SKU: product.SKU || `SKU-${Date.now()}`,
         stockQuantity: product.stockQuantity || 0,
-        costPrice: (product as any).costPrice !== undefined && (product as any).costPrice !== null 
-          ? (product as any).costPrice 
+        basePrice: (product as any).basePrice !== undefined && (product as any).basePrice !== null 
+          ? (product as any).basePrice 
           : ((product as any).basePrice !== undefined && (product as any).basePrice !== null 
             ? (product as any).basePrice 
             : 0),
@@ -1493,8 +1493,8 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
       newErrors.brand = 'Brand is required';
     }
 
-    if (!formData.costPrice || formData.costPrice <= 0) {
-      newErrors.costPrice = 'Base Price is required and must be greater than 0';
+    if (!formData.basePrice || formData.basePrice <= 0) {
+      newErrors.basePrice = 'Base Price is required and must be greater than 0';
     }
 
     if (formData.stockQuantity !== undefined && formData.stockQuantity < 0) {
@@ -1529,7 +1529,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
       name: 'field-product-name',
       category: 'field-product-category',
       brand: 'field-product-brand',
-      costPrice: 'field-product-cost-price',
+      basePrice: 'field-product-cost-price',
       stockQuantity: 'field-product-stock-quantity',
       minStockLevel: 'field-product-min-stock',
       maxStockLevel: 'field-product-max-stock',
@@ -1570,7 +1570,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
     if (!confirm('Are you sure you want to delete this product?')) return;
     try {
       setDeleting(true);
-      onDelete(product.id);
+      await onDelete(product.id);
       onClose();
       showToast('success', 'Product deleted');
     } catch (error: any) {
@@ -1605,7 +1605,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
       }
 
       // Calculate prices
-      const basePrice = formData.costPrice || 0;
+      const basePrice = formData.basePrice || 0;
       const vatPercent = formData.taxRate || 16;
       const sellingPrice = basePrice * (1 + vatPercent / 100);
       const discountPercent = formData.discountPercent || 0;
@@ -1618,7 +1618,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
         slug: formData.name.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').replace(/^-+|-+$/g, ''),
         price: sellingPrice.toString(), // Selling price = Base Price + VAT
         discountedPrice: discountPrice > 0 ? discountPrice.toString() : '0',
-        costPrice: basePrice, // Base price (formerly cost price)
+        basePrice: basePrice, // Base price (formerly cost price)
         taxRate: vatPercent,
         discountPercent: discountPercent,
         // Include SEO fields
@@ -2139,7 +2139,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
                     
                     {(() => {
                       // Computed values
-                      const basePrice = formData.costPrice || 0;
+                      const basePrice = formData.basePrice || 0;
                       const vatPercent = formData.taxRate || 16;
                       const sellingPrice = basePrice * (1 + vatPercent / 100);
                       const discountPercent = formData.discountPercent || 0;
@@ -2153,10 +2153,10 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
                             <input
                               id="field-product-cost-price"
                               type="number"
-                              value={formData.costPrice || ''}
+                              value={formData.basePrice || ''}
                               onChange={(e) => {
                                 const value = parseFloat(e.target.value) || 0;
-                                handleInputChange('costPrice', value);
+                                handleInputChange('basePrice', value);
                                 // Auto-update selling price
                                 const newSellingPrice = value * (1 + (formData.taxRate || 16) / 100);
                                 handleInputChange('price', newSellingPrice.toFixed(2));
@@ -2166,12 +2166,12 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
                                   handleInputChange('discountedPrice', newDiscountPrice.toFixed(2));
                                 }
                               }}
-                              className={`w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.costPrice ? 'border-red-500' : ''}`}
+                              className={`w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.basePrice ? 'border-red-500' : ''}`}
                               placeholder="0.00"
                               min="0"
                               step="0.01"
                             />
-                            {errors.costPrice && <p className="mt-1 text-sm text-red-600">{errors.costPrice}</p>}
+                            {errors.basePrice && <p className="mt-1 text-sm text-red-600">{errors.basePrice}</p>}
                           </div>
 
                           {/* VAT */}
@@ -2184,7 +2184,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
                                 const value = parseFloat(e.target.value) || 16;
                                 handleInputChange('taxRate', value);
                                 // Auto-update selling price
-                                const basePriceValue = formData.costPrice || 0;
+                                const basePriceValue = formData.basePrice || 0;
                                 const newSellingPrice = basePriceValue * (1 + value / 100);
                                 handleInputChange('price', newSellingPrice.toFixed(2));
                                 // Auto-update discount price if discount percent exists
@@ -2224,7 +2224,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
                                 const value = parseFloat(e.target.value) || 0;
                                 handleInputChange('discountPercent', value);
                                 // Auto-update discount price
-                                const basePriceValue = formData.costPrice || 0;
+                                const basePriceValue = formData.basePrice || 0;
                                 const vatPercentValue = formData.taxRate || 16;
                                 const currentSellingPrice = basePriceValue * (1 + vatPercentValue / 100);
                                 const newDiscountPrice = currentSellingPrice * (1 - value / 100);

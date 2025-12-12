@@ -262,6 +262,23 @@ class ClientApiClient {
     return response;
   }
 
+  // Loyalty
+  async getLoyaltyPoints() {
+    const user = await clientAuth.getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+    return this.request<{ data: { points: number } }>('/loyalty/points');
+  }
+
+  async getLoyaltyHistory() {
+    const user = await clientAuth.getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+    return this.request<{ data: any[] }>('/loyalty/history');
+  }
+
   // Client profile - Get and update user profile
   async getProfile() {
     const user = await clientAuth.getCurrentUser();
