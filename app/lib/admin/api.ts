@@ -145,7 +145,7 @@ class ApiClient {
     // Handle subcategoryId - allow null to clear the relation
     if (productData.subcategory !== undefined) {
       const subcategoryValue =
-        typeof productData.subcategory === 'object'
+        typeof productData.subcategory === 'object' && productData.subcategory !== null
           ? productData.subcategory.id
           : productData.subcategory;
 
@@ -162,7 +162,9 @@ class ApiClient {
     // Handle brandId - allow null to clear the relation
     if (productData.brand !== undefined) {
       const brandValue =
-        typeof productData.brand === 'object' ? productData.brand.id : productData.brand;
+        typeof productData.brand === 'object' && productData.brand !== null
+          ? productData.brand.id
+          : productData.brand;
 
       if (brandValue !== undefined && brandValue !== null && brandValue !== '') {
         const numValue = Number(brandValue);
@@ -203,6 +205,12 @@ class ApiClient {
     if (productData.minStockLevel !== undefined) updateData.minStockLevel = parseInt(productData.minStockLevel);
     if (productData.maxStockLevel !== undefined) updateData.maxStockLevel = parseInt(productData.maxStockLevel);
     if (productData.isActive !== undefined) updateData.isActive = productData.isActive;
+    // SEO fields
+    if (productData.metaTitle !== undefined) updateData.metaTitle = productData.metaTitle;
+    if (productData.metaDescription !== undefined) updateData.metaDescription = productData.metaDescription;
+    if (productData.metaKeywords !== undefined) updateData.metaKeywords = productData.metaKeywords;
+    if (productData.ogImage !== undefined) updateData.ogImage = productData.ogImage;
+    if (productData.schemaMarkup !== undefined) updateData.schemaMarkup = productData.schemaMarkup;
 
     // Debug: Log the update payload
     console.log('[API] Update payload:', JSON.stringify(updateData, null, 2));
@@ -218,6 +226,74 @@ class ApiClient {
       method: 'DELETE',
     });
   }
+
+  // Product Variants API
+  async getProductVariants(productId: string | number) {
+    const response = await this.request<any[]>(`/admin/products/${productId}/variants`);
+    return {
+      data: Array.isArray(response) ? response : (response.data || []),
+    };
+  }
+
+  async getProductVariant(productId: string | number, variantId: string | number) {
+    return this.request<any>(`/admin/products/${productId}/variants/${variantId}`);
+  }
+
+  async createProductVariant(productId: string | number, variantData: any) {
+    return this.request<any>(`/admin/products/${productId}/variants`, {
+      method: 'POST',
+      body: JSON.stringify(variantData),
+    });
+  }
+
+  async updateProductVariant(productId: string | number, variantId: string | number, variantData: any) {
+    return this.request<any>(`/admin/products/${productId}/variants/${variantId}`, {
+      method: 'PUT',
+      body: JSON.stringify(variantData),
+    });
+  }
+
+  async deleteProductVariant(productId: string | number, variantId: string | number) {
+    return this.request(`/admin/products/${productId}/variants/${variantId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // Review Management API
+  async getFlaggedReviews() {
+    const response = await this.request<any[]>(`/reviews/admin/flagged`);
+    return {
+      data: Array.isArray(response) ? response : (response.data || []),
+    };
+  }
+
+  async moderateReview(reviewId: number, action: 'approve' | 'dismiss') {
+    return this.request<any>(`/reviews/admin/${reviewId}/moderate`, {
+      method: 'PUT',
+      body: JSON.stringify({ action }),
+    });
+  }
+
+  // Bulk Product Operations
+  async bulkImportProducts(payload: { products: any[] }) {
+    return this.request(`/admin/products/bulk/import`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  }
+
+  async bulkUpdateProducts(payload: { action: 'price' | 'status'; priceUpdates?: any[]; statusUpdates?: any[] }) {
+    return this.request(`/admin/products/bulk/update`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  }
+
+  async getBulkImportTemplate() {
+    return this.request(`/admin/products/bulk/template`);
+  }
+
+  // Recommendations (admin may not need endpoints; placeholder for future admin analytics)
 
   // Brand API methods
   async getBrands(params?: {
@@ -414,6 +490,149 @@ class ApiClient {
     });
   }
 
+  async cancelOrder(id: string | number, reason?: string) {
+    return this.request<{ success: boolean; message: string }>(`/orders/${id}/cancel`, {
+      method: 'PUT',
+      body: JSON.stringify({ reason }),
+    });
+  }
+
+  // Returns API
+  async getReturns(params?: {
+    status?: string;
+    customerId?: number;
+    orderId?: number;
+    page?: number;
+    pageSize?: number;
+  }) {
+    const searchParams = new URLSearchParams();
+
+    if (params?.status) {
+      searchParams.append('status', params.status);
+    }
+    if (params?.customerId) {
+      searchParams.append('customerId', params.customerId.toString());
+    }
+    if (params?.orderId) {
+      searchParams.append('orderId', params.orderId.toString());
+    }
+    if (params?.page) {
+      searchParams.append('page', params.page.toString());
+    }
+    if (params?.pageSize) {
+      searchParams.append('pageSize', params.pageSize.toString());
+    }
+
+    const queryString = searchParams.toString();
+    const endpoint = `/returns${queryString ? `?${queryString}` : ''}`;
+
+    return this.request<{ data: any[]; meta: any }>(endpoint);
+  }
+
+  async getReturn(id: string | number) {
+    return this.request<{ data: any }>(`/returns/${id}`);
+  }
+
+  async approveReturn(id: string | number) {
+    return this.request<{ success: boolean; message: string; data: any }>(`/returns/${id}/approve`, {
+      method: 'PUT',
+    });
+  }
+
+  async rejectReturn(id: string | number, rejectionReason: string) {
+    return this.request<{ success: boolean; message: string; data: any }>(`/returns/${id}/reject`, {
+      method: 'PUT',
+      body: JSON.stringify({ rejectionReason }),
+    });
+  }
+
+  // Orders Export API
+  async exportOrdersToCSV(params?: {
+    startDate?: string;
+    endDate?: string;
+    status?: string;
+    paymentStatus?: string;
+  }) {
+    const searchParams = new URLSearchParams();
+    if (params?.startDate) searchParams.append('startDate', params.startDate);
+    if (params?.endDate) searchParams.append('endDate', params.endDate);
+    if (params?.status) searchParams.append('status', params.status);
+    if (params?.paymentStatus) searchParams.append('paymentStatus', params.paymentStatus);
+
+    const queryString = searchParams.toString();
+    const url = `${this.baseURL}/orders/admin/export/csv${queryString ? `?${queryString}` : ''}`;
+    
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: this.getHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to export orders');
+    }
+
+    const blob = await response.blob();
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.download = `orders-${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(downloadUrl);
+  }
+
+  async exportOrdersToPDF(params?: {
+    startDate?: string;
+    endDate?: string;
+    status?: string;
+    paymentStatus?: string;
+  }) {
+    const searchParams = new URLSearchParams();
+    if (params?.startDate) searchParams.append('startDate', params.startDate);
+    if (params?.endDate) searchParams.append('endDate', params.endDate);
+    if (params?.status) searchParams.append('status', params.status);
+    if (params?.paymentStatus) searchParams.append('paymentStatus', params.paymentStatus);
+
+    const queryString = searchParams.toString();
+    const url = `${this.baseURL}/orders/admin/export/pdf${queryString ? `?${queryString}` : ''}`;
+    
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: this.getHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to export orders');
+    }
+
+    const blob = await response.blob();
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.download = `orders-${new Date().toISOString().split('T')[0]}.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(downloadUrl);
+  }
+
+  async getOrderAnalytics(params?: {
+    startDate?: string;
+    endDate?: string;
+    status?: string;
+    paymentStatus?: string;
+  }) {
+    const searchParams = new URLSearchParams();
+    if (params?.startDate) searchParams.append('startDate', params.startDate);
+    if (params?.endDate) searchParams.append('endDate', params.endDate);
+    if (params?.status) searchParams.append('status', params.status);
+    if (params?.paymentStatus) searchParams.append('paymentStatus', params.paymentStatus);
+
+    const queryString = searchParams.toString();
+    return this.request<{ data: any }>(`/orders/admin/analytics${queryString ? `?${queryString}` : ''}`);
+  }
+
   // Payments API
   async getPayments(params?: {
     pagination?: { page: number; pageSize: number };
@@ -533,6 +752,189 @@ class ApiClient {
     });
   }
 
+  // Inventory Management API
+  async getWarehouses(filters?: { isActive?: boolean }) {
+    const params = new URLSearchParams();
+    if (filters?.isActive !== undefined) {
+      params.append('isActive', filters.isActive.toString());
+    }
+    const queryString = params.toString();
+    return this.request(`/inventory/warehouses${queryString ? `?${queryString}` : ''}`);
+  }
+
+  async getWarehouse(id: number) {
+    return this.request(`/inventory/warehouses/${id}`);
+  }
+
+  async createWarehouse(data: any) {
+    return this.request('/inventory/warehouses', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateWarehouse(id: number, data: any) {
+    return this.request(`/inventory/warehouses/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteWarehouse(id: number) {
+    return this.request(`/inventory/warehouses/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async getWarehouseInventory(warehouseId: number, productId?: number) {
+    const params = new URLSearchParams();
+    if (productId) {
+      params.append('productId', productId.toString());
+    }
+    const queryString = params.toString();
+    return this.request(`/inventory/warehouses/${warehouseId}/inventory${queryString ? `?${queryString}` : ''}`);
+  }
+
+  async reserveInventory(data: any) {
+    return this.request('/inventory/reserve', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async releaseReservation(data: { reservationId?: number; orderId?: number }) {
+    return this.request('/inventory/release', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async confirmReservation(reservationId: number) {
+    return this.request(`/inventory/confirm-reservation/${reservationId}`, {
+      method: 'POST',
+    });
+  }
+
+  async adjustStock(data: any) {
+    return this.request('/inventory/adjust', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async transferStock(data: any) {
+    return this.request('/inventory/transfer', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async getInventoryMovements(filters?: {
+    productId?: number;
+    warehouseId?: number;
+    movementType?: string;
+    dateFrom?: string;
+    dateTo?: string;
+    limit?: number;
+  }) {
+    const params = new URLSearchParams();
+    if (filters?.productId) params.append('productId', filters.productId.toString());
+    if (filters?.warehouseId) params.append('warehouseId', filters.warehouseId.toString());
+    if (filters?.movementType) params.append('movementType', filters.movementType);
+    if (filters?.dateFrom) params.append('dateFrom', filters.dateFrom);
+    if (filters?.dateTo) params.append('dateTo', filters.dateTo);
+    if (filters?.limit) params.append('limit', filters.limit.toString());
+    const queryString = params.toString();
+    return this.request(`/inventory/movements${queryString ? `?${queryString}` : ''}`);
+  }
+
+  async getLowStockProducts(warehouseId?: number, threshold?: number) {
+    const params = new URLSearchParams();
+    if (warehouseId) params.append('warehouseId', warehouseId.toString());
+    if (threshold) params.append('threshold', threshold.toString());
+    const queryString = params.toString();
+    return this.request(`/inventory/low-stock${queryString ? `?${queryString}` : ''}`);
+  }
+
+  async getReorderPoints(warehouseId?: number) {
+    const params = new URLSearchParams();
+    if (warehouseId) params.append('warehouseId', warehouseId.toString());
+    const queryString = params.toString();
+    return this.request(`/inventory/reorder-points${queryString ? `?${queryString}` : ''}`);
+  }
+
+  // Inventory Alerts API
+  async getAlertSettings() {
+    return this.request('/inventory/alerts/settings');
+  }
+
+  async updateAlertSettings(data: any) {
+    return this.request('/inventory/alerts/settings', {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async checkAlerts(warehouseId?: number) {
+    const params = new URLSearchParams();
+    if (warehouseId) params.append('warehouseId', warehouseId.toString());
+    const queryString = params.toString();
+    return this.request(`/inventory/alerts/check${queryString ? `?${queryString}` : ''}`, {
+      method: 'POST',
+    });
+  }
+
+  async getAlertHistory(warehouseId?: number, limit?: number) {
+    const params = new URLSearchParams();
+    if (warehouseId) params.append('warehouseId', warehouseId.toString());
+    if (limit) params.append('limit', limit.toString());
+    const queryString = params.toString();
+    return this.request(`/inventory/alerts/history${queryString ? `?${queryString}` : ''}`);
+  }
+
+  // Inventory Reports API
+  async getStockLevelReport(warehouseId?: number, format?: 'csv' | 'pdf') {
+    const params = new URLSearchParams();
+    if (warehouseId) params.append('warehouseId', warehouseId.toString());
+    if (format) params.append('format', format);
+    const queryString = params.toString();
+    return this.request(`/inventory/reports/stock-levels${queryString ? `?${queryString}` : ''}`);
+  }
+
+  async getValuationReport(warehouseId?: number, format?: 'csv' | 'pdf') {
+    const params = new URLSearchParams();
+    if (warehouseId) params.append('warehouseId', warehouseId.toString());
+    if (format) params.append('format', format);
+    const queryString = params.toString();
+    return this.request(`/inventory/reports/valuation${queryString ? `?${queryString}` : ''}`);
+  }
+
+  async getMovementReport(filters?: {
+    warehouseId?: number;
+    productId?: number;
+    dateFrom?: string;
+    dateTo?: string;
+    format?: 'csv' | 'pdf';
+  }) {
+    const params = new URLSearchParams();
+    if (filters?.warehouseId) params.append('warehouseId', filters.warehouseId.toString());
+    if (filters?.productId) params.append('productId', filters.productId.toString());
+    if (filters?.dateFrom) params.append('dateFrom', filters.dateFrom);
+    if (filters?.dateTo) params.append('dateTo', filters.dateTo);
+    if (filters?.format) params.append('format', filters.format);
+    const queryString = params.toString();
+    return this.request(`/inventory/reports/movements${queryString ? `?${queryString}` : ''}`);
+  }
+
+  async getSlowMovingReport(warehouseId?: number, daysThreshold?: number, format?: 'csv' | 'pdf') {
+    const params = new URLSearchParams();
+    if (warehouseId) params.append('warehouseId', warehouseId.toString());
+    if (daysThreshold) params.append('daysThreshold', daysThreshold.toString());
+    if (format) params.append('format', format);
+    const queryString = params.toString();
+    return this.request(`/inventory/reports/slow-moving${queryString ? `?${queryString}` : ''}`);
+  }
+
   // Dashboard Statistics
   async getDashboardStats(): Promise<{
     totalProducts: number;
@@ -544,6 +946,71 @@ class ApiClient {
     outOfStockProducts: number;
   }> {
     return this.request('/admin/dashboard/stats');
+  }
+
+  // Admin Users API
+  async getAdminUsers(params?: {
+    pagination?: { page: number; pageSize: number };
+    filters?: { role?: string; isActive?: boolean };
+  }) {
+    const searchParams = new URLSearchParams();
+
+    if (params?.pagination) {
+      searchParams.append('page', params.pagination.page.toString());
+      searchParams.append('pageSize', params.pagination.pageSize.toString());
+    }
+
+    if (params?.filters) {
+      if (params.filters.role) {
+        searchParams.append('role', params.filters.role);
+      }
+      if (params.filters.isActive !== undefined) {
+        searchParams.append('isActive', params.filters.isActive.toString());
+      }
+    }
+
+    const queryString = searchParams.toString();
+    const endpoint = `/admin/users${queryString ? `?${queryString}` : ''}`;
+
+    return this.request<{ data: any[]; meta: any }>(endpoint);
+  }
+
+  async getAdminUser(id: string | number) {
+    return this.request<{ data: any }>(`/admin/users/${id}`);
+  }
+
+  async createAdminUser(data: {
+    email: string;
+    password: string;
+    firstName?: string;
+    lastName?: string;
+    role?: 'super_admin' | 'manager' | 'support';
+    isActive?: boolean;
+  }) {
+    return this.request('/admin/users', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateAdminUser(id: string | number, data: {
+    email?: string;
+    password?: string;
+    firstName?: string;
+    lastName?: string;
+    role?: 'super_admin' | 'manager' | 'support';
+    isActive?: boolean;
+  }) {
+    return this.request<{ data: any }>(`/admin/users/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteAdminUser(id: string | number) {
+    return this.request(`/admin/users/${id}`, {
+      method: 'DELETE',
+    });
   }
 }
 

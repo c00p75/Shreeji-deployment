@@ -12,12 +12,14 @@ import { useCart } from '@/app/contexts/CartContext';
 import toast from 'react-hot-toast';
 import QuantityInput from '../QuantityInput';
 import { ToastWithProgress } from '@/app/components/ToastWithProgress';
+import ProductVariantSelector from '@/app/components/products/ProductVariantSelector';
 
-const ProductDetails = ({product}) => {  
+const ProductDetails = ({product, previewMode = false}) => {  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [quantity, setQuantity] = useState(1)
   const [addingToCart, setAddingToCart] = useState(false)
   const [brandLogoError, setBrandLogoError] = useState(false)
+  const [selectedVariant, setSelectedVariant] = useState(null)
   const { addItem } = useCart()
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
@@ -81,8 +83,33 @@ const ProductDetails = ({product}) => {
   
   const brandLogoUrl = getBrandLogoUrl();
   
+  // Helper function to format price with currency prefix
+  const formatPrice = (price) => {
+    if (!price) return null;
+    
+    // If price is already a string with "K" prefix, return as is
+    if (typeof price === 'string' && price.trim().startsWith('K')) {
+      return price;
+    }
+    
+    // If price is a number, format it with "K" prefix
+    if (typeof price === 'number') {
+      return `K ${price.toLocaleString()}`;
+    }
+    
+    // If price is a string without "K", try to extract number and format
+    if (typeof price === 'string') {
+      const numericValue = parseFloat(price.replace(/[^0-9.]/g, ''));
+      if (!isNaN(numericValue)) {
+        return `K ${numericValue.toLocaleString()}`;
+      }
+    }
+    
+    return price; // Fallback to original value
+  };
+  
   return (
-    <div className="pl-5 md:pl-10 pr-5 text-black h-full pt-5 product-details">
+    <div className="pl-5 md:pl-10 pr-5 text-black h-full pt-5 product-details pb-[2rem]">
       {brandLogoUrl && !brandLogoError && (
         <div className='w-full h-fit flex-center mb-5'>
           <Image 
@@ -104,23 +131,51 @@ const ProductDetails = ({product}) => {
       {product['description'] && (
         <div className='relative'>
           <p className="text-2xl text-[#544829] text-center relative z-[2]">{product['description']}</p>
+          
           <SpecialFeaturBudge product={product} />
         </div>
       )}
       
       <div className={`flex justify-center items-start flex-col md:flex-row ${ product['special feature'] ? 'mt-14' : ''}`}>
-        <div className='flex-1 relative mt-10'>
+        <div className='flex-1 mt-10 sticky top-[250px]'>
           {product['images'] && (
             <ProductImage images={product['images']} name={product.name} product={product} />
           )}      
         </div>
+          
+        <div className='product-specs mt-10 md:mt-0 flex-1 md:p-10 pr-0'>  
+            {/* Price Display */}
+            {(product?.price || product?.['discounted price']) && (
+              <div className='mb-6'>
+                {product?.['discounted price'] ? (
+                  <div className='flex flex-col gap-2'>
+                    <div className='flex items-center gap-3 flex-wrap'>
+                      <span className='price-zigzag-pattern text-3xl font-bold text-white'>
+                        {formatPrice(product['discounted price'])}
+                      </span>
+                      {product.price && (
+                        <span className='text-xl text-gray-500 line-through'>
+                          {formatPrice(product.price)}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  product.price && (
+                    <div className='price-zigzag-pattern text-3xl font-bold text-white'>
+                      {formatPrice(product.price)}
+                    </div>
+                  )
+                )}
+              </div>
+            )}
 
-        <div className='product-specs mt-10 md:mt-0 flex-1 md:p-10 pr-0'>    
           {product['tagline'] && (
             <h1 className="text-3xl text-center md:text-start mb-6 font-bold bg-gradient-to-r from-[#807045] to-[#544829] bg-clip-text text-transparent relative">
               {product['tagline']}
             </h1>
           )}            
+
           {product['specs'] && (
             <div className='relative'>
               <div className='fadeUp fadeUp1' />
@@ -161,7 +216,21 @@ const ProductDetails = ({product}) => {
             </div>
           )}
 
-          <div className='mt-10'>
+          <div>
+            {/* Recommendations */}
+          
+            {/* Product Variants Selector */}
+            {product?.id && (
+              <div className='mb-6'>
+                <ProductVariantSelector
+                  productId={product.id}
+                  productPrice={product.price ? parseFloat(product.price.toString().replace(/[^0-9.]/g, '')) : 0}
+                  productDiscountedPrice={product['discounted price'] ? parseFloat(product['discounted price'].toString().replace(/[^0-9.]/g, '')) : undefined}
+                  onVariantSelect={setSelectedVariant}
+                />
+              </div>
+            )}
+            
             {/* <p className='text-xl font-semibold text-[#544829]'>Ready to purchase?</p>
             <p className='text-sm text-gray-500 mb-4'>Add this product to your cart and complete checkout when you&apos;re ready.</p> */}
             <div className='flex flex-col gap-3 md:flex-row md:items-center'>
@@ -175,6 +244,7 @@ const ProductDetails = ({product}) => {
               <button
                 type='button'
                 onClick={async () => {
+                  if (previewMode) return;
                   const productIdentifier = product?.documentId ?? product?.id
                   if (!productIdentifier) {
                     toast.error('Product identifier is missing')
@@ -182,7 +252,9 @@ const ProductDetails = ({product}) => {
                   }
                   setAddingToCart(true)
                   try {
-                    await addItem(productIdentifier, quantity)
+                    // If variant is selected, we need to pass variant info
+                    // For now, add the base product - variant handling in cart will be added later
+                    await addItem(productIdentifier, quantity, selectedVariant?.id)
                     toast.success((t) => (
                       <ToastWithProgress t={t} duration={8000} />
                     ), {
@@ -212,7 +284,8 @@ const ProductDetails = ({product}) => {
                   }
                 }}
                 className='w-fit rounded-2xl bg-[var(--shreeji-primary)] px-6 py-3 text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70'
-                disabled={addingToCart || !(product?.documentId || product?.id)}
+                disabled={previewMode || addingToCart || !(product?.documentId || product?.id)}
+                style={previewMode ? { cursor: 'not-allowed', opacity: 0.6 } : {}}
               >
                 {addingToCart ? 'Adding...' : 'Add to Cart'}
               </button>

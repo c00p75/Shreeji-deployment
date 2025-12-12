@@ -1,31 +1,84 @@
 'use client'
 
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import { useState, useEffect } from 'react'
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
+import api from '@/app/lib/admin/api'
 
-const data = [
-  { name: 'Jan', total: 4000, cancelled: 400 },
-  { name: 'Feb', total: 3000, cancelled: 300 },
-  { name: 'Mar', total: 5000, cancelled: 500 },
-  { name: 'Apr', total: 4500, cancelled: 450 },
-  { name: 'May', total: 6000, cancelled: 600 },
-  { name: 'Jun', total: 5500, cancelled: 550 },
-  { name: 'Jul', total: 7000, cancelled: 700 },
-]
+interface SalesChartProps {
+  period?: 'daily' | 'weekly' | 'monthly'
+}
 
-export default function SalesChart() {
+export default function SalesChart({ period = 'weekly' }: SalesChartProps) {
+  const [data, setData] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchSalesData()
+  }, [period])
+
+  const fetchSalesData = async () => {
+    try {
+      setLoading(true)
+      const endDate = new Date()
+      const startDate = new Date()
+      
+      // Calculate date range based on period
+      if (period === 'daily') {
+        startDate.setDate(endDate.getDate() - 7) // Last 7 days
+      } else if (period === 'weekly') {
+        startDate.setDate(endDate.getDate() - 42) // Last 6 weeks
+      } else {
+        startDate.setMonth(endDate.getMonth() - 6) // Last 6 months
+      }
+
+      const analytics = await api.getOrderAnalytics({
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+        groupBy: period === 'daily' ? 'day' : period === 'weekly' ? 'week' : 'month'
+      })
+
+      // Transform analytics data for chart
+      const chartData = analytics?.data || []
+      setData(chartData)
+    } catch (error) {
+      console.error('Error fetching sales data:', error)
+      // Fallback to empty data
+      setData([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="h-64 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+      </div>
+    )
+  }
+
+  if (data.length === 0) {
+    return (
+      <div className="h-64 flex items-center justify-center text-gray-500">
+        <p>No sales data available</p>
+      </div>
+    )
+  }
+
   return (
     <div className="h-64">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data}>
           <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
           <XAxis 
-            dataKey="name" 
+            dataKey="period" 
             stroke="#6b7280"
             fontSize={12}
           />
           <YAxis 
             stroke="#6b7280"
             fontSize={12}
+            tickFormatter={(value) => `K${(value / 1000).toFixed(0)}k`}
           />
           <Tooltip 
             contentStyle={{
@@ -34,10 +87,13 @@ export default function SalesChart() {
               borderRadius: '8px',
               boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
             }}
+            formatter={(value: number) => `K${value.toLocaleString()}`}
           />
+          <Legend />
           <Line 
             type="monotone" 
-            dataKey="total" 
+            dataKey="revenue" 
+            name="Revenue"
             stroke="#807045" 
             strokeWidth={2}
             dot={{ fill: '#807045', strokeWidth: 2, r: 4 }}
@@ -45,25 +101,15 @@ export default function SalesChart() {
           />
           <Line 
             type="monotone" 
-            dataKey="cancelled" 
-            stroke="#ef4444" 
+            dataKey="orders" 
+            name="Orders"
+            stroke="#3b82f6" 
             strokeWidth={2}
-            dot={{ fill: '#ef4444', strokeWidth: 2, r: 4 }}
-            activeDot={{ r: 6, stroke: '#ef4444', strokeWidth: 2 }}
+            dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }}
+            activeDot={{ r: 6, stroke: '#3b82f6', strokeWidth: 2 }}
           />
         </LineChart>
       </ResponsiveContainer>
-      
-      <div className="flex items-center justify-center space-x-6 mt-4">
-        <div className="flex items-center">
-          <div className="w-3 h-3 bg-primary-500 rounded-full mr-2"></div>
-          <span className="text-sm text-gray-600">Total Order</span>
-        </div>
-        <div className="flex items-center">
-          <div className="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
-          <span className="text-sm text-gray-600">Cancelled Order</span>
-        </div>
-      </div>
     </div>
   )
 }

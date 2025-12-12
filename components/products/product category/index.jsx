@@ -10,6 +10,30 @@ const productCategory = ({category, count, heading}) => {
   
   let latestProducts = filterProducts('category', category, count)
   
+  // Helper function to format price with currency prefix
+  const formatPrice = (price) => {
+    if (!price) return null;
+    
+    // If price is already a string with "K" prefix, return as is
+    if (typeof price === 'string' && price.trim().startsWith('K')) {
+      return price;
+    }
+    
+    // If price is a number, format it with "K" prefix
+    if (typeof price === 'number') {
+      return `K ${price.toLocaleString()}`;
+    }
+    
+    // If price is a string without "K", try to extract number and format
+    if (typeof price === 'string') {
+      const numericValue = parseFloat(price.replace(/[^0-9.]/g, ''));
+      if (!isNaN(numericValue)) {
+        return `K ${numericValue.toLocaleString()}`;
+      }
+    }
+    
+    return price; // Fallback to original value
+  };
 
   const scrollRef = useRef(null);
   const scroll = (direction) => {
@@ -56,8 +80,8 @@ const productCategory = ({category, count, heading}) => {
               <Image src={product["image"]} alt={product["name"]} className="h-auto w-[20rem] object-cover" />
               <p className="text-center mt-2 text-white">{product.name}</p>
               <div className='flex gap-3'>
-                <p className='line-through'>{product["price"]}</p>
-                <p>{product["discounted price"]}</p>
+                <p className='line-through'>{formatPrice(product["price"])}</p>
+                <p>{formatPrice(product["discounted price"])}</p>
               </div>
             </div>
           </Link>

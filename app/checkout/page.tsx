@@ -334,10 +334,17 @@ export default function CheckoutPage() {
 
   if (loading) {
     return (
-      <div className='flex min-h-screen items-center justify-center bg-[#f5f1e8]'>
-        <div className='text-center'>
-          <div className='mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-[var(--shreeji-primary)]'></div>
-          <p className='mt-4 text-gray-600'>Loading your cart...</p>
+      <div className='min-h-screen bg-[#f5f1e8] pt-24'>
+        <div className='mx-auto max-w-7xl px-4 pb-8 sm:px-6 lg:px-8'>
+          <div className="h-8 bg-gray-200 rounded w-64 animate-pulse mb-8"></div>
+          <div className="space-y-6 animate-pulse">
+            <div className="h-8 bg-gray-300 rounded w-1/3"></div>
+            <div className="space-y-4">
+              <div className="h-4 bg-gray-200 rounded w-full"></div>
+              <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+              <div className="h-12 bg-gray-200 rounded"></div>
+            </div>
+          </div>
         </div>
       </div>
     )

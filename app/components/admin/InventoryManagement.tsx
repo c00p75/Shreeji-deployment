@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { 
   MagnifyingGlassIcon, 
   FunnelIcon,
@@ -9,12 +10,17 @@ import {
   XCircleIcon,
   CubeIcon,
   CurrencyDollarIcon,
-  ChartBarIcon
+  ChartBarIcon,
+  BuildingOfficeIcon
 } from '@heroicons/react/24/outline';
 import api from '@/app/lib/admin/api';
 import { processProductImages } from '@/app/lib/admin/image-mapping';
 import Layout from './Layout'
 import EditInventoryModal from './EditInventoryModal'
+import StockAdjustmentModal from './StockAdjustmentModal'
+import InventoryTransferModal from './InventoryTransferModal'
+import InventoryMovementHistory from './InventoryMovementHistory'
+import { TableSkeleton, StatsSkeleton } from '@/app/components/ui/Skeletons'
 
 interface Product {
   id: number;
@@ -52,6 +58,13 @@ export default function InventoryManagement() {
   const [error, setError] = useState<string | null>(null);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [adjustingProduct, setAdjustingProduct] = useState<Product | null>(null);
+  const [isAdjustModalOpen, setIsAdjustModalOpen] = useState(false);
+  const [transferringProduct, setTransferringProduct] = useState<Product | null>(null);
+  const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
+  const [showMovementHistory, setShowMovementHistory] = useState(false);
+  const [selectedWarehouse, setSelectedWarehouse] = useState<number | null>(null);
+  const [warehouses, setWarehouses] = useState<any[]>([]);
   const [stats, setStats] = useState({
     totalProducts: 0,
     lowStock: 0,
@@ -62,7 +75,17 @@ export default function InventoryManagement() {
 
   useEffect(() => {
     fetchProducts();
+    fetchWarehouses();
   }, []);
+
+  const fetchWarehouses = async () => {
+    try {
+      const response = await api.getWarehouses({ isActive: true });
+      setWarehouses(response.data || []);
+    } catch (error) {
+      console.error('Error fetching warehouses:', error);
+    }
+  };
 
   useEffect(() => {
     filterProducts();
@@ -260,8 +283,10 @@ export default function InventoryManagement() {
   if (loading) {
     return (
       <Layout currentPage="Inventory">
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <div className="space-y-6">
+          <div className="h-8 bg-gray-200 rounded w-64 animate-pulse"></div>
+          <StatsSkeleton />
+          <TableSkeleton rows={10} columns={6} />
         </div>
       </Layout>
     );
@@ -293,6 +318,22 @@ export default function InventoryManagement() {
           <p className="mt-1 text-sm text-gray-500">
             Monitor stock levels and inventory value ({filteredProducts.length} products)
           </p>
+        </div>
+        <div className="mt-4 sm:mt-0 flex gap-3">
+          <Link
+            href="/admin/inventory/warehouses"
+            className="btn-secondary flex items-center"
+          >
+            <BuildingOfficeIcon className="w-5 h-5 mr-2" />
+            Manage Warehouses
+          </Link>
+          <button
+            onClick={() => setShowMovementHistory(!showMovementHistory)}
+            className="btn-secondary flex items-center"
+          >
+            <ChartBarIcon className="w-5 h-5 mr-2" />
+            {showMovementHistory ? 'Hide' : 'Show'} Movement History
+          </button>
         </div>
       </div>
 
@@ -437,6 +478,25 @@ export default function InventoryManagement() {
             </select>
           </div>
 
+          {/* Warehouse Filter */}
+          <div className="md:w-48">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Warehouse
+            </label>
+            <select
+              className="input-field"
+              value={selectedWarehouse || ''}
+              onChange={(e) => setSelectedWarehouse(e.target.value ? parseInt(e.target.value, 10) : null)}
+            >
+              <option value="">All Warehouses</option>
+              {warehouses.map((warehouse) => (
+                <option key={warehouse.id} value={warehouse.id}>
+                  {warehouse.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
           {/* Status Filter */}
           <div className="md:w-40">
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -480,17 +540,14 @@ export default function InventoryManagement() {
                 <th className="table-header">Cost Price</th>
                 <th className="table-header">Inventory Value</th>
                 <th className="table-header">Weight</th>
+                <th className="table-header">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredProducts.map((product) => (
                 <tr
                   key={product.id}
-                  className="hover:bg-gray-50 cursor-pointer"
-                  onClick={() => {
-                    setEditingProduct(product);
-                    setIsEditModalOpen(true);
-                  }}
+                  className="hover:bg-gray-50"
                 >
                   <td className="table-cell">
                     <div className="flex items-center">
@@ -541,6 +598,45 @@ export default function InventoryManagement() {
                     K{(product.costPrice * product.stockQuantity).toLocaleString()}
                   </td>
                   <td className="table-cell">{product.weight} kg</td>
+                  <td className="table-cell">
+                    <div className="flex gap-2">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingProduct(product);
+                          setIsEditModalOpen(true);
+                        }}
+                        className="text-primary-600 hover:text-primary-700 text-sm"
+                        title="Edit Inventory"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setAdjustingProduct(product);
+                          setIsAdjustModalOpen(true);
+                        }}
+                        className="text-blue-600 hover:text-blue-700 text-sm"
+                        title="Adjust Stock"
+                      >
+                        Adjust
+                      </button>
+                      {warehouses.length > 1 && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setTransferringProduct(product);
+                            setIsTransferModalOpen(true);
+                          }}
+                          className="text-purple-600 hover:text-purple-700 text-sm"
+                          title="Transfer Stock"
+                        >
+                          Transfer
+                        </button>
+                      )}
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -558,6 +654,13 @@ export default function InventoryManagement() {
         )}
       </div>
 
+      {/* Movement History */}
+      {showMovementHistory && (
+        <div className="mt-6">
+          <InventoryMovementHistory />
+        </div>
+      )}
+
       {/* Edit Inventory Modal */}
       <EditInventoryModal
         isOpen={isEditModalOpen}
@@ -567,7 +670,33 @@ export default function InventoryManagement() {
         }}
         product={editingProduct}
         onSave={() => {
-          // Refresh products after save
+          fetchProducts();
+        }}
+      />
+
+      {/* Stock Adjustment Modal */}
+      <StockAdjustmentModal
+        isOpen={isAdjustModalOpen}
+        onClose={() => {
+          setIsAdjustModalOpen(false);
+          setAdjustingProduct(null);
+        }}
+        product={adjustingProduct}
+        warehouseId={selectedWarehouse}
+        onSuccess={() => {
+          fetchProducts();
+        }}
+      />
+
+      {/* Stock Transfer Modal */}
+      <InventoryTransferModal
+        isOpen={isTransferModalOpen}
+        onClose={() => {
+          setIsTransferModalOpen(false);
+          setTransferringProduct(null);
+        }}
+        product={transferringProduct}
+        onSuccess={() => {
           fetchProducts();
         }}
       />

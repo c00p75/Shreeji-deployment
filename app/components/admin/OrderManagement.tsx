@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { PlusIcon, EyeIcon, PencilIcon, TrashIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid';
+import { PlusIcon, TrashIcon, MagnifyingGlassIcon, XCircleIcon, ArrowDownTrayIcon, ChartBarIcon } from '@heroicons/react/20/solid';
 import clsx from 'clsx';
 import Layout from './Layout'
 import api from '@/app/lib/admin/api'
 import EditOrderModal from './EditOrderModal'
+import CancelOrderModal from './CancelOrderModal'
 
 const statusColors = {
   pending: 'bg-yellow-100 text-yellow-800',
@@ -45,6 +46,11 @@ export default function OrderManagement() {
   });
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+  const [orderToCancel, setOrderToCancel] = useState<any>(null);
+  const [analytics, setAnalytics] = useState<any>(null);
+  const [showAnalytics, setShowAnalytics] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   const fetchOrders = useCallback(async () => {
     try {
@@ -108,6 +114,60 @@ export default function OrderManagement() {
     fetchOrders();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pagination.page, filters.status, filters.paymentStatus, filters.startDate, filters.endDate]);
+
+  const fetchAnalytics = useCallback(async () => {
+    try {
+      const response = await api.getOrderAnalytics({
+        startDate: filters.startDate || undefined,
+        endDate: filters.endDate || undefined,
+        status: filters.status || undefined,
+        paymentStatus: filters.paymentStatus || undefined,
+      });
+      setAnalytics(response.data);
+    } catch (error) {
+      console.error('Error fetching analytics:', error);
+    }
+  }, [filters.startDate, filters.endDate, filters.status, filters.paymentStatus]);
+
+  useEffect(() => {
+    if (showAnalytics) {
+      fetchAnalytics();
+    }
+  }, [showAnalytics, fetchAnalytics]);
+
+  const handleExportCSV = async () => {
+    try {
+      setExporting(true);
+      await api.exportOrdersToCSV({
+        startDate: filters.startDate || undefined,
+        endDate: filters.endDate || undefined,
+        status: filters.status || undefined,
+        paymentStatus: filters.paymentStatus || undefined,
+      });
+    } catch (error: any) {
+      console.error('Error exporting CSV:', error);
+      alert(error.message || 'Failed to export orders');
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const handleExportPDF = async () => {
+    try {
+      setExporting(true);
+      await api.exportOrdersToPDF({
+        startDate: filters.startDate || undefined,
+        endDate: filters.endDate || undefined,
+        status: filters.status || undefined,
+        paymentStatus: filters.paymentStatus || undefined,
+      });
+    } catch (error: any) {
+      console.error('Error exporting PDF:', error);
+      alert(error.message || 'Failed to export orders');
+    } finally {
+      setExporting(false);
+    }
+  };
 
   // Memoize stats calculations to prevent unnecessary re-renders
   const stats = useMemo(() => {
@@ -185,12 +245,64 @@ export default function OrderManagement() {
           >
             Refresh
           </button>
-          <button className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
-            <PlusIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
-            New Order
+          <button
+            onClick={() => setShowAnalytics(!showAnalytics)}
+            className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+          >
+            <ChartBarIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
+            Analytics
+          </button>
+          <button
+            onClick={handleExportCSV}
+            disabled={exporting}
+            className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50"
+          >
+            <ArrowDownTrayIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
+            Export CSV
+          </button>
+          <button
+            onClick={handleExportPDF}
+            disabled={exporting}
+            className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50"
+          >
+            <ArrowDownTrayIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
+            Export PDF
           </button>
         </div>
       </div>
+
+      {/* Analytics Dashboard */}
+      {showAnalytics && analytics && (
+        <div className="bg-white p-6 rounded-lg shadow">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Order Analytics</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="p-4 bg-blue-50 rounded-lg">
+              <p className="text-sm text-gray-600">Total Orders</p>
+              <p className="text-2xl font-bold text-gray-900">{analytics.totalOrders || 0}</p>
+            </div>
+            <div className="p-4 bg-green-50 rounded-lg">
+              <p className="text-sm text-gray-600">Total Revenue</p>
+              <p className="text-2xl font-bold text-gray-900">K{Number(analytics.totalRevenue || 0).toLocaleString()}</p>
+            </div>
+            <div className="p-4 bg-purple-50 rounded-lg">
+              <p className="text-sm text-gray-600">Average Order Value</p>
+              <p className="text-2xl font-bold text-gray-900">K{Number(analytics.averageOrderValue || 0).toFixed(2)}</p>
+            </div>
+          </div>
+          {analytics.statusDistribution && (
+            <div className="mt-4">
+              <h4 className="text-sm font-medium text-gray-700 mb-2">Status Distribution</h4>
+              <div className="flex flex-wrap gap-2">
+                {Object.entries(analytics.statusDistribution).map(([status, count]: [string, any]) => (
+                  <span key={status} className="px-3 py-1 bg-gray-100 rounded-full text-sm">
+                    {status}: {count}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -418,7 +530,17 @@ export default function OrderManagement() {
                 </tr>
               ) : (
                 filteredOrders.map((order) => (
-                <tr key={order.id} className={clsx(selectedOrders.includes(order.id) && 'bg-gray-50')}>
+                <tr
+                  key={order.id}
+                  onClick={() => {
+                    setSelectedOrder(order);
+                    setIsEditModalOpen(true);
+                  }}
+                  className={clsx(
+                    'cursor-pointer',
+                    selectedOrders.includes(order.id) && 'bg-gray-50'
+                  )}
+                >
                   <td className="relative w-12 px-6 sm:w-16 sm:px-8">
                     {selectedOrders.includes(order.id) && (
                       <div className="absolute inset-y-0 left-0 w-0.5 bg-primary-600" />
@@ -428,6 +550,7 @@ export default function OrderManagement() {
                       className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 sm:left-6"
                       checked={selectedOrders.includes(order.id)}
                       onChange={() => handleSelectOrder(order.id)}
+                      onClick={(e) => e.stopPropagation()}
                     />
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
@@ -464,34 +587,19 @@ export default function OrderManagement() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex items-center justify-end space-x-2">
-                      <button 
-                        onClick={() => {
-                          // View order details (can be implemented later)
-                        }}
-                        className="text-primary-600 hover:text-primary-900"
-                        title="View Details"
-                      >
-                        <EyeIcon className="h-4 w-4" />
-                      </button>
-                      <button 
-                        onClick={() => {
-                          setSelectedOrder(order);
-                          setIsEditModalOpen(true);
-                        }}
-                        className="text-gray-600 hover:text-gray-900"
-                        title="Edit Order"
-                      >
-                        <PencilIcon className="h-4 w-4" />
-                      </button>
-                      <button 
-                        onClick={() => {
-                          // Delete order (can be implemented later)
-                        }}
-                        className="text-red-600 hover:text-red-900"
-                        title="Delete Order"
-                      >
-                        <TrashIcon className="h-4 w-4" />
-                      </button>
+                      {order.status !== 'cancelled' && order.status !== 'delivered' && (
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setOrderToCancel(order);
+                            setIsCancelModalOpen(true);
+                          }}
+                          className="text-red-600 hover:text-red-900"
+                          title="Cancel Order"
+                        >
+                          <XCircleIcon className="h-4 w-4" />
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -569,6 +677,22 @@ export default function OrderManagement() {
           fetchOrders();
         }}
       />
+
+      {/* Cancel Order Modal */}
+      {orderToCancel && (
+        <CancelOrderModal
+          isOpen={isCancelModalOpen}
+          onClose={() => {
+            setIsCancelModalOpen(false);
+            setOrderToCancel(null);
+          }}
+          orderId={orderToCancel.orderId || orderToCancel.id}
+          orderNumber={orderToCancel.orderNumber || orderToCancel.id}
+          onSuccess={() => {
+            fetchOrders();
+          }}
+        />
+      )}
     </div>
     </Layout>
   );

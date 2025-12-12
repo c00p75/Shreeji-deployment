@@ -3,6 +3,8 @@
 import { CreditCard, X } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import React from 'react'
+import { useClientAuth } from '@/app/contexts/ClientAuthContext'
+import clientApi from '@/app/lib/client/api'
 
 import { CheckoutCardDetails, CheckoutMobileMoneyDetails, getBankDetails, getEnabledPaymentMethods, type BankDetails } from '@/app/lib/ecommerce/api'
 
@@ -49,7 +51,10 @@ export default function PaymentDetailsSection({
   onPaymentDetailsChange,
   isProcessing,
 }: PaymentDetailsSectionProps) {
+  const { isAuthenticated } = useClientAuth()
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null)
+  const [savedCards, setSavedCards] = useState<any[]>([])
+  const [loadingSavedCards, setLoadingSavedCards] = useState(false)
   const [mobileNumber, setMobileNumber] = useState<string>('')
   const [showNewCardForm, setShowNewCardForm] = useState(true)
   const [selectedCardType, setSelectedCardType] = useState<'visa' | 'mastercard' | 'amex' | 'diners' | null>('visa')
@@ -88,6 +93,37 @@ export default function PaymentDetailsSection({
         setLoadingMethods(false)
       })
   }, [])
+
+  // Load saved cards when authenticated and card payment is selected
+  useEffect(() => {
+    if (isAuthenticated && paymentMethod === 'card' && !loadingSavedCards) {
+      setLoadingSavedCards(true)
+      clientApi.getSavedCards()
+        .then((response) => {
+          setSavedCards(response.data || [])
+          // If there are saved cards, show them by default
+          if (response.data && response.data.length > 0) {
+            const defaultCard = response.data.find((card: any) => card.isDefault) || response.data[0]
+            if (defaultCard) {
+              setSelectedCardId(defaultCard.id.toString())
+              setShowNewCardForm(false)
+            }
+          } else {
+            setShowNewCardForm(true)
+          }
+        })
+        .catch((error) => {
+          console.error('Failed to load saved cards:', error)
+          setShowNewCardForm(true)
+        })
+        .finally(() => {
+          setLoadingSavedCards(false)
+        })
+    } else if (!isAuthenticated || paymentMethod !== 'card') {
+      setShowNewCardForm(true)
+      setSelectedCardId(null)
+    }
+  }, [isAuthenticated, paymentMethod])
 
   // Load bank details when bank transfer is selected
   useEffect(() => {
@@ -211,6 +247,90 @@ export default function PaymentDetailsSection({
 
       {paymentMethod === 'card' && (
         <div className='space-y-4'>
+          {/* Saved Cards Selection */}
+          {isAuthenticated && savedCards.length > 0 && (
+            <div className='space-y-3'>
+              <div className='flex items-center justify-between'>
+                <label className='text-sm font-medium text-gray-700'>Use Saved Card</label>
+                <button
+                  type='button'
+                  onClick={() => {
+                    setShowNewCardForm(!showNewCardForm)
+                    if (showNewCardForm) {
+                      setSelectedCardId(null)
+                    }
+                  }}
+                  className='text-sm text-[var(--shreeji-primary)] hover:underline'
+                >
+                  {showNewCardForm ? 'Use saved card' : 'Enter new card'}
+                </button>
+              </div>
+              {!showNewCardForm && (
+                <div className='space-y-2'>
+                  {savedCards.map((card) => (
+                    <label
+                      key={card.id}
+                      className={`flex cursor-pointer items-center gap-3 rounded-lg border-2 p-4 transition-all ${
+                        selectedCardId === card.id.toString()
+                          ? 'border-green-500 bg-green-50'
+                          : 'border-gray-200 bg-white hover:border-gray-300'
+                      }`}
+                    >
+                      <input
+                        type='radio'
+                        name='savedCard'
+                        value={card.id}
+                        checked={selectedCardId === card.id.toString()}
+                        onChange={(e) => {
+                          setSelectedCardId(e.target.value)
+                          setShowNewCardForm(false)
+                        }}
+                        className='h-4 w-4 text-green-600 focus:ring-green-500'
+                      />
+                      <div className='flex-1'>
+                        <div className='flex items-center gap-2'>
+                          <span className='text-lg font-semibold text-gray-900'>
+                            {card.cardType?.toUpperCase() || 'CARD'} •••• {card.last4}
+                          </span>
+                          {card.isDefault && (
+                            <span className='text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded'>Default</span>
+                          )}
+                        </div>
+                        <p className='text-sm text-gray-500 mt-1'>
+                          {card.cardholderName || 'Cardholder'} • Expires {card.expiryMonth?.padStart(2, '0')}/{card.expiryYear?.slice(-2)}
+                        </p>
+                      </div>
+                    </label>
+                  ))}
+                  {selectedCardId && (
+                    <div className='mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3'>
+                      <p className='text-sm text-amber-800'>
+                        Please enter your CVV to complete the payment
+                      </p>
+                      <input
+                        type='text'
+                        placeholder='CVV'
+                        maxLength={4}
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/\D/g, '').slice(0, 4)
+                          if (onPaymentDetailsChange) {
+                            onPaymentDetailsChange({
+                              cardDetails: {
+                                cardId: selectedCardId,
+                                cvv: value,
+                              },
+                            })
+                          }
+                        }}
+                        className='mt-2 w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500'
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Card Type Selection - Always visible when form is shown */}
           {showNewCardForm && (
             <div>
@@ -432,8 +552,8 @@ export default function PaymentDetailsSection({
         onClick={onPayment}
         disabled={
           isProcessing ||
-          (paymentMethod === 'card' && !selectedCardId && !showNewCardForm) ||
-          (paymentMethod === 'card' && showNewCardForm && (!newCardData.number || !newCardData.expiryMonth || !newCardData.expiryYear || !newCardData.cvv || !newCardData.cardholderName)) ||
+          (paymentMethod === 'card' && !selectedCardId && showNewCardForm && (!newCardData.number || !newCardData.expiryMonth || !newCardData.expiryYear || !newCardData.cvv || !newCardData.cardholderName)) ||
+          (paymentMethod === 'card' && !selectedCardId && !showNewCardForm && savedCards.length > 0) ||
           (paymentMethod === 'mobile_money' && (!mobileNumber || !validateMobileNumber(mobileNumber)))
         }
         className='w-full rounded-lg bg-green-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50'

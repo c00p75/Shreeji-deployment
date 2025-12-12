@@ -280,8 +280,8 @@ export default function EditOrderModal({ isOpen, onClose, order, onSave }: EditO
         />
 
         {/* Modal panel */}
-        <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-3xl sm:w-full">
-          <form onSubmit={handleSubmit}>
+        <div className="inline-block align-bottom bg-white max-h-[90vh] overflow-y-auto rounded-2xl text-left overflow-visible shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-3xl sm:w-full">
+          <form onSubmit={handleSubmit} className="relative">
             {/* Header */}
             <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4 border-b border-gray-200">
               <div className="flex items-center justify-between">
@@ -454,23 +454,25 @@ export default function EditOrderModal({ isOpen, onClose, order, onSave }: EditO
               )}
             </div>
 
-            {/* Footer */}
-            <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse border-t border-gray-200">
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary-600 text-base font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? 'Saving...' : 'Save Changes'}
-              </button>
-              <button
-                type="button"
-                onClick={handleClose}
-                disabled={loading}
-                className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50"
-              >
-                Cancel
-              </button>
+            {/* Floating actions */}
+            <div className="sticky bottom-0 z-20 mt-6 px-4 pb-4 sm:px-6">
+              <div className="flex flex-wrap items-center justify-end gap-3 rounded-2xl p-3">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="inline-flex items-center rounded-xl bg-primary-600 px-6 py-3 text-sm font-semibold text-white shadow-md shadow-primary-500/40 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {loading ? 'Saving...' : 'Save Changes'}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleClose}
+                  disabled={loading}
+                  className="inline-flex items-center rounded-xl border border-primary-100 bg-white px-5 py-3 text-sm font-semibold text-primary-700 shadow-sm hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-primary-200 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           </form>
         </div>

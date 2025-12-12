@@ -39,50 +39,85 @@ export function getAvailableProducts(): string[] {
   return Object.keys(imageMapping.mappings);
 }
 
-// Enhanced image processing that prioritizes local images
+// Enhanced image processing that prioritizes uploaded images from backend
 export function processProductImages(product: any): Array<{ url: string; alt: string; isMain?: boolean }> {
   const productName = product.name;
   
-  // First, try to get local images from mapping
+  // PRIORITY 1: Uploaded images from backend (product.images)
+  if (product.images && Array.isArray(product.images) && product.images.length > 0) {
+    const uploadedImages = product.images
+      .map((img: any, index: number) => {
+        let url: string | null = null;
+        let alt: string = productName;
+
+        if (typeof img === 'string') {
+          url = img;
+        } else if (img && typeof img === 'object') {
+          url = img.url || img.src || null;
+          alt = img.alt || productName;
+        }
+
+        if (url && typeof url === 'string' && url.trim()) {
+          return {
+            url: url.trim(),
+            alt,
+            isMain: index === 0 || img.isMain === true,
+          };
+        }
+        return null;
+      })
+      .filter((img: any): img is { url: string; alt: string; isMain?: boolean } => img !== null);
+
+    if (uploadedImages.length > 0) {
+      return uploadedImages;
+    }
+  }
+
+  // PRIORITY 2: Single image field
+  if (product.image && typeof product.image === 'string' && product.image.trim()) {
+    return [{ url: product.image.trim(), alt: productName, isMain: true }];
+  }
+
+  // PRIORITY 3: Media field (e.g., Strapi)
+  if (product.media) {
+    let mediaImages: Array<{ url: string; alt: string; isMain?: boolean }> = [];
+    if (Array.isArray(product.media)) {
+      mediaImages = product.media
+        .map((media: any, index: number) => {
+          const url = media?.url || media?.attributes?.url || media;
+          if (url && typeof url === 'string' && url.trim()) {
+            return {
+              url: url.trim(),
+              alt: media?.alt || productName,
+              isMain: index === 0,
+            };
+          }
+          return null;
+        })
+        .filter((img: any): img is { url: string; alt: string; isMain?: boolean } => img !== null);
+    } else if (typeof product.media === 'object' && product.media.url) {
+      mediaImages = [{ url: product.media.url.trim(), alt: productName, isMain: true }];
+    } else if (typeof product.media === 'string' && product.media.trim()) {
+      mediaImages = [{ url: product.media.trim(), alt: productName, isMain: true }];
+    }
+
+    if (mediaImages.length > 0) {
+      return mediaImages;
+    }
+  }
+
+  // PRIORITY 4: Local mapped images as fallback
   const localImages = getProductImages(productName);
   if (localImages.length > 0) {
     return localImages.map((imagePath, index) => ({
       url: imagePath,
       alt: productName,
-      isMain: index === 0
+      isMain: index === 0,
     }));
-  }
-  
-  // Fallback to Strapi images if no local mapping found
-  let images = [];
-  
-  if (product.images && Array.isArray(product.images) && product.images.length > 0) {
-    // Case 1: images is an array
-    images = product.images.map((img: any) => ({
-      url: typeof img === 'string' ? img : (img.url || img.src || img),
-      alt: typeof img === 'string' ? productName : (img.alt || productName),
-      isMain: true
-    }));
-  } else if (product.image) {
-    // Case 2: image is a single string URL
-    images = [{ url: product.image, alt: productName, isMain: true }];
-  } else if (product.media) {
-    // Case 3: media field (Strapi media)
-    if (Array.isArray(product.media)) {
-      images = product.media.map((media: any) => ({
-        url: media.url || media.attributes?.url || media,
-        alt: media.alt || productName,
-        isMain: true
-      }));
-    } else {
-      images = [{ url: product.media.url || product.media, alt: productName, isMain: true }];
-    }
-  } else {
-    // Case 4: No image found, use placeholder
-    images = [{ url: '/public/products/placeholder.png', alt: productName, isMain: true }];
   }
 
-  return images;
+  // PRIORITY 5: Placeholder
+  return [{ url: '/products/placeholder.png', alt: productName, isMain: true }];
 }
 
 export default imageMapping;

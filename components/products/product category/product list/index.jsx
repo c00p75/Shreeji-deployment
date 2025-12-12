@@ -5,6 +5,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import './style.scss';
 import { filterProducts } from '@/app/lib/client/products';
 import ProductPreview from '../../ProductPreview';
+import { ProductListItemSkeleton } from '@/app/components/ui/Skeletons';
 
 const ProductList = ({filterBy, filter}) => {
   const [categoryProducts, setCategoryProducts] = useState([]);
@@ -32,7 +33,9 @@ const ProductList = ({filterBy, filter}) => {
       <div className="product-category-list bg-[var(--shreeji-primary)] h-fit relative flex flex-col">
         <div className="scroll-container overflow-visible md:overflow-hidden relative px-5 md:px-10 pt-10">
           <div className="w-full product-containermin-w-full flex flex-col md:grid grid-cols-3 gap-7">
-            <p className="text-white">Loading products...</p>
+            {Array.from({ length: 6 }).map((_, i) => (
+              <ProductListItemSkeleton key={i} />
+            ))}
           </div>
         </div>
       </div>

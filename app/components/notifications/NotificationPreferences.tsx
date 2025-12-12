@@ -3,15 +3,51 @@
 import { useState, useEffect } from 'react';
 import { notificationsApi, NotificationPreferences as NotificationPrefs } from '../../lib/notifications/api';
 import { Switch } from '@headlessui/react';
+import clientApi from '@/app/lib/client/api';
+import toast from 'react-hot-toast';
 
 export default function NotificationPreferences() {
   const [preferences, setPreferences] = useState<NotificationPrefs[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<Record<string, boolean>>({});
+  const [marketingSubscribed, setMarketingSubscribed] = useState(false);
+  const [marketingLoading, setMarketingLoading] = useState(true);
+  const [marketingSaving, setMarketingSaving] = useState(false);
 
   useEffect(() => {
     loadPreferences();
+    loadMarketingSubscription();
   }, []);
+
+  const loadMarketingSubscription = async () => {
+    try {
+      setMarketingLoading(true);
+      const response = await clientApi.getMarketingSubscription();
+      setMarketingSubscribed(response.subscribed);
+    } catch (error) {
+      console.error('Failed to load marketing subscription:', error);
+    } finally {
+      setMarketingLoading(false);
+    }
+  };
+
+  const handleMarketingToggle = async (subscribed: boolean) => {
+    try {
+      setMarketingSaving(true);
+      if (subscribed) {
+        await clientApi.subscribeToMarketing();
+        toast.success('Subscribed to marketing emails');
+      } else {
+        await clientApi.unsubscribeFromMarketing();
+        toast.success('Unsubscribed from marketing emails');
+      }
+      setMarketingSubscribed(subscribed);
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to update marketing preferences');
+    } finally {
+      setMarketingSaving(false);
+    }
+  };
 
   const loadPreferences = async () => {
     try {
@@ -127,6 +163,37 @@ export default function NotificationPreferences() {
             </div>
           ))
         )}
+
+        {/* Marketing Email Preferences */}
+        <div className="border-t border-gray-200 pt-6">
+          <h3 className="text-sm font-medium text-gray-900 mb-4">
+            Marketing Communications
+          </h3>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-700">Marketing emails</p>
+              <p className="text-xs text-gray-500">Receive promotional emails, special offers, and updates</p>
+            </div>
+            {marketingLoading ? (
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-400"></div>
+            ) : (
+              <Switch
+                checked={marketingSubscribed}
+                onChange={handleMarketingToggle}
+                disabled={marketingSaving}
+                className={`${
+                  marketingSubscribed ? 'bg-primary-600' : 'bg-gray-200'
+                } relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50`}
+              >
+                <span
+                  className={`${
+                    marketingSubscribed ? 'translate-x-6' : 'translate-x-1'
+                  } inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
+                />
+              </Switch>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

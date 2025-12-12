@@ -1,0 +1,173 @@
+'use client'
+
+// Product Card Skeleton
+export function ProductCardSkeleton() {
+  return (
+    <div className="card overflow-hidden animate-pulse">
+      <div className="aspect-w-16 aspect-h-9 bg-gray-200">
+        <div className="w-full h-48 bg-gray-300"></div>
+      </div>
+      <div className="p-4 space-y-3">
+        <div className="h-4 bg-gray-300 rounded w-3/4"></div>
+        <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+        <div className="flex items-center justify-between">
+          <div className="h-5 bg-gray-300 rounded w-20"></div>
+          <div className="h-4 bg-gray-200 rounded w-16"></div>
+        </div>
+        <div className="h-8 bg-gray-200 rounded"></div>
+      </div>
+    </div>
+  )
+}
+
+// Product Grid Skeleton
+export function ProductGridSkeleton({ count = 8 }: { count?: number }) {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {Array.from({ length: count }).map((_, i) => (
+        <ProductCardSkeleton key={i} />
+      ))}
+    </div>
+  )
+}
+
+// Table Row Skeleton
+export function TableRowSkeleton({ columns = 5 }: { columns?: number }) {
+  return (
+    <tr className="animate-pulse">
+      {Array.from({ length: columns }).map((_, i) => (
+        <td key={i} className="px-6 py-4">
+          <div className="h-4 bg-gray-200 rounded w-full"></div>
+        </td>
+      ))}
+    </tr>
+  )
+}
+
+// Table Skeleton
+export function TableSkeleton({ rows = 5, columns = 5 }: { rows?: number; columns?: number }) {
+  return (
+    <div className="card overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              {Array.from({ length: columns }).map((_, i) => (
+                <th key={i} className="px-6 py-3">
+                  <div className="h-4 bg-gray-300 rounded w-24"></div>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {Array.from({ length: rows }).map((_, i) => (
+              <TableRowSkeleton key={i} columns={columns} />
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
+
+// Order Card Skeleton
+export function OrderCardSkeleton() {
+  return (
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 animate-pulse">
+      <div className="flex items-center justify-between mb-4">
+        <div className="h-5 bg-gray-300 rounded w-32"></div>
+        <div className="h-6 bg-gray-200 rounded-full w-20"></div>
+      </div>
+      <div className="space-y-2">
+        <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+        <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+      </div>
+      <div className="mt-4 h-10 bg-gray-200 rounded"></div>
+    </div>
+  )
+}
+
+// Product Details Skeleton
+export function ProductDetailsSkeleton() {
+  return (
+    <div className="animate-pulse">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Image Section */}
+        <div className="space-y-4">
+          <div className="aspect-square bg-gray-300 rounded-lg"></div>
+          <div className="grid grid-cols-4 gap-2">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="aspect-square bg-gray-200 rounded"></div>
+            ))}
+          </div>
+        </div>
+        {/* Details Section */}
+        <div className="space-y-4">
+          <div className="h-8 bg-gray-300 rounded w-3/4"></div>
+          <div className="h-6 bg-gray-200 rounded w-1/2"></div>
+          <div className="h-10 bg-gray-300 rounded w-32"></div>
+          <div className="space-y-2">
+            <div className="h-4 bg-gray-200 rounded w-full"></div>
+            <div className="h-4 bg-gray-200 rounded w-full"></div>
+            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+          </div>
+          <div className="h-12 bg-gray-300 rounded"></div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Wishlist Item Skeleton
+export function WishlistItemSkeleton() {
+  return (
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden animate-pulse">
+      <div className="aspect-square w-full bg-gray-300"></div>
+      <div className="p-4 space-y-3">
+        <div className="h-5 bg-gray-300 rounded w-3/4"></div>
+        <div className="h-6 bg-gray-200 rounded w-24"></div>
+        <div className="h-10 bg-gray-200 rounded"></div>
+      </div>
+    </div>
+  )
+}
+
+// Checkout Step Skeleton
+export function CheckoutStepSkeleton() {
+  return (
+    <div className="space-y-6 animate-pulse">
+      <div className="h-8 bg-gray-300 rounded w-1/3"></div>
+      <div className="space-y-4">
+        <div className="h-4 bg-gray-200 rounded w-full"></div>
+        <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+        <div className="h-12 bg-gray-200 rounded"></div>
+      </div>
+    </div>
+  )
+}
+
+// Admin Stats Skeleton
+export function StatsSkeleton() {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {Array.from({ length: 4 }).map((_, i) => (
+        <div key={i} className="card p-6 animate-pulse">
+          <div className="h-4 bg-gray-200 rounded w-24 mb-4"></div>
+          <div className="h-8 bg-gray-300 rounded w-32"></div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// Product List Item Skeleton (for category pages)
+export function ProductListItemSkeleton() {
+  return (
+    <div className="bg-white rounded-lg p-4 animate-pulse">
+      <div className="aspect-square bg-gray-200 rounded mb-4"></div>
+      <div className="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
+      <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+    </div>
+  )
+}
+

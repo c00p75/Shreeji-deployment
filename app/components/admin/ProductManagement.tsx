@@ -6,15 +6,14 @@ import {
   PlusIcon, 
   MagnifyingGlassIcon, 
   FunnelIcon,
-  PencilIcon,
-  TrashIcon,
-  EyeIcon
+  PencilIcon
 } from '@heroicons/react/24/outline'
 import api from '@/app/lib/admin/api'
 import { processProductImages } from '@/app/lib/admin/image-mapping'
 import EditProductModal from './EditProductModal'
 import AddProductModal from './AddProductModal'
-import ViewProductModal from './ViewProductModal'
+import toast from 'react-hot-toast'
+import { ProductGridSkeleton, TableSkeleton } from '@/app/components/ui/Skeletons'
 
 interface Product {
   id: number
@@ -54,10 +53,13 @@ export default function ProductManagement() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
-  const [viewingProduct, setViewingProduct] = useState<Product | null>(null)
   const [showEditModal, setShowEditModal] = useState(false)
-  const [showViewModal, setShowViewModal] = useState(false)
   const [showAddModal, setShowAddModal] = useState(false)
+  const [bulkImportText, setBulkImportText] = useState('')
+  const [bulkPriceText, setBulkPriceText] = useState('')
+  const [bulkStatusText, setBulkStatusText] = useState('')
+  const [bulkLoading, setBulkLoading] = useState(false)
+  const [showBulkImportModal, setShowBulkImportModal] = useState(false)
 
   const fetchProducts = async () => {
     try {
@@ -131,7 +133,11 @@ export default function ProductManagement() {
               minStockLevel: productData.minStockLevel,
               maxStockLevel: productData.maxStockLevel,
               stockStatus: productData.stockStatus,
-              costPrice: productData.costPrice,
+              costPrice: productData.costPrice !== undefined && productData.costPrice !== null 
+                ? productData.costPrice 
+                : (productData.basePrice !== undefined && productData.basePrice !== null 
+                  ? productData.basePrice 
+                  : undefined),
               weight: productData.weight,
               Dimensions: productData.Dimensions || productData.dimensions
             };
@@ -183,6 +189,95 @@ export default function ProductManagement() {
     }
   }
 
+  const parseCsvLines = (text: string) => {
+    return text
+      .split('\n')
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .map((line) => line.split(',').map((v) => v.trim()));
+  };
+
+  const handleBulkImport = async () => {
+    if (!bulkImportText.trim()) {
+      toast.error('Please paste CSV rows to import.');
+      return;
+    }
+    try {
+      setBulkLoading(true);
+      // Expect header: name,sku,category,sellingPrice,discountedPrice,stockQuantity
+      const lines = parseCsvLines(bulkImportText);
+      const hasHeader = lines[0]?.[0]?.toLowerCase() === 'name';
+      const dataLines = hasHeader ? lines.slice(1) : lines;
+      const products = dataLines.map((cols) => ({
+        name: cols[0],
+        sku: cols[1],
+        category: cols[2],
+        sellingPrice: cols[3] ? Number(cols[3]) : undefined,
+        discountedPrice: cols[4] ? Number(cols[4]) : undefined,
+        stockQuantity: cols[5] ? Number(cols[5]) : undefined,
+      }));
+      await api.bulkImportProducts({ products });
+      toast.success('Bulk import queued/completed');
+      setBulkImportText('');
+      fetchProducts();
+    } catch (error: any) {
+      toast.error(error.message || 'Bulk import failed');
+    } finally {
+      setBulkLoading(false);
+    }
+  };
+
+  const handleBulkPriceUpdate = async () => {
+    if (!bulkPriceText.trim()) {
+      toast.error('Please paste rows: sku,sellingPrice,discountedPrice(optional)');
+      return;
+    }
+    try {
+      setBulkLoading(true);
+      const lines = parseCsvLines(bulkPriceText);
+      const hasHeader = lines[0]?.[0]?.toLowerCase() === 'sku';
+      const dataLines = hasHeader ? lines.slice(1) : lines;
+      const priceUpdates = dataLines.map((cols) => ({
+        sku: cols[0],
+        sellingPrice: Number(cols[1]),
+        discountedPrice: cols[2] ? Number(cols[2]) : undefined,
+      }));
+      await api.bulkUpdateProducts({ action: 'price', priceUpdates });
+      toast.success('Prices updated');
+      setBulkPriceText('');
+      fetchProducts();
+    } catch (error: any) {
+      toast.error(error.message || 'Bulk price update failed');
+    } finally {
+      setBulkLoading(false);
+    }
+  };
+
+  const handleBulkStatusUpdate = async () => {
+    if (!bulkStatusText.trim()) {
+      toast.error('Please paste rows: sku,status');
+      return;
+    }
+    try {
+      setBulkLoading(true);
+      const lines = parseCsvLines(bulkStatusText);
+      const hasHeader = lines[0]?.[0]?.toLowerCase() === 'sku';
+      const dataLines = hasHeader ? lines.slice(1) : lines;
+      const statusUpdates = dataLines.map((cols) => ({
+        sku: cols[0],
+        status: cols[1],
+      }));
+      await api.bulkUpdateProducts({ action: 'status', statusUpdates });
+      toast.success('Statuses updated');
+      setBulkStatusText('');
+      fetchProducts();
+    } catch (error: any) {
+      toast.error(error.message || 'Bulk status update failed');
+    } finally {
+      setBulkLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchProducts()
   }, [])
@@ -220,9 +315,7 @@ export default function ProductManagement() {
   const brands = Array.from(new Set(products.map(p => p.brand).filter(Boolean)))
 
   const handleDelete = (id: number) => {
-    if (confirm('Are you sure you want to delete this product?')) {
-      setProducts(products.filter(p => p.id !== id))
-    }
+    setProducts(products.filter(p => p.id !== id))
   }
 
   const toggleActive = (id: number) => {
@@ -236,16 +329,18 @@ export default function ProductManagement() {
     setShowEditModal(true)
   }
 
-  const handleViewProduct = (product: Product) => {
-    setViewingProduct(product)
-    setShowViewModal(true)
-  }
-
   const handleSaveProduct = async (updatedProduct: Product) => {
     try {
-      if (!updatedProduct.documentId) {
-        console.error('No documentId found for product')
+      // Use documentId if available, otherwise use id
+      const productId = updatedProduct.documentId || updatedProduct.id;
+      if (!productId) {
+        console.error('No product ID found for product')
         throw new Error('Product ID is missing. Cannot save product.')
+      }
+      
+      // Ensure documentId is set for the API call
+      if (!updatedProduct.documentId && updatedProduct.id) {
+        updatedProduct.documentId = updatedProduct.id.toString();
       }
 
       // Prepare the data for NestJS backend - only include fields that have values
@@ -291,14 +386,15 @@ export default function ProductManagement() {
       }
 
       console.log('Updating product with data:', productData)
-      console.log('Product ID:', updatedProduct.documentId)
+      console.log('Product ID:', productId)
       
-      const response = await api.updateProduct(updatedProduct.documentId, productData)
+      const response = await api.updateProduct(productId, productData)
       console.log('Update response:', response)
       
       // Refresh products list to get latest data
       await fetchProducts()
       
+      toast.success('Product updated successfully!')
       console.log('Product updated successfully')
     } catch (error: any) {
       console.error('Error updating product:', error)
@@ -325,23 +421,31 @@ export default function ProductManagement() {
     setEditingProduct(null)
   }
 
-  const handleCloseViewModal = () => {
-    setShowViewModal(false)
-    setViewingProduct(null)
-  }
-
-  const handleEditFromView = (product: Product) => {
-    setShowViewModal(false)
-    setViewingProduct(null)
-    setEditingProduct(product)
-    setShowEditModal(true)
-  }
-
   if (loading) {
     return (
       <Layout currentPage="Products">
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <div className="space-y-6">
+          {/* Header Skeleton */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <div className="h-6 bg-gray-200 rounded w-64 animate-pulse"></div>
+            <div className="h-10 bg-gray-200 rounded w-32 animate-pulse mt-4 sm:mt-0"></div>
+          </div>
+
+          {/* Filters Skeleton */}
+          <div className="card p-6">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="h-10 bg-gray-200 rounded animate-pulse"></div>
+              ))}
+            </div>
+          </div>
+
+          {/* Products Skeleton */}
+          {viewMode === 'grid' ? (
+            <ProductGridSkeleton count={8} />
+          ) : (
+            <TableSkeleton rows={8} columns={5} />
+          )}
         </div>
       </Layout>
     )
@@ -357,7 +461,13 @@ export default function ProductManagement() {
               Manage your product catalog ({filteredProducts.length} products)
             </p>
           </div>
-          <div className="mt-4 sm:mt-0">
+          <div className="mt-4 sm:mt-0 flex items-center space-x-3">
+            <button
+              onClick={() => setShowBulkImportModal(true)}
+              className="btn-secondary flex items-center"
+            >
+              Import Data
+            </button>
             <button 
               onClick={() => setShowAddModal(true)}
               className="btn-primary flex items-center"
@@ -395,7 +505,7 @@ export default function ProductManagement() {
           </div>
         )}
 
-        {/* Filters */}
+        {/* Filters & Actions */}
         <div className="card p-6">
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
             {/* Search */}
@@ -480,6 +590,7 @@ export default function ProductManagement() {
               >
                 Clear
               </button>
+              
             </div>
           </div>
         </div>
@@ -488,11 +599,20 @@ export default function ProductManagement() {
         {viewMode === 'grid' ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredProducts.map((product) => (
-              <ProductCard key={`product-${product.id}-${product.slug}`} product={product} onDelete={handleDelete} onToggleActive={toggleActive} onEdit={handleEditProduct} onView={handleViewProduct} />
+              <ProductCard
+                key={`product-${product.id}-${product.slug}`}
+                product={product}
+                onToggleActive={toggleActive}
+                onEdit={handleEditProduct}
+              />
             ))}
           </div>
         ) : (
-          <ProductTable products={filteredProducts} onDelete={handleDelete} onToggleActive={toggleActive} onEdit={handleEditProduct} onView={handleViewProduct} />
+          <ProductTable
+            products={filteredProducts}
+            onToggleActive={toggleActive}
+            onEdit={handleEditProduct}
+          />
         )}
 
         {filteredProducts.length === 0 && (
@@ -518,13 +638,123 @@ export default function ProductManagement() {
         }}
       />
 
-      {/* View Product Modal */}
-      <ViewProductModal
-        isOpen={showViewModal}
-        onClose={handleCloseViewModal}
-        product={viewingProduct}
-        onEdit={handleEditFromView}
-      />
+      {/* Bulk Import Modal */}
+      {showBulkImportModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-3xl p-6 relative">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-semibold text-gray-900">Bulk Import Products</h3>
+              <button
+                className="text-gray-500 hover:text-gray-700"
+                onClick={() => setShowBulkImportModal(false)}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <p className="text-sm text-gray-600">
+                Use this modal for all bulk actions: import new products, update prices, or update stock status.
+              </p>
+              <div className="space-y-6">
+                {/* Bulk Import */}
+                <div className="border border-gray-200 rounded-xl p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-base font-semibold text-gray-900">Bulk Import</h4>
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        const tpl = await api.getBulkImportTemplate();
+                        setBulkImportText(typeof tpl === 'string' ? tpl : ((tpl as any)?.data || ''));
+                      }}
+                      className="text-xs text-[var(--shreeji-primary)] hover:underline"
+                    >
+                      Load template
+                    </button>
+                  </div>
+                  <p className="text-xs text-gray-600">
+                    Columns: <strong>name, sku, category, sellingPrice, discountedPrice, stockQuantity</strong>.
+                    Header row is optional.
+                  </p>
+                  <textarea
+                    className="w-full h-32 border border-gray-200 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[var(--shreeji-primary)] focus:border-transparent text-sm"
+                    placeholder="Example:
+name,sku,category,sellingPrice,discountedPrice,stockQuantity
+Sample Product,SKU-123,Category A,100,90,50"
+                    value={bulkImportText}
+                    onChange={(e) => setBulkImportText(e.target.value)}
+                  />
+                  <div className="flex justify-end">
+                    <button
+                      className="px-4 py-2 rounded-lg bg-[var(--shreeji-primary)] text-white hover:opacity-90 disabled:opacity-60"
+                      onClick={handleBulkImport}
+                      disabled={bulkLoading}
+                    >
+                      {bulkLoading ? 'Importing...' : 'Import'}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Bulk Price Update */}
+                <div className="border border-gray-200 rounded-xl p-4 space-y-3">
+                  <h4 className="text-base font-semibold text-gray-900">Bulk Price Update</h4>
+                  <p className="text-xs text-gray-600">Rows: <strong>sku, sellingPrice, discountedPrice (optional)</strong></p>
+                  <textarea
+                    className="w-full h-28 border border-gray-200 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                    placeholder="SKU-123,120,99"
+                    value={bulkPriceText}
+                    onChange={(e) => setBulkPriceText(e.target.value)}
+                  />
+                  <div className="flex justify-end">
+                    <button
+                      className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-60"
+                      onClick={handleBulkPriceUpdate}
+                      disabled={bulkLoading}
+                    >
+                      {bulkLoading ? 'Updating...' : 'Update Prices'}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Bulk Status Update */}
+                <div className="border border-gray-200 rounded-xl p-4 space-y-3">
+                  <h4 className="text-base font-semibold text-gray-900">Bulk Status Update</h4>
+                  <p className="text-xs text-gray-600">Rows: <strong>sku, status</strong> (in-stock | low-stock | out-of-stock | discontinued)</p>
+                  <textarea
+                    className="w-full h-28 border border-gray-200 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:border-transparent text-sm"
+                    placeholder="SKU-123,in-stock"
+                    value={bulkStatusText}
+                    onChange={(e) => setBulkStatusText(e.target.value)}
+                  />
+                  <div className="flex justify-end">
+                    <button
+                      className="px-4 py-2 rounded-lg bg-gray-800 text-white hover:bg-gray-900 disabled:opacity-60"
+                      onClick={handleBulkStatusUpdate}
+                      disabled={bulkLoading}
+                    >
+                      {bulkLoading ? 'Updating...' : 'Update Status'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end space-x-3">
+                <button
+                  className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  onClick={() => {
+                    setShowBulkImportModal(false)
+                    setBulkImportText('')
+                    setBulkPriceText('')
+                    setBulkStatusText('')
+                  }}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Edit Product Modal */}
       <EditProductModal
@@ -532,17 +762,16 @@ export default function ProductManagement() {
         onClose={handleCloseEditModal}
         product={editingProduct}
         onSave={handleSaveProduct}
+        onDelete={handleDelete}
       />
     </Layout>
   )
 }
 
-function ProductCard({ product, onDelete, onToggleActive, onEdit, onView }: { 
+function ProductCard({ product, onToggleActive, onEdit }: { 
   product: Product, 
-  onDelete: (id: number) => void, 
   onToggleActive: (id: number) => void,
-  onEdit: (product: Product) => void,
-  onView: (product: Product) => void
+  onEdit: (product: Product) => void
 }) {
   // Get the main image or fallback
   const mainImage = product.images && product.images.length > 0 
@@ -550,7 +779,18 @@ function ProductCard({ product, onDelete, onToggleActive, onEdit, onView }: {
     : { url: 'https://via.placeholder.com/300x200?text=No+Image', alt: product.name };
   
   return (
-    <div className="card overflow-hidden">
+    <div
+      className="card overflow-hidden cursor-pointer"
+      onClick={() => onEdit(product)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onEdit(product)
+        }
+      }}
+    >
       <div className="aspect-w-16 aspect-h-9 bg-gray-200">
         <img
           src={mainImage.url}
@@ -578,39 +818,16 @@ function ProductCard({ product, onDelete, onToggleActive, onEdit, onView }: {
             )}
           </div>
         </div>
-        <div className="flex space-x-2">
-          <button 
-            className="flex items-center justify-center btn-secondary text-sm py-2"
-            onClick={() => onView(product)}
-          >
-            <EyeIcon className="w-4 h-4 mr-1" />
-            View
-          </button>
-          <button 
-            className="flex justify-center items-center btn-secondary text-sm py-2"
-            onClick={() => onEdit(product)}
-          >
-            <PencilIcon className="w-4 h-4 mr-1" />
-            Edit
-          </button>
-          <button 
-            className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg"
-            onClick={() => onDelete(product.id)}
-          >
-            <TrashIcon className="w-4 h-4" />
-          </button>
-        </div>
+        <div className="flex space-x-2" />
       </div>
     </div>
   )
 }
 
-function ProductTable({ products, onDelete, onToggleActive, onEdit, onView }: { 
+function ProductTable({ products, onToggleActive, onEdit }: { 
   products: Product[], 
-  onDelete: (id: number) => void, 
   onToggleActive: (id: number) => void,
-  onEdit: (product: Product) => void,
-  onView: (product: Product) => void
+  onEdit: (product: Product) => void
 }) {
   return (
     <div className="card overflow-hidden">
@@ -623,7 +840,6 @@ function ProductTable({ products, onDelete, onToggleActive, onEdit, onView }: {
               <th className="table-header">Brand</th>
               <th className="table-header">Price</th>
               <th className="table-header">Status</th>
-              <th className="table-header">Actions</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
@@ -634,7 +850,19 @@ function ProductTable({ products, onDelete, onToggleActive, onEdit, onView }: {
                 : { url: 'https://via.placeholder.com/50x50?text=No+Image', alt: product.name };
               
               return (
-                <tr key={`product-row-${product.id}-${product.slug}`} className="hover:bg-gray-50">
+                <tr 
+                  key={`product-row-${product.id}-${product.slug}`} 
+                  className="hover:bg-gray-50 cursor-pointer"
+                  onClick={() => onEdit(product)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      onEdit(product)
+                    }
+                  }}
+                >
                   <td className="table-cell">
                     <div className="flex items-center">
                       <img
@@ -664,35 +892,14 @@ function ProductTable({ products, onDelete, onToggleActive, onEdit, onView }: {
                 </td>
                 <td className="table-cell">
                   <button
-                    onClick={() => onToggleActive(product.id)}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onToggleActive(product.id)
+                      }}
                     className={`px-2 py-1 text-xs rounded-full ${product.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
                   >
                     {product.isActive ? 'Active' : 'Inactive'}
                   </button>
-                </td>
-                <td className="table-cell">
-                  <div className="flex space-x-2">
-                    <button 
-                      className="text-primary-600 hover:text-primary-900"
-                      onClick={() => onView(product)}
-                      title="View Product"
-                    >
-                      <EyeIcon className="w-4 h-4" />
-                    </button>
-                    <button 
-                      className="text-gray-600 hover:text-gray-900"
-                      onClick={() => onEdit(product)}
-                      title="Edit Product"
-                    >
-                      <PencilIcon className="w-4 h-4" />
-                    </button>
-                    <button 
-                      className="text-red-600 hover:text-red-900"
-                      onClick={() => onDelete(product.id)}
-                    >
-                      <TrashIcon className="w-4 h-4" />
-                    </button>
-                  </div>
                 </td>
               </tr>
             );

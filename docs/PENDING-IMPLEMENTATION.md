@@ -146,25 +146,25 @@ This document tracks all pending tasks and next steps required to make the ecomm
   - [x] Enhanced shipping notification email template
   - [x] Edit order modal for admin to manage tracking
 
-- [ ] **Order Cancellation**
-  - [ ] Customer-initiated cancellation (within time limit)
-  - [ ] Admin-initiated cancellation
-  - [ ] Automatic refund processing on cancellation
-  - [ ] Cancellation reason tracking
-  - [ ] Inventory restoration on cancellation
+- [x] **Order Cancellation**
+  - [x] Customer-initiated cancellation (within time limit)
+  - [x] Admin-initiated cancellation
+  - [x] Automatic refund processing on cancellation
+  - [x] Cancellation reason tracking
+  - [x] Inventory restoration on cancellation
 
-- [ ] **Order Returns/Refunds**
-  - [ ] Return request functionality
-  - [ ] Return reason selection
-  - [ ] Return approval workflow
-  - [ ] Return shipping label generation
-  - [ ] Refund processing on return approval
+- [x] **Order Returns/Refunds**
+  - [x] Return request functionality
+  - [x] Return reason selection
+  - [x] Return approval workflow
+  - [x] Refund processing on return approval
+  - [ ] Return shipping label generation (future enhancement)
 
-- [ ] **Order History & Search**
-  - [ ] Advanced order filtering in admin
-  - [ ] Order search by number, customer, date range
-  - [ ] Order export functionality (CSV/PDF)
-  - [ ] Order analytics dashboard
+- [x] **Order History & Search**
+  - [x] Advanced order filtering in admin
+  - [x] Order search by number, customer, date range
+  - [x] Order export functionality (CSV/PDF)
+  - [x] Order analytics dashboard
 
 ---
 
@@ -176,31 +176,38 @@ This document tracks all pending tasks and next steps required to make the ecomm
 - [x] Address management
 - [x] Order history view
 
+### ✅ Completed (December 7, 2024)
+- [x] **Customer Portal Enhancements**
+  - [x] Wishlist functionality (backend + frontend)
+  - [x] Product reviews and ratings (backend + frontend)
+  - [x] Recently viewed products tracking (backend + frontend)
+  - [x] Recently viewed carousel styled to match recommendations + RTL tests (Dec 11, 2025)
+  - [x] Saved payment methods UI (frontend - backend already existed)
+  - [x] Discount code management UI (frontend - backend already existed)
+
+- [x] **Account Security**
+  - [x] Password reset via email (backend + frontend)
+  - [x] Two-factor authentication (2FA) with TOTP (backend + frontend)
+    - [x] UI consolidated under Settings → Security tab (replaces standalone portal two-factor page)
+  - [x] Login history tracking (backend + frontend)
+  - [x] Account activity notifications and logging (backend + frontend)
+  - [x] Session management (backend + frontend)
+
+- [x] **Customer Communication**
+  - [x] Email preferences management (enhanced)
+  - [x] Marketing email opt-in/opt-out (backend + frontend)
+  - [x] Communication history log (backend + frontend)
+
 ### 🔄 Pending
-- [ ] **Customer Portal Enhancements**
-  - [ ] Wishlist functionality
-  - [ ] Product reviews and ratings
-  - [ ] Recently viewed products
-  - [ ] Saved payment methods (see Saved Cards section)
+- [ ] **Customer Portal Enhancements (Remaining)**
   - [ ] Subscription management (if applicable)
 
-- [ ] **Account Security**
-  - [ ] Password reset via email
-  - [ ] Two-factor authentication (2FA)
-  - [ ] Login history tracking
-  - [ ] Account activity notifications
-  - [ ] Session management
-
-- [ ] **Customer Communication**
-  - [ ] Email preferences management
-  - [ ] SMS notification preferences
-  - [ ] Marketing email opt-in/opt-out
-  - [ ] Communication history log
+- [ ] **Account Security (Remaining)**
+  - [ ] SMS notification preferences (backend exists, frontend pending)
 
 - [ ] **Loyalty & Rewards**
   - [ ] Points/rewards system (if applicable)
   - [ ] Referral program (if applicable)
-  - [ ] Discount code management
 
 ---
 
@@ -213,39 +220,40 @@ This document tracks all pending tasks and next steps required to make the ecomm
 - [x] Brand management
 - [x] Product search and filtering
 
-### 🔄 Pending
-- [ ] **Product Variants**
-  - [ ] Size variants (if applicable)
-  - [ ] Color variants (if applicable)
-  - [ ] Other attribute variants
-  - [ ] Variant-specific pricing
-  - [ ] Variant inventory tracking
+### ✅ Completed (December 9, 2025)
+- [x] **Product Variants**
+  - [x] Size variants (if applicable)
+  - [x] Color variants (if applicable)
+  - [x] Other attribute variants
+  - [x] Variant-specific pricing
+  - [x] Variant inventory tracking
+  - [x] Admin variant endpoints corrected (Dec 10, 2025) to use `/admin/products/:id/variants` and preserve min stock values when editing
 
-- [ ] **Product Reviews & Ratings**
-  - [ ] Customer review submission
-  - [ ] Review moderation (admin approval)
-  - [ ] Rating aggregation and display
-  - [ ] Review helpfulness voting
-  - [ ] Review reporting/flagging
+- [x] **Product Reviews & Ratings**
+  - [x] Customer review submission
+  - [x] Review moderation (admin approval)
+  - [x] Rating aggregation and display
+  - [x] Review helpfulness voting
+  - [x] Review reporting/flagging
 
-- [ ] **Product Recommendations**
-  - [ ] "Customers also bought" suggestions
-  - [ ] "You may also like" recommendations
-  - [ ] Related products
-  - [ ] Recently viewed products
+- [x] **Product Recommendations**
+  - [x] "Customers also bought" suggestions
+  - [x] "You may also like" recommendations
+  - [x] Related products
+  - [x] Recently viewed products
 
-- [ ] **Product Bulk Operations**
-  - [ ] Bulk product import (CSV/Excel)
-  - [ ] Bulk price updates
-  - [ ] Bulk status changes
-  - [ ] Bulk image upload
+- [x] **Product Bulk Operations**
+  - [x] Bulk product import (CSV/Excel)
+  - [x] Bulk price updates
+  - [x] Bulk status changes
+  - [ ] Bulk image upload (pending)
 
-- [ ] **Product SEO**
-  - [ ] SEO-friendly URLs
-  - [ ] Meta descriptions
-  - [ ] Open Graph tags
-  - [ ] Schema.org markup
-  - [ ] Sitemap generation
+- [x] **Product SEO**
+  - [x] SEO-friendly URLs (slugs)
+  - [x] Meta descriptions
+  - [x] Open Graph tags
+  - [x] Schema.org markup
+  - [x] Sitemap generation
 
 ---
 
@@ -257,25 +265,25 @@ This document tracks all pending tasks and next steps required to make the ecomm
 - [x] Out of stock status
 - [x] Inventory value calculation
 
-### 🔄 Pending
-- [ ] **Advanced Inventory Features**
-  - [ ] Multi-location inventory (warehouses)
-  - [ ] Inventory reservations (hold stock during checkout)
-  - [ ] Inventory movement history
-  - [ ] Stock adjustment reasons
-  - [ ] Automated reorder points
+### ✅ Completed (December 2024)
+- [x] **Advanced Inventory Features**
+  - [x] Multi-location inventory (warehouses)
+  - [x] Inventory reservations (hold stock during checkout)
+  - [x] Inventory movement history
+  - [x] Stock adjustment reasons
+  - [x] Automated reorder points
 
-- [ ] **Inventory Alerts**
-  - [ ] Email alerts for low stock
-  - [ ] Dashboard notifications
-  - [ ] Configurable threshold levels
-  - [ ] Alert frequency settings
+- [x] **Inventory Alerts**
+  - [x] Email alerts for low stock
+  - [x] Dashboard notifications
+  - [x] Configurable threshold levels
+  - [x] Alert frequency settings
 
-- [ ] **Inventory Reports**
-  - [ ] Stock level reports
-  - [ ] Inventory valuation reports
-  - [ ] Stock movement reports
-  - [ ] Slow-moving items report
+- [x] **Inventory Reports**
+  - [x] Stock level reports
+  - [x] Inventory valuation reports
+  - [x] Stock movement reports
+  - [x] Slow-moving items report
 
 ---
 
@@ -328,43 +336,57 @@ This document tracks all pending tasks and next steps required to make the ecomm
 - [x] Customer management
 - [x] Dashboard with statistics
 
-### 🔄 Pending
-- [ ] **Admin Dashboard Enhancements**
-  - [ ] Sales analytics and charts
-  - [ ] Revenue trends
-  - [ ] Top-selling products
-  - [ ] Customer acquisition metrics
-  - [ ] Conversion rate tracking
+### ✅ Completed (January 2025)
+- [x] **Admin Dashboard Enhancements**
+  - [x] Sales analytics and charts (real data with period selection)
+  - [x] Revenue trends (with percentage change indicators)
+  - [x] Top-selling products (based on actual sales data from orders)
+  - [x] Customer acquisition metrics (new customers tracking)
 
-- [ ] **Admin Reports**
-  - [ ] Sales reports (daily, weekly, monthly)
-  - [ ] Product performance reports
-  - [ ] Customer lifetime value reports
-  - [ ] Inventory reports
-- [ ] **Settings Management**
-  - [ ] Build UI in admin portal for editing payment/bank settings created in backend
-  - [ ] Add audit logging for configuration changes (who/when/what)
-  - [ ] Validation rules + test coverage for settings API
-  - [ ] Documentation for ops handoff (how to update DPO/bank configs safely)
+- [x] **Admin Reports**
+  - [x] Sales reports (daily, weekly, monthly) with date range filtering
+  - [x] Product performance reports (units sold, revenue, order count)
+  - [x] Customer lifetime value reports (total spent, order count, average order value)
+  - [x] Inventory reports (already existed)
+
+- [x] **Settings Management**
+  - [x] Build UI in admin portal for editing payment/bank settings created in backend
+  - [ ] Add audit logging for configuration changes (who/when/what) - Backend feature
+  - [ ] Validation rules + test coverage for settings API - Backend feature
+  - [ ] Documentation for ops handoff (how to update DPO/bank configs safely) - Documentation task
+
+- [x] **Coupon Management**
+  - [x] Create/edit/delete coupons
+  - [x] Coupon usage tracking (displays usage count and limits)
+  - [x] Coupon expiration management (expiry date and status)
+  - [ ] Bulk coupon generation (future enhancement)
+
+### 🔄 Pending
+- [x] **Admin Dashboard Enhancements (Remaining)**
+  - [x] Conversion rate tracking (with trend comparison)
+
+- [ ] **Settings Management (Remaining)**
+  - [ ] Add audit logging for configuration changes (who/when/what) - Backend feature
+  - [ ] Validation rules + test coverage for settings API - Backend feature
+  - [ ] Documentation for ops handoff (how to update DPO/bank configs safely) - Documentation task
   - [ ] Financial reports
 
-- [ ] **Admin User Management**
-  - [ ] Role-based access control (RBAC)
-  - [ ] Admin user roles (Super Admin, Manager, Support)
-  - [ ] Permission management
-  - [ ] Admin activity logging
+- [x] **Admin User Management (Complete)**
+  - [x] Admin user management UI with role-based access control
+  - [x] Admin user roles (Super Admin, Manager, Support)
+  - [x] Permission management UI (role-based permissions)
+  - [x] Backend API endpoints:
+    - [x] `GET /admin/users` - List all admin users
+    - [x] `POST /admin/users` - Create new admin user
+    - [x] `PUT /admin/users/:id` - Update admin user
+    - [x] `DELETE /admin/users/:id` - Delete admin user
+  - [ ] Admin activity logging - Backend feature (future enhancement)
 
-- [ ] **Coupon Management**
-  - [ ] Create/edit/delete coupons
-  - [ ] Coupon usage tracking
-  - [ ] Coupon expiration management
-  - [ ] Bulk coupon generation
-
-- [ ] **Content Management**
-  - [ ] Homepage banner management
-  - [ ] Promotional content management
-  - [ ] Blog/news management (if applicable)
-  - [ ] FAQ management
+- [x] **Content Management**
+  - [x] Homepage banner management
+  - [x] Promotional content management
+  - [ ] Blog/news management (if applicable) - Future enhancement
+  - [x] FAQ management
 
 ---
 
@@ -518,12 +540,143 @@ This document tracks all pending tasks and next steps required to make the ecomm
 
 ---
 
-**Last Updated:** December 5, 2024
+**Last Updated:** January 2025
 **Maintained By:** Development Team
+
+### December 2024 - Inventory Management Frontend Completion
+- ✅ Completed all frontend UI components for inventory management:
+  - Warehouse management interface with create, edit, delete, and view operations
+  - Enhanced inventory management with warehouse filtering and multi-warehouse support
+  - Stock adjustment modal with increase/decrease/set options and reason tracking
+  - Stock transfer functionality between warehouses
+  - Inventory movement history with comprehensive filtering
+  - Alert settings configuration UI
+  - Low stock alerts dashboard with warehouse filtering
+  - Comprehensive inventory reports with CSV/PDF export
+  - Reorder points management interface
+  - All components integrated with backend APIs
+  - Route pages created for all inventory management features
 
 ---
 
 ## Recent Updates
+
+### December 2024 - Inventory Management Implementation
+- ✅ Implemented Advanced Inventory Features:
+  - Multi-location inventory (warehouses) with full CRUD operations
+  - Inventory reservations system to hold stock during checkout
+  - Complete inventory movement history tracking
+  - Stock adjustments with reasons and notes
+  - Reorder points management per warehouse
+  - Stock transfers between warehouses
+
+- ✅ Implemented Inventory Alerts System:
+  - Email alerts for low stock products
+  - Dashboard notifications for inventory alerts
+  - Configurable threshold levels per product/warehouse
+  - Alert frequency settings to prevent spam
+  - Scheduled daily job for automatic alert checking
+  - Alert settings management via admin API
+
+- ✅ Implemented Inventory Reports:
+  - Stock level reports with warehouse filtering
+  - Inventory valuation reports (cost and retail value)
+  - Stock movement reports with date range filtering
+  - Slow-moving items report with configurable thresholds
+  - CSV and PDF export functionality for all reports
+
+- ✅ Backend Implementation:
+  - Created 6 new entities (Warehouse, InventoryLocation, InventoryMovement, StockAdjustment, ReorderPoint, InventoryReservation)
+  - Implemented WarehouseService with full CRUD operations
+  - Implemented InventoryService with reservations, adjustments, transfers, and movements
+  - Implemented InventoryAlertsService with low stock detection and notifications
+  - Implemented InventoryReportsService with comprehensive reporting
+  - Created controllers for inventory, alerts, and reports
+  - Integrated with checkout service for inventory reservations
+  - Integrated with orders service for reservation release on cancellation
+  - Scheduled job for daily low stock alerts
+  - Comprehensive unit tests written (TDD approach)
+
+- ✅ Frontend API Client:
+  - Added all inventory management methods to admin API client
+  - Warehouse management endpoints
+  - Inventory reservation and adjustment endpoints
+  - Alert settings and checking endpoints
+  - Report generation endpoints with export support
+
+- ✅ Frontend UI Components:
+  - WarehouseManagement component with full CRUD operations
+  - Enhanced InventoryManagement component with warehouse filtering, stock adjustments, and transfers
+  - StockAdjustmentModal for adjusting stock with reasons
+  - InventoryTransferModal for transferring stock between warehouses
+  - InventoryMovementHistory component with filtering and date range selection
+  - InventoryAlertsSettings component for configuring alert preferences
+  - LowStockAlerts component for viewing and managing low stock items
+  - InventoryReports component with all report types and export functionality
+  - ReorderPointsManagement component for managing reorder points
+  - All route pages created with proper navigation and protected routes
+  - Full integration with backend APIs
+
+### December 9, 2025 - Product Management Completion
+- ✅ Product Variants with pricing, inventory, images, and attribute management
+- ✅ Review reporting/flagging with admin moderation UI
+- ✅ Product recommendations (customers also bought, you may like, related, personalized)
+- ✅ Bulk operations (import, price updates, status updates) — bulk image upload pending
+- ✅ SEO enhancements (meta, Open Graph, schema, sitemap, robots.txt, slugs)
+
+### December 7, 2024 - Customer Features Implementation
+- ✅ Implemented Customer Portal Enhancements:
+  - Wishlist functionality with add/remove products, view wishlist page, and wishlist icon on product cards
+  - Product reviews and ratings system with star ratings, review moderation, helpful votes, and review aggregation
+  - Recently viewed products tracking with automatic tracking on product page views and display on dashboard
+  - Saved payment methods UI with view, set default, delete, and use in checkout functionality
+
+- ✅ Implemented Account Security Features:
+  - Password reset via email with token-based reset links, 24-hour expiration, and one-time use tokens
+  - Two-factor authentication (2FA) with TOTP support, QR code generation, backup codes, and authenticator app integration
+  - Login history tracking with successful and failed login attempts, IP address, device, and location tracking
+  - Session management with view active sessions, revoke individual sessions, and revoke all other sessions
+
+- ✅ Implemented Customer Communication Features:
+  - Enhanced email preferences management with marketing email toggle
+  - Communication history log with email, SMS, and notification tracking
+  - Account activity logging with comprehensive activity tracking (logins, profile updates, orders, etc.)
+
+- ✅ Implemented Discount Codes UI:
+  - Customer portal page to view available coupons
+  - Active, upcoming, and expired coupon sections
+  - Copy coupon code functionality
+
+- Backend infrastructure includes entities, services, controllers, and unit tests (TDD approach)
+- Frontend includes customer portal pages, UI components, API integration, and navigation updates
+
+### December 6, 2024 - Order Management Features Implementation
+- ✅ Implemented Order Cancellation feature:
+  - Customer-initiated cancellation with 24-hour time limit validation
+  - Admin-initiated cancellation (no time limit)
+  - Automatic refund processing via payment gateway
+  - Inventory restoration on cancellation
+  - Cancellation reason tracking
+  - Frontend UI for both customer portal and admin panel
+  - Backend tests written (TDD approach)
+
+- ✅ Implemented Order Returns/Refunds feature:
+  - Created returns module with ReturnRequest and ReturnItem entities
+  - Return request creation with reason selection
+  - Return approval/rejection workflow for admins
+  - Automatic refund processing on return approval
+  - Return status tracking (pending, approved, rejected, refunded)
+  - Frontend UI for customer return requests
+  - Admin return management interface
+  - Backend tests written (TDD approach)
+
+- ✅ Implemented Order Export & Analytics:
+  - CSV export functionality
+  - PDF export functionality
+  - Order analytics dashboard with revenue, status distribution
+  - Enhanced search and filtering in admin panel
+  - Export buttons in admin order management
+  - Backend tests written (TDD approach)
 
 ### December 5, 2024 - Order Tracking Implementation
 - ✅ Implemented Order Tracking feature:
@@ -554,4 +707,8 @@ This document tracks all pending tasks and next steps required to make the ecomm
   - Added API endpoints for card management
   - Integrated card saving into checkout flow
   - Added support for using saved cards in payments
+
+---
+
+Last Updated: December 11, 2025
 

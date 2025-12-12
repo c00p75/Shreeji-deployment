@@ -11,6 +11,7 @@ import Breadcrumbs from "@/components/products/product category/breadcrumbs";
 import ProductList from "@/components/products/product category/product list";
 import PrimaryPromotionalBanner from "@/components/products/main grid/primary promotional banner";
 import ProductDetailsWithEdit from "../../components/products/ProductDetailsWithEdit";
+import ProductRecommendationsWrapper from "@/app/components/products/ProductRecommendationsWrapper";
 
 const ProductPage = async ({ params }) => {
   const { slug } = await params;
@@ -61,16 +62,23 @@ const ProductPage = async ({ params }) => {
   // Dedicated hero layout for individual product view
   if (product && productDetails) {
     return (
-      <section className="products-main-section product-details-page relative z-[1] h-fit min-h-screen gap-5 pb-[2rem] pl-1 pr-1 text-white md:pr-8">
-        <SideGrid />
-        <section className="main-grid relative flex flex-[3] flex-col gap-5 overflow-visible">
-          <Breadcrumbs breadcrumbs={[categoryName, subcategoryName, productName]} />
-          <ProductDetailsWithEdit
-            product={productDetails}
-            breadcrumbs={[categoryName, subcategoryName, productName].filter(Boolean)}
-          />
+      <>
+        <section className="products-main-section product-details-page relative z-[1] h-fit min-h-screen gap-5 pb-[2rem] pl-1 pr-1 text-white md:pr-8">
+          <SideGrid />
+          <section className="main-grid relative flex flex-[3] flex-col gap-5 overflow-visible">
+            <Breadcrumbs breadcrumbs={[categoryName, subcategoryName, productName]} />
+            <ProductDetailsWithEdit
+              product={productDetails}
+              breadcrumbs={[categoryName, subcategoryName, productName].filter(Boolean)}
+            />
+          </section>
         </section>
-      </section>
+        {productDetails?.id && (
+          <div className="w-full py-10 bg-[var(--shreeji-primary)]">
+            <ProductRecommendationsWrapper productId={productDetails.id} />
+          </div>
+        )}
+      </>
     );
   }
 
@@ -87,8 +95,18 @@ const ProductPage = async ({ params }) => {
             </>
           ) : (
             <>
-              <Breadcrumbs breadcrumbs={[categoryName, productName]} />
-              <ProductDetails product={productDetails} />
+              <section className="products-main-section product-details-page relative z-[1] h-fit min-h-screen gap-5 pb-[2rem] pl-1 pr-1 text-white md:pr-8">
+                <SideGrid />
+                <section className="main-grid relative flex flex-[3] flex-col gap-5 overflow-visible">
+                  <Breadcrumbs breadcrumbs={[categoryName, productName]} />
+                  <ProductDetails product={productDetails} />
+                </section>
+              </section>
+              {productDetails?.id && (
+                <div className="w-full py-10 bg-[var(--shreeji-primary)]">
+                  <ProductRecommendationsWrapper productId={productDetails.id} />
+                </div>
+              )}
             </>
           )
         ) : (

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useClientAuth } from '@/app/contexts/ClientAuthContext'
 import clientApi from '@/app/lib/client/api'
 import { 
@@ -14,7 +14,8 @@ import {
 import { Eye, EyeOff } from 'lucide-react'
 import clsx from 'clsx'
 import toast from 'react-hot-toast'
-import NotificationPreferences from '@/app/components/notifications/NotificationPreferences'
+import NotificationPreferences from '@/app/components/portal/NotificationPreferences'
+import TwoFactorSettings from '@/app/components/portal/TwoFactorSettings'
 
 const settingsSections = [
   {
@@ -52,6 +53,7 @@ const settingsSections = [
 export default function SettingsPage() {
   const { loading: authLoading, isAuthenticated, user } = useClientAuth()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [activeSection, setActiveSection] = useState('profile')
   const [settingsLoading, setSettingsLoading] = useState(false)
   const [settingsSaving, setSettingsSaving] = useState(false)
@@ -95,6 +97,13 @@ export default function SettingsPage() {
       router.push('/portal/login')
     }
   }, [authLoading, isAuthenticated, router])
+
+  useEffect(() => {
+    const sectionParam = searchParams?.get('section')
+    if (sectionParam && settingsSections.some((section) => section.id === sectionParam)) {
+      setActiveSection(sectionParam)
+    }
+  }, [searchParams])
 
   useEffect(() => {
     if (user) {
@@ -402,6 +411,10 @@ export default function SettingsPage() {
             <option value="60">1 hour</option>
             <option value="120">2 hours</option>
           </select>
+        </div>
+
+        <div className="pt-6 border-t border-gray-200">
+          <TwoFactorSettings />
         </div>
       </div>
     </div>

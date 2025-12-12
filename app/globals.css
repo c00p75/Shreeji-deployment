@@ -204,6 +204,16 @@ a:hover {cursor: pointer;}
   background-color: #4b4124;
 }
 
+/* Hide scrollbar for horizontal scrollable sections */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
+}
+
 .about-page {
   background: radial-gradient(whitesmoke, rgb(255 255 255 / 50%),  rgb(0 0 0 / 10%), rgb(0 0 0 / 30%)) !important;
 }
@@ -305,4 +315,19 @@ a:hover {cursor: pointer;}
   animation: none !important;
   transform: none !important;
   opacity: 1 !important;
+}
+
+/* Shimmer animation for gradient text */
+.shimmer-text {
+  background-size: 200% auto;
+  animation: shimmer 3s linear infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
 }

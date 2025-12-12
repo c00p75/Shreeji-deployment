@@ -46,7 +46,7 @@ export default function RootLayout({ children }) {
       <GoogleAnalytics gaId="G-1W93H38B5W" />
       <body className="antialiased light-theme">
         <Toaster 
-          position="top-right"
+          position="top-center"
           toastOptions={{
             duration: 4000,
             style: {

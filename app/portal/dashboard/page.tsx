@@ -7,6 +7,7 @@ import { useClientAuth } from '@/app/contexts/ClientAuthContext'
 import { useCart } from '@/app/contexts/CartContext'
 import clientApi from '@/app/lib/client/api'
 import { Package, DollarSign, TrendingUp, ShoppingCart } from 'lucide-react'
+import RecentlyViewed from '@/app/components/products/RecentlyViewed'
 
 export default function PortalDashboardPage() {
   const { user, loading: authLoading, isAuthenticated } = useClientAuth()
@@ -193,6 +194,9 @@ export default function PortalDashboardPage() {
             )}
         </div>
       </div>
+
+      {/* Recently Viewed Products */}
+      <RecentlyViewed className="mt-8" />
     </div>
   )
 }

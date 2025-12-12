@@ -8,6 +8,8 @@ import ProductDetails from '@/components/products/product details';
 import api from '@/app/lib/admin/api';
 import adminAuth from '@/app/lib/admin/auth';
 import { clearProductsCache } from '@/app/lib/client/products';
+import clientApi from '@/app/lib/client/api';
+import { useClientAuth } from '@/app/contexts/ClientAuthContext';
 
 interface ProductDetailsWithEditProps {
   product: any;
@@ -21,6 +23,7 @@ export default function ProductDetailsWithEdit({
   className = "",
 }: ProductDetailsWithEditProps) {
   const router = useRouter();
+  const { isAuthenticated: isClientAuthenticated } = useClientAuth();
   const [showEditModal, setShowEditModal] = useState(false);
   const [saving, setSaving] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -54,6 +57,16 @@ export default function ProductDetailsWithEdit({
       clearInterval(interval);
     };
   }, []);
+
+  // Track product view for authenticated customers
+  useEffect(() => {
+    if (isClientAuthenticated && product?.id) {
+      // Track product view (non-blocking)
+      clientApi.trackProductView(product.id).catch(() => {
+        // Silently fail - tracking is not critical
+      });
+    }
+  }, [isClientAuthenticated, product?.id]);
 
   const handleSaveProduct = async (updatedProduct: any) => {
     try {

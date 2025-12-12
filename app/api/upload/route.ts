@@ -5,17 +5,15 @@ const API_URL = process.env.NEXT_PUBLIC_ECOM_API_URL?.replace(/\/$/, '') || 'htt
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
-    const file = formData.get('file') as File;
+    const file = formData.get('file') as File | null;
 
     if (!file) {
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
     }
 
-    // Get admin JWT token from request headers or cookie
+    // Get admin JWT token from Authorization header or cookie
     const authHeader = request.headers.get('authorization');
-    const token = authHeader?.replace('Bearer ', '') || 
-                  request.cookies.get('admin_jwt')?.value ||
-                  (typeof window !== 'undefined' ? localStorage.getItem('admin_jwt') : null);
+    const token = authHeader?.replace('Bearer ', '') || request.cookies.get('admin_jwt')?.value;
 
     if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -28,18 +26,34 @@ export async function POST(request: NextRequest) {
     const response = await fetch(`${API_URL}/files/upload`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
       body: backendFormData,
     });
 
     if (!response.ok) {
-      const error = await response.text();
-      return NextResponse.json({ error: error || 'Upload failed' }, { status: response.status });
+      const errorText = await response.text();
+      let errorMessage = `Image upload failed: ${response.status} ${response.statusText}`;
+
+      try {
+        const errorJson = JSON.parse(errorText);
+        errorMessage = errorJson.error?.message || errorJson.message || errorMessage;
+      } catch {
+        if (errorText) {
+          errorMessage = errorText;
+        }
+      }
+
+      return NextResponse.json({ error: errorMessage }, { status: response.status });
     }
 
-    const data = await response.json();
-    return NextResponse.json(data);
+    // Transform backend FileMetadata -> frontend expected shape
+    const backendData = await response.json();
+    return NextResponse.json({
+      id: backendData.id || Date.now(),
+      url: backendData.url,
+      name: backendData.originalName || backendData.name || file.name,
+    });
   } catch (error: any) {
     console.error('Upload error:', error);
     return NextResponse.json({ error: error.message || 'Upload failed' }, { status: 500 });

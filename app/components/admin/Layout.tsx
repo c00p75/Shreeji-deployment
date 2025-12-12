@@ -1,13 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
+import Link from 'next/link'
 import Image from 'next/image'
 import clsx from 'clsx'
 import { useAuth } from '@/app/contexts/AuthContext'
 import api from '@/app/lib/admin/api'
 import { 
-  HomeIcon, 
   ShoppingBagIcon, 
   UsersIcon, 
   ChartBarIcon,
@@ -16,8 +16,12 @@ import {
   XMarkIcon,
   CubeIcon,
   ArrowRightOnRectangleIcon,
-  CurrencyDollarIcon
+  CurrencyDollarIcon,
+  DocumentTextIcon,
+  TagIcon,
+  PhotoIcon
 } from '@heroicons/react/24/outline'
+import { LayoutDashboard } from 'lucide-react'
 import NotificationBell from '../notifications/NotificationBell'
 
 interface LayoutProps {
@@ -27,12 +31,16 @@ interface LayoutProps {
 }
 
 const navigation = [
-  { name: 'Dashboard', href: '/admin', icon: HomeIcon, current: true },
+  { name: 'Dashboard', href: '/admin', icon: LayoutDashboard, current: true },
   { name: 'Products', href: '/admin/products', icon: ShoppingBagIcon, current: false },
   { name: 'Inventory', href: '/admin/inventory', icon: CubeIcon, current: false },
   { name: 'Orders', href: '/admin/orders', icon: ChartBarIcon, current: false },
   { name: 'Payments', href: '/admin/payments', icon: CurrencyDollarIcon, current: false },
   { name: 'Customers', href: '/admin/customers', icon: UsersIcon, current: false },
+  { name: 'Coupons', href: '/admin/coupons', icon: TagIcon, current: false },
+  { name: 'Reports', href: '/admin/reports', icon: DocumentTextIcon, current: false },
+  { name: 'Content', href: '/admin/content', icon: PhotoIcon, current: false },
+  { name: 'Users', href: '/admin/users', icon: UsersIcon, current: false },
   { name: 'Settings', href: '/admin/settings', icon: CogIcon, current: false },
 ]
 
@@ -41,6 +49,7 @@ export default function Layout({ children, currentPage = 'Dashboard', pageTitle 
   const [showUserMenu, setShowUserMenu] = useState(false)
   const { user, logout } = useAuth()
   const router = useRouter()
+  const pathname = usePathname()
   const [theme, setTheme] = useState<'light' | 'dark' | 'auto'>('light')
 
   // Apply theme to HTML element
@@ -140,10 +149,15 @@ export default function Layout({ children, currentPage = 'Dashboard', pageTitle 
           <div className="px-4 space-y-2">
             {navigation.map((item) => {
               const Icon = item.icon
-              const isActive = item.name === currentPage
+              // Check if current pathname matches or starts with the item's href
+              // This handles sub-routes (e.g., /admin/inventory/warehouses should mark Inventory as active)
+              // For Dashboard (/admin), only match exactly to avoid matching all admin routes
+              const isActive = item.href === '/admin' 
+                ? pathname === item.href
+                : pathname === item.href || pathname.startsWith(item.href + '/')
               
               return (
-                <a
+                <Link
                   key={item.name}
                   href={item.href}
                   className={clsx(
@@ -158,7 +172,7 @@ export default function Layout({ children, currentPage = 'Dashboard', pageTitle 
                     isActive ? 'text-white' : 'text-gray-500 dark:text-white/60 group-hover:text-gray-700 dark:group-hover:text-white/80'
                   )} />
                   {item.name}
-                </a>
+                </Link>
               )
             })}
           </div>

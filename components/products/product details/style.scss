@@ -121,4 +121,190 @@
     background: linear-gradient(to top, #f0efd6, rgba(255, 255, 255, 0));   
     width: calc(20% - 6px); 
   }
+
+  // Zigzag price background using clip-path for clean zigzag edges
+  .price-zigzag-pattern {
+    position: relative;
+    display: inline-block;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #807045 0%, #9b7a3c 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    margin: 8px 0;
+    // Use percentage-based zigzag that scales with element width
+    
+    // Create zigzag pattern on all edges using clip-path
+    // Top and bottom zigzag edges
+    clip-path: polygon(
+      // Top zigzag
+      0 10px,
+      8px 0,
+      16px 10px,
+      24px 0,
+      32px 10px,
+      40px 0,
+      48px 10px,
+      56px 0,
+      64px 10px,
+      72px 0,
+      80px 10px,
+      88px 0,
+      96px 10px,
+      104px 0,
+      112px 10px,
+      120px 0,
+      128px 10px,
+      136px 0,
+      144px 10px,
+      152px 0,
+      160px 10px,
+      168px 0,
+      176px 10px,
+      184px 0,
+      192px 10px,
+      200px 0,
+      208px 10px,
+      216px 0,
+      224px 10px,
+      232px 0,
+      240px 10px,
+      248px 0,
+      256px 10px,
+      // Top right to bottom right
+      calc(100% - 10px) 0,
+      100% 10px,
+      100% calc(100% - 10px),
+      // Bottom zigzag (reversed)
+      calc(100% - 10px) 100%,
+      calc(100% - 18px) calc(100% - 10px),
+      calc(100% - 26px) 100%,
+      calc(100% - 34px) calc(100% - 10px),
+      calc(100% - 42px) 100%,
+      calc(100% - 50px) calc(100% - 10px),
+      calc(100% - 58px) 100%,
+      calc(100% - 66px) calc(100% - 10px),
+      calc(100% - 74px) 100%,
+      calc(100% - 82px) calc(100% - 10px),
+      calc(100% - 90px) 100%,
+      calc(100% - 98px) calc(100% - 10px),
+      calc(100% - 106px) 100%,
+      calc(100% - 114px) calc(100% - 10px),
+      calc(100% - 122px) 100%,
+      calc(100% - 130px) calc(100% - 10px),
+      calc(100% - 138px) 100%,
+      calc(100% - 146px) calc(100% - 10px),
+      calc(100% - 154px) 100%,
+      calc(100% - 162px) calc(100% - 10px),
+      calc(100% - 170px) 100%,
+      calc(100% - 178px) calc(100% - 10px),
+      calc(100% - 186px) 100%,
+      calc(100% - 194px) calc(100% - 10px),
+      calc(100% - 202px) 100%,
+      calc(100% - 210px) calc(100% - 10px),
+      calc(100% - 218px) 100%,
+      calc(100% - 226px) calc(100% - 10px),
+      calc(100% - 234px) 100%,
+      calc(100% - 242px) calc(100% - 10px),
+      calc(100% - 250px) 100%,
+      calc(100% - 258px) calc(100% - 10px),
+      // Bottom left corner
+      10px calc(100% - 10px),
+      0 100%
+    );
+    
+    // For responsive design, simplify on smaller screens
+    @media (max-width: 768px) {
+      clip-path: polygon(
+        0 8px,
+        6px 0,
+        12px 8px,
+        18px 0,
+        24px 8px,
+        30px 0,
+        36px 8px,
+        42px 0,
+        48px 8px,
+        54px 0,
+        60px 8px,
+        calc(100% - 8px) 0,
+        100% 8px,
+        100% calc(100% - 8px),
+        calc(100% - 8px) 100%,
+        calc(100% - 14px) calc(100% - 8px),
+        calc(100% - 20px) 100%,
+        calc(100% - 26px) calc(100% - 8px),
+        calc(100% - 32px) 100%,
+        calc(100% - 38px) calc(100% - 8px),
+        calc(100% - 44px) 100%,
+        calc(100% - 50px) calc(100% - 8px),
+        calc(100% - 56px) 100%,
+        calc(100% - 62px) calc(100% - 8px),
+        8px calc(100% - 8px),
+        0 100%
+      );
+    }
+  }
+}
+
+// Zigzag price background
+.price-zigzag {
+  position: relative;
+  display: inline-block;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #807045 0%, #9b7a3c 100%);
+  color: white;
+  
+  // Create zigzag edges using clip-path
+  clip-path: polygon(
+    0 12px,
+    12px 0,
+    24px 12px,
+    36px 0,
+    48px 12px,
+    60px 0,
+    72px 12px,
+    84px 0,
+    96px 12px,
+    108px 0,
+    120px 12px,
+    132px 0,
+    144px 12px,
+    156px 0,
+    168px 12px,
+    180px 0,
+    192px 12px,
+    204px 0,
+    216px 12px,
+    228px 0,
+    240px 12px,
+    100% 12px,
+    100% calc(100% - 12px),
+    calc(100% - 12px) 100%,
+    calc(100% - 24px) calc(100% - 12px),
+    calc(100% - 36px) 100%,
+    calc(100% - 48px) calc(100% - 12px),
+    calc(100% - 60px) 100%,
+    calc(100% - 72px) calc(100% - 12px),
+    calc(100% - 84px) 100%,
+    calc(100% - 96px) calc(100% - 12px),
+    calc(100% - 108px) 100%,
+    calc(100% - 120px) calc(100% - 12px),
+    calc(100% - 132px) 100%,
+    calc(100% - 144px) calc(100% - 12px),
+    calc(100% - 156px) 100%,
+    calc(100% - 168px) calc(100% - 12px),
+    calc(100% - 180px) 100%,
+    calc(100% - 192px) calc(100% - 12px),
+    calc(100% - 204px) 100%,
+    calc(100% - 216px) calc(100% - 12px),
+    calc(100% - 228px) 100%,
+    calc(100% - 240px) calc(100% - 12px),
+    12px calc(100% - 12px),
+    0 100%
+  );
+  
+  // Ensure text color is white for visibility
+  * {
+    color: white !important;
+  }
 }

@@ -208,6 +208,60 @@ class ClientApiClient {
     };
   }
 
+  async cancelOrder(orderId: string | number, reason?: string) {
+    const user = await clientAuth.getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    const response = await this.request<{ success: boolean; message: string }>(`/orders/${orderId}/cancel`, {
+      method: 'PUT',
+      body: JSON.stringify({ reason }),
+    });
+
+    return response;
+  }
+
+  // Return requests
+  async createReturnRequest(data: {
+    orderId: number;
+    reason: string;
+    reasonDetails?: string;
+    items: Array<{ orderItemId: number; quantity: number }>;
+  }) {
+    const user = await clientAuth.getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    const response = await this.request<{ success: boolean; message: string; data: any }>('/returns', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+
+    return response;
+  }
+
+  async getReturnRequest(id: string | number) {
+    const user = await clientAuth.getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    const response = await this.request<{ data: any }>(`/returns/${id}`);
+    return response;
+  }
+
+  async getReturnsByOrder(orderId: string | number) {
+    const user = await clientAuth.getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    const response = await this.request<{ data: any[] }>(`/returns/order/${orderId}`);
+    return response;
+  }
+
   // Client profile - Get and update user profile
   async getProfile() {
     const user = await clientAuth.getCurrentUser();
@@ -285,6 +339,30 @@ class ClientApiClient {
     });
 
     return { success: true };
+  }
+
+  // Password reset
+  async forgotPassword(email: string) {
+    const response = await this.request<{ message: string }>('/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
+
+    return response;
+  }
+
+  async verifyResetToken(token: string) {
+    const response = await this.request<{ valid: boolean }>(`/auth/verify-reset-token/${token}`);
+    return response;
+  }
+
+  async resetPassword(token: string, newPassword: string) {
+    const response = await this.request<{ message: string }>('/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({ token, newPassword }),
+    });
+
+    return response;
   }
 
   // Client addresses - Manage addresses
@@ -415,6 +493,654 @@ class ClientApiClient {
       method: 'POST',
       body: JSON.stringify({ code, orderAmount, productIds }),
     });
+  }
+
+  // Get available coupons (public endpoint)
+  async getCoupons(params?: { isActive?: boolean; page?: number; pageSize?: number }) {
+    const searchParams = new URLSearchParams();
+    if (params?.isActive !== undefined) {
+      searchParams.append('isActive', params.isActive.toString());
+    }
+    if (params?.page) {
+      searchParams.append('page', params.page.toString());
+    }
+    if (params?.pageSize) {
+      searchParams.append('pageSize', params.pageSize.toString());
+    }
+
+    const queryString = searchParams.toString();
+    const endpoint = `/coupons${queryString ? `?${queryString}` : ''}`;
+    
+    const response = await this.request<any>(endpoint);
+    return {
+      data: Array.isArray(response) ? response : (response.data || []),
+      meta: response.meta,
+    };
+  }
+
+  // Wishlist API
+  async getWishlist() {
+    const user = await clientAuth.getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    const response = await this.request<any[]>('/wishlist');
+    const items = Array.isArray(response) ? response : (response.data || []);
+    
+    return {
+      data: items.map((item: any) => ({
+        id: item.id,
+        productId: item.productId || item.product?.id,
+        product: item.product,
+        createdAt: item.createdAt || item.created_at,
+      })),
+    };
+  }
+
+  async addToWishlist(productId: number) {
+    const user = await clientAuth.getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    const response = await this.request<any>(`/wishlist/${productId}`, {
+      method: 'POST',
+    });
+
+    return { success: true, data: response };
+  }
+
+  async removeFromWishlist(productId: number) {
+    const user = await clientAuth.getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    await this.request(`/wishlist/${productId}`, {
+      method: 'DELETE',
+    });
+
+    return { success: true };
+  }
+
+  async checkInWishlist(productId: number) {
+    const user = await clientAuth.getCurrentUser();
+    if (!user) {
+      return { inWishlist: false };
+    }
+
+    try {
+      const response = await this.request<{ inWishlist: boolean }>(`/wishlist/check/${productId}`);
+      return response;
+    } catch (error) {
+      return { inWishlist: false };
+    }
+  }
+
+  // Recently Viewed API
+  async getRecentlyViewed() {
+    const user = await clientAuth.getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    const response = await this.request<any[]>('/recently-viewed');
+    const items = Array.isArray(response) ? response : (response.data || []);
+    
+    return {
+      data: items.map((item: any) => ({
+        id: item.id,
+        productId: item.productId || item.product?.id,
+        product: item.product,
+        viewedAt: item.viewedAt || item.viewed_at,
+      })),
+    };
+  }
+
+  async trackProductView(productId: number) {
+    const user = await clientAuth.getCurrentUser();
+    if (!user) {
+      return; // Silently fail if not authenticated
+    }
+
+    try {
+      await this.request(`/recently-viewed/${productId}`, {
+        method: 'POST',
+      });
+    } catch (error) {
+      // Silently fail - this is not critical
+      console.error('Failed to track product view:', error);
+    }
+  }
+
+  // Marketing Preferences API
+  async getMarketingSubscription() {
+    const user = await clientAuth.getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    const response = await this.request<{ subscribed: boolean; email: string }>('/marketing/subscription');
+    return response;
+  }
+
+  async subscribeToMarketing() {
+    const user = await clientAuth.getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    const response = await this.request<{ success: boolean }>('/marketing/subscribe', {
+      method: 'POST',
+    });
+
+    return response;
+  }
+
+  async unsubscribeFromMarketing() {
+    const user = await clientAuth.getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    const response = await this.request<{ success: boolean }>('/marketing/unsubscribe-customer', {
+      method: 'POST',
+    });
+
+    return response;
+  }
+
+  // Reviews API
+  async getProductReviews(productId: number) {
+    const response = await this.request<any[]>(`/reviews/product/${productId}`);
+    const reviews = Array.isArray(response) ? response : (response.data || []);
+    
+    return {
+      data: reviews.map((review: any) => ({
+        id: review.id,
+        productId: review.productId || review.product?.id,
+        customerId: review.customerId || review.customer?.id,
+        customer: review.customer,
+        rating: review.rating,
+        title: review.title,
+        comment: review.comment,
+        status: review.status,
+        helpfulCount: review.helpfulCount || 0,
+        isVerifiedPurchase: review.isVerifiedPurchase || false,
+        createdAt: review.createdAt || review.created_at,
+      })),
+    };
+  }
+
+  async getProductRecommendations(productId: number) {
+    const [alsoBought, youMayLike, related] = await Promise.all([
+      this.request<any[]>(`/products/${productId}/recommendations/customers-also-bought`),
+      this.request<any[]>(`/products/${productId}/recommendations/you-may-like`),
+      this.request<any[]>(`/products/${productId}/recommendations/related`),
+    ]);
+
+    return {
+      customersAlsoBought: Array.isArray(alsoBought) ? alsoBought : (alsoBought as any)?.data || [],
+      youMayLike: Array.isArray(youMayLike) ? youMayLike : (youMayLike as any)?.data || [],
+      related: Array.isArray(related) ? related : (related as any)?.data || [],
+    };
+  }
+
+  async getPersonalizedRecommendations() {
+    const response = await this.request<any[]>(`/recommendations/personalized`);
+    return { data: Array.isArray(response) ? response : (response as any)?.data || [] };
+  }
+
+  async getProductRatingStats(productId: number) {
+    const response = await this.request<{
+      averageRating: number;
+      totalReviews: number;
+      ratingDistribution: Record<number, number>;
+    }>(`/reviews/product/${productId}/stats`);
+    return response;
+  }
+
+  async createReview(data: {
+    productId: number;
+    orderId?: number;
+    rating: number;
+    title?: string;
+    comment?: string;
+  }) {
+    const user = await clientAuth.getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    const response = await this.request<any>('/reviews', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+
+    return { success: true, data: response };
+  }
+
+  async getCustomerReviews() {
+    const user = await clientAuth.getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    const response = await this.request<any[]>('/reviews/me');
+    const reviews = Array.isArray(response) ? response : (response.data || []);
+    
+    return {
+      data: reviews.map((review: any) => ({
+        id: review.id,
+        productId: review.productId || review.product?.id,
+        product: review.product,
+        rating: review.rating,
+        title: review.title,
+        comment: review.comment,
+        status: review.status,
+        helpfulCount: review.helpfulCount || 0,
+        createdAt: review.createdAt || review.created_at,
+      })),
+    };
+  }
+
+  async updateReview(reviewId: number, data: {
+    rating?: number;
+    title?: string;
+    comment?: string;
+  }) {
+    const user = await clientAuth.getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    const response = await this.request<any>(`/reviews/${reviewId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+
+    return { success: true, data: response };
+  }
+
+  async deleteReview(reviewId: number) {
+    const user = await clientAuth.getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    await this.request(`/reviews/${reviewId}`, {
+      method: 'DELETE',
+    });
+
+    return { success: true };
+  }
+
+  async reportReview(reviewId: number, data: { reason: string; comment?: string }) {
+    return this.request(`/reviews/${reviewId}/report`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async markReviewHelpful(reviewId: number) {
+    const response = await this.request<any>(`/reviews/${reviewId}/helpful`, {
+      method: 'POST',
+    });
+
+    return response;
+  }
+
+  // Sessions API
+  async getActiveSessions() {
+    const user = await clientAuth.getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    const response = await this.request<any[]>('/auth/sessions');
+    const sessions = Array.isArray(response) ? response : (response.data || []);
+    
+    return {
+      data: sessions.map((session: any) => ({
+        id: session.id,
+        device: session.device || 'Unknown',
+        location: session.location || 'Unknown',
+        ipAddress: session.ipAddress || 'Unknown',
+        lastActivityAt: session.lastActivityAt || session.last_activity_at,
+        createdAt: session.createdAt || session.created_at,
+        isActive: session.isActive !== false,
+      })),
+    };
+  }
+
+  async revokeSession(sessionId: number) {
+    const user = await clientAuth.getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    await this.request(`/auth/sessions/${sessionId}`, {
+      method: 'DELETE',
+    });
+
+    return { success: true };
+  }
+
+  async revokeAllOtherSessions() {
+    const user = await clientAuth.getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    await this.request('/auth/sessions/others', {
+      method: 'DELETE',
+    });
+
+    return { success: true };
+  }
+
+  // Login History API
+  async getLoginHistory() {
+    const user = await clientAuth.getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    const response = await this.request<any[]>('/auth/login-history');
+    const history = Array.isArray(response) ? response : (response.data || []);
+    
+    return {
+      data: history.map((entry: any) => ({
+        id: entry.id,
+        status: entry.status,
+        ipAddress: entry.ipAddress || 'Unknown',
+        location: entry.location || 'Unknown',
+        device: entry.device || 'Unknown',
+        failureReason: entry.failureReason,
+        createdAt: entry.createdAt || entry.created_at,
+      })),
+    };
+  }
+
+  // Account Activity API
+  async getAccountActivities(params?: { limit?: number; type?: string }) {
+    const user = await clientAuth.getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    const searchParams = new URLSearchParams();
+    if (params?.limit) {
+      searchParams.append('limit', params.limit.toString());
+    }
+    if (params?.type) {
+      searchParams.append('type', params.type);
+    }
+
+    const queryString = searchParams.toString();
+    const endpoint = `/account-activity${queryString ? `?${queryString}` : ''}`;
+    
+    const response = await this.request<any[]>(endpoint);
+    const activities = Array.isArray(response) ? response : (response.data || []);
+    
+    return {
+      data: activities.map((activity: any) => ({
+        id: activity.id,
+        activityType: activity.activityType,
+        description: activity.description,
+        metadata: activity.metadata || {},
+        ipAddress: activity.ipAddress,
+        createdAt: activity.createdAt || activity.created_at,
+      })),
+    };
+  }
+
+  // Communication History API
+  async getCommunicationHistory(params?: { limit?: number; type?: string }) {
+    const user = await clientAuth.getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    const searchParams = new URLSearchParams();
+    if (params?.limit) {
+      searchParams.append('limit', params.limit.toString());
+    }
+    if (params?.type) {
+      searchParams.append('type', params.type);
+    }
+
+    const queryString = searchParams.toString();
+    const endpoint = `/communication-history${queryString ? `?${queryString}` : ''}`;
+    
+    const response = await this.request<any[]>(endpoint);
+    const communications = Array.isArray(response) ? response : (response.data || []);
+    
+    return {
+      data: communications.map((comm: any) => ({
+        id: comm.id,
+        communicationType: comm.communicationType,
+        status: comm.status,
+        subject: comm.subject,
+        content: comm.content,
+        metadata: comm.metadata || {},
+        sentAt: comm.sentAt || comm.sent_at,
+        deliveredAt: comm.deliveredAt || comm.delivered_at,
+        openedAt: comm.openedAt || comm.opened_at,
+        clickedAt: comm.clickedAt || comm.clicked_at,
+        createdAt: comm.createdAt || comm.created_at,
+      })),
+    };
+  }
+
+  // Notification Preferences API
+  async getNotificationPreferences() {
+    const user = await clientAuth.getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    const response = await this.request<{ data: any[] }>('/notifications/preferences');
+    return response.data || [];
+  }
+
+  async updateNotificationPreference(
+    type: string,
+    emailEnabled: boolean,
+    inAppEnabled: boolean,
+    smsEnabled?: boolean,
+  ) {
+    const user = await clientAuth.getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    const body: any = {
+      type,
+      emailEnabled,
+      inAppEnabled,
+    };
+
+    if (smsEnabled !== undefined) {
+      body.smsEnabled = smsEnabled;
+    }
+
+    return this.request('/notifications/preferences', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    });
+  }
+
+  // Two-Factor Authentication API
+  async get2FAStatus() {
+    const user = await clientAuth.getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    const response = await this.request<{
+      isEnabled: boolean;
+      isVerified: boolean;
+      enabledAt: string | null;
+    }>('/two-factor/status');
+    return response;
+  }
+
+  async generate2FASecret() {
+    const user = await clientAuth.getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    const response = await this.request<{
+      secret: string;
+      qrCodeUrl: string;
+      manualEntryKey: string;
+    }>('/two-factor/generate', {
+      method: 'POST',
+    });
+
+    return response;
+  }
+
+  async enable2FA(code: string) {
+    const user = await clientAuth.getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    const response = await this.request<{
+      success: boolean;
+      backupCodes: string[];
+    }>('/two-factor/enable', {
+      method: 'POST',
+      body: JSON.stringify({ code }),
+    });
+
+    return response;
+  }
+
+  async verify2FACode(code: string) {
+    const user = await clientAuth.getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    const response = await this.request<{ valid: boolean }>('/two-factor/verify', {
+      method: 'POST',
+      body: JSON.stringify({ code }),
+    });
+
+    return response;
+  }
+
+  async disable2FA() {
+    const user = await clientAuth.getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    await this.request('/two-factor/disable', {
+      method: 'DELETE',
+    });
+
+    return { success: true };
+  }
+
+  async regenerate2FABackupCodes() {
+    const user = await clientAuth.getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    const response = await this.request<{ backupCodes: string[] }>('/two-factor/regenerate-backup-codes', {
+      method: 'POST',
+    });
+
+    return response;
+  }
+
+  // Product Variants API
+  async getProductVariants(productId: number) {
+    const response = await this.request<any[]>(`/products/${productId}/variants`);
+    return {
+      data: Array.isArray(response) ? response : (response.data || []),
+    };
+  }
+
+  async getProductVariant(productId: number, variantId: number) {
+    return this.request<any>(`/products/${productId}/variants/${variantId}`);
+  }
+
+  // Saved Cards API
+  async getSavedCards() {
+    const user = await clientAuth.getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    const response = await this.request<any[]>(`/customers/${user.id}/cards`);
+    const cards = Array.isArray(response) ? response : (response.data || []);
+    
+    return {
+      data: cards.map((card: any) => ({
+        id: card.id,
+        last4: card.last4,
+        cardType: card.cardType || card.card_type,
+        expiryMonth: card.expiryMonth || card.expiry_month,
+        expiryYear: card.expiryYear || card.expiry_year,
+        cardholderName: card.cardholderName || card.cardholder_name,
+        isDefault: card.isDefault || card.is_default || false,
+        createdAt: card.createdAt || card.created_at,
+      })),
+    };
+  }
+
+  async getSavedCard(cardId: number) {
+    const user = await clientAuth.getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    const response = await this.request<any>(`/customers/${user.id}/cards/${cardId}`);
+    return {
+      data: {
+        id: response.id,
+        last4: response.last4,
+        cardType: response.cardType || response.card_type,
+        expiryMonth: response.expiryMonth || response.expiry_month,
+        expiryYear: response.expiryYear || response.expiry_year,
+        cardholderName: response.cardholderName || response.cardholder_name,
+        isDefault: response.isDefault || response.is_default || false,
+      },
+    };
+  }
+
+  async setDefaultCard(cardId: number) {
+    const user = await clientAuth.getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    const response = await this.request<any>(`/customers/${user.id}/cards/${cardId}/default`, {
+      method: 'PUT',
+    });
+
+    return { success: true, data: response };
+  }
+
+  async deleteSavedCard(cardId: number) {
+    const user = await clientAuth.getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    await this.request(`/customers/${user.id}/cards/${cardId}`, {
+      method: 'DELETE',
+    });
+
+    return { success: true };
   }
 }
 

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useClientAuth } from '@/app/contexts/ClientAuthContext'
 import clientApi from '@/app/lib/client/api'
+import { TableSkeleton } from '@/app/components/ui/Skeletons'
 
 export default function PortalOrdersPage() {
   const { loading: authLoading, isAuthenticated } = useClientAuth()
@@ -48,8 +49,11 @@ export default function PortalOrdersPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#f5f1e8]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+      <div className="min-h-screen bg-[#f5f1e8] pt-24">
+        <div className="space-y-6">
+          <div className="h-8 bg-gray-200 rounded w-48 animate-pulse"></div>
+          <TableSkeleton rows={5} columns={5} />
+        </div>
       </div>
     )
   }

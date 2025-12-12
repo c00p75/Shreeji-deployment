@@ -4,11 +4,13 @@ import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { useClientAuth } from '@/app/contexts/ClientAuthContext'
 import clientApi from '@/app/lib/client/api'
-import { ArrowLeft, Package, MapPin, CreditCard, Truck } from 'lucide-react'
+import { ArrowLeft, Package, MapPin, CreditCard, Truck, XCircle, RotateCcw } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { getMainProductImage } from '@/app/lib/admin/image-mapping'
 import { currencyFormatter } from '@/app/components/checkout/currency-formatter'
+import CancelOrderModal from '@/app/components/portal/CancelOrderModal'
+import ReturnRequestModal from '@/app/components/portal/ReturnRequestModal'
 
 // Process image URL to ensure it's properly formatted for Next.js Image component
 // Handles filenames with spaces by encoding them properly
@@ -45,6 +47,8 @@ export default function OrderDetailsPage() {
   const { loading: authLoading, isAuthenticated } = useClientAuth()
   const [order, setOrder] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false)
+  const [isReturnModalOpen, setIsReturnModalOpen] = useState(false)
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -68,6 +72,30 @@ export default function OrderDetailsPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const canCancelOrder = () => {
+    if (!order) return false
+    
+    // Can't cancel if already cancelled, shipped, or delivered
+    if (['cancelled', 'shipped', 'delivered'].includes(order.orderStatus?.toLowerCase())) {
+      return false
+    }
+
+    // Check time limit (24 hours)
+    if (order.createdAt) {
+      const orderDate = new Date(order.createdAt)
+      const hoursSinceOrder = (Date.now() - orderDate.getTime()) / (1000 * 60 * 60)
+      return hoursSinceOrder <= 24
+    }
+
+    return true
+  }
+
+  const canRequestReturn = () => {
+    if (!order) return false
+    // Can only request return for delivered orders
+    return order.orderStatus?.toLowerCase() === 'delivered'
   }
 
   const getStatusColor = (status: string) => {
@@ -152,10 +180,19 @@ export default function OrderDetailsPage() {
                   })}
                 </p>
               </div>
-              <div className="text-right">
+              <div className="flex items-center gap-3">
                 <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${getStatusColor(order.orderStatus)}`}>
                   {order.orderStatus || 'pending'}
                 </span>
+                {canCancelOrder() && (
+                  <button
+                    onClick={() => setIsCancelModalOpen(true)}
+                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-700 bg-red-50 border border-red-200 rounded-md hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                  >
+                    <XCircle className="h-4 w-4" />
+                    Cancel Order
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -508,6 +545,29 @@ export default function OrderDetailsPage() {
           </div>
         </div>
       </div>
+
+      {/* Cancel Order Modal */}
+      {order && (
+        <>
+          <CancelOrderModal
+            isOpen={isCancelModalOpen}
+            onClose={() => setIsCancelModalOpen(false)}
+            orderId={order.id}
+            orderNumber={order.orderNumber || order.id}
+            onSuccess={() => {
+              fetchOrder()
+            }}
+          />
+          <ReturnRequestModal
+            isOpen={isReturnModalOpen}
+            onClose={() => setIsReturnModalOpen(false)}
+            order={order}
+            onSuccess={() => {
+              fetchOrder()
+            }}
+          />
+        </>
+      )}
     </div>
   )
 }

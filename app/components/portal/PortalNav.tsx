@@ -9,7 +9,12 @@ import {
   Package, 
   User, 
   MapPin, 
-  Settings
+  Settings,
+  CreditCard,
+  Heart,
+  Ticket as TicketIcon,
+  Clock as ClockIcon,
+  Mail as EnvelopeIcon,
 } from 'lucide-react'
 
 interface PortalNavProps {
@@ -22,7 +27,13 @@ export default function PortalNav({ sidebarOpen = false }: PortalNavProps) {
   const navItems = [
     { href: '/portal/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/portal/orders', label: 'Orders', icon: Package },
+    { href: '/portal/wishlist', label: 'Wishlist', icon: Heart },
+    { href: '/portal/coupons', label: 'Coupons', icon: TicketIcon },
+    { href: '/portal/reviews', label: 'My Reviews', icon: User },
     { href: '/portal/addresses', label: 'Addresses', icon: MapPin },
+    { href: '/portal/payment-methods', label: 'Payment Methods', icon: CreditCard },
+    { href: '/portal/activity', label: 'Activity', icon: ClockIcon },
+    { href: '/portal/communications', label: 'Communications', icon: EnvelopeIcon },
     { href: '/portal/profile', label: 'Profile', icon: User },
     { href: '/portal/settings', label: 'Settings', icon: Settings },
   ]

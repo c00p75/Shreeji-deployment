@@ -63,16 +63,6 @@ export default function PortalHeader({ currentPage = 'Dashboard', pageTitle, onM
                   {user?.firstName?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || 'C'}
                 </span>
               </div>
-              <div className="hidden sm:block">
-                <p className="text-sm font-medium text-gray-900 dark:text-white">
-                  {user?.firstName && user?.lastName 
-                    ? `${user.firstName} ${user.lastName}` 
-                    : user?.email || 'Customer'}
-                </p>
-                <p className="text-xs text-gray-500 dark:text-white/70">
-                  {user?.email || ''}
-                </p>
-              </div>
             </button>
 
             {/* User dropdown menu */}

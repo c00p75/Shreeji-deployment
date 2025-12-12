@@ -12,11 +12,18 @@ import {
   PencilIcon,
   ChevronDownIcon,
   CloudArrowUpIcon,
-  LinkIcon
+  LinkIcon,
+  MagnifyingGlassIcon
 } from '@heroicons/react/24/outline';
 import { processProductImages } from '@/app/lib/admin/image-mapping';
 import api from '@/app/lib/admin/api';
-import ModernProductShowcase from '../products/ModernProductShowcase';
+import ProductDetails from '@/components/products/product details';
+import '@/components/products/product details/style.scss';
+import { CartProvider } from '@/app/contexts/CartContext';
+import { ClientAuthProvider } from '@/app/contexts/ClientAuthContext';
+import ProductVariantsManager from './ProductVariantsManager';
+import ProductSEOEditor from './ProductSEOEditor';
+import toast from 'react-hot-toast';
 
 interface Product {
   id: number;
@@ -43,6 +50,11 @@ interface Product {
   discountPercent?: number;
   weight?: number;
   Dimensions?: any;
+  metaTitle?: string;
+  metaDescription?: string;
+  metaKeywords?: string;
+  ogImage?: string;
+  schemaMarkup?: Record<string, any>;
 }
 
 interface EditProductModalProps {
@@ -50,56 +62,228 @@ interface EditProductModalProps {
   onClose: () => void;
   product: Product | null;
   onSave: (updatedProduct: Product) => void;
+  onDelete: (id: number) => void;
 }
 
-// Component to handle spec input without losing focus
+interface Category {
+  id: number | string;
+  documentId?: string;
+  name: string;
+  slug?: string;
+}
+
+interface Subcategory {
+  id: number | string;
+  documentId?: string;
+  name: string;
+  slug?: string;
+  category: number | Category | string;
+}
+
+interface Brand {
+  id: number | string;
+  documentId?: string;
+  name: string;
+  logo?: { url: string; id: number } | null;
+  logoUrl?: string | null;
+}
+
+// Component to handle spec input with searchable dropdown for spec name
 function SpecInput({ 
   specKey, 
   specValue, 
+  availableSpecNames,
   onKeyChange, 
-  onValueChange 
+  onValueChange,
+  onRemove
 }: { 
   specKey: string; 
   specValue: any; 
+  availableSpecNames: string[];
   onKeyChange: (oldKey: string, newKey: string) => void;
   onValueChange: (key: string, value: string) => void;
+  onRemove: (key: string) => void;
 }) {
-  const [localKey, setLocalKey] = useState(specKey);
-  const keyInputRef = useRef<HTMLInputElement>(null);
+  const [query, setQuery] = useState(specKey || '');
+  const [isOpen, setIsOpen] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Update local key when specKey prop changes (e.g., when specs are reordered)
+  // Update query when specKey changes externally
   useEffect(() => {
-    if (keyInputRef.current !== document.activeElement) {
-      setLocalKey(specKey);
+    if (inputRef.current !== document.activeElement) {
+      setQuery(specKey || '');
     }
   }, [specKey]);
 
-  const handleKeyBlur = () => {
-    const newKey = localKey.trim();
-    if (newKey !== specKey) {
-      onKeyChange(specKey, newKey);
-    } else if (!newKey) {
-      // Remove if empty
-      onKeyChange(specKey, '');
+  // Filter available specs based on query
+  const filteredSpecs = availableSpecNames.filter((name) =>
+    name.toLowerCase().includes(query.toLowerCase())
+  );
+
+  // Check if current specKey is in available list
+  const isCustomSpec = specKey && !availableSpecNames.includes(specKey);
+  
+  // Show "Add new" option if query doesn't match any existing spec and query is not empty
+  const showAddNew = query.trim() !== '' && 
+                     !availableSpecNames.some(name => name.toLowerCase() === query.toLowerCase().trim()) &&
+                     (!specKey || query.toLowerCase().trim() !== specKey.toLowerCase());
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setQuery(value);
+    setIsOpen(true);
+  };
+
+  const handleSelect = (value: string) => {
+    if (value && value.trim() !== '') {
+      onKeyChange(specKey, value.trim());
+      setQuery(value.trim());
+      setIsOpen(false);
+    }
+  };
+
+  const handleAddNew = () => {
+    const trimmedQuery = query.trim();
+    if (trimmedQuery) {
+      onKeyChange(specKey, trimmedQuery);
+      setQuery(trimmedQuery);
+      setIsOpen(false);
+    }
+  };
+
+  const handleInputFocus = () => {
+    setIsOpen(true);
+  };
+
+  const handleInputBlur = (e: React.FocusEvent) => {
+    // Delay to allow click events on dropdown items
+    setTimeout(() => {
+      if (!dropdownRef.current?.contains(document.activeElement)) {
+        setIsOpen(false);
+        // If query doesn't match specKey, update it
+        if (query.trim() !== specKey && query.trim() !== '') {
+          handleAddNew();
+        } else if (query.trim() === '') {
+          setQuery(specKey || '');
+        }
+      }
+    }, 200);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && showAddNew) {
+      e.preventDefault();
+      handleAddNew();
+    } else if (e.key === 'Escape') {
+      setIsOpen(false);
+      setQuery(specKey || '');
+      inputRef.current?.blur();
+    } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      setIsOpen(true);
     }
   };
 
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2 items-center">
+      <div className="flex-1 relative" ref={dropdownRef}>
+        <div className="relative">
+          <MagnifyingGlassIcon
+            className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400"
+            aria-hidden="true"
+          />
       <input
-        ref={keyInputRef}
+            ref={inputRef}
         type="text"
-        value={localKey}
-        onChange={(e) => setLocalKey(e.target.value)}
-        onBlur={handleKeyBlur}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter') {
-            e.currentTarget.blur();
-          }
-        }}
-        className="flex-1 px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-        placeholder="Spec name"
-      />
+            value={query}
+            onChange={handleInputChange}
+            onFocus={handleInputFocus}
+            onBlur={handleInputBlur}
+            onKeyDown={handleKeyDown}
+            className="w-full rounded-lg border border-gray-300 bg-gray-50 py-2 pl-10 pr-10 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            placeholder="Search or add specification"
+            autoComplete="off"
+          />
+          <button
+            type="button"
+            onClick={() => setIsOpen(!isOpen)}
+            className="absolute inset-y-0 right-0 flex items-center pr-2"
+          >
+            <ChevronDownIcon
+              className={`h-5 w-5 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+              aria-hidden="true"
+            />
+          </button>
+        </div>
+        {isOpen && (
+          <Transition
+            show={isOpen}
+            as={React.Fragment}
+            enter="transition ease-out duration-100"
+            enterFrom="opacity-0 scale-95"
+            enterTo="opacity-100 scale-100"
+            leave="transition ease-in duration-75"
+            leaveFrom="opacity-100 scale-100"
+            leaveTo="opacity-0 scale-95"
+          >
+            <div className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+              {query === '' && (
+                <div className="relative cursor-default select-none px-4 py-2 text-gray-700">
+                  Start typing to search or add a new specification
+                </div>
+              )}
+              {filteredSpecs.length === 0 && query !== '' && !showAddNew && (
+                <div className="relative cursor-default select-none px-4 py-2 text-gray-700">
+                  No specifications found.
+                </div>
+              )}
+              {filteredSpecs.map((name) => (
+                <div
+                  key={name}
+                  onClick={() => handleSelect(name)}
+                  className={`relative cursor-pointer select-none py-2 pl-10 pr-4 ${
+                    specKey === name
+                      ? 'bg-primary-600 text-white font-medium'
+                      : 'text-gray-900 hover:bg-gray-100'
+                  }`}
+                >
+                  <span className="block truncate">{name}</span>
+                  {specKey === name && (
+                    <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-white">
+                      <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                    </span>
+                  )}
+                </div>
+              ))}
+              {isCustomSpec && specKey && !filteredSpecs.includes(specKey) && (
+                <div
+                  onClick={() => handleSelect(specKey)}
+                  className={`relative cursor-pointer select-none py-2 pl-10 pr-4 ${
+                    'bg-primary-600 text-white font-medium'
+                  }`}
+                >
+                  <span className="block truncate">{specKey} (custom)</span>
+                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-white">
+                    <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                  </span>
+                </div>
+              )}
+              {showAddNew && (
+                <div
+                  onClick={handleAddNew}
+                  className="relative cursor-pointer select-none py-2 pl-10 pr-4 text-primary-600 hover:bg-primary-50 font-medium"
+                >
+                  <span className="block truncate">
+                    <PlusIcon className="inline h-4 w-4 mr-1" />
+                    Add "{query.trim()}"
+                  </span>
+                </div>
+              )}
+            </div>
+          </Transition>
+        )}
+      </div>
       <input
         type="text"
         value={String(specValue || '')}
@@ -107,11 +291,19 @@ function SpecInput({
         className="flex-1 px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
         placeholder="Spec value"
       />
+      <button
+        type="button"
+        onClick={() => onRemove(specKey)}
+        className="px-3 py-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+        title="Remove specification"
+      >
+        <XMarkIcon className="h-5 w-5" />
+      </button>
     </div>
   );
 }
 
-export default function EditProductModal({ isOpen, onClose, product, onSave }: EditProductModalProps) {
+export default function EditProductModal({ isOpen, onClose, product, onSave, onDelete }: EditProductModalProps) {
   const [formData, setFormData] = useState<Product>({
     id: 0,
     name: '',
@@ -135,11 +327,17 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
     taxRate: 16, // Default VAT 16%
     discountPercent: 0,
     weight: 0,
-    Dimensions: { length: 0, width: 0, height: 0, unit: 'cm' }
+    Dimensions: { length: 0, width: 0, height: 0, unit: 'cm' },
+    metaTitle: '',
+    metaDescription: '',
+    metaKeywords: '',
+    ogImage: '',
+    schemaMarkup: undefined
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [mainImageIndex, setMainImageIndex] = useState<number>(0);
   
@@ -150,6 +348,24 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
   const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<{ current: number; total: number; fileName: string } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Track last toast to prevent duplicates
+  const lastToastRef = useRef<{ id: string; message: string } | null>(null);
+  
+  // Helper function to show toast without duplicates
+  const showToast = (type: 'success' | 'error', message: string, options?: { duration?: number }) => {
+    // If the message matches the last toast, dismiss it first
+    if (lastToastRef.current && lastToastRef.current.message === message) {
+      toast.dismiss(lastToastRef.current.id);
+    }
+    
+    // Show new toast and track it
+    const toastId = type === 'success' 
+      ? toast.success(message, options)
+      : toast.error(message, options);
+    
+    lastToastRef.current = { id: toastId, message };
+  };
   
   // Modal states for adding/editing category/brand/subcategory
   const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
@@ -165,31 +381,6 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
   const [newBrandName, setNewBrandName] = useState('');
   const [editingBrand, setEditingBrand] = useState<Brand | null>(null);
 
-  // Category and Subcategory interfaces
-  interface Category {
-    id: number | string;
-    documentId?: string;
-    name: string;
-    slug?: string;
-  }
-
-  interface Subcategory {
-    id: number | string;
-    documentId?: string;
-    name: string;
-    slug?: string;
-    category: number | Category | string;
-  }
-
-  // Brands fetched from API with logo support
-  interface Brand {
-    id: number | string;
-    documentId?: string;
-    name: string;
-    logo?: { url: string; id: number } | null;
-    logoUrl?: string | null;
-  }
-
   // Categories and subcategories fetched from API
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
@@ -197,6 +388,9 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
   const [loadingSubcategories, setLoadingSubcategories] = useState(false);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [loadingBrands, setLoadingBrands] = useState(false);
+  
+  // Available specification names for dropdown
+  const [availableSpecNames, setAvailableSpecNames] = useState<string[]>([]);
 
   const stockStatuses = [
     { value: 'in-stock', label: 'In Stock' },
@@ -267,12 +461,22 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
         Dimensions: product.Dimensions || { length: 0, width: 0, height: 0, unit: 'cm' },
         SKU: product.SKU || `SKU-${Date.now()}`,
         stockQuantity: product.stockQuantity || 0,
+        costPrice: (product as any).costPrice !== undefined && (product as any).costPrice !== null 
+          ? (product as any).costPrice 
+          : ((product as any).basePrice !== undefined && (product as any).basePrice !== null 
+            ? (product as any).basePrice 
+            : 0),
         images: processedImages,
         discountedPrice: product.discountedPrice !== undefined && product.discountedPrice !== null 
           ? String(product.discountedPrice) 
           : '0',
         taxRate: taxRateValue,
         discountPercent: calculatedDiscountPercent,
+        metaTitle: (product as any).metaTitle || '',
+        metaDescription: (product as any).metaDescription || '',
+        metaKeywords: (product as any).metaKeywords || '',
+        ogImage: (product as any).ogImage || '',
+        schemaMarkup: (product as any).schemaMarkup || undefined,
       });
       setErrors({});
       // Find the main image index or default to 0
@@ -296,7 +500,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
             logo: brandData.logo?.data
               ? {
                   url: brandData.logo.data.attributes?.url || brandData.logo.data.url,
-                  id: brandData.logo.data.id,
+                  id: brandData.logo.data?.id,
                 }
               : null,
             logoUrl: brandData.logoUrl || null,
@@ -316,6 +520,52 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
       fetchBrands();
     }
   }, [isOpen]);
+
+  // Fetch all specification names from products for dropdown
+  useEffect(() => {
+    const fetchAllSpecNames = async () => {
+      try {
+        const response = await api.getProducts({ 
+          pagination: { page: 1, pageSize: 1000 } // Get many products to collect spec names
+        });
+        const products = response.data || [];
+        const specNamesSet = new Set<string>();
+        
+        products.forEach((product: any) => {
+          if (product.specs && typeof product.specs === 'object') {
+            Object.keys(product.specs).forEach(key => {
+              if (key && key.trim()) {
+                specNamesSet.add(key.trim());
+              }
+            });
+          }
+        });
+        
+        // Also add current product's spec names
+        if (formData.specs && typeof formData.specs === 'object') {
+          Object.keys(formData.specs).forEach(key => {
+            if (key && key.trim()) {
+              specNamesSet.add(key.trim());
+            }
+          });
+        }
+        
+        setAvailableSpecNames(Array.from(specNamesSet).sort());
+      } catch (error) {
+        console.error('Error fetching spec names:', error);
+        // Fallback to current product's specs
+        if (formData.specs && typeof formData.specs === 'object') {
+          setAvailableSpecNames(Object.keys(formData.specs).sort());
+        } else {
+          setAvailableSpecNames([]);
+        }
+      }
+    };
+    
+    if (isOpen) {
+      fetchAllSpecNames();
+    }
+  }, [isOpen, formData.specs]);
 
   // When brands are loaded, map any existing brand names to their IDs so the select can prefill
   useEffect(() => {
@@ -578,28 +828,45 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
       return;
     }
 
-    // For now, handle one file at a time
-    const file = imageFiles[0];
+    // Switch to upload mode to show progress
+    setImageUploadMode('upload');
     setUploadingImage(true);
-    setUploadProgress({ current: 1, total: 1, fileName: file.name });
+    setErrors(prev => {
+      const newErrors = { ...prev };
+      delete newErrors.imageUpload;
+      return newErrors;
+    });
 
     try {
-      const uploadResult = await api.uploadImage(file);
-      
-      // Add the uploaded image to the form data
-      const newImage = {
-        url: uploadResult.url,
-        alt: formData.name || 'Product image',
-        isMain: formData.images.length === 0
-      };
+      const uploadedImages: Array<{ url: string; alt: string; isMain: boolean }> = [];
+      const currentImageCount = formData.images.length;
+      const isFirstImage = currentImageCount === 0;
 
+      // Upload files sequentially to show progress
+      for (let i = 0; i < imageFiles.length; i++) {
+        setUploadProgress({ 
+          current: i + 1, 
+          total: imageFiles.length, 
+          fileName: imageFiles[i].name 
+        });
+        
+        const uploadResult = await api.uploadImage(imageFiles[i]);
+        
+        uploadedImages.push({
+          url: uploadResult.url,
+          alt: formData.name || `Product image ${currentImageCount + i + 1}`,
+          isMain: isFirstImage && i === 0 // First uploaded image is main if no images exist
+        });
+      }
+
+      // Add all uploaded images to form data
       setFormData(prev => ({
         ...prev,
-        images: [...prev.images, newImage]
+        images: [...prev.images, ...uploadedImages]
       }));
 
-      // Update main image index if this is the first image
-      if (formData.images.length === 0) {
+      // Update main image index if this was the first image
+      if (isFirstImage && uploadedImages.length > 0) {
         setMainImageIndex(0);
       }
 
@@ -611,10 +878,10 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
         fileInputRef.current.value = '';
       }
     } catch (error: any) {
-      console.error('Error uploading image:', error);
+      console.error('Error uploading images:', error);
       setErrors(prev => ({ 
         ...prev, 
-        imageUpload: error.message || 'Failed to upload image. Please try again.' 
+        imageUpload: error.message || 'Failed to upload images. Please try again.' 
       }));
     } finally {
       setUploadingImage(false);
@@ -1054,7 +1321,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
         name: brandDataAttr.name || trimmedName,
         logo: brandDataAttr.logo?.data ? {
           url: brandDataAttr.logo.data.attributes?.url || brandDataAttr.logo.data.url,
-          id: brandDataAttr.logo.data.id
+          id: brandDataAttr.logo.data?.id
         } : null,
         logoUrl: brandDataAttr.logoUrl || logoUrl || null
       };
@@ -1148,7 +1415,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
         name: brandDataAttr.name || trimmedName,
         logo: brandDataAttr.logo?.data ? {
           url: brandDataAttr.logo.data.attributes?.url || brandDataAttr.logo.data.url,
-          id: brandDataAttr.logo.data.id
+          id: brandDataAttr.logo.data?.id
         } : null,
         logoUrl: brandDataAttr.logoUrl || logoUrl || null
       };
@@ -1211,7 +1478,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
   const mainImageUrl = formData.images[mainImageIndex]?.url || (formData.images.length > 0 ? formData.images[0]?.url : null);
   const displayImages = formData.images.slice(0, 4); // Show max 4 thumbnails
 
-  const validateForm = () => {
+  const validateForm = (): { isValid: boolean; firstErrorField: string | null; errorMessage: string } => {
     const newErrors: Record<string, string> = {};
 
     if (!formData.name.trim()) {
@@ -1241,13 +1508,90 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
     }
 
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    
+    // Find first error field
+    const firstErrorField = Object.keys(newErrors)[0] || null;
+    const errorMessage = firstErrorField ? newErrors[firstErrorField] : '';
+    
+    return {
+      isValid: Object.keys(newErrors).length === 0,
+      firstErrorField,
+      errorMessage
+    };
+  };
+
+  // Helper function to scroll and focus on error field
+  const scrollToErrorField = (fieldName: string | null) => {
+    if (!fieldName) return;
+    
+    // Map field names to IDs
+    const fieldIds: Record<string, string> = {
+      name: 'field-product-name',
+      category: 'field-product-category',
+      brand: 'field-product-brand',
+      costPrice: 'field-product-cost-price',
+      stockQuantity: 'field-product-stock-quantity',
+      minStockLevel: 'field-product-min-stock',
+      maxStockLevel: 'field-product-max-stock',
+    };
+    
+    const fieldId = fieldIds[fieldName];
+    if (!fieldId) return;
+    
+    // Try to find the field element
+    const fieldElement = document.getElementById(fieldId);
+    
+    if (fieldElement) {
+      // Scroll to field with smooth behavior
+      fieldElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      
+      // Focus on the field after a short delay
+      setTimeout(() => {
+        if (fieldElement instanceof HTMLInputElement || 
+            fieldElement instanceof HTMLTextAreaElement ||
+            fieldElement instanceof HTMLSelectElement) {
+          fieldElement.focus();
+        } else {
+          // For Listbox, try to find the button inside
+          const button = fieldElement.querySelector('button');
+          if (button) {
+            button.focus();
+          }
+        }
+      }, 300);
+    }
+  };
+
+  const handleDeleteProduct = async () => {
+    if (!product?.id) {
+      showToast('error', 'Product ID is missing. Cannot delete.');
+      return;
+    }
+    if (!confirm('Are you sure you want to delete this product?')) return;
+    try {
+      setDeleting(true);
+      onDelete(product.id);
+      onClose();
+      showToast('success', 'Product deleted');
+    } catch (error: any) {
+      console.error('Error deleting product:', error);
+      showToast('error', error?.message || 'Failed to delete product');
+    } finally {
+      setDeleting(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validateForm()) {
+    const validation = validateForm();
+    
+    if (!validation.isValid) {
+      // Show toast with error message
+      showToast('error', `Validation failed: ${validation.errorMessage}`, { duration: 4000 });
+      
+      // Scroll and focus to first error field
+      scrollToErrorField(validation.firstErrorField);
       return;
     }
 
@@ -1276,17 +1620,32 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
         discountedPrice: discountPrice > 0 ? discountPrice.toString() : '0',
         costPrice: basePrice, // Base price (formerly cost price)
         taxRate: vatPercent,
-        discountPercent: discountPercent
+        discountPercent: discountPercent,
+        // Include SEO fields
+        metaTitle: formData.metaTitle,
+        metaDescription: formData.metaDescription,
+        metaKeywords: formData.metaKeywords,
+        ogImage: formData.ogImage,
+        schemaMarkup: formData.schemaMarkup,
       };
 
       console.log('Saving product:', updatedProduct);
       console.log('Product documentId:', updatedProduct.documentId);
+      console.log('Product id:', product?.id);
       
-      if (!updatedProduct.documentId) {
-        throw new Error('Product ID (documentId) is missing. Cannot save product.');
+      // Use documentId if available, otherwise use id
+      const productId = updatedProduct.documentId || product?.id;
+      if (!productId) {
+        throw new Error('Product ID is missing. Cannot save product.');
+      }
+
+      // Ensure documentId is set for the API call
+      if (!updatedProduct.documentId && product?.id) {
+        updatedProduct.documentId = product.id.toString();
       }
 
       await onSave(updatedProduct);
+      showToast('success', 'Product saved successfully!');
       onClose();
     } catch (error: any) {
       console.error('Error saving product:', error);
@@ -1313,7 +1672,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-[0.93]" onClick={onClose}>
       <div 
-        className="bg-white rounded-xl shadow-2xl w-[95%] md:w-[85%] h-[95%] md:h-[85%] flex flex-col md:flex-row relative overflow-hidden"
+        className="bg-white rounded-xl shadow-2xl w-[95%] md:w-[85%] lg:w-[90%] h-[95%] md:h-[85%] flex flex-col md:flex-row relative overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close button - visible on mobile and desktop */}
@@ -1327,7 +1686,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
 
         {/* Left Column - Images with gradient background */}
         <div 
-          className="flex-1 h-full px-8 md:px-16 flex items-center justify-center py-20 md:py-0 relative"
+          className="flex-2 min-w-[42%] h-full px-8 md:px-16 flex items-center justify-center py-20 md:py-0 relative"
           style={{
             background: 'radial-gradient(#a78d55, #87703f, #87703f, #68542c)'
           }}
@@ -1342,7 +1701,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
                           <img
                             src={mainImageUrl}
                             alt={formData.images[mainImageIndex]?.alt || "Main product image"}
-                            className="w-full h-full object-contain"
+                            className="w-full h-full object-contain min-h-[15rem]"
                           />
                           {/* Delete button on hover */}
                           <button
@@ -1416,6 +1775,35 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
               Edit Product
             </h2>
             
+            {/* Active Status Toggle - At the top */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <label htmlFor="isActive" className="block text-sm font-medium text-gray-700 mb-1">
+                    Product Status
+                  </label>
+                  <p className="text-xs text-gray-500">
+                    {formData.isActive ? 'Product is visible to customers' : 'Product is hidden from customers'}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={formData.isActive}
+                  onClick={() => handleInputChange('isActive', !formData.isActive)}
+                  className={`relative inline-flex h-7 w-14 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ${
+                    formData.isActive ? 'bg-primary-600' : 'bg-gray-300'
+                  }`}
+                >
+                  <span
+                    className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                      formData.isActive ? 'translate-x-7' : 'translate-x-0'
+                    }`}
+                  />
+                </button>
+              </div>
+            </div>
+            
             <div className="space-y-6">
               {/* General Information Card */}
                   <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -1427,6 +1815,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
                   <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">Name Product *</label>
                     <input
+                      id="field-product-name"
                       type="text"
                       value={formData.name}
                       onChange={(e) => handleInputChange('name', e.target.value)}
@@ -1466,7 +1855,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
                         }
                       }}
                     >
-                      <div className="relative">
+                      <div className="relative" id="field-product-category">
                         <Listbox.Button
                           className={`relative w-full cursor-default rounded-lg border border-gray-300 bg-gray-50 py-2 pl-3 pr-10 text-left text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent ${
                             errors.category ? 'border-red-500' : ''
@@ -1656,7 +2045,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
                         }
                       }}
                     >
-                      <div className="relative">
+                      <div className="relative" id="field-product-brand">
                         <Listbox.Button
                           className={`relative w-full cursor-default rounded-lg border border-gray-300 bg-gray-50 py-2 pl-3 pr-10 text-left text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent ${
                             errors.brand ? 'border-red-500' : ''
@@ -1762,6 +2151,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">Base Price *</label>
                             <input
+                              id="field-product-cost-price"
                               type="number"
                               value={formData.costPrice || ''}
                               onChange={(e) => {
@@ -1880,6 +2270,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">Stock *</label>
                       <input
+                        id="field-product-stock-quantity"
                         type="number"
                         value={formData.stockQuantity || ''}
                         onChange={(e) => handleInputChange('stockQuantity', parseInt(e.target.value) || 0)}
@@ -1908,6 +2299,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">Min Stock Level</label>
                       <input
+                        id="field-product-min-stock"
                         type="number"
                         value={formData.minStockLevel || ''}
                         onChange={(e) => handleInputChange('minStockLevel', parseInt(e.target.value) || 0)}
@@ -1922,6 +2314,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">Max Stock Level</label>
                       <input
+                        id="field-product-max-stock"
                         type="number"
                         value={formData.maxStockLevel || ''}
                         onChange={(e) => handleInputChange('maxStockLevel', parseInt(e.target.value) || 0)}
@@ -1955,9 +2348,10 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
                         // Use index as stable key to prevent remounting when key changes
                         return (
                           <SpecInput
-                            key={`spec-${index}`}
+                            key={`spec-${index}-${key}`}
                             specKey={key}
                             specValue={value}
+                            availableSpecNames={availableSpecNames}
                             onKeyChange={(oldKey, newKey) => {
                               const newSpecs = { ...formData.specs };
                               if (newKey && newKey.trim() !== '') {
@@ -1970,6 +2364,11 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
                             }}
                             onValueChange={(specKey, newValue) => {
                               handleSpecsChange(specKey, newValue);
+                            }}
+                            onRemove={(specKey) => {
+                              const newSpecs = { ...formData.specs };
+                              delete newSpecs[specKey];
+                              setFormData(prev => ({ ...prev, specs: newSpecs }));
                             }}
                           />
                         );
@@ -1987,22 +2386,39 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
                       </button>
                     </div>
                   </div>
+            </div>
 
-                  {/* Status */}
-                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                    <div className="flex items-center">
-                      <input
-                        type="checkbox"
-                        id="isActive"
-                        checked={formData.isActive}
-                        onChange={(e) => handleInputChange('isActive', e.target.checked)}
-                        className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-                      />
-                      <label htmlFor="isActive" className="ml-2 block text-sm text-gray-700">
-                        Product is active
-                      </label>
-                    </div>
-                  </div>
+            {/* Product Variants Section */}
+            {product && product.id && (
+              <div className="mt-6 border-t border-gray-200 pt-6">
+                <ProductVariantsManager
+                  key={`variants-${product.id}-${isOpen}`}
+                  productId={product.id}
+                  productName={formData.name}
+                />
+              </div>
+            )}
+
+            {/* SEO Section */}
+            <div className="mt-6 border-t border-gray-200 pt-6">
+              <ProductSEOEditor
+                seoData={{
+                  metaTitle: formData.metaTitle,
+                  metaDescription: formData.metaDescription,
+                  metaKeywords: formData.metaKeywords,
+                  ogImage: formData.ogImage,
+                  schemaMarkup: formData.schemaMarkup,
+                }}
+                productName={formData.name}
+                productDescription={formData.description}
+                productImages={formData.images}
+                onChange={(seoData) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    ...seoData,
+                  }))
+                }}
+              />
             </div>
 
             {/* Error Message */}
@@ -2012,6 +2428,22 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
                 <span className="text-sm">{errors.submit}</span>
               </div>
             )}
+
+            {/* Danger zone */}
+            <div className="mt-8 rounded-2xl border border-red-100 bg-red-50/60 p-4">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="text-sm font-semibold text-red-800">Danger zone</div>
+                <button
+                  type="button"
+                  onClick={handleDeleteProduct}
+                  disabled={loading || deleting}
+                  className="inline-flex items-center rounded-xl border border-red-200 bg-white px-5 py-3 text-sm font-semibold text-red-700 shadow-sm hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-200 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  <TrashIcon className="mr-2 h-4 w-4" />
+                  {deleting ? 'Deleting...' : 'Delete Product'}
+                </button>
+              </div>
+            </div>
 
             <div className="sticky bottom-4 z-20 mt-6 flex justify-end">
               <div className="flex flex-wrap items-center justify-end gap-3 rounded-2xl p-3">
@@ -2043,6 +2475,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
           typeof formData.subcategory === 'string' ? formData.subcategory : '',
           formData.name,
         ].filter(Boolean)}
+        brands={brands}
         onClose={() => setIsPreviewOpen(false)}
       />
     )}
@@ -2764,13 +3197,24 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
                 </button>
               </div>
 
+              {/* Hidden file input that's always available */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleFileSelect}
+                className="hidden"
+                disabled={uploadingImage}
+              />
+
               {!imageUploadMode ? (
                 <div className="space-y-3">
                   <p className="text-sm text-gray-600 mb-4">Choose how you want to add the image:</p>
                   
                   <button
                     type="button"
-                    onClick={() => setImageUploadMode('upload')}
+                    onClick={() => fileInputRef.current?.click()}
                     className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg border-2 border-gray-300 hover:border-primary-500 hover:bg-primary-50 transition-colors text-left"
                   >
                     <CloudArrowUpIcon className="h-6 w-6 text-primary-600" />
@@ -2795,15 +3239,8 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
               ) : imageUploadMode === 'upload' ? (
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Select Image File</label>
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFileSelect}
-                      className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                      disabled={uploadingImage}
-                    />
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Uploading Images</label>
+                    <p className="text-sm text-gray-600 mb-2">Files selected: {fileInputRef.current?.files?.length || 0}</p>
                     {errors.imageUpload && <p className="mt-1 text-sm text-red-600">{errors.imageUpload}</p>}
                     
                     {uploadProgress && (
@@ -2821,8 +3258,10 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
                       </div>
                     )}
 
-                    {uploadingImage && (
-                      <p className="mt-2 text-sm text-gray-500">Please wait while we upload your image...</p>
+                    {uploadingImage && uploadProgress && (
+                      <p className="mt-2 text-sm text-gray-500">
+                        Uploading {uploadProgress.current} of {uploadProgress.total} image{uploadProgress.total > 1 ? 's' : ''}...
+                      </p>
                     )}
                   </div>
 
@@ -2918,23 +3357,90 @@ export default function EditProductModal({ isOpen, onClose, product, onSave }: E
 function ProductPreviewOverlay({
   product,
   breadcrumbs,
+  brands,
   onClose,
 }: {
   product: Product;
   breadcrumbs: string[];
+  brands: Brand[];
   onClose: () => void;
 }) {
+  // Get brand logo from brands array
+  const getBrandLogo = () => {
+    // First check if product already has brand logo
+    if ((product as any)['brand logo']) {
+      return (product as any)['brand logo'];
+    }
+    
+    // Find brand in brands array by ID
+    if (product.brand) {
+      const brandId = typeof product.brand === 'number' 
+        ? product.brand 
+        : typeof product.brand === 'string' 
+        ? parseInt(product.brand) 
+        : null;
+      
+      if (brandId) {
+        const brand = brands.find(b => 
+          b.id === brandId || 
+          b.documentId === brandId?.toString() ||
+          (typeof b.id === 'string' && parseInt(b.id) === brandId)
+        );
+        if (brand) {
+          // Prefer logoUrl, then logo.url
+          if (brand.logoUrl) {
+            return brand.logoUrl;
+          }
+          if (brand.logo?.url) {
+            return brand.logo.url;
+          }
+        }
+      }
+    }
+    
+    return null;
+  };
+
+  // Transform product data to match ProductDetails component structure
+  const transformedProduct: any = {
+    ...product,
+    'name': product.name,
+    'description': product.description,
+    'tagline': product.tagline,
+    'specs': product.specs || {},
+    // Transform images array from {url, alt} objects to URL strings
+    'images': product.images?.map(img => {
+      // Handle both string URLs and objects with url property
+      if (typeof img === 'string') return img;
+      return img.url || img;
+    }) || [],
+    'brand logo': getBrandLogo(),
+    'special feature': (product as any)['special feature'] || null,
+    'discounted price': product.discountedPrice,
+    'price': product.price,
+    'id': product.id,
+    'documentId': product.documentId || product.id?.toString(),
+  };
+
   return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 px-4 py-8">
-      <div className="relative w-full max-w-5xl">
+    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 px-4 py-8 overflow-auto">
+      <div className="relative w-full max-w-7xl bg-white rounded-lg shadow-2xl max-h-[90vh] overflow-auto">
+        <div className="relative w-full max-w-7xl bg-white rounded-lg shadow-2xl max-h-[90vh] overflow-auto product-details-page">
         <button
           type="button"
           onClick={onClose}
-          className="absolute right-5 top-5 z-10 rounded-full bg-white/90 p-2 text-gray-600 shadow hover:bg-white"
+          className="sticky top-5 right-5 z-[80] ml-auto flex rounded-full bg-white/90 p-2 text-gray-600 shadow-lg hover:bg-white transition-colors mr-5 mt-5"
         >
           <XMarkIcon className="h-5 w-5" />
         </button>
-        <ModernProductShowcase product={product} breadcrumbs={breadcrumbs} />
+        <div className="bg-transparent">
+          <ClientAuthProvider>
+            <CartProvider>
+              <ProductDetails product={transformedProduct} previewMode={true} />
+            </CartProvider>
+          </ClientAuthProvider>
+        </div>
+        </div>
       </div>
     </div>
   );
