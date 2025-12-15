@@ -5,6 +5,7 @@ import { useClientAuth } from '@/app/contexts/ClientAuthContext'
 import clientApi from '@/app/lib/client/api'
 import Image from 'next/image'
 import Link from 'next/link'
+import { currencyFormatter } from '@/app/components/checkout/currency-formatter'
 
 interface RecentlyViewedProps {
   limit?: number
@@ -141,7 +142,7 @@ function RecentlyViewedCard({ item }: { item: RecentlyViewedItem }) {
           {price !== undefined ? (
             <div className="flex items-center justify-center space-x-2 text-sm h-5">
               <span className="text-[var(--shreeji-primary)] font-semibold text-lg">
-                {currency} {Number(price).toLocaleString()}
+                {currencyFormatter(Number(price || 0), currency || 'ZMW')}
               </span>
             </div>
           ) : (

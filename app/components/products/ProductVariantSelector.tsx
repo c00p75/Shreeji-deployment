@@ -175,15 +175,15 @@ export default function ProductVariantSelector({
           {displayDiscountedPrice && displayDiscountedPrice < displayPrice ? (
             <>
               <span className="text-2xl font-bold text-[var(--shreeji-primary)]">
-                K{displayDiscountedPrice.toLocaleString()}
+                {currencyFormatter(Number(displayDiscountedPrice || 0))}
               </span>
               <span className="text-lg text-gray-500 line-through">
-                K{displayPrice.toLocaleString()}
+                {currencyFormatter(Number(displayPrice || 0))}
               </span>
             </>
           ) : (
             <span className="text-2xl font-bold text-[var(--shreeji-primary)]">
-              K{displayPrice.toLocaleString()}
+              {currencyFormatter(Number(displayPrice || 0))}
             </span>
           )}
         </div>

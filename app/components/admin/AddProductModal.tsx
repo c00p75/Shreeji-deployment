@@ -15,6 +15,7 @@ import {
   ChevronDownIcon
 } from '@heroicons/react/24/outline';
 import api from '@/app/lib/admin/api';
+import { generateSKU, generateUniqueSKU } from '@/utils/sku-generator';
 
 interface Product {
   id?: number;
@@ -244,6 +245,59 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
       setShowAddBrandModal(true);
     } else {
       handleInputChange('brand', value);
+    }
+  };
+
+  // Handle SKU generation with uniqueness checking
+  const handleGenerateSKU = async () => {
+    if (!formData.name) {
+      return;
+    }
+    
+    try {
+      const brandName = formData.brand 
+        ? brands.find(b => {
+            if (typeof formData.brand === 'string') {
+              return b.name === formData.brand;
+            } else {
+              const brandId = formData.brand as number;
+              return b.id === brandId || 
+                     (b.documentId && b.documentId.toString() === brandId.toString());
+            }
+          })?.name
+        : undefined;
+      
+      // Generate unique SKU with retry logic
+      const generatedSKU = await generateUniqueSKU(
+        formData.name,
+        brandName,
+        async (sku: string) => {
+          try {
+            return await api.checkSKUExists(sku);
+          } catch (error) {
+            console.error('Error checking SKU:', error);
+            return false; // Allow generation if check fails
+          }
+        }
+      );
+      
+      handleInputChange('sku', generatedSKU);
+    } catch (error) {
+      console.error('Error generating SKU:', error);
+      // Fallback to simple generation if uniqueness check fails
+      const brandName = formData.brand 
+        ? brands.find(b => {
+            if (typeof formData.brand === 'string') {
+              return b.name === formData.brand;
+            } else {
+              const brandId = formData.brand as number;
+              return b.id === brandId || 
+                     (b.documentId && b.documentId.toString() === brandId.toString());
+            }
+          })?.name
+        : undefined;
+      const fallbackSKU = generateSKU(formData.name, brandName);
+      handleInputChange('sku', fallbackSKU);
     }
   };
 
@@ -1784,14 +1838,37 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
 
                     {/* SKU */}
                   <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">SKU *</label>
-                    <input
-                      type="text"
-                          value={formData.sku || ''}
-                          onChange={(e) => handleInputChange('sku', e.target.value)}
-                          className={`w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.sku ? 'border-red-500' : ''}`}
-                      placeholder="Product SKU"
-                    />
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          SKU *
+                          <button
+                            type="button"
+                            onClick={handleGenerateSKU}
+                            disabled={!formData.name}
+                            className="ml-2 text-xs text-primary-600 hover:text-primary-700 disabled:text-gray-400 disabled:cursor-not-allowed underline"
+                            title={!formData.name ? 'Enter product name first' : 'Auto-generate SKU'}
+                          >
+                            Auto Generate
+                          </button>
+                        </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                            value={formData.sku || ''}
+                            onChange={(e) => handleInputChange('sku', e.target.value)}
+                            className={`w-full px-3 py-2 pr-20 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.sku ? 'border-red-500' : ''}`}
+                        placeholder="Product SKU"
+                      />
+                      {formData.name && (
+                        <button
+                          type="button"
+                          onClick={handleGenerateSKU}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-xs bg-primary-100 text-primary-700 rounded hover:bg-primary-200 transition-colors"
+                          title="Generate SKU from product name and brand"
+                        >
+                          Generate
+                        </button>
+                      )}
+                    </div>
                         {errors.sku && <p className="mt-1 text-sm text-red-600">{errors.sku}</p>}
                   </div>
 

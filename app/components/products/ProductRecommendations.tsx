@@ -7,6 +7,7 @@ import Image from 'next/image'
 import { ChevronLeft, ChevronRight, ShoppingCart } from 'lucide-react'
 import { useCart } from '@/app/contexts/CartContext'
 import toast from 'react-hot-toast'
+import { currencyFormatter } from '@/app/components/checkout/currency-formatter'
 
 interface ProductRecommendation {
   id: number
@@ -289,10 +290,10 @@ function ProductCard({ product }: { product: ProductRecommendation }) {
           {price !== undefined ? (
             <div className="flex items-center justify-center space-x-2 text-sm h-5">
               <span className="text-[var(--shreeji-primary)] font-semibold text-lg">
-                K{Number(price).toLocaleString()}
+                {currencyFormatter(Number(price || 0))}
               </span>
               {original !== undefined && (
-                <span className="text-gray-500 line-through">K{Number(original).toLocaleString()}</span>
+                <span className="text-gray-500 line-through">{currencyFormatter(Number(original || 0))}</span>
               )}
             </div>
           ) : (

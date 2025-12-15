@@ -5,6 +5,7 @@ import Layout from './Layout'
 import api from '@/app/lib/admin/api'
 import toast from 'react-hot-toast'
 import { CheckCircleIcon, XCircleIcon, EyeIcon } from '@heroicons/react/20/solid'
+import { currencyFormatter } from '@/app/components/checkout/currency-formatter'
 
 const statusColors = {
   pending: 'bg-yellow-100 text-yellow-800',
@@ -135,7 +136,7 @@ export default function ReturnManagement() {
                         {returnRequest.reason}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        K{Number(returnRequest.refundAmount || 0).toLocaleString()}
+                        {currencyFormatter(Number(returnRequest.refundAmount || 0))}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${statusColors[returnRequest.status] || 'bg-gray-100 text-gray-800'}`}>

@@ -11,6 +11,7 @@ import {
 } from '@heroicons/react/24/outline'
 import api from '@/app/lib/admin/api'
 import toast from 'react-hot-toast'
+import { currencyFormatter } from '@/app/components/checkout/currency-formatter'
 
 interface Coupon {
   id: number
@@ -253,11 +254,11 @@ export default function CouponManagement() {
                         <td className="table-cell">
                           {coupon.discountType === 'percentage' 
                             ? `${coupon.discountValue}%`
-                            : `K${coupon.discountValue.toLocaleString()}`
+                            : currencyFormatter(Number(coupon.discountValue || 0))
                           }
                           {coupon.maxDiscountAmount && coupon.discountType === 'percentage' && (
                             <span className="text-xs text-gray-500 ml-1">
-                              (max K{coupon.maxDiscountAmount.toLocaleString()})
+                              (max {currencyFormatter(Number(coupon.maxDiscountAmount || 0))})
                             </span>
                           )}
                         </td>

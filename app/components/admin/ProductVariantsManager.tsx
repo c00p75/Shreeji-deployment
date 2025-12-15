@@ -13,6 +13,8 @@ import {
   XMarkIcon
 } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
+import { generateVariantSKU, generateUniqueVariantSKU } from '@/utils/sku-generator'
+import { currencyFormatter } from '@/app/components/checkout/currency-formatter'
 
 interface ProductVariant {
   id: number
@@ -120,6 +122,7 @@ export default function ProductVariantsManager({ productId, productName }: Produ
       {isCreating && (
         <VariantForm
           productId={productId}
+          productName={productName}
           onSave={handleCreateVariant}
           onCancel={() => setIsCreating(false)}
         />
@@ -128,6 +131,7 @@ export default function ProductVariantsManager({ productId, productName }: Produ
       {editingVariant && (
         <VariantForm
           productId={productId}
+          productName={productName}
           variant={editingVariant}
           onSave={(data) => handleUpdateVariant(editingVariant.id, data)}
           onCancel={() => setEditingVariant(null)}
@@ -424,12 +428,13 @@ function AttributeInput({
 
 interface VariantFormProps {
   productId: number
+  productName: string
   variant?: ProductVariant
   onSave: (data: any) => Promise<void>
   onCancel: () => void
 }
 
-function VariantForm({ productId, variant, onSave, onCancel }: VariantFormProps) {
+function VariantForm({ productId, productName, variant, onSave, onCancel }: VariantFormProps) {
   const [formData, setFormData] = useState({
     sku: variant?.sku || '',
     specs: variant?.specs || {},
@@ -562,6 +567,49 @@ function VariantForm({ productId, variant, onSave, onCancel }: VariantFormProps)
     setFormData({ ...formData, specs: newSpecs })
   }
 
+  // Handle SKU generation with uniqueness checking
+  const handleGenerateSKU = async () => {
+    if (!productName) {
+      toast.error('Product name is required to generate SKU')
+      return
+    }
+
+    // Check if we have at least one specification
+    if (!formData.specs || Object.keys(formData.specs).length === 0) {
+      toast.error('Please add at least one specification (e.g., Size, Color) before generating SKU')
+      return
+    }
+
+    try {
+      // Generate unique SKU with retry logic
+      const generatedSKU = await generateUniqueVariantSKU(
+        productName,
+        formData.specs,
+        async (sku: string) => {
+          try {
+            // If editing, exclude current variant's SKU from the check
+            if (variant && sku === variant.sku) {
+              return false
+            }
+            return await api.checkSKUExists(sku)
+          } catch (error) {
+            console.error('Error checking SKU:', error)
+            return false // Allow generation if check fails
+          }
+        }
+      )
+
+      setFormData({ ...formData, sku: generatedSKU })
+      toast.success('SKU generated successfully')
+    } catch (error) {
+      console.error('Error generating SKU:', error)
+      // Fallback to simple generation if uniqueness check fails
+      const fallbackSKU = generateVariantSKU(productName, formData.specs)
+      setFormData({ ...formData, sku: fallbackSKU })
+      toast.success('SKU generated (uniqueness check unavailable)')
+    }
+  }
+
   // Handle form submission - cannot use <form> because it's nested in parent form
   const handleFormSubmit = (e: React.FormEvent) => {
     handleSubmit(e)
@@ -575,24 +623,36 @@ function VariantForm({ productId, variant, onSave, onCancel }: VariantFormProps)
 
       <div className="space-y-4">
         <div>
-          <label htmlFor="variant-sku" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="variant-sku" className="block text-sm font-medium text-gray-700 mb-2">
             SKU <span className="text-red-500">*</span>
           </label>
-          <input
-            type="text"
-            id="variant-sku"
-            value={formData.sku}
-            onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                e.preventDefault()
-                handleFormSubmit(e as any)
-              }
-            }}
-            required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-[var(--shreeji-primary)] focus:border-[var(--shreeji-primary)]"
-            placeholder="e.g., PROD-001-L-RED"
-          />
+          <div className="relative">
+            <input
+              type="text"
+              id="variant-sku"
+              value={formData.sku}
+              onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  handleFormSubmit(e as any)
+                }
+              }}
+              required
+              className="w-full px-3 py-2 pr-20 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              placeholder="Product SKU"
+            />
+            {productName && (
+              <button
+                type="button"
+                onClick={handleGenerateSKU}
+                className="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-xs bg-primary-100 text-primary-700 rounded hover:bg-primary-200 transition-colors"
+                title="Generate SKU from product name and variant attributes"
+              >
+                Generate
+              </button>
+            )}
+          </div>
         </div>
 
         <div>
@@ -618,7 +678,7 @@ function VariantForm({ productId, variant, onSave, onCancel }: VariantFormProps)
             <button
               type="button"
               onClick={handleAddSpec}
-              className="flex items-center text-sm text-primary-600 hover:text-primary-500 mt-2"
+              className="flex items-center text-sm font-semibold mt-4 text-primary-600 hover:text-primary-500"
             >
               <PlusIcon className="h-4 w-4 mr-1" />
               Add Specification

@@ -8,6 +8,7 @@ import { useCart } from '@/app/contexts/CartContext'
 import clientApi from '@/app/lib/client/api'
 import { Package, DollarSign, TrendingUp, ShoppingCart } from 'lucide-react'
 import RecentlyViewed from '@/app/components/products/RecentlyViewed'
+import { currencyFormatter } from '@/app/components/checkout/currency-formatter'
 
 export default function PortalDashboardPage() {
   const { user, loading: authLoading, isAuthenticated } = useClientAuth()
@@ -117,7 +118,7 @@ export default function PortalDashboardPage() {
               <div>
                 <h3 className="text-sm font-medium text-gray-500">Total Spent</h3>
                 <p className="mt-2 text-2xl font-bold text-gray-900">
-                  K{totalSpent.toLocaleString()}
+                  {currencyFormatter(Number(totalSpent || 0))}
                 </p>
               </div>
               <DollarSign className="h-8 w-8 text-green-600" />
@@ -128,7 +129,7 @@ export default function PortalDashboardPage() {
               <div>
                 <h3 className="text-sm font-medium text-gray-500">Avg Order Value</h3>
                 <p className="mt-2 text-2xl font-bold text-gray-900">
-                  K{Math.round(averageOrderValue).toLocaleString()}
+                  {currencyFormatter(Number(Math.round(averageOrderValue || 0)))}
                 </p>
               </div>
               <TrendingUp className="h-8 w-8 text-blue-600" />
@@ -177,7 +178,7 @@ export default function PortalDashboardPage() {
                       </div>
                       <div className="text-right">
                         <p className="font-medium text-gray-900">
-                          K{order.totalAmount?.toLocaleString() || '0'}
+                          {currencyFormatter(Number(order.totalAmount || 0))}
                         </p>
                         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                           order.orderStatus === 'delivered' ? 'bg-green-100 text-green-800' :

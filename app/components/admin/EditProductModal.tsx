@@ -13,7 +13,9 @@ import {
   ChevronDownIcon,
   CloudArrowUpIcon,
   LinkIcon,
-  MagnifyingGlassIcon
+  MagnifyingGlassIcon,
+  EyeIcon,
+  EyeSlashIcon
 } from '@heroicons/react/24/outline';
 import { processProductImages } from '@/app/lib/admin/image-mapping';
 import api from '@/app/lib/admin/api';
@@ -24,6 +26,7 @@ import { ClientAuthProvider } from '@/app/contexts/ClientAuthContext';
 import ProductVariantsManager from './ProductVariantsManager';
 import ProductSEOEditor from './ProductSEOEditor';
 import toast from 'react-hot-toast';
+import { generateSKU, generateUniqueSKU } from '@/utils/sku-generator';
 
 interface Product {
   id: number;
@@ -50,6 +53,10 @@ interface Product {
   discountPercent?: number;
   weight?: number;
   Dimensions?: any;
+  color?: string;
+  condition?: string;
+  warrantyPeriod?: string;
+  attributes?: Record<string, { value: string; type: 'text' | 'dropdown'; options?: string[] }>;
   metaTitle?: string;
   metaDescription?: string;
   metaKeywords?: string;
@@ -303,6 +310,367 @@ function SpecInput({
   );
 }
 
+// Component to handle dynamic attribute input with text/dropdown support
+function AttributeInput({ 
+  attributeKey, 
+  attributeData,
+  availableAttributeNames,
+  onKeyChange, 
+  onValueChange,
+  onTypeChange,
+  onOptionsChange,
+  onHiddenChange,
+  onRemove
+}: { 
+  attributeKey: string; 
+  attributeData: { value: string; type: 'text' | 'dropdown'; options?: string[]; hidden?: boolean };
+  availableAttributeNames: string[];
+  onKeyChange: (oldKey: string, newKey: string) => void;
+  onValueChange: (key: string, value: string) => void;
+  onTypeChange: (key: string, type: 'text' | 'dropdown') => void;
+  onOptionsChange: (key: string, options: string[]) => void;
+  onHiddenChange?: (key: string, hidden: boolean) => void;
+  onRemove: (key: string) => void;
+}) {
+  const [query, setQuery] = useState(attributeKey || '');
+  const [isOpen, setIsOpen] = useState(false);
+  const [showOptionsEditor, setShowOptionsEditor] = useState(false);
+  const [newOption, setNewOption] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Update query when attributeKey changes externally
+  useEffect(() => {
+    if (inputRef.current !== document.activeElement) {
+      setQuery(attributeKey || '');
+    }
+  }, [attributeKey]);
+
+  // Filter available attributes based on query
+  const filteredAttributes = availableAttributeNames.filter((name) =>
+    name.toLowerCase().includes(query.toLowerCase())
+  );
+
+  // Check if current attributeKey is in available list
+  const isCustomAttribute = attributeKey && !availableAttributeNames.includes(attributeKey);
+  
+  // Show "Add new" option if query doesn't match any existing attribute and query is not empty
+  const showAddNew = query.trim() !== '' && 
+                     !availableAttributeNames.some(name => name.toLowerCase() === query.toLowerCase().trim()) &&
+                     (!attributeKey || query.toLowerCase().trim() !== attributeKey.toLowerCase());
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setQuery(value);
+    setIsOpen(true);
+  };
+
+  const handleSelect = (value: string) => {
+    if (value && value.trim() !== '') {
+      onKeyChange(attributeKey, value.trim());
+      setQuery(value.trim());
+      setIsOpen(false);
+    }
+  };
+
+  const handleAddNew = () => {
+    const trimmedQuery = query.trim();
+    if (trimmedQuery) {
+      onKeyChange(attributeKey, trimmedQuery);
+      setQuery(trimmedQuery);
+      setIsOpen(false);
+    }
+  };
+
+  const handleInputFocus = () => {
+    setIsOpen(true);
+  };
+
+  const handleInputBlur = (e: React.FocusEvent) => {
+    setTimeout(() => {
+      if (!dropdownRef.current?.contains(document.activeElement)) {
+        setIsOpen(false);
+        if (query.trim() !== attributeKey && query.trim() !== '') {
+          handleAddNew();
+        } else if (query.trim() === '') {
+          setQuery(attributeKey || '');
+        }
+      }
+    }, 200);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && showAddNew) {
+      e.preventDefault();
+      handleAddNew();
+    } else if (e.key === 'Escape') {
+      setIsOpen(false);
+      setQuery(attributeKey || '');
+      inputRef.current?.blur();
+    } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      setIsOpen(true);
+    }
+  };
+
+  const handleAddOption = () => {
+    if (newOption.trim() && !attributeData.options?.includes(newOption.trim())) {
+      onOptionsChange(attributeKey, [...(attributeData.options || []), newOption.trim()]);
+      setNewOption('');
+    }
+  };
+
+  const handleRemoveOption = (option: string) => {
+    onOptionsChange(attributeKey, (attributeData.options || []).filter(opt => opt !== option));
+  };
+
+  return (
+    <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+      <div className="flex gap-2 items-start">
+        <div className="flex-1 relative" ref={dropdownRef}>
+          <div className="relative">
+            <MagnifyingGlassIcon
+              className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400"
+              aria-hidden="true"
+            />
+            <input
+              ref={inputRef}
+              type="text"
+              value={query}
+              onChange={handleInputChange}
+              onFocus={handleInputFocus}
+              onBlur={handleInputBlur}
+              onKeyDown={handleKeyDown}
+              className="w-full rounded-lg border border-gray-300 bg-white py-2 pl-10 pr-10 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              placeholder="Search or add attribute name"
+              autoComplete="off"
+            />
+            <button
+              type="button"
+              onClick={() => setIsOpen(!isOpen)}
+              className="absolute inset-y-0 right-0 flex items-center pr-2"
+            >
+              <ChevronDownIcon
+                className={`h-5 w-5 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+                aria-hidden="true"
+              />
+            </button>
+          </div>
+          {isOpen && (
+            <Transition
+              show={isOpen}
+              as={React.Fragment}
+              enter="transition ease-out duration-100"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
+              leave="transition ease-in duration-75"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-95"
+            >
+              <div className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                {query === '' && (
+                  <div className="relative cursor-default select-none px-4 py-2 text-gray-700">
+                    Start typing to search or add a new attribute
+                  </div>
+                )}
+                {filteredAttributes.length === 0 && query !== '' && !showAddNew && (
+                  <div className="relative cursor-default select-none px-4 py-2 text-gray-700">
+                    No attributes found.
+                  </div>
+                )}
+                {filteredAttributes.map((name) => (
+                  <div
+                    key={name}
+                    onClick={() => handleSelect(name)}
+                    className={`relative cursor-pointer select-none py-2 pl-10 pr-4 ${
+                      attributeKey === name
+                        ? 'bg-primary-600 text-white font-medium'
+                        : 'text-gray-900 hover:bg-gray-100'
+                    }`}
+                  >
+                    <span className="block truncate">{name}</span>
+                    {attributeKey === name && (
+                      <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-white">
+                        <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                      </span>
+                    )}
+                  </div>
+                ))}
+                {isCustomAttribute && attributeKey && !filteredAttributes.includes(attributeKey) && (
+                  <div
+                    onClick={() => handleSelect(attributeKey)}
+                    className={`relative cursor-pointer select-none py-2 pl-10 pr-4 ${
+                      'bg-primary-600 text-white font-medium'
+                    }`}
+                  >
+                    <span className="block truncate">{attributeKey} (custom)</span>
+                    <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-white">
+                      <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                    </span>
+                  </div>
+                )}
+                {showAddNew && (
+                  <div
+                    onClick={handleAddNew}
+                    className="relative cursor-pointer select-none py-2 pl-10 pr-4 text-primary-600 hover:bg-primary-50 font-medium"
+                  >
+                    <span className="block truncate">
+                      <PlusIcon className="inline h-4 w-4 mr-1" />
+                      Add "{query.trim()}"
+                    </span>
+                  </div>
+                )}
+              </div>
+            </Transition>
+          )}
+        </div>
+        {onHiddenChange && (
+          <button
+            type="button"
+            onClick={() => onHiddenChange(attributeKey, !attributeData.hidden)}
+            className={`px-3 py-2 rounded-lg transition-colors ${
+              attributeData.hidden 
+                ? 'text-gray-500 hover:text-gray-700 hover:bg-gray-100' 
+                : 'text-blue-600 hover:text-blue-700 hover:bg-blue-50'
+            }`}
+            title={attributeData.hidden ? 'Show attribute' : 'Hide attribute'}
+          >
+            {attributeData.hidden ? (
+              <EyeSlashIcon className="h-5 w-5" />
+            ) : (
+              <EyeIcon className="h-5 w-5" />
+            )}
+          </button>
+        )}
+        <button
+          type="button"
+          onClick={() => onRemove(attributeKey)}
+          className="px-3 py-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+          title="Remove attribute"
+        >
+          <XMarkIcon className="h-5 w-5" />
+        </button>
+      </div>
+
+      {/* Type Selector */}
+      <div className="flex items-center gap-3">
+        <label className="text-sm font-medium text-gray-700">Type:</label>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => onTypeChange(attributeKey, 'text')}
+            className={`px-3 py-1 rounded-lg text-sm transition-colors ${
+              attributeData.type === 'text'
+                ? 'bg-primary-500 text-white'
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+          >
+            Text
+          </button>
+          <button
+            type="button"
+            onClick={() => onTypeChange(attributeKey, 'dropdown')}
+            className={`px-3 py-1 rounded-lg text-sm transition-colors ${
+              attributeData.type === 'dropdown'
+                ? 'bg-primary-500 text-white'
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+          >
+            Dropdown
+          </button>
+        </div>
+      </div>
+
+      {/* Value Input */}
+      {attributeData.type === 'text' ? (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Value</label>
+          <input
+            type="text"
+            value={attributeData.value || ''}
+            onChange={(e) => onValueChange(attributeKey, e.target.value)}
+            className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            placeholder="Enter value"
+          />
+        </div>
+      ) : (
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700 mb-1">Value</label>
+          <select
+            value={attributeData.value || ''}
+            onChange={(e) => onValueChange(attributeKey, e.target.value)}
+            className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 4 5%22><path fill=%22%23666%22 d=%22M2 0L0 2h4zm0 5L0 3h4z%22/></svg>')] bg-no-repeat bg-right bg-[length:12px] pr-10"
+          >
+            <option value="">Select value</option>
+            {(attributeData.options || []).map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+          
+          {/* Options Editor */}
+          <div className="border border-gray-200 rounded-lg p-3 bg-white">
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-sm font-medium text-gray-700">Dropdown Options</label>
+              <button
+                type="button"
+                onClick={() => setShowOptionsEditor(!showOptionsEditor)}
+                className="text-sm text-primary-600 hover:text-primary-700"
+              >
+                {showOptionsEditor ? 'Hide' : 'Edit Options'}
+              </button>
+            </div>
+            {showOptionsEditor && (
+              <div className="space-y-2">
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={newOption}
+                    onChange={(e) => setNewOption(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleAddOption();
+                      }
+                    }}
+                    className="flex-1 px-3 py-1.5 text-sm rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    placeholder="Add new option"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAddOption}
+                    className="px-3 py-1.5 text-sm bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
+                  >
+                    <PlusIcon className="h-4 w-4" />
+                  </button>
+                </div>
+                <div className="space-y-1 max-h-32 overflow-y-auto">
+                  {(attributeData.options || []).map((option) => (
+                    <div key={option} className="flex items-center justify-between px-2 py-1 bg-gray-50 rounded">
+                      <span className="text-sm text-gray-700">{option}</span>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveOption(option)}
+                        className="text-red-600 hover:text-red-700"
+                      >
+                        <XMarkIcon className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ))}
+                  {(!attributeData.options || attributeData.options.length === 0) && (
+                    <p className="text-sm text-gray-500 text-center py-2">No options added yet</p>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function EditProductModal({ isOpen, onClose, product, onSave, onDelete }: EditProductModalProps) {
   const [formData, setFormData] = useState<Product>({
     id: 0,
@@ -328,6 +696,10 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
     discountPercent: 0,
     weight: 0,
     Dimensions: { length: 0, width: 0, height: 0, unit: 'cm' },
+    color: '',
+    condition: '',
+    warrantyPeriod: '',
+    attributes: {},
     metaTitle: '',
     metaDescription: '',
     metaKeywords: '',
@@ -373,6 +745,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
   const [showAddSubcategoryModal, setShowAddSubcategoryModal] = useState(false);
   const [showEditSubcategoryModal, setShowEditSubcategoryModal] = useState(false);
   const [showAddBrandModal, setShowAddBrandModal] = useState(false);
+  const [showHiddenAttributes, setShowHiddenAttributes] = useState(false);
   const [showEditBrandModal, setShowEditBrandModal] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState('');
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
@@ -391,6 +764,9 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
   
   // Available specification names for dropdown
   const [availableSpecNames, setAvailableSpecNames] = useState<string[]>([]);
+  
+  // Available attribute names for dropdown
+  const [availableAttributeNames, setAvailableAttributeNames] = useState<string[]>([]);
 
   const stockStatuses = [
     { value: 'in-stock', label: 'In Stock' },
@@ -472,6 +848,10 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
           : '0',
         taxRate: taxRateValue,
         discountPercent: calculatedDiscountPercent,
+        color: (product as any).color || '',
+        condition: (product as any).condition || '',
+        warrantyPeriod: (product as any).warrantyPeriod || '',
+        attributes: (product as any).attributes || {},
         metaTitle: (product as any).metaTitle || '',
         metaDescription: (product as any).metaDescription || '',
         metaKeywords: (product as any).metaKeywords || '',
@@ -566,6 +946,52 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
       fetchAllSpecNames();
     }
   }, [isOpen, formData.specs]);
+
+  // Fetch all attribute names from products for dropdown
+  useEffect(() => {
+    const fetchAllAttributeNames = async () => {
+      try {
+        const response = await api.getProducts({ 
+          pagination: { page: 1, pageSize: 1000 } // Get many products to collect attribute names
+        });
+        const products = response.data || [];
+        const attributeNamesSet = new Set<string>();
+        
+        products.forEach((product: any) => {
+          if (product.attributes && typeof product.attributes === 'object') {
+            Object.keys(product.attributes).forEach(key => {
+              if (key && key.trim()) {
+                attributeNamesSet.add(key.trim());
+              }
+            });
+          }
+        });
+        
+        // Also add current product's attribute names
+        if (formData.attributes && typeof formData.attributes === 'object') {
+          Object.keys(formData.attributes).forEach(key => {
+            if (key && key.trim()) {
+              attributeNamesSet.add(key.trim());
+            }
+          });
+        }
+        
+        setAvailableAttributeNames(Array.from(attributeNamesSet).sort());
+      } catch (error) {
+        console.error('Error fetching attribute names:', error);
+        // Fallback to current product's attributes
+        if (formData.attributes && typeof formData.attributes === 'object') {
+          setAvailableAttributeNames(Object.keys(formData.attributes).sort());
+        } else {
+          setAvailableAttributeNames([]);
+        }
+      }
+    };
+    
+    if (isOpen) {
+      fetchAllAttributeNames();
+    }
+  }, [isOpen, formData.attributes]);
 
   // When brands are loaded, map any existing brand names to their IDs so the select can prefill
   useEffect(() => {
@@ -795,6 +1221,69 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
       specs: {
         ...prev.specs,
         [specKey]: value
+      }
+    }));
+  };
+
+  const handleDimensionsChange = (field: 'length' | 'width' | 'height' | 'unit', value: number | string) => {
+    setFormData(prev => ({
+      ...prev,
+      Dimensions: {
+        ...(prev.Dimensions || { length: 0, width: 0, height: 0, unit: 'cm' }),
+        [field]: value
+      }
+    }));
+  };
+
+  const handleAttributesChange = (attributeKey: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      attributes: {
+        ...prev.attributes,
+        [attributeKey]: {
+          ...(prev.attributes?.[attributeKey] || { value: '', type: 'text', options: [] }),
+          value
+        }
+      }
+    }));
+  };
+
+  const handleAttributeTypeChange = (attributeKey: string, type: 'text' | 'dropdown') => {
+    setFormData(prev => ({
+      ...prev,
+      attributes: {
+        ...prev.attributes,
+        [attributeKey]: {
+          ...(prev.attributes?.[attributeKey] || { value: '', type: 'text', options: [] }),
+          type,
+          options: type === 'dropdown' ? (prev.attributes?.[attributeKey]?.options || []) : undefined
+        }
+      }
+    }));
+  };
+
+  const handleAttributeHiddenChange = (attributeKey: string, hidden: boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      attributes: {
+        ...prev.attributes,
+        [attributeKey]: {
+          ...(prev.attributes?.[attributeKey] || { value: '', type: 'text', options: [] }),
+          hidden
+        }
+      }
+    }));
+  };
+
+  const handleAttributeOptionsChange = (attributeKey: string, options: string[]) => {
+    setFormData(prev => ({
+      ...prev,
+      attributes: {
+        ...prev.attributes,
+        [attributeKey]: {
+          ...(prev.attributes?.[attributeKey] || { value: '', type: 'dropdown', options: [] }),
+          options
+        }
       }
     }));
   };
@@ -1264,6 +1753,63 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
       // Convert to number if it's a numeric string (brand ID)
       const brandId = value && !isNaN(Number(value)) ? Number(value) : value;
       handleInputChange('brand', brandId);
+    }
+  };
+
+  // Handle SKU generation with uniqueness checking
+  const handleGenerateSKU = async () => {
+    if (!formData.name) {
+      return;
+    }
+    
+    try {
+      const brandName = formData.brand 
+        ? brands.find(b => {
+            if (typeof formData.brand === 'string') {
+              return b.name === formData.brand;
+            } else {
+              return b.id === formData.brand || 
+                     (b.documentId && b.documentId.toString() === formData.brand.toString());
+            }
+          })?.name
+        : undefined;
+      
+      // Generate unique SKU with retry logic
+      // Note: When editing, we should exclude the current product's SKU from the check
+      const currentSKU = formData.SKU;
+      const generatedSKU = await generateUniqueSKU(
+        formData.name,
+        brandName,
+        async (sku: string) => {
+          try {
+            // If the generated SKU matches the current product's SKU, it's not a duplicate
+            if (currentSKU && sku === currentSKU) {
+              return false;
+            }
+            return await api.checkSKUExists(sku);
+          } catch (error) {
+            console.error('Error checking SKU:', error);
+            return false; // Allow generation if check fails
+          }
+        }
+      );
+      
+      handleInputChange('SKU', generatedSKU);
+    } catch (error) {
+      console.error('Error generating SKU:', error);
+      // Fallback to simple generation if uniqueness check fails
+      const brandName = formData.brand 
+        ? brands.find(b => {
+            if (typeof formData.brand === 'string') {
+              return b.name === formData.brand;
+            } else {
+              return b.id === formData.brand || 
+                     (b.documentId && b.documentId.toString() === formData.brand.toString());
+            }
+          })?.name
+        : undefined;
+      const fallbackSKU = generateSKU(formData.name, brandName);
+      handleInputChange('SKU', fallbackSKU);
     }
   };
 
@@ -2255,19 +2801,33 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
                     })()}
 
                     {/* SKU */}
-                  <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">SKU</label>
-                    <input
-                      type="text"
-                      value={formData.SKU || ''}
-                      onChange={(e) => handleInputChange('SKU', e.target.value)}
-                          className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                      placeholder="Product SKU"
-                    />
+                  <div className="mt-6">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          SKU
+                        </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={formData.SKU || ''}
+                        onChange={(e) => handleInputChange('SKU', e.target.value)}
+                            className="w-full px-3 py-2 pr-20 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                        placeholder="Product SKU"
+                      />
+                      {formData.name && (
+                        <button
+                          type="button"
+                          onClick={handleGenerateSKU}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-xs bg-primary-100 text-primary-700 rounded hover:bg-primary-200 transition-colors"
+                          title="Generate SKU from product name and brand"
+                        >
+                          Generate
+                        </button>
+                      )}
+                    </div>
                   </div>
 
                       {/* Stock */}
-                    <div>
+                    <div className="mt-6">
                         <label className="block text-sm font-medium text-gray-700 mb-2">Stock *</label>
                       <input
                         id="field-product-stock-quantity"
@@ -2282,7 +2842,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
                     </div>
 
                       {/* Stock Status */}
-                    <div>
+                    <div className="mt-6">
                         <label className="block text-sm font-medium text-gray-700 mb-2">Stock Status</label>
                       <select
                         value={formData.stockStatus || 'in-stock'}
@@ -2296,7 +2856,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
                   </div>
 
                       {/* Min Stock Level */}
-                    <div>
+                    <div className="mt-6">
                         <label className="block text-sm font-medium text-gray-700 mb-2">Min Stock Level</label>
                       <input
                         id="field-product-min-stock"
@@ -2311,7 +2871,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
                     </div>
 
                       {/* Max Stock Level */}
-                    <div>
+                    <div className="mt-6">
                         <label className="block text-sm font-medium text-gray-700 mb-2">Max Stock Level</label>
                       <input
                         id="field-product-max-stock"
@@ -2323,21 +2883,214 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
                         min="0"
                       />
                   </div>
+                </div>
 
+                  {/* Attributes Card */}
+                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mt-6">
+                    <h4 className="text-lg font-bold text-gray-900 mb-6">Attributes</h4>
+                    
+                    <div className="space-y-4">
                       {/* Weight */}
-                  <div>
+                      <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">Weight (kg)</label>
-                    <input
-                      type="number"
-                      value={formData.weight || ''}
-                      onChange={(e) => handleInputChange('weight', parseFloat(e.target.value) || 0)}
+                        <input
+                          type="number"
+                          value={formData.weight || ''}
+                          onChange={(e) => handleInputChange('weight', parseFloat(e.target.value) || 0)}
                           className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                           placeholder="0"
-                      min="0"
-                      step="0.1"
-                    />
+                          min="0"
+                          step="0.1"
+                        />
+                      </div>
+
+                      {/* Dimensions */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Dimensions</label>
+                        <div className="grid grid-cols-4 gap-3">
+                          <div>
+                            <label className="block text-xs text-gray-600 mb-1">Length</label>
+                            <input
+                              type="number"
+                              value={formData.Dimensions?.length || ''}
+                              onChange={(e) => handleDimensionsChange('length', parseFloat(e.target.value) || 0)}
+                              className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                              placeholder="0"
+                              min="0"
+                              step="0.1"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs text-gray-600 mb-1">Width</label>
+                            <input
+                              type="number"
+                              value={formData.Dimensions?.width || ''}
+                              onChange={(e) => handleDimensionsChange('width', parseFloat(e.target.value) || 0)}
+                              className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                              placeholder="0"
+                              min="0"
+                              step="0.1"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs text-gray-600 mb-1">Height</label>
+                            <input
+                              type="number"
+                              value={formData.Dimensions?.height || ''}
+                              onChange={(e) => handleDimensionsChange('height', parseFloat(e.target.value) || 0)}
+                              className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                              placeholder="0"
+                              min="0"
+                              step="0.1"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs text-gray-600 mb-1">Unit</label>
+                            <select
+                              value={formData.Dimensions?.unit || 'cm'}
+                              onChange={(e) => handleDimensionsChange('unit', e.target.value)}
+                              className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 4 5%22><path fill=%22%23666%22 d=%22M2 0L0 2h4zm0 5L0 3h4z%22/></svg>')] bg-no-repeat bg-right bg-[length:12px] pr-10"
+                            >
+                              <option value="cm">cm</option>
+                              <option value="m">m</option>
+                              <option value="in">in</option>
+                              <option value="ft">ft</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Color */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Color</label>
+                        <input
+                          type="text"
+                          value={formData.color || ''}
+                          onChange={(e) => handleInputChange('color', e.target.value)}
+                          className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                          placeholder="e.g., Red, Blue, Black"
+                        />
+                      </div>
+
+                      {/* Condition */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Condition</label>
+                        <select
+                          value={formData.condition || ''}
+                          onChange={(e) => handleInputChange('condition', e.target.value)}
+                          className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 4 5%22><path fill=%22%23666%22 d=%22M2 0L0 2h4zm0 5L0 3h4z%22/></svg>')] bg-no-repeat bg-right bg-[length:12px] pr-10"
+                        >
+                          <option value="">Select Condition</option>
+                          <option value="New">New</option>
+                          <option value="Refurbished">Refurbished</option>
+                          <option value="Used">Used</option>
+                          <option value="Open Box">Open Box</option>
+                        </select>
+                      </div>
+
+                      {/* Warranty Period */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Warranty Period</label>
+                        <input
+                          type="text"
+                          value={formData.warrantyPeriod || ''}
+                          onChange={(e) => handleInputChange('warrantyPeriod', e.target.value)}
+                          className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                          placeholder="e.g., 1 Year, 2 Years, Lifetime"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Custom Attributes Section */}
+                    <div className="mt-6 pt-6 border-t border-gray-300">
+                      <div className="flex items-center justify-between mb-4">
+                        <h5 className="text-md font-semibold text-gray-900">Custom Attributes</h5>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const newKey = `attr_${Date.now()}`;
+                            setFormData(prev => ({
+                              ...prev,
+                              attributes: {
+                                ...prev.attributes,
+                                [newKey]: { value: '', type: 'text', options: [] }
+                              }
+                            }));
+                          }}
+                          className="flex items-center text-sm text-primary-600 hover:text-primary-500"
+                        >
+                          <PlusIcon className="h-4 w-4 mr-1" />
+                          Add Custom Attribute
+                        </button>
+                      </div>
+                      
+                      {/* Show hidden attributes toggle */}
+                      <div className="flex items-center justify-between mb-2">
+                        <label className="flex items-center text-sm text-gray-700">
+                          <input
+                            type="checkbox"
+                            checked={showHiddenAttributes}
+                            onChange={(e) => setShowHiddenAttributes(e.target.checked)}
+                            className="mr-2 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                          />
+                          Show hidden attributes
+                        </label>
+                      </div>
+                      
+                      <div className="space-y-3">
+                        {Object.entries(formData.attributes || {})
+                          .filter(([key, attr]) => showHiddenAttributes || !attr.hidden)
+                          .map(([key, attributeData], index) => {
+                            return (
+                              <AttributeInput
+                                key={`attr-${index}-${key}`}
+                                attributeKey={key}
+                                attributeData={attributeData}
+                                availableAttributeNames={availableAttributeNames}
+                                onKeyChange={(oldKey, newKey) => {
+                                  const newAttributes = { ...formData.attributes };
+                                  if (newKey && newKey.trim() !== '') {
+                                    const value = newAttributes[oldKey];
+                                    delete newAttributes[oldKey];
+                                    newAttributes[newKey.trim()] = value;
+                                  } else {
+                                    delete newAttributes[oldKey];
+                                  }
+                                  setFormData(prev => ({ ...prev, attributes: newAttributes }));
+                                }}
+                                onValueChange={(attrKey, newValue) => {
+                                  handleAttributesChange(attrKey, newValue);
+                                }}
+                                onTypeChange={(attrKey, newType) => {
+                                  handleAttributeTypeChange(attrKey, newType);
+                                }}
+                                onOptionsChange={(attrKey, newOptions) => {
+                                  handleAttributeOptionsChange(attrKey, newOptions);
+                                }}
+                                onHiddenChange={(attrKey, hidden) => {
+                                  handleAttributeHiddenChange(attrKey, hidden);
+                                }}
+                                onRemove={(attrKey) => {
+                                  const newAttributes = { ...formData.attributes };
+                                  delete newAttributes[attrKey];
+                                  setFormData(prev => ({ ...prev, attributes: newAttributes }));
+                                }}
+                              />
+                            );
+                          })}
+                        {(!formData.attributes || Object.keys(formData.attributes).filter((k) => !formData.attributes[k].hidden).length === 0) && !showHiddenAttributes && (
+                          <p className="text-sm text-gray-500 text-center py-4">
+                            No custom attributes added yet. Click "Add Custom Attribute" to create one.
+                          </p>
+                        )}
+                        {showHiddenAttributes && (!formData.attributes || Object.keys(formData.attributes).length === 0) && (
+                          <p className="text-sm text-gray-500 text-center py-4">
+                            No custom attributes added yet. Click "Add Custom Attribute" to create one.
+                          </p>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                </div>
 
                   {/* Specifications Card */}
                   <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">

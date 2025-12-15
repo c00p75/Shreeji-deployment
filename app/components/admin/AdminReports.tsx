@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Layout from './Layout'
 import api from '@/app/lib/admin/api'
+import { currencyFormatter } from '@/app/components/checkout/currency-formatter'
 import { 
   DocumentArrowDownIcon,
   CalendarIcon,
@@ -265,7 +266,7 @@ export default function AdminReports() {
             <div className="card p-6">
               <p className="text-sm font-medium text-gray-500">Avg Order Value</p>
               <p className="text-2xl font-semibold text-gray-900 mt-1">
-                K{avgOrderValue.toLocaleString()}
+                {currencyFormatter(Number(avgOrderValue || 0))}
               </p>
             </div>
             <div className="card p-6">
@@ -307,11 +308,11 @@ export default function AdminReports() {
                       salesData.map((row, index) => (
                         <tr key={index} className="hover:bg-gray-50">
                           <td className="table-cell">{row.period || `Period ${index + 1}`}</td>
-                          <td className="table-cell">K{row.revenue?.toLocaleString() || '0'}</td>
+                          <td className="table-cell">{currencyFormatter(Number(row.revenue || 0))}</td>
                           <td className="table-cell">{row.orders || 0}</td>
                           <td className="table-cell">{row.customers || 0}</td>
                           <td className="table-cell">
-                            K{row.averageOrderValue?.toLocaleString() || '0'}
+                            {currencyFormatter(Number(row.averageOrderValue || 0))}
                           </td>
                         </tr>
                       ))
@@ -343,9 +344,9 @@ export default function AdminReports() {
                         <tr key={index} className="hover:bg-gray-50">
                           <td className="table-cell font-medium">{product.name}</td>
                           <td className="table-cell">{product.sold}</td>
-                          <td className="table-cell">K{product.revenue.toLocaleString()}</td>
+                          <td className="table-cell">{currencyFormatter(Number(product.revenue || 0))}</td>
                           <td className="table-cell">{product.orderCount}</td>
-                          <td className="table-cell">K{product.avgPrice.toLocaleString()}</td>
+                          <td className="table-cell">{currencyFormatter(Number(product.avgPrice || 0))}</td>
                         </tr>
                       ))
                     ) : (
@@ -377,9 +378,9 @@ export default function AdminReports() {
                         <tr key={index} className="hover:bg-gray-50">
                           <td className="table-cell font-medium">{customer.name}</td>
                           <td className="table-cell">{customer.email}</td>
-                          <td className="table-cell">K{customer.totalSpent.toLocaleString()}</td>
+                          <td className="table-cell">{currencyFormatter(Number(customer.totalSpent || 0))}</td>
                           <td className="table-cell">{customer.orderCount}</td>
-                          <td className="table-cell">K{customer.avgOrderValue.toLocaleString()}</td>
+                          <td className="table-cell">{currencyFormatter(Number(customer.avgOrderValue || 0))}</td>
                           <td className="table-cell">
                             {new Date(customer.lastOrder).toLocaleDateString()}
                           </td>

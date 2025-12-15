@@ -99,6 +99,20 @@ class ApiClient {
     return this.request<{ data: any }>(`/admin/products/${id}`);
   }
 
+  async checkSKUExists(sku: string): Promise<boolean> {
+    try {
+      const response = await this.getProducts({
+        filters: { sku },
+        pagination: { page: 1, pageSize: 1 }
+      });
+      return (response as { data: any[]; meta: any }).data && (response as { data: any[]; meta: any }).data.length > 0;
+    } catch (error) {
+      // If there's an error, assume it doesn't exist to allow generation
+      console.warn('Error checking SKU existence:', error);
+      return false;
+    }
+  }
+
   async createProduct(data: any) {
     // Transform data to match NestJS DTO format
     const productData = {
@@ -122,6 +136,10 @@ class ApiClient {
       taxRate: data.taxRate ? parseFloat(data.taxRate) : undefined,
       discountPercent: data.discountPercent !== undefined ? parseFloat(data.discountPercent) : undefined,
       weight: data.weight ? parseFloat(data.weight) : undefined,
+      color: data.color,
+      condition: data.condition,
+      warrantyPeriod: data.warrantyPeriod,
+      attributes: data.attributes,
       stockQuantity: parseInt(data.stockQuantity || 0),
       minStockLevel: data.minStockLevel ? parseInt(data.minStockLevel) : undefined,
       maxStockLevel: data.maxStockLevel ? parseInt(data.maxStockLevel) : undefined,
@@ -205,6 +223,10 @@ class ApiClient {
       const weightValue = parseFloat(productData.weight);
       if (!isNaN(weightValue)) updateData.weight = weightValue;
     }
+    if (productData.color !== undefined) updateData.color = productData.color;
+    if (productData.condition !== undefined) updateData.condition = productData.condition;
+    if (productData.warrantyPeriod !== undefined) updateData.warrantyPeriod = productData.warrantyPeriod;
+    if (productData.attributes !== undefined) updateData.attributes = productData.attributes;
     if (productData.stockQuantity !== undefined) {
       const stockQty = parseInt(String(productData.stockQuantity), 10);
       if (!isNaN(stockQty)) updateData.stockQuantity = stockQty;
@@ -243,9 +265,9 @@ class ApiClient {
 
   // Product Variants API
   async getProductVariants(productId: string | number) {
-    const response = await this.request<any[]>(`/admin/products/${productId}/variants`);
+    const response = await this.request<any>(`/admin/products/${productId}/variants`);
     return {
-      data: Array.isArray(response) ? response : (response.data || []),
+      data: Array.isArray(response) ? response : ((response as any).data || []),
     };
   }
 
@@ -275,9 +297,9 @@ class ApiClient {
 
   // Review Management API
   async getFlaggedReviews() {
-    const response = await this.request<any[]>(`/reviews/admin/flagged`);
+    const response = await this.request<any>(`/reviews/admin/flagged`);
     return {
-      data: Array.isArray(response) ? response : (response.data || []),
+      data: Array.isArray(response) ? response : ((response as any).data || []),
     };
   }
 
@@ -631,17 +653,90 @@ class ApiClient {
     window.URL.revokeObjectURL(downloadUrl);
   }
 
+  // Payments Export API
+  async exportPaymentsToCSV(params?: {
+    startDate?: string;
+    endDate?: string;
+    status?: string;
+    paymentMethod?: string;
+  }) {
+    const searchParams = new URLSearchParams();
+    if (params?.startDate) searchParams.append('startDate', params.startDate);
+    if (params?.endDate) searchParams.append('endDate', params.endDate);
+    if (params?.status) searchParams.append('status', params.status);
+    if (params?.paymentMethod) searchParams.append('paymentMethod', params.paymentMethod);
+
+    const queryString = searchParams.toString();
+    const url = `${this.baseURL}/admin/payments/export/csv${queryString ? `?${queryString}` : ''}`;
+    
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: this.getHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to export payments');
+    }
+
+    const blob = await response.blob();
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.download = `payments-${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(downloadUrl);
+  }
+
+  async exportPaymentsToPDF(params?: {
+    startDate?: string;
+    endDate?: string;
+    status?: string;
+    paymentMethod?: string;
+  }) {
+    const searchParams = new URLSearchParams();
+    if (params?.startDate) searchParams.append('startDate', params.startDate);
+    if (params?.endDate) searchParams.append('endDate', params.endDate);
+    if (params?.status) searchParams.append('status', params.status);
+    if (params?.paymentMethod) searchParams.append('paymentMethod', params.paymentMethod);
+
+    const queryString = searchParams.toString();
+    const url = `${this.baseURL}/admin/payments/export/pdf${queryString ? `?${queryString}` : ''}`;
+    
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: this.getHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to export payments');
+    }
+
+    const blob = await response.blob();
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.download = `payments-${new Date().toISOString().split('T')[0]}.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(downloadUrl);
+  }
+
   async getOrderAnalytics(params?: {
     startDate?: string;
     endDate?: string;
     status?: string;
     paymentStatus?: string;
+    groupBy?: string;
   }) {
     const searchParams = new URLSearchParams();
     if (params?.startDate) searchParams.append('startDate', params.startDate);
     if (params?.endDate) searchParams.append('endDate', params.endDate);
     if (params?.status) searchParams.append('status', params.status);
     if (params?.paymentStatus) searchParams.append('paymentStatus', params.paymentStatus);
+    if (params?.groupBy) searchParams.append('groupBy', params.groupBy);
 
     const queryString = searchParams.toString();
     return this.request<{ data: any }>(`/orders/admin/analytics${queryString ? `?${queryString}` : ''}`);

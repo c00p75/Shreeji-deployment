@@ -22,6 +22,9 @@ import Layout from './Layout'
 import EditInventoryModal from './EditInventoryModal'
 import InventoryTransferModal from './InventoryTransferModal'
 import { TableSkeleton, StatsSkeleton } from '@/app/components/ui/Skeletons'
+import toast from 'react-hot-toast';
+import { currencyFormatter } from '@/app/components/checkout/currency-formatter';
+import { Download } from 'lucide-react';
 
 interface ProductVariant {
   id: number;
@@ -454,6 +457,350 @@ export default function InventoryManagement() {
       .join(', ') || 'No attributes';
   };
 
+  // Migrate all products to Shreeji House if it has no inventory
+  const migrateProductsToShreejiHouse = async () => {
+    try {
+      // Find Shreeji House warehouse
+      const shreejiHouse = warehouses.find(w => 
+        w.name.toLowerCase().includes('shreeji house')
+      );
+
+      if (!shreejiHouse) {
+        console.warn('Shreeji House warehouse not found');
+        return false;
+      }
+
+      // Check if Shreeji House has any inventory
+      const inventoryResponse = await api.getWarehouseInventory(shreejiHouse.id);
+      const inventoryItems = Array.isArray(inventoryResponse) 
+        ? inventoryResponse 
+        : (inventoryResponse as any)?.data || [];
+
+      // If Shreeji House already has inventory, no need to migrate
+      if (inventoryItems.length > 0) {
+        console.log('Shreeji House already has inventory assigned');
+        return false;
+      }
+
+      // Migrate all products with stock to Shreeji House
+      const migrationToast = toast.loading('Migrating products to Shreeji House warehouse...');
+      console.log('Migrating all products to Shreeji House...');
+      let migratedCount = 0;
+      let errorCount = 0;
+
+      for (const product of products) {
+        try {
+          // Migrate product inventory
+          // Note: Backend doesn't support variant-level warehouse inventory.
+          // Variants are tracked at the product level only.
+          if (product.stockQuantity > 0) {
+            await api.adjustStock({
+              productId: product.id,
+              warehouseId: shreejiHouse.id,
+              adjustmentType: 'SET',
+              quantity: product.stockQuantity,
+              notes: 'Auto-migrated: Initial warehouse assignment to Shreeji House',
+            });
+            migratedCount++;
+          }
+
+          // Variant inventory is not migrated separately - backend tracks inventory at product level only
+          // If products have variants, their stock is included in the product's stockQuantity
+        } catch (error) {
+          console.error(`Error migrating product ${product.id}:`, error);
+          errorCount++;
+        }
+      }
+
+      console.log(`Migration complete: ${migratedCount} products migrated, ${errorCount} errors`);
+      
+      // Show completion notification
+      if (migratedCount > 0) {
+        toast.success(`Successfully migrated ${migratedCount} products to Shreeji House`, { id: migrationToast });
+      } else {
+        toast.dismiss(migrationToast);
+      }
+      
+      if (errorCount > 0) {
+        toast.error(`Failed to migrate ${errorCount} products. Check console for details.`);
+      }
+      
+      // Refresh warehouse inventory after migration
+      if (selectedWarehouse === shreejiHouse.id) {
+        await fetchWarehouseInventory(shreejiHouse.id);
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error migrating products to Shreeji House:', error);
+      toast.error('Failed to migrate products. Please try again.');
+      return false;
+    }
+  };
+
+  const exportInventoryReport = async () => {
+    try {
+      // Migration removed - products are already migrated to Shreeji House
+      // If you need to migrate again, you can call migrateProductsToShreejiHouse() separately
+
+      // If no warehouse is selected, fetch inventory for all warehouses to determine actual warehouse
+      let allWarehouseInventory: Record<number, { quantity: number; warehouseId: number }> = {};
+      let allWarehouseVariantInventory: Record<string, { quantity: number; warehouseId: number }> = {};
+      
+      if (!selectedWarehouse) {
+        // Fetch inventory for all warehouses
+        for (const warehouse of warehouses) {
+          try {
+            const response = await api.getWarehouseInventory(warehouse.id);
+            
+            // Handle different response structures - could be { data: [...] } or just [...]
+            const inventoryItems = Array.isArray(response) 
+              ? response 
+              : (response as any)?.data || [];
+            
+            inventoryItems.forEach((item: any) => {
+              // Normalize productId to number
+              const productId = typeof item.productId === 'string' 
+                ? parseInt(item.productId, 10) 
+                : Number(item.productId);
+              
+              // Normalize variantId to number if it exists
+              const variantId = item.variantId 
+                ? (typeof item.variantId === 'string' ? parseInt(item.variantId, 10) : Number(item.variantId))
+                : undefined;
+              
+              // Normalize quantity
+              const quantity = Number(item.quantity || 0);
+              
+              if (variantId !== undefined) {
+                const key = `${productId}-${variantId}`;
+                if (quantity > 0) {
+                  // If already exists, it means item is in multiple warehouses
+                  if (allWarehouseVariantInventory[key]) {
+                    allWarehouseVariantInventory[key] = {
+                      quantity: allWarehouseVariantInventory[key].quantity + quantity,
+                      warehouseId: -1 // -1 means multiple warehouses
+                    };
+                  } else {
+                    allWarehouseVariantInventory[key] = {
+                      quantity: quantity,
+                      warehouseId: warehouse.id
+                    };
+                  }
+                }
+              } else {
+                if (quantity > 0) {
+                  // If already exists, it means item is in multiple warehouses
+                  if (allWarehouseInventory[productId]) {
+                    allWarehouseInventory[productId] = {
+                      quantity: allWarehouseInventory[productId].quantity + quantity,
+                      warehouseId: -1 // -1 means multiple warehouses
+                    };
+                  } else {
+                    allWarehouseInventory[productId] = {
+                      quantity: quantity,
+                      warehouseId: warehouse.id
+                    };
+                  }
+                }
+              }
+            });
+          } catch (error) {
+            console.error(`Error fetching inventory for warehouse ${warehouse.id}:`, error);
+          }
+        }
+      }
+
+      // CSV Headers
+      const headers = [
+        'Product Name',
+        'SKU',
+        'Variant',
+        'Brand',
+        'Category',
+        'Subcategory',
+        'Stock Quantity',
+        'Min Stock Level',
+        'Max Stock Level',
+        'Stock Status',
+        'Base Price',
+        'Selling Price',
+        'Inventory Value',
+        'Weight (kg)',
+        'Dimensions (LxWxH)',
+        'Warehouse'
+      ];
+
+      // Build CSV rows
+      const rows: string[][] = [headers];
+
+      filteredProducts.forEach((product) => {
+        const getWarehouseName = (productId: number, variantId?: number): string => {
+          if (selectedWarehouse) {
+            // Warehouse filter is selected, show that warehouse
+            return warehouses.find(w => w.id === selectedWarehouse)?.name || 'N/A';
+          } else {
+            // No warehouse filter, determine actual warehouse
+            // Normalize productId for lookup
+            const normalizedProductId = Number(productId);
+            
+            if (variantId !== undefined) {
+              const normalizedVariantId = Number(variantId);
+              const key = `${normalizedProductId}-${normalizedVariantId}`;
+              const variantInfo = allWarehouseVariantInventory[key];
+              if (variantInfo) {
+                if (variantInfo.warehouseId === -1) {
+                  return 'Multiple Warehouses';
+                }
+                return warehouses.find(w => w.id === variantInfo.warehouseId)?.name || 'N/A';
+              }
+            } else {
+              const productInfo = allWarehouseInventory[normalizedProductId];
+              if (productInfo) {
+                if (productInfo.warehouseId === -1) {
+                  return 'Multiple Warehouses';
+                }
+                return warehouses.find(w => w.id === productInfo.warehouseId)?.name || 'N/A';
+              }
+            }
+            // If no warehouse inventory found, product has no stock assigned to any warehouse
+            return 'N/A';
+          }
+        };
+
+        const getProductQuantity = (): number => {
+          if (selectedWarehouse && warehouseInventory[product.id]) {
+            return warehouseInventory[product.id].quantity;
+          }
+          if (!selectedWarehouse && allWarehouseInventory[product.id]) {
+            return allWarehouseInventory[product.id].quantity;
+          }
+          return product.stockQuantity;
+        };
+
+        const getVariantQuantity = (variant: ProductVariant): number => {
+          if (selectedWarehouse) {
+            const key = `${product.id}-${variant.id}`;
+            const variantQty = warehouseVariantInventory[key]?.quantity;
+            if (variantQty !== undefined) {
+              return variantQty;
+            }
+          }
+          if (!selectedWarehouse) {
+            const key = `${product.id}-${variant.id}`;
+            const variantInfo = allWarehouseVariantInventory[key];
+            if (variantInfo) {
+              return variantInfo.quantity;
+            }
+          }
+          return variant.stockQuantity || 0;
+        };
+
+        // If product has variants, create a row for each variant
+        if (product.variants && product.variants.length > 0) {
+          product.variants.forEach((variant) => {
+            const variantQuantity = getVariantQuantity(variant);
+            const variantMinLevel = variant.minStockLevel || product.minStockLevel;
+            const variantMaxLevel = variant.maxStockLevel || product.maxStockLevel;
+            const variantStockStatus = computeStockStatus(variantQuantity, variantMinLevel, variant.stockStatus);
+            const variantPrice = parsePrice(variant.price || product.basePrice);
+            const variantAttributes = formatVariantAttributes(variant);
+            const variantValue = variantPrice * variantQuantity;
+            const warehouseName = getWarehouseName(product.id, variant.id);
+
+            rows.push([
+              product.name || 'N/A',
+              variant.sku || product.SKU || 'N/A',
+              variantAttributes,
+              product.brand || 'N/A',
+              product.category || 'N/A',
+              product.subcategory || 'N/A',
+              variantQuantity.toString(),
+              variantMinLevel.toString(),
+              variantMaxLevel.toString(),
+              variantStockStatus.replace('-', ' '),
+              variantPrice.toLocaleString(),
+              parsePrice(product.price).toLocaleString(),
+              variantValue.toLocaleString(),
+              product.weight > 0 ? product.weight.toString() : 'N/A',
+              product.Dimensions ? `${product.Dimensions.length}x${product.Dimensions.width}x${product.Dimensions.height} ${product.Dimensions.unit}` : 'N/A',
+              warehouseName
+            ]);
+          });
+        } else {
+          // Product without variants
+          const quantity = getProductQuantity();
+          const stockStatus = computeStockStatus(quantity, product.minStockLevel, product.stockStatus);
+          const basePrice = product.basePrice;
+          const sellingPrice = parsePrice(product.price);
+          const inventoryValue = basePrice * quantity;
+          const warehouseName = getWarehouseName(product.id);
+
+          rows.push([
+            product.name || 'N/A',
+            product.SKU || 'N/A',
+            'N/A',
+            product.brand || 'N/A',
+            product.category || 'N/A',
+            product.subcategory || 'N/A',
+            quantity.toString(),
+            product.minStockLevel.toString(),
+            product.maxStockLevel.toString(),
+            stockStatus.replace('-', ' '),
+            basePrice.toLocaleString(),
+            sellingPrice.toLocaleString(),
+            inventoryValue.toLocaleString(),
+            product.weight > 0 ? product.weight.toString() : 'N/A',
+            product.Dimensions ? `${product.Dimensions.length}x${product.Dimensions.width}x${product.Dimensions.height} ${product.Dimensions.unit}` : 'N/A',
+            warehouseName
+          ]);
+        }
+      });
+
+      // Convert to CSV string
+      const csvContent = rows
+        .map(row => 
+          row.map(cell => {
+            // Escape commas, quotes, and newlines in cell content
+            const cellStr = String(cell || '');
+            if (cellStr.includes(',') || cellStr.includes('"') || cellStr.includes('\n')) {
+              return `"${cellStr.replace(/"/g, '""')}"`;
+            }
+            return cellStr;
+          }).join(',')
+        )
+        .join('\n');
+
+      // Create and download file
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      
+      // Generate filename with date and filters
+      const dateStr = new Date().toISOString().split('T')[0];
+      let filename = `inventory-report-${dateStr}`;
+      if (selectedWarehouse) {
+        const warehouseName = warehouses.find(w => w.id === selectedWarehouse)?.name || 'warehouse';
+        filename += `-${warehouseName.replace(/\s+/g, '-').toLowerCase()}`;
+      }
+      if (filterStatus) {
+        filename += `-${filterStatus}`;
+      }
+      filename += '.csv';
+      
+      link.setAttribute('download', filename);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error exporting inventory report:', error);
+      alert('Failed to export inventory report. Please try again.');
+    }
+  };
+
   if (loading) {
     return (
       <Layout currentPage="Inventory">
@@ -496,7 +843,7 @@ export default function InventoryManagement() {
         <div className="mt-4 sm:mt-0 flex gap-3">
           <Link
             href="/admin/inventory/warehouses"
-            className="btn-secondary flex items-center"
+            className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50"
           >
             <BuildingOfficeIcon className="w-5 h-5 mr-2" />
             Manage Warehouses
@@ -541,7 +888,7 @@ export default function InventoryManagement() {
             <CurrencyDollarIcon className="h-8 w-8 text-green-500" />
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-500">Inventory Value</p>
-              <p className="text-2xl font-semibold text-green-600">K{stats.totalValue.toLocaleString()}</p>
+              <p className="text-2xl font-semibold text-green-600">{currencyFormatter(Number(stats.totalValue || 0))}</p>
             </div>
           </div>
         </div>
@@ -647,9 +994,11 @@ export default function InventoryManagement() {
             </label>
             <div className="relative group">
               <button 
+                onClick={exportInventoryReport}
                 className="btn-secondary w-full md:w-[42px] h-[42px] flex items-center justify-center p-0"
+                title="Export Inventory Report"
               >
-                <ChartBarIcon className="w-5 h-5" />
+                <Download className="w-5 h-5" />
               </button>
               <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
                 Export Report
@@ -738,7 +1087,6 @@ export default function InventoryManagement() {
                 <th className="table-header">Base Price</th>
                 <th className="table-header">Inventory Value</th>
                 <th className="table-header">Weight</th>
-                <th className="table-header">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -771,7 +1119,11 @@ export default function InventoryManagement() {
                   <React.Fragment key={product.id}>
                     {/* Main Product Row */}
                     <tr
-                      className="hover:bg-gray-50"
+                      className="hover:bg-gray-50 cursor-pointer"
+                      onClick={() => {
+                        setEditingProduct(product);
+                        setIsEditModalOpen(true);
+                      }}
                     >
                       <td className="table-cell max-w-xs">
                         <div className="flex items-center">
@@ -841,35 +1193,23 @@ export default function InventoryManagement() {
                           </span>
                         </div>
                       </td>
-                      <td className="table-cell">K{product.basePrice.toLocaleString()}</td>
+                      <td className="table-cell">{currencyFormatter(Number(product.basePrice || 0))}</td>
                       <td className="table-cell">
                         {hasVariants ? (
                           <span className="text-sm text-gray-500">
-                            K{product.variants!.reduce((sum, variant) => {
+                            {currencyFormatter(Number(product.variants!.reduce((sum, variant) => {
                               const variantQty = selectedWarehouse 
                                 ? warehouseVariantInventory[`${product.id}-${variant.id}`]?.quantity ?? variant.stockQuantity
                                 : variant.stockQuantity;
                               const price = parsePrice(variant.price || product.basePrice);
                               return sum + (price * variantQty);
-                            }, 0).toLocaleString()}
+                            }, 0)))}
                           </span>
                         ) : (
-                          `K${(product.basePrice * quantity).toLocaleString()}`
+                          currencyFormatter(Number((product.basePrice || 0) * quantity))
                         )}
                       </td>
                       <td className="table-cell">{product.weight > 0 ? `${product.weight} kg` : '-'}</td>
-                      <td className="table-cell">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setEditingProduct(product);
-                            setIsEditModalOpen(true);
-                          }}
-                          className="text-primary-600 hover:text-primary-800 text-sm font-medium"
-                        >
-                          Edit
-                        </button>
-                      </td>
                     </tr>
                     
                     {/* Variant Rows */}
@@ -885,7 +1225,7 @@ export default function InventoryManagement() {
                       return (
                         <tr
                           key={`${product.id}-${variant.id}`}
-                          className="hover:bg-gray-50 bg-gray-25"
+                          className="hover:bg-gray-50 bg-gray-25 cursor-pointer"
                           onClick={(e) => {
                             e.stopPropagation();
                             // Create a temporary product object for variant editing
@@ -953,45 +1293,11 @@ export default function InventoryManagement() {
                               </span>
                             </div>
                           </td>
-                          <td className="table-cell">K{variantPrice.toLocaleString()}</td>
+                          <td className="table-cell">{currencyFormatter(Number(variantPrice || 0))}</td>
                           <td className="table-cell">
-                            K{(variantPrice * variantQuantity).toLocaleString()}
+                            {currencyFormatter(Number((variantPrice || 0) * variantQuantity))}
                           </td>
                           <td className="table-cell">-</td>
-                          <td className="table-cell">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                const variantProduct: Product = {
-                                  id: product.id,
-                                  documentId: product.documentId,
-                                  name: product.name,
-                                  brand: product.brand,
-                                  category: product.category,
-                                  price: variant.price || product.price,
-                                  images: (variant.images || product.images).map(img => ({
-                                    url: img.url,
-                                    alt: img.alt || product.name,
-                                    isMain: (img as any).isMain,
-                                  })),
-                                  SKU: variant.sku,
-                                  stockQuantity: variantQuantity,
-                                  minStockLevel: variantMinLevel,
-                                  maxStockLevel: variantMaxLevel,
-                                  stockStatus: variantStockStatus,
-                                  basePrice: variantPrice,
-                                  weight: product.weight,
-                                  Dimensions: product.Dimensions,
-                                  subcategory: product.subcategory,
-                                };
-                                setEditingProduct(variantProduct);
-                                setIsEditModalOpen(true);
-                              }}
-                              className="text-primary-600 hover:text-primary-800 text-sm font-medium"
-                            >
-                              Edit
-                            </button>
-                          </td>
                         </tr>
                       );
                     })}

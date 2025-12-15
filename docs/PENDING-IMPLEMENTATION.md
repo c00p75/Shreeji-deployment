@@ -337,6 +337,7 @@ This document tracks all pending tasks and next steps required to make the ecomm
 - [x] Order management
 - [x] Customer management
 - [x] Dashboard with statistics
+- [x] Payment management exports (CSV/PDF) with filters (Dec 2025)
 
 ### ✅ Completed (January 2025)
 - [x] **Admin Dashboard Enhancements**
@@ -542,7 +543,7 @@ This document tracks all pending tasks and next steps required to make the ecomm
 
 ---
 
-**Last Updated:** January 2025
+**Last Updated:** December 15, 2025
 **Maintained By:** Development Team
 
 ### December 2024 - Inventory Management Frontend Completion
@@ -562,6 +563,10 @@ This document tracks all pending tasks and next steps required to make the ecomm
 ---
 
 ## Recent Updates
+
+### December 2025 - Payments Export
+- ✅ Added admin payments CSV/PDF export endpoints (backend) with pdfkit layout sizing to prevent clipping
+- ✅ Added Payment Management UI export actions and admin API helpers (CSV/PDF) respecting filters
 
 ### December 2024 - Inventory Management Implementation
 - ✅ Implemented Advanced Inventory Features:

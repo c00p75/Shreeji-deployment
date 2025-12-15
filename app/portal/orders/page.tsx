@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useClientAuth } from '@/app/contexts/ClientAuthContext'
 import clientApi from '@/app/lib/client/api'
 import { TableSkeleton } from '@/app/components/ui/Skeletons'
+import { currencyFormatter } from '@/app/components/checkout/currency-formatter'
 
 export default function PortalOrdersPage() {
   const { loading: authLoading, isAuthenticated } = useClientAuth()
@@ -103,7 +104,7 @@ export default function PortalOrdersPage() {
                         {new Date(order.createdAt).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        K{order.totalAmount?.toLocaleString() || '0'}
+                        {currencyFormatter(Number(order.totalAmount || 0))}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${

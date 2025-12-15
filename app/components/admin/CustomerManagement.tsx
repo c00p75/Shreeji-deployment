@@ -6,6 +6,7 @@ import { Menu, Transition } from '@headlessui/react';
 import clsx from 'clsx';
 import Layout from './Layout'
 import api from '@/app/lib/admin/api'
+import { currencyFormatter } from '@/app/components/checkout/currency-formatter'
 
 const statusColors = {
   active: 'bg-green-100 text-green-800',
@@ -170,7 +171,7 @@ export default function CustomerManagement() {
               <div className="ml-5 w-0 flex-1">
                 <dl>
                   <dt className="text-sm font-medium text-gray-500 truncate">Total Revenue</dt>
-                  <dd className="text-lg font-medium text-gray-900">K{customers.reduce((sum, customer) => sum + customer.totalSpent, 0).toLocaleString()}</dd>
+                  <dd className="text-lg font-medium text-gray-900">{currencyFormatter(Number(customers.reduce((sum, customer) => sum + (customer.totalSpent || 0), 0)))}</dd>
                 </dl>
               </div>
             </div>
@@ -356,7 +357,7 @@ export default function CustomerManagement() {
                       {customer.totalOrders}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      K{customer.totalSpent.toLocaleString()}
+                      {currencyFormatter(Number(customer.totalSpent || 0))}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {customer.lastOrder !== 'N/A' ? new Date(customer.lastOrder).toLocaleDateString() : 'N/A'}

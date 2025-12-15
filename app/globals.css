@@ -282,6 +282,7 @@ a:hover {cursor: pointer;}
   .stat-card {
     @apply bg-white p-6 rounded-3xl;
     box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.1);
+    min-height: 7.5rem;
   }
   
   .stat-value {

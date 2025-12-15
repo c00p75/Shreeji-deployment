@@ -443,7 +443,7 @@ export default function OrderDetailsPage() {
                           <div className="flex justify-between">
                             <span className="text-gray-600">Amount:</span>
                             <span className="font-medium text-gray-900">
-                              {payment.currency || 'ZMW'} {payment.amount?.toLocaleString() || '0'}
+                              {currencyFormatter(Number(payment.amount || 0), payment.currency || 'ZMW')}
                             </span>
                           </div>
                           {payment.transactionId && (
@@ -503,29 +503,29 @@ export default function OrderDetailsPage() {
               <div className="space-y-2">
                 <div className="flex justify-between text-gray-600">
                   <span>Subtotal</span>
-                  <span>K{order.subtotal?.toLocaleString() || '0'}</span>
+                  <span>{currencyFormatter(Number(order.subtotal || 0))}</span>
                 </div>
                 {order.shippingAmount > 0 && (
                   <div className="flex justify-between text-gray-600">
                     <span>Shipping</span>
-                    <span>K{order.shippingAmount?.toLocaleString() || '0'}</span>
+                    <span>{currencyFormatter(Number(order.shippingAmount || 0))}</span>
                   </div>
                 )}
                 {order.taxAmount > 0 && (
                   <div className="flex justify-between text-gray-600">
                     <span>Tax</span>
-                    <span>K{order.taxAmount?.toLocaleString() || '0'}</span>
+                    <span>{currencyFormatter(Number(order.taxAmount || 0))}</span>
                   </div>
                 )}
                 {order.discountAmount > 0 && (
                   <div className="flex justify-between text-green-600">
                     <span>Discount</span>
-                    <span>-K{order.discountAmount?.toLocaleString() || '0'}</span>
+                    <span>-{currencyFormatter(Number(order.discountAmount || 0))}</span>
                   </div>
                 )}
                 <div className="flex justify-between text-lg font-bold text-gray-900 pt-2 border-t border-gray-200">
                   <span>Total</span>
-                  <span>K{order.totalAmount?.toLocaleString() || '0'}</span>
+                  <span>{currencyFormatter(Number(order.totalAmount || 0))}</span>
                 </div>
                 <div className="mt-4">
                   <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${getPaymentStatusColor(order.paymentStatus)}`}>

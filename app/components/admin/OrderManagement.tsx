@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { PlusIcon, TrashIcon, MagnifyingGlassIcon, XCircleIcon, ArrowDownTrayIcon, ChartBarIcon } from '@heroicons/react/20/solid';
+import { PlusIcon, TrashIcon, MagnifyingGlassIcon, XCircleIcon, ArrowDownTrayIcon } from '@heroicons/react/20/solid';
 import clsx from 'clsx';
 import Layout from './Layout'
 import api from '@/app/lib/admin/api'
 import EditOrderModal from './EditOrderModal'
 import CancelOrderModal from './CancelOrderModal'
+import { currencyFormatter } from '@/app/components/checkout/currency-formatter'
 
 const statusColors = {
   pending: 'bg-yellow-100 text-yellow-800',
@@ -49,7 +50,6 @@ export default function OrderManagement() {
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [orderToCancel, setOrderToCancel] = useState<any>(null);
   const [analytics, setAnalytics] = useState<any>(null);
-  const [showAnalytics, setShowAnalytics] = useState(false);
   const [exporting, setExporting] = useState(false);
 
   const fetchOrders = useCallback(async () => {
@@ -109,6 +109,60 @@ export default function OrderManagement() {
     }
   }, [pagination.page, pagination.pageSize, filters.status, filters.paymentStatus, filters.startDate, filters.endDate]);
 
+  // Silent refresh for polling (doesn't show loading state)
+  const refreshOrdersSilently = useCallback(async () => {
+    try {
+      const response = await api.getOrders({ 
+        pagination: {
+          page: pagination.page,
+          pageSize: pagination.pageSize,
+        },
+        filters: {
+          ...(filters.status && { status: filters.status }),
+          ...(filters.paymentStatus && { paymentStatus: filters.paymentStatus }),
+          ...(filters.startDate && { startDate: filters.startDate }),
+          ...(filters.endDate && { endDate: filters.endDate }),
+        },
+        populate: ['customer', 'orderItems', 'shippingAddress']
+      });
+      
+      const transformedOrders = (response.data || []).map((order: any) => {
+        const customer = order.customer || {};
+        const shippingAddress = order.shippingAddress || {};
+        
+        return {
+          id: order.orderNumber || `#${order.id}`,
+          orderId: order.id,
+          orderNumber: order.orderNumber || `#${order.id}`,
+          customer: customer.firstName && customer.lastName
+            ? `${customer.firstName} ${customer.lastName}`
+            : customer.email || 'Unknown Customer',
+          email: customer.email || '',
+          phone: customer.phone || shippingAddress.phone || '',
+          total: order.totalAmount || 0,
+          status: order.status || order.orderStatus || 'pending',
+          paymentStatus: order.paymentStatus || 'pending',
+          trackingNumber: order.trackingNumber || '',
+          items: order.orderItems?.length || 0,
+          date: order.createdAt ? new Date(order.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+          shippingAddress: shippingAddress.addressLine1 
+            ? `${shippingAddress.addressLine1}, ${shippingAddress.city || ''}`
+            : 'N/A',
+          rawOrder: order
+        };
+      });
+      
+      setOrders(transformedOrders);
+      setPagination(prev => ({
+        ...prev,
+        total: response.meta?.pagination?.total || 0,
+      }));
+    } catch (error) {
+      console.error('Error refreshing orders:', error);
+      // Silently fail during auto-refresh
+    }
+  }, [pagination.page, pagination.pageSize, filters.status, filters.paymentStatus, filters.startDate, filters.endDate]);
+
   // Fetch orders when filters or pagination change (not when fetchOrders function changes)
   useEffect(() => {
     fetchOrders();
@@ -130,10 +184,18 @@ export default function OrderManagement() {
   }, [filters.startDate, filters.endDate, filters.status, filters.paymentStatus]);
 
   useEffect(() => {
-    if (showAnalytics) {
+    fetchAnalytics();
+  }, [fetchAnalytics]);
+
+  // Auto-refresh orders and analytics every 30 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refreshOrdersSilently();
       fetchAnalytics();
-    }
-  }, [showAnalytics, fetchAnalytics]);
+    }, 30000); // 30 seconds
+
+    return () => clearInterval(interval);
+  }, [refreshOrdersSilently, fetchAnalytics]);
 
   const handleExportCSV = async () => {
     try {
@@ -236,22 +298,8 @@ export default function OrderManagement() {
   return (
     <Layout currentPage="Orders" pageTitle="Order Management">
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-end">
         <div className="flex items-center gap-3">
-          <button
-            onClick={fetchOrders}
-            disabled={loading}
-            className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50"
-          >
-            Refresh
-          </button>
-          <button
-            onClick={() => setShowAnalytics(!showAnalytics)}
-            className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-          >
-            <ChartBarIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
-            Analytics
-          </button>
           <button
             onClick={handleExportCSV}
             disabled={exporting}
@@ -272,7 +320,7 @@ export default function OrderManagement() {
       </div>
 
       {/* Analytics Dashboard */}
-      {showAnalytics && analytics && (
+      {analytics ? (
         <div className="bg-white p-6 rounded-lg shadow">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Order Analytics</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -282,102 +330,35 @@ export default function OrderManagement() {
             </div>
             <div className="p-4 bg-green-50 rounded-lg">
               <p className="text-sm text-gray-600">Total Revenue</p>
-              <p className="text-2xl font-bold text-gray-900">K{Number(analytics.totalRevenue || 0).toLocaleString()}</p>
+              <p className="text-2xl font-bold text-gray-900">{currencyFormatter(Number(analytics.totalRevenue || 0))}</p>
             </div>
             <div className="p-4 bg-purple-50 rounded-lg">
               <p className="text-sm text-gray-600">Average Order Value</p>
-              <p className="text-2xl font-bold text-gray-900">K{Number(analytics.averageOrderValue || 0).toFixed(2)}</p>
+              <p className="text-2xl font-bold text-gray-900">{currencyFormatter(Number(analytics.averageOrderValue || 0))}</p>
             </div>
           </div>
-          {analytics.statusDistribution && (
-            <div className="mt-4">
-              <h4 className="text-sm font-medium text-gray-700 mb-2">Status Distribution</h4>
-              <div className="flex flex-wrap gap-2">
-                {Object.entries(analytics.statusDistribution).map(([status, count]: [string, any]) => (
-                  <span key={status} className="px-3 py-1 bg-gray-100 rounded-full text-sm">
-                    {status}: {count}
+          <div className="mt-4">
+            <h4 className="text-sm font-medium text-gray-700 mb-2">Status Distribution</h4>
+            <div className="flex flex-wrap gap-2">
+              {['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded'].map((status) => {
+                const count = analytics?.statusDistribution?.[status] || 0;
+                return (
+                  <span key={status} className={clsx('px-3 py-1 rounded-full text-sm', statusColors[status as keyof typeof statusColors] || 'bg-gray-100 text-gray-800')}>
+                    {status.charAt(0).toUpperCase() + status.slice(1)}: {count}
                   </span>
-                ))}
-              </div>
+                );
+              })}
             </div>
-          )}
+          </div>
+        </div>
+      ) : (
+        <div className="bg-white p-6 rounded-lg shadow">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Order Analytics</h3>
+          <div className="flex items-center justify-center h-32">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+          </div>
         </div>
       )}
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="bg-white overflow-hidden shadow rounded-lg">
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="w-8 h-8 bg-yellow-500 rounded-md flex items-center justify-center">
-                  <span className="text-white text-sm font-medium">P</span>
-                </div>
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">Pending Orders</dt>
-                  <dd className="text-lg font-medium text-gray-900">{stats.pendingCount}</dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white overflow-hidden shadow rounded-lg">
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="w-8 h-8 bg-primary-500 rounded-md flex items-center justify-center">
-                  <span className="text-white text-sm font-medium">P</span>
-                </div>
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">Processing</dt>
-                  <dd className="text-lg font-medium text-gray-900">{stats.processingCount}</dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white overflow-hidden shadow rounded-lg">
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="w-8 h-8 bg-green-500 rounded-md flex items-center justify-center">
-                  <span className="text-white text-sm font-medium">D</span>
-                </div>
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">Delivered</dt>
-                  <dd className="text-lg font-medium text-gray-900">{stats.deliveredCount}</dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white overflow-hidden shadow rounded-lg">
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="w-8 h-8 bg-purple-500 rounded-md flex items-center justify-center">
-                  <span className="text-white text-sm font-medium">R</span>
-                </div>
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">Revenue</dt>
-                  <dd className="text-lg font-medium text-gray-900">K{stats.revenue.toLocaleString()}</dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Filters */}
       <div className="bg-white p-4 rounded-lg shadow">
@@ -563,7 +544,7 @@ export default function OrderManagement() {
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    K{order.total.toLocaleString()}
+                    {currencyFormatter(Number(order.total || 0))}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={clsx('inline-flex px-2 py-1 text-xs font-semibold rounded-full', statusColors[order.status])}>
@@ -587,15 +568,15 @@ export default function OrderManagement() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex items-center justify-end space-x-2">
-                      {order.status !== 'cancelled' && order.status !== 'delivered' && (
+                      {order.status !== 'cancelled' && order.status !== 'delivered' && order.paymentStatus !== 'paid' && (
                         <button 
                           onClick={(e) => {
                             e.stopPropagation();
                             setOrderToCancel(order);
                             setIsCancelModalOpen(true);
                           }}
-                          className="text-red-600 hover:text-red-900"
-                          title="Cancel Order"
+                          className="tooltip tooltip-left text-red-600 hover:text-red-900"
+                          data-tip="Cancel Order"
                         >
                           <XCircleIcon className="h-4 w-4" />
                         </button>

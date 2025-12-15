@@ -2,8 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { MagnifyingGlassIcon, FunnelIcon } from '@heroicons/react/20/solid';
+import toast from 'react-hot-toast';
 import Layout from './Layout'
 import api from '@/app/lib/admin/api'
+import { currencyFormatter } from '@/app/components/checkout/currency-formatter'
+import { Download } from 'lucide-react';
+import Link from 'next/link';
 
 const paymentStatusColors = {
   pending: 'bg-yellow-100 text-yellow-800',
@@ -26,6 +30,9 @@ const paymentMethodLabels = {
 export default function PaymentManagement() {
   const [payments, setPayments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isExporting, setIsExporting] = useState(false);
+  const [selectedPayment, setSelectedPayment] = useState<any | null>(null);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
     status: '',
@@ -83,6 +90,29 @@ export default function PaymentManagement() {
     setPagination(prev => ({ ...prev, page: 1 }));
   };
 
+  const handleExport = async (type: 'csv' | 'pdf') => {
+    try {
+      setIsExporting(true);
+      const params: Record<string, string> = {};
+      if (filters.startDate) params.startDate = filters.startDate;
+      if (filters.endDate) params.endDate = filters.endDate;
+      if (filters.status) params.status = filters.status;
+      if (filters.paymentMethod) params.paymentMethod = filters.paymentMethod;
+
+      if (type === 'csv') {
+        await api.exportPaymentsToCSV(params);
+      } else {
+        await api.exportPaymentsToPDF(params);
+      }
+      toast.success(`Payments ${type.toUpperCase()} exported`);
+    } catch (error) {
+      console.error('Failed to export payments', error);
+      toast.error('Failed to export payments');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   const clearFilters = () => {
     setFilters({
       status: '',
@@ -106,6 +136,26 @@ export default function PaymentManagement() {
   return (
     <Layout currentPage="Payments" pageTitle="Payment Management">
       <div className="space-y-6">
+      <div className="flex items-center justify-end">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => handleExport('csv')}
+              disabled={isExporting}
+              className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50"
+            >
+              <Download className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
+              Export CSV
+            </button>
+            <button
+              onClick={() => handleExport('pdf')}
+              disabled={isExporting}
+              className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50"
+            >
+              <Download className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
+              Export PDF
+            </button>
+          </div>
+        </div>
         {/* Filters */}
         <div className="bg-white p-4 rounded-lg shadow">
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
@@ -222,15 +272,22 @@ export default function PaymentManagement() {
                   </tr>
                 ) : (
                   filteredPayments.map((payment) => (
-                    <tr key={payment.id}>
+                    <tr
+                      key={payment.id}
+                      className="cursor-pointer hover:bg-gray-50"
+                      onClick={() => {
+                        setSelectedPayment(payment);
+                        setIsDetailsOpen(true);
+                      }}
+                    >
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                         {payment.transactionId || `#${payment.id}`}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {payment.order ? (
-                          <a href={`/admin/orders`} className="text-primary-600 hover:text-primary-700">
+                          <Link href={`/admin/orders`} className="text-primary-600 hover:text-primary-700">
                             {payment.order.orderNumber}
-                          </a>
+                          </Link>
                         ) : (
                           'N/A'
                         )}
@@ -241,7 +298,7 @@ export default function PaymentManagement() {
                           : 'N/A'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {payment.currency} {payment.amount?.toLocaleString() || '0'}
+                        {currencyFormatter(Number(payment.amount || 0), payment.currency || 'ZMW')}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {paymentMethodLabels[payment.paymentMethod as keyof typeof paymentMethodLabels] || payment.paymentMethod}
@@ -268,6 +325,103 @@ export default function PaymentManagement() {
             </table>
           </div>
 
+          {/* Payment Details Modal */}
+          {isDetailsOpen && selectedPayment && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+              <div className="w-full max-w-2xl rounded-lg bg-white shadow-xl">
+                <div className="flex items-center justify-between border-b px-6 py-4">
+                  <h3 className="text-lg font-semibold text-gray-900">Payment Details</h3>
+                  <button
+                    onClick={() => setIsDetailsOpen(false)}
+                    className="text-gray-500 hover:text-gray-700"
+                    aria-label="Close"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                <div className="px-6 py-4 space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+                    <div>
+                      <div className="text-gray-500">Transaction ID</div>
+                      <div className="font-medium text-gray-900">{selectedPayment.transactionId || `#${selectedPayment.id}`}</div>
+                    </div>
+                    <div>
+                      <div className="text-gray-500">Order</div>
+                      <div className="font-medium text-primary-600">
+                        {selectedPayment.order?.orderNumber || 'N/A'}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-gray-500">Customer</div>
+                      <div className="font-medium text-gray-900">
+                        {selectedPayment.customer
+                          ? `${selectedPayment.customer.firstName} ${selectedPayment.customer.lastName} (${selectedPayment.customer.email})`
+                          : 'N/A'}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-gray-500">Amount</div>
+                      <div className="font-semibold text-gray-900">
+                        {currencyFormatter(Number(selectedPayment.amount || 0), selectedPayment.currency || 'ZMW')}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-gray-500">Method</div>
+                      <div className="font-medium text-gray-900">
+                        {paymentMethodLabels[selectedPayment.paymentMethod as keyof typeof paymentMethodLabels] || selectedPayment.paymentMethod}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-gray-500">Status</div>
+                      <span
+                        className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                          paymentStatusColors[selectedPayment.paymentStatus as keyof typeof paymentStatusColors] ||
+                          'bg-gray-100 text-gray-800'
+                        }`}
+                      >
+                        {selectedPayment.paymentStatus}
+                      </span>
+                    </div>
+                    <div>
+                      <div className="text-gray-500">Processed At</div>
+                      <div className="font-medium text-gray-900">
+                        {selectedPayment.processedAt ? new Date(selectedPayment.processedAt).toLocaleString() : 'N/A'}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-gray-500">Created At</div>
+                      <div className="font-medium text-gray-900">
+                        {selectedPayment.createdAt ? new Date(selectedPayment.createdAt).toLocaleString() : 'N/A'}
+                      </div>
+                    </div>
+                    {selectedPayment.paymentProofUrl && (
+                      <div className="md:col-span-2">
+                        <div className="text-gray-500">Payment Proof</div>
+                        <a
+                          href={selectedPayment.paymentProofUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary-600 hover:text-primary-700 underline"
+                        >
+                          View proof
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-2 border-t px-6 py-4">
+                  <button
+                    onClick={() => setIsDetailsOpen(false)}
+                    className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
           {/* Pagination */}
           {pagination.total > pagination.pageSize && (
             <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">

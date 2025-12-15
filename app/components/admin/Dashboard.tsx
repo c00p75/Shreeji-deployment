@@ -7,6 +7,13 @@ import RecentOrders from './RecentOrders'
 import TopProducts from './TopProducts'
 import SalesChart from './SalesChart'
 import api from '@/app/lib/admin/api'
+import { currencyFormatter } from '@/app/components/checkout/currency-formatter'
+import { 
+  CubeIcon, 
+  UsersIcon, 
+  ShoppingBagIcon, 
+  CurrencyDollarIcon 
+} from '@heroicons/react/24/outline'
 
 interface DashboardStats {
   totalProducts: number;
@@ -23,7 +30,8 @@ export default function Dashboard() {
   const [orders, setOrders] = useState<any[]>([])
   const [topProducts, setTopProducts] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
-  const [chartPeriod, setChartPeriod] = useState<'daily' | 'weekly' | 'monthly'>('weekly')
+  const [revenueChartPeriod, setRevenueChartPeriod] = useState<'daily' | 'weekly' | 'monthly'>('weekly')
+  const [ordersChartPeriod, setOrdersChartPeriod] = useState<'daily' | 'weekly' | 'monthly'>('weekly')
   const [revenueTrend, setRevenueTrend] = useState<{ current: number; previous: number; change: number } | null>(null)
   const [customerMetrics, setCustomerMetrics] = useState<{ newCustomers: number; totalCustomers: number; growth: number } | null>(null)
   const [conversionRate, setConversionRate] = useState<{ rate: number; trend: number } | null>(null)
@@ -86,7 +94,7 @@ export default function Dashboard() {
             ? `${order.customer.firstName} ${order.customer.lastName}`
             : 'Unknown Customer',
           date: new Date(order.createdAt).toLocaleDateString(),
-          amount: `K${order.totalAmount?.toLocaleString() || '0'}`,
+          amount: currencyFormatter(Number(order.totalAmount || 0)),
           status: order.orderStatus || 'pending',
           paymentStatus: order.paymentStatus || 'pending'
         })) || []
@@ -135,8 +143,8 @@ export default function Dashboard() {
             .slice(0, 5)
             .map(product => ({
               name: product.name,
-              price: `K${product.price.toLocaleString()}`,
-              revenue: `K${product.revenue.toLocaleString()}`,
+              price: currencyFormatter(Number(product.price || 0)),
+              revenue: currencyFormatter(Number(product.revenue || 0)),
               sold: product.sold
             }))
           
@@ -147,7 +155,7 @@ export default function Dashboard() {
             transformedProducts = productsData.data?.map((product: any) => ({
               name: product.name,
               price: product.price,
-              revenue: `K${((product.stockQuantity || 0) * (product.basePrice || 0)).toLocaleString()}`,
+              revenue: currencyFormatter(Number((product.stockQuantity || 0) * (product.basePrice || 0))),
               sold: product.stockQuantity || 0,
               stockStatus: product.stockStatus
             })) || []
@@ -218,20 +226,36 @@ export default function Dashboard() {
           <StatCard
             title="Total Products"
             value={stats?.totalProducts.toString() || "0"}
+            icon={<CubeIcon className="w-6 h-6" />}
+            iconBgColor="bg-blue-100"
+            iconColor="text-blue-600"
+            href="/admin/products"
           />
           <StatCard
             title="Total Customers"
             value={stats?.totalCustomers.toString() || "0"}
             subtitle={customerMetrics ? `${customerMetrics.newCustomers} new (30d)` : undefined}
+            icon={<UsersIcon className="w-6 h-6" />}
+            iconBgColor="bg-green-100"
+            iconColor="text-green-600"
+            href="/admin/customers"
           />
           <StatCard
             title="Total Orders"
             value={stats?.totalOrders.toString() || "0"}
+            icon={<ShoppingBagIcon className="w-6 h-6" />}
+            iconBgColor="bg-purple-100"
+            iconColor="text-purple-600"
+            href="/admin/orders"
           />
           <StatCard
             title="Total Revenue"
-            value={`K${stats?.totalRevenue.toLocaleString() || "0"}`}
+            value={currencyFormatter(Number(stats?.totalRevenue || 0))}
             subtitle={revenueTrend ? `Trend: ${revenueTrend.change >= 0 ? '+' : ''}${revenueTrend.change.toFixed(1)}%` : undefined}
+            icon={<CurrencyDollarIcon className="w-6 h-6" />}
+            iconBgColor="bg-yellow-100"
+            iconColor="text-yellow-600"
+            href="/admin/reports"
           />
         </div>
 
@@ -268,7 +292,7 @@ export default function Dashboard() {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-500">Inventory Value</p>
                 <p className="text-2xl font-semibold text-gray-900">
-                  K{stats?.inventoryValue.toLocaleString() || "0"}
+                  {currencyFormatter(Number(stats?.inventoryValue || 0))}
                 </p>
               </div>
             </div>
@@ -309,11 +333,11 @@ export default function Dashboard() {
 
         {/* Charts and Tables */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Sales Chart */}
+          {/* Revenue Chart Card */}
           <div className="card p-6 pb-14">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Sales Statistics</h3>
+                <h3 className="text-lg font-semibold text-gray-900">Revenue Statistics</h3>
                 {revenueTrend && (
                   <div className="flex items-center mt-1">
                     <span className="text-sm text-gray-500">Revenue Trend: </span>
@@ -325,9 +349,9 @@ export default function Dashboard() {
               </div>
               <div className="flex space-x-2">
                 <button 
-                  onClick={() => setChartPeriod('daily')}
+                  onClick={() => setRevenueChartPeriod('daily')}
                   className={`px-3 py-1 text-sm rounded-md transition-colors ${
-                    chartPeriod === 'daily' 
+                    revenueChartPeriod === 'daily' 
                       ? 'bg-primary-100 text-primary-700' 
                       : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
                   }`}
@@ -335,9 +359,9 @@ export default function Dashboard() {
                   Daily
                 </button>
                 <button 
-                  onClick={() => setChartPeriod('weekly')}
+                  onClick={() => setRevenueChartPeriod('weekly')}
                   className={`px-3 py-1 text-sm rounded-md transition-colors ${
-                    chartPeriod === 'weekly' 
+                    revenueChartPeriod === 'weekly' 
                       ? 'bg-primary-100 text-primary-700' 
                       : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
                   }`}
@@ -345,9 +369,9 @@ export default function Dashboard() {
                   Weekly
                 </button>
                 <button 
-                  onClick={() => setChartPeriod('monthly')}
+                  onClick={() => setRevenueChartPeriod('monthly')}
                   className={`px-3 py-1 text-sm rounded-md transition-colors ${
-                    chartPeriod === 'monthly' 
+                    revenueChartPeriod === 'monthly' 
                       ? 'bg-primary-100 text-primary-700' 
                       : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
                   }`}
@@ -356,42 +380,49 @@ export default function Dashboard() {
                 </button>
               </div>
             </div>
-            <SalesChart period={chartPeriod} />
+            <SalesChart period={revenueChartPeriod} type="revenue" />
           </div>
 
-          {/* Store Statistics */}
-          <div className="card p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-6">Live Store Statistics</h3>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <div className="w-3 h-3 bg-primary-500 rounded-full mr-3"></div>
-                  <span className="text-gray-600">Total Orders</span>
-                </div>
-                <span className="font-semibold text-gray-900">{stats?.totalOrders || "0"}</span>
+          {/* Orders Chart Card */}
+          <div className="card p-6 pb-14">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Orders Statistics</h3>
               </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <div className="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
-                  <span className="text-gray-600">Total Customers</span>
-                </div>
-                <span className="font-semibold text-gray-900">{stats?.totalCustomers || "0"}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <div className="w-3 h-3 bg-yellow-500 rounded-full mr-3"></div>
-                  <span className="text-gray-600">Total Products</span>
-                </div>
-                <span className="font-semibold text-gray-900">{stats?.totalProducts || "0"}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <div className="w-3 h-3 bg-purple-500 rounded-full mr-3"></div>
-                  <span className="text-gray-600">Inventory Value</span>
-                </div>
-                <span className="font-semibold text-gray-900">K{stats?.inventoryValue.toLocaleString() || "0"}</span>
+              <div className="flex space-x-2">
+                <button 
+                  onClick={() => setOrdersChartPeriod('daily')}
+                  className={`px-3 py-1 text-sm rounded-md transition-colors ${
+                    ordersChartPeriod === 'daily' 
+                      ? 'bg-primary-100 text-primary-700' 
+                      : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  Daily
+                </button>
+                <button 
+                  onClick={() => setOrdersChartPeriod('weekly')}
+                  className={`px-3 py-1 text-sm rounded-md transition-colors ${
+                    ordersChartPeriod === 'weekly' 
+                      ? 'bg-primary-100 text-primary-700' 
+                      : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  Weekly
+                </button>
+                <button 
+                  onClick={() => setOrdersChartPeriod('monthly')}
+                  className={`px-3 py-1 text-sm rounded-md transition-colors ${
+                    ordersChartPeriod === 'monthly' 
+                      ? 'bg-primary-100 text-primary-700' 
+                      : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  Monthly
+                </button>
               </div>
             </div>
+            <SalesChart period={ordersChartPeriod} type="orders" />
           </div>
         </div>
 
