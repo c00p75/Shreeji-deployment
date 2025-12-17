@@ -192,73 +192,170 @@ export default function LoyaltyProgramSettings() {
             </div>
           ) : (
             <div className="divide-y divide-gray-200">
-              {rules.map((rule) => (
-                <div key={rule.id} className="p-5 hover:bg-gray-50 transition-colors">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <h4 className="text-lg font-semibold text-gray-900">{rule.name}</h4>
-                        <span
-                          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                            rule.status === 'active'
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-gray-100 text-gray-600'
-                          }`}
+              {rules.map((rule) => {
+                const ruleTypeLabel = ruleTypes.find((r) => r.value === rule.ruleType)?.label || rule.ruleType
+                const getRuleIcon = () => {
+                  switch (rule.ruleType) {
+                    case 'points_per_kwacha':
+                      return '💰'
+                    case 'points_per_purchase':
+                      return '🎁'
+                    case 'points_per_product':
+                      return '📦'
+                    case 'points_per_category':
+                      return '🏷️'
+                    default:
+                      return '⭐'
+                  }
+                }
+
+                return (
+                  <div 
+                    key={rule.id} 
+                    className="p-6 hover:bg-gray-50 transition-all duration-200 border-l-4 border-l-transparent hover:border-l-primary-500"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        {/* Header Section */}
+                        <div className="flex items-start gap-3 mb-3">
+                          <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center text-xl">
+                            {getRuleIcon()}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1 flex-wrap">
+                              <h4 className="text-lg font-semibold text-gray-900">{rule.name}</h4>
+                              <span
+                                className={`inline-flex items-center px-2.5 py-0.5 text-xs font-semibold rounded-full ${
+                                  rule.status === 'active'
+                                    ? 'bg-green-100 text-green-800 border border-green-200'
+                                    : 'bg-gray-100 text-gray-600 border border-gray-200'
+                                }`}
+                              >
+                                <span className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
+                                  rule.status === 'active' ? 'bg-green-500' : 'bg-gray-400'
+                                }`}></span>
+                                {rule.status.charAt(0).toUpperCase() + rule.status.slice(1)}
+                              </span>
+                              {rule.priority > 0 && (
+                                <span className="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded bg-amber-50 text-amber-700 border border-amber-200">
+                                  Priority: {rule.priority}
+                                </span>
+                              )}
+                            </div>
+                            {rule.description && (
+                              <p className="text-sm text-gray-600 mt-1 line-clamp-2">{rule.description}</p>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Rule Details Grid */}
+                        <div className="ml-13 mt-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
+                              <div className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
+                                Rule Type
+                              </div>
+                              <div className="text-sm font-semibold text-gray-900">
+                                {ruleTypeLabel}
+                              </div>
+                            </div>
+                            
+                            <div className="bg-blue-50 rounded-lg p-3 border border-blue-100">
+                              <div className="text-xs font-medium text-blue-600 uppercase tracking-wide mb-1">
+                                Points Value
+                              </div>
+                              <div className="text-sm font-semibold text-blue-900">
+                                {rule.pointsValue}
+                                {rule.ruleType === 'points_per_kwacha' && (
+                                  <span className="text-xs text-blue-600 ml-1">per ZMW</span>
+                                )}
+                              </div>
+                            </div>
+
+                            {rule.conditions?.minPurchaseAmount && (
+                              <div className="bg-purple-50 rounded-lg p-3 border border-purple-100">
+                                <div className="text-xs font-medium text-purple-600 uppercase tracking-wide mb-1">
+                                  Min Purchase
+                                </div>
+                                <div className="text-sm font-semibold text-purple-900">
+                                  ZMW {rule.conditions.minPurchaseAmount.toLocaleString()}
+                                </div>
+                              </div>
+                            )}
+
+                            {rule.conditions?.maxPointsPerOrder && (
+                              <div className="bg-orange-50 rounded-lg p-3 border border-orange-100">
+                                <div className="text-xs font-medium text-orange-600 uppercase tracking-wide mb-1">
+                                  Max per Order
+                                </div>
+                                <div className="text-sm font-semibold text-orange-900">
+                                  {rule.conditions.maxPointsPerOrder.toLocaleString()} pts
+                                </div>
+                              </div>
+                            )}
+
+                            {(rule.validFrom || rule.validUntil) && (
+                              <div className="bg-indigo-50 rounded-lg p-3 border border-indigo-100 md:col-span-2 lg:col-span-1">
+                                <div className="text-xs font-medium text-indigo-600 uppercase tracking-wide mb-1">
+                                  Validity
+                                </div>
+                                <div className="text-xs text-indigo-900 space-y-0.5">
+                                  {rule.validFrom && (
+                                    <div>From: {new Date(rule.validFrom).toLocaleDateString()}</div>
+                                  )}
+                                  {rule.validUntil && (
+                                    <div>Until: {new Date(rule.validUntil).toLocaleDateString()}</div>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Additional Conditions */}
+                          {(rule.conditions?.productIds?.length > 0 || rule.conditions?.categoryIds?.length > 0) && (
+                            <div className="mt-3 flex flex-wrap gap-2">
+                              {rule.conditions.productIds?.length > 0 && (
+                                <span className="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-md bg-gray-100 text-gray-700 border border-gray-200">
+                                  {rule.conditions.productIds.length} Product{rule.conditions.productIds.length !== 1 ? 's' : ''}
+                                </span>
+                              )}
+                              {rule.conditions.categoryIds?.length > 0 && (
+                                <span className="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-md bg-gray-100 text-gray-700 border border-gray-200">
+                                  {rule.conditions.categoryIds.length} Categor{rule.conditions.categoryIds.length !== 1 ? 'ies' : 'y'}
+                                </span>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <button
+                          onClick={() => openEdit(rule)}
+                          className="p-2.5 rounded-lg text-blue-600 hover:text-blue-700 hover:bg-blue-50 border border-transparent hover:border-blue-200 transition-all duration-200"
+                          title="Edit Rule"
                         >
-                          {rule.status}
-                        </span>
+                          <PencilIcon className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(rule.id)}
+                          className="p-2.5 rounded-lg text-red-600 hover:text-red-700 hover:bg-red-50 border border-transparent hover:border-red-200 transition-all duration-200"
+                          title="Delete Rule"
+                        >
+                          <TrashIcon className="w-5 h-5" />
+                        </button>
                       </div>
-                      {rule.description && (
-                        <p className="text-sm text-gray-600 mb-3">{rule.description}</p>
-                      )}
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                        <div>
-                          <span className="font-medium text-gray-700">Type:</span>
-                          <p className="text-gray-600">{ruleTypes.find((r) => r.value === rule.ruleType)?.label}</p>
-                        </div>
-                        <div>
-                          <span className="font-medium text-gray-700">Points Value:</span>
-                          <p className="text-gray-600">{rule.pointsValue}</p>
-                        </div>
-                        {rule.conditions?.minPurchaseAmount && (
-                          <div>
-                            <span className="font-medium text-gray-700">Min Purchase:</span>
-                            <p className="text-gray-600">ZMW {rule.conditions.minPurchaseAmount}</p>
-                          </div>
-                        )}
-                        {rule.conditions?.maxPointsPerOrder && (
-                          <div>
-                            <span className="font-medium text-gray-700">Max per Order:</span>
-                            <p className="text-gray-600">{rule.conditions.maxPointsPerOrder}</p>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 ml-4">
-                      <button
-                        onClick={() => openEdit(rule)}
-                        className="text-blue-600 hover:text-blue-700 p-2 rounded-lg hover:bg-blue-50"
-                        title="Edit"
-                      >
-                        <PencilIcon className="w-5 h-5" />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(rule.id)}
-                        className="text-red-600 hover:text-red-700 p-2 rounded-lg hover:bg-red-50"
-                        title="Delete"
-                      >
-                        <TrashIcon className="w-5 h-5" />
-                      </button>
                     </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           )}
         </div>
 
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" style={{ marginTop: '0' }}>
           <div className="w-full max-w-3xl rounded-xl bg-white p-6 shadow-xl">
             <div className="mb-4 flex items-center justify-between">
               <h4 className="text-lg font-semibold text-gray-900">{modalTitle}</h4>

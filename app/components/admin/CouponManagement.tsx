@@ -12,22 +12,23 @@ import {
 import api from '@/app/lib/admin/api'
 import toast from 'react-hot-toast'
 import { currencyFormatter } from '@/app/components/checkout/currency-formatter'
+import { mapFormToCouponPayload, type CouponFormData } from './couponMapper'
 
 interface Coupon {
   id: number
   code: string
+  name: string
   description?: string
-  discountType: 'percentage' | 'fixed'
-  discountValue: number
-  minPurchaseAmount?: number
-  maxDiscountAmount?: number
+  type: 'percentage' | 'fixed_amount'
+  value: number
+  minimumOrderAmount?: number
+  maximumDiscountAmount?: number
   usageLimit?: number
   usageCount?: number
-  expiresAt?: string
+  validUntil?: string
   isActive: boolean
-  applicableTo?: 'all' | 'categories' | 'products'
-  categoryIds?: number[]
-  productIds?: number[]
+  applicableProducts?: number[]
+  applicableCategories?: string[]
 }
 
 export default function CouponManagement() {
@@ -85,12 +86,12 @@ export default function CouponManagement() {
     if (statusFilter === 'active') {
       filtered = filtered.filter(coupon => 
         coupon.isActive && 
-        (!coupon.expiresAt || new Date(coupon.expiresAt) > now) &&
+        (!coupon.validUntil || new Date(coupon.validUntil) > now) &&
         (!coupon.usageLimit || (coupon.usageCount || 0) < coupon.usageLimit)
       )
     } else if (statusFilter === 'expired') {
       filtered = filtered.filter(coupon => 
-        coupon.expiresAt && new Date(coupon.expiresAt) <= now
+        coupon.validUntil && new Date(coupon.validUntil) <= now
       )
     } else if (statusFilter === 'inactive') {
       filtered = filtered.filter(coupon => !coupon.isActive)
@@ -134,7 +135,7 @@ export default function CouponManagement() {
 
   const getCouponStatus = (coupon: Coupon): string => {
     if (!coupon.isActive) return 'Inactive'
-    if (coupon.expiresAt && new Date(coupon.expiresAt) <= new Date()) return 'Expired'
+    if (coupon.validUntil && new Date(coupon.validUntil) <= new Date()) return 'Expired'
     if (coupon.usageLimit && (coupon.usageCount || 0) >= coupon.usageLimit) return 'Exceeded'
     return 'Active'
   }
@@ -252,13 +253,13 @@ export default function CouponManagement() {
                           {coupon.description || '-'}
                         </td>
                         <td className="table-cell">
-                          {coupon.discountType === 'percentage' 
-                            ? `${coupon.discountValue}%`
-                            : currencyFormatter(Number(coupon.discountValue || 0))
+                          {coupon.type === 'percentage' 
+                            ? `${coupon.value}%`
+                            : currencyFormatter(Number(coupon.value || 0))
                           }
-                          {coupon.maxDiscountAmount && coupon.discountType === 'percentage' && (
+                          {coupon.maximumDiscountAmount && coupon.type === 'percentage' && (
                             <span className="text-xs text-gray-500 ml-1">
-                              (max {currencyFormatter(Number(coupon.maxDiscountAmount || 0))})
+                              (max {currencyFormatter(Number(coupon.maximumDiscountAmount || 0))})
                             </span>
                           )}
                         </td>
@@ -267,8 +268,8 @@ export default function CouponManagement() {
                           {coupon.usageLimit && ` / ${coupon.usageLimit}`}
                         </td>
                         <td className="table-cell">
-                          {coupon.expiresAt 
-                            ? new Date(coupon.expiresAt).toLocaleDateString()
+                          {coupon.validUntil 
+                            ? new Date(coupon.validUntil).toLocaleDateString()
                             : 'No expiry'
                           }
                         </td>
@@ -339,7 +340,7 @@ interface CouponModalProps {
 }
 
 function CouponModal({ coupon, isEditMode, onClose, onSave }: CouponModalProps) {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<CouponFormData>({
     code: '',
     description: '',
     discountType: 'percentage' as 'percentage' | 'fixed',
@@ -358,14 +359,14 @@ function CouponModal({ coupon, isEditMode, onClose, onSave }: CouponModalProps) 
       setFormData({
         code: coupon.code || '',
         description: coupon.description || '',
-        discountType: coupon.discountType || 'percentage',
-        discountValue: coupon.discountValue || 0,
-        minPurchaseAmount: coupon.minPurchaseAmount || 0,
-        maxDiscountAmount: coupon.maxDiscountAmount || 0,
+        discountType: coupon.type === 'percentage' ? 'percentage' : 'fixed',
+        discountValue: coupon.value || 0,
+        minPurchaseAmount: coupon.minimumOrderAmount || 0,
+        maxDiscountAmount: coupon.maximumDiscountAmount || 0,
         usageLimit: coupon.usageLimit || 0,
-        expiresAt: coupon.expiresAt ? new Date(coupon.expiresAt).toISOString().split('T')[0] : '',
+        expiresAt: coupon.validUntil ? new Date(coupon.validUntil).toISOString().split('T')[0] : '',
         isActive: coupon.isActive !== undefined ? coupon.isActive : true,
-        applicableTo: coupon.applicableTo || 'all'
+        applicableTo: 'all'
       })
     } else {
       // Generate random code for new coupon
@@ -382,13 +383,7 @@ function CouponModal({ coupon, isEditMode, onClose, onSave }: CouponModalProps) 
     setSaving(true)
 
     try {
-      const payload = {
-        ...formData,
-        minPurchaseAmount: formData.minPurchaseAmount || undefined,
-        maxDiscountAmount: formData.maxDiscountAmount || undefined,
-        usageLimit: formData.usageLimit || undefined,
-        expiresAt: formData.expiresAt || undefined
-      }
+      const payload = mapFormToCouponPayload(formData)
 
       if (isEditMode && coupon) {
         await api.updateCoupon(coupon.id, payload)

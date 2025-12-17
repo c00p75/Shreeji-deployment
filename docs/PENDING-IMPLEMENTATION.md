@@ -362,6 +362,21 @@ This document tracks all pending tasks and next steps required to make the ecomm
   - [x] Create/edit/delete coupons
   - [x] Coupon usage tracking (displays usage count and limits)
   - [x] Coupon expiration management (expiry date and status)
+  - [x] **Enhanced Coupon Usage Tracking** (December 16, 2025)
+    - [x] Added `couponCode` field to Order entity to track which coupon was used
+    - [x] Created `CouponUsage` entity for detailed usage history (coupon, order, customer, discount amount, timestamp)
+    - [x] Updated `CouponsService` to separate validation from usage recording
+    - [x] Usage count now increments only when order payment is confirmed (not during validation)
+    - [x] Added `recordCouponUsage()` method to create usage records
+    - [x] Added `hasCustomerUsedCoupon()` method for per-customer usage tracking
+    - [x] Added `getCouponUsageHistory()` method to retrieve usage history
+    - [x] Updated checkout service to save coupon code to order and record usage on payment approval
+    - [x] Created database migration file (`migrations/add-coupon-tracking.sql`)
+  - [ ] **Pending Actions:**
+    - [ ] Run database migration in production: `migrations/add-coupon-tracking.sql`
+    - [ ] Add admin UI to view coupon usage history (frontend enhancement)
+    - [ ] Add per-customer usage limit enforcement in coupon validation (if needed)
+    - [ ] Add coupon usage analytics/reports in admin dashboard (future enhancement)
   - [ ] Bulk coupon generation (future enhancement)
 
 ### 🔄 Pending
@@ -717,5 +732,27 @@ This document tracks all pending tasks and next steps required to make the ecomm
 
 ---
 
-Last Updated: December 12, 2025
+### December 16, 2025 - Enhanced Coupon Usage Tracking
+- ✅ Implemented comprehensive coupon usage tracking system:
+  - Added `couponCode` field to Order entity to track which coupon was used in each order
+  - Created `CouponUsage` entity for detailed usage history tracking (coupon, order, customer, discount amount, timestamp)
+  - Updated `CouponsService` to separate validation from usage recording:
+    - `applyCoupon()` now only validates and calculates discount (doesn't increment usage)
+    - New `recordCouponUsage()` method increments usage count and creates usage record (called when order is confirmed)
+    - New `hasCustomerUsedCoupon()` method for per-customer usage tracking
+    - New `getCouponUsageHistory()` method to retrieve usage history for a coupon
+  - Updated checkout flow to save coupon code to order and record usage only when payment is approved
+  - Prevents usage count increment if checkout fails (only increments on successful payment)
+  - Created database migration file for production deployment
+  - Added `CouponUsage` to `CouponsModule` and `DatabaseModule`
+
+- 🔄 Pending Actions:
+  - [ ] Run database migration in production: Execute `migrations/add-coupon-tracking.sql` in production database
+  - [ ] Add admin UI to view coupon usage history (frontend enhancement)
+  - [ ] Add per-customer usage limit enforcement in coupon validation (if business rules require it)
+  - [ ] Add coupon usage analytics/reports in admin dashboard (future enhancement)
+
+---
+
+Last Updated: December 16, 2025
 

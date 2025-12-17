@@ -510,6 +510,10 @@ class ApiClient {
     return this.request<{ data: any[]; meta: any }>(endpoint);
   }
 
+  async getCustomer(id: string | number) {
+    return this.request<{ data: any }>(`/admin/customers/${id}`);
+  }
+
   async getOrder(id: string | number) {
     return this.request<{ data: any }>(`/admin/orders/${id}`);
   }

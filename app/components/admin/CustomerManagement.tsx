@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { MagnifyingGlassIcon, FunnelIcon, PlusIcon, EyeIcon, PencilIcon, TrashIcon, EnvelopeIcon, PhoneIcon } from '@heroicons/react/20/solid';
-import { Menu, Transition } from '@headlessui/react';
+import { MagnifyingGlassIcon, FunnelIcon, PlusIcon, EyeIcon, PencilIcon, TrashIcon, EnvelopeIcon, PhoneIcon, Squares2X2Icon, ListBulletIcon } from '@heroicons/react/20/solid';
+import { Popover, Transition } from '@headlessui/react';
 import clsx from 'clsx';
 import Layout from './Layout'
+import { useRouter } from 'next/navigation'
 import api from '@/app/lib/admin/api'
 import { currencyFormatter } from '@/app/components/checkout/currency-formatter'
 
@@ -15,11 +16,15 @@ const statusColors = {
 };
 
 export default function CustomerManagement() {
+  const router = useRouter();
   const [customers, setCustomers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCustomers, setSelectedCustomers] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
+  const [statusFilters, setStatusFilters] = useState<Array<'active' | 'inactive' | 'blocked'>>([]);
+  const [registrationFilters, setRegistrationFilters] = useState<Array<'last30' | 'last90' | 'last365'>>([]);
+  const [locationFilters, setLocationFilters] = useState<string[]>([]);
 
   useEffect(() => {
     fetchCustomers();
@@ -62,11 +67,54 @@ export default function CustomerManagement() {
     }
   };
 
-  const filteredCustomers = customers.filter(customer =>
-    customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    customer.id.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredCustomers = customers
+    // Search filter
+    .filter(customer => {
+      const term = searchTerm.toLowerCase();
+      if (!term) return true;
+      return (
+        customer.name.toLowerCase().includes(term) ||
+        customer.email.toLowerCase().includes(term) ||
+        customer.id.toLowerCase().includes(term)
+      );
+    })
+    // Status filter (multi-select)
+    .filter(customer => {
+      if (!statusFilters.length) return true;
+      return statusFilters.includes(customer.status);
+    })
+    // Registration date filter (multi-select)
+    .filter(customer => {
+      if (!registrationFilters.length) return true;
+
+      const regDate = customer.registrationDate ? new Date(customer.registrationDate) : null;
+      if (!regDate || Number.isNaN(regDate.getTime())) return false;
+
+      const now = new Date();
+      const diffMs = now.getTime() - regDate.getTime();
+      const diffDays = diffMs / (1000 * 60 * 60 * 24);
+
+      const matches = registrationFilters.some(filter => {
+        if (filter === 'last30') return diffDays <= 30;
+        if (filter === 'last90') return diffDays <= 90;
+        if (filter === 'last365') return diffDays <= 365;
+        return false;
+      });
+
+      return matches;
+    })
+    // Location filter (multi-select)
+    .filter(customer => {
+      if (!locationFilters.length) return true;
+      return locationFilters.includes(customer.location);
+    });
+
+  const goToCustomerDetail = (customer: any) => {
+    const backendId =
+      customer.rawCustomer?.id ??
+      Number(String(customer.id).replace('CUST-', ''));
+    router.push(`/admin/customers/${backendId}`);
+  };
 
   const handleSelectCustomer = (customerId: string) => {
     setSelectedCustomers(prev =>
@@ -177,6 +225,34 @@ export default function CustomerManagement() {
             </div>
           </div>
         </div>
+        {(statusFilters.length || registrationFilters.length || locationFilters.length) > 0 && (
+          <div className="mt-3 flex flex-wrap gap-2 text-xs">
+            {statusFilters.map(status => (
+              <span
+                key={`status-${status}`}
+                className="inline-flex items-center rounded-full bg-primary-50 px-2 py-1 text-primary-700"
+              >
+                {`Status: ${status}`}
+              </span>
+            ))}
+            {registrationFilters.map(filter => (
+              <span
+                key={`reg-${filter}`}
+                className="inline-flex items-center rounded-full bg-primary-50 px-2 py-1 text-primary-700"
+              >
+                {`Reg: ${filter}`}
+              </span>
+            ))}
+            {locationFilters.map(loc => (
+              <span
+                key={`loc-${loc}`}
+                className="inline-flex items-center rounded-full bg-primary-50 px-2 py-1 text-primary-700"
+              >
+                {`Location: ${loc}`}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Filters and Search */}
@@ -195,13 +271,11 @@ export default function CustomerManagement() {
                 className="block w-full rounded-md border-0 bg-gray-100 py-1.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
               />
             </div>
-            <Menu as="div" className="relative inline-block text-left">
-              <div>
-                <Menu.Button className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+            <Popover className="relative inline-block text-left">
+              <Popover.Button className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                   <FunnelIcon className="-ml-0.5 h-5 w-5 text-gray-400" aria-hidden="true" />
                   Filter
-                </Menu.Button>
-              </div>
+                </Popover.Button>
               <Transition
                 enter="transition ease-out duration-100"
                 enterFrom="transform opacity-0 scale-95"
@@ -210,59 +284,278 @@ export default function CustomerManagement() {
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
-                <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                  <div className="py-1">
-                    <Menu.Item>
-                      {({ active }) => (
-                        <a href="#" className={clsx(active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm')}>
+                <Popover.Panel className="absolute right-0 z-10 mt-2 w-64 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                  <div className="py-1 text-sm text-gray-700">
+                    <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase">
                           Status
-                        </a>
-                      )}
-                    </Menu.Item>
-                    <Menu.Item>
-                      {({ active }) => (
-                        <a href="#" className={clsx(active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm')}>
+                    </div>
+                    <div>
+                      <button
+                          type="button"
+                          className={clsx(
+                            'w-full text-left px-4 py-2 flex items-center gap-2',
+                            !statusFilters.length && 'font-semibold'
+                          )}
+                          onClick={() => setStatusFilters([])}
+                          role="menuitem"
+                        >
+                          <input
+                            type="checkbox"
+                            readOnly
+                            checked={!statusFilters.length}
+                            className="h-4 w-4 rounded border-gray-300 text-primary-600"
+                          />
+                          <span>Status: All</span>
+                        </button>
+                    </div>
+                    <div>
+                      <button
+                          type="button"
+                          className={clsx(
+                            'w-full text-left px-4 py-2 flex items-center gap-2',
+                            statusFilters.includes('active') && 'font-semibold'
+                          )}
+                          onClick={() =>
+                            setStatusFilters(prev =>
+                              prev.includes('active')
+                                ? prev.filter(s => s !== 'active')
+                                : [...prev, 'active']
+                            )
+                          }
+                          role="menuitem"
+                        >
+                          <input
+                            type="checkbox"
+                            readOnly
+                            checked={statusFilters.includes('active')}
+                            className="h-4 w-4 rounded border-gray-300 text-primary-600"
+                          />
+                          <span>Status: Active only</span>
+                        </button>
+                    </div>
+                    <div>
+                      <button
+                          type="button"
+                          className={clsx(
+                            'w-full text-left px-4 py-2 flex items-center gap-2',
+                            statusFilters.includes('inactive') && 'font-semibold'
+                          )}
+                          onClick={() =>
+                            setStatusFilters(prev =>
+                              prev.includes('inactive')
+                                ? prev.filter(s => s !== 'inactive')
+                                : [...prev, 'inactive']
+                            )
+                          }
+                          role="menuitem"
+                        >
+                          <input
+                            type="checkbox"
+                            readOnly
+                            checked={statusFilters.includes('inactive')}
+                            className="h-4 w-4 rounded border-gray-300 text-primary-600"
+                          />
+                          <span>Status: Inactive only</span>
+                        </button>
+                    </div>
+
+                    <div className="border-t my-1" />
+
+                    <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase">
                           Registration Date
-                        </a>
-                      )}
-                    </Menu.Item>
-                    <Menu.Item>
-                      {({ active }) => (
-                        <a href="#" className={clsx(active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm')}>
+                    </div>
+                    <div>
+                      <button
+                          type="button"
+                          className={clsx(
+                            'w-full text-left px-4 py-2 flex items-center gap-2',
+                            !registrationFilters.length && 'font-semibold'
+                          )}
+                          onClick={() => setRegistrationFilters([])}
+                          role="menuitem"
+                        >
+                          <input
+                            type="checkbox"
+                            readOnly
+                            checked={!registrationFilters.length}
+                            className="h-4 w-4 rounded border-gray-300 text-primary-600"
+                          />
+                          <span>Registration: Any time</span>
+                        </button>
+                    </div>
+                    <div>
+                      <button
+                          type="button"
+                          className={clsx(
+                            'w-full text-left px-4 py-2 flex items-center gap-2',
+                            registrationFilters.includes('last30') && 'font-semibold'
+                          )}
+                          onClick={() =>
+                            setRegistrationFilters(prev =>
+                              prev.includes('last30')
+                                ? prev.filter(r => r !== 'last30')
+                                : [...prev, 'last30']
+                            )
+                          }
+                          role="menuitem"
+                        >
+                          <input
+                            type="checkbox"
+                            readOnly
+                            checked={registrationFilters.includes('last30')}
+                            className="h-4 w-4 rounded border-gray-300 text-primary-600"
+                          />
+                          <span>Registration: Last 30 days</span>
+                        </button>
+                    </div>
+                    <div>
+                      <button
+                          type="button"
+                          className={clsx(
+                            'w-full text-left px-4 py-2 flex items-center gap-2',
+                            registrationFilters.includes('last90') && 'font-semibold'
+                          )}
+                          onClick={() =>
+                            setRegistrationFilters(prev =>
+                              prev.includes('last90')
+                                ? prev.filter(r => r !== 'last90')
+                                : [...prev, 'last90']
+                            )
+                          }
+                          role="menuitem"
+                        >
+                          <input
+                            type="checkbox"
+                            readOnly
+                            checked={registrationFilters.includes('last90')}
+                            className="h-4 w-4 rounded border-gray-300 text-primary-600"
+                          />
+                          <span>Registration: Last 90 days</span>
+                        </button>
+                    </div>
+                    <div>
+                      <button
+                          type="button"
+                          className={clsx(
+                            'w-full text-left px-4 py-2 flex items-center gap-2',
+                            registrationFilters.includes('last365') && 'font-semibold'
+                          )}
+                          onClick={() =>
+                            setRegistrationFilters(prev =>
+                              prev.includes('last365')
+                                ? prev.filter(r => r !== 'last365')
+                                : [...prev, 'last365']
+                            )
+                          }
+                          role="menuitem"
+                        >
+                          <input
+                            type="checkbox"
+                            readOnly
+                            checked={registrationFilters.includes('last365')}
+                            className="h-4 w-4 rounded border-gray-300 text-primary-600"
+                          />
+                          <span>Registration: Last 365 days</span>
+                        </button>
+                    </div>
+
+                    <div className="border-t my-1" />
+
+                    <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase">
                           Location
-                        </a>
-                      )}
-                    </Menu.Item>
+                    </div>
+                    <div>
+                      <button
+                          type="button"
+                          className={clsx(
+                            'w-full text-left px-4 py-2 flex items-center gap-2',
+                            !locationFilters.length && 'font-semibold'
+                          )}
+                          onClick={() => setLocationFilters([])}
+                          role="menuitem"
+                        >
+                          <input
+                            type="checkbox"
+                            readOnly
+                            checked={!locationFilters.length}
+                            className="h-4 w-4 rounded border-gray-300 text-primary-600"
+                          />
+                          <span>Location: All</span>
+                        </button>
+                    </div>
+                    {Array.from(
+                      new Set(
+                        customers
+                          .map((c: any) => c.location)
+                          .filter((loc: string | null | undefined) => !!loc && loc !== 'N/A')
+                      )
+                    ).map((loc: any) => (
+                      <div key={loc}>
+                          <button
+                            type="button"
+                            className={clsx(
+                              'w-full text-left px-4 py-2 flex items-center gap-2',
+                              locationFilters.includes(loc) && 'font-semibold'
+                            )}
+                            onClick={() =>
+                              setLocationFilters(prev =>
+                                prev.includes(loc)
+                                  ? prev.filter(l => l !== loc)
+                                  : [...prev, loc]
+                              )
+                            }
+                            role="menuitem"
+                          >
+                            <input
+                              type="checkbox"
+                              readOnly
+                              checked={locationFilters.includes(loc)}
+                              className="h-4 w-4 rounded border-gray-300 text-primary-600"
+                            />
+                            <span>{`Location: ${loc}`}</span>
+                          </button>
+                      </div>
+                    ))}
                   </div>
-                </Menu.Items>
+                </Popover.Panel>
               </Transition>
-            </Menu>
+            </Popover>
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="flex items-center border border-gray-300 rounded-md">
+            <div className="flex space-x-2">
+              <div className="relative group">
               <button
                 onClick={() => setViewMode('table')}
                 className={clsx(
-                  'px-3 py-2 text-sm font-medium',
+                    'px-3 py-2 rounded-lg flex items-center justify-center',
                   viewMode === 'table'
-                    ? 'bg-primary-600 text-white'
-                    : 'bg-white text-gray-700 hover:bg-gray-50'
+                      ? 'bg-primary-100 text-primary-700'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 )}
               >
-                Table
+                  <ListBulletIcon className="h-5 w-5" />
               </button>
+                <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                  Table View
+                </span>
+              </div>
+              <div className="relative group">
               <button
                 onClick={() => setViewMode('grid')}
                 className={clsx(
-                  'px-3 py-2 text-sm font-medium border-l border-gray-300',
+                    'px-3 py-2 rounded-lg flex items-center justify-center',
                   viewMode === 'grid'
-                    ? 'bg-primary-600 text-white'
-                    : 'bg-white text-gray-700 hover:bg-gray-50'
+                      ? 'bg-primary-100 text-primary-700'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 )}
               >
-                Grid
+                  <Squares2X2Icon className="h-5 w-5" />
               </button>
+                <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                  Grid View
+                </span>
+              </div>
             </div>
 
             {selectedCustomers.length > 0 && (
@@ -310,14 +603,18 @@ export default function CustomerManagement() {
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Last Order
                   </th>
-                  <th scope="col" className="relative px-6 py-3">
-                    <span className="sr-only">Actions</span>
-                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredCustomers.map((customer) => (
-                  <tr key={customer.id} className={clsx(selectedCustomers.includes(customer.id) && 'bg-gray-50')}>
+                  <tr
+                    key={customer.id}
+                    onClick={() => goToCustomerDetail(customer)}
+                    className={clsx(
+                      selectedCustomers.includes(customer.id) && 'bg-gray-50',
+                      'cursor-pointer hover:bg-gray-50'
+                    )}
+                  >
                     <td className="relative w-12 px-6 sm:w-16 sm:px-8">
                       {selectedCustomers.includes(customer.id) && (
                         <div className="absolute inset-y-0 left-0 w-0.5 bg-primary-600" />
@@ -327,6 +624,7 @@ export default function CustomerManagement() {
                         className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 sm:left-6"
                         checked={selectedCustomers.includes(customer.id)}
                         onChange={() => handleSelectCustomer(customer.id)}
+                        onClick={(e) => e.stopPropagation()}
                       />
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -362,19 +660,6 @@ export default function CustomerManagement() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {customer.lastOrder !== 'N/A' ? new Date(customer.lastOrder).toLocaleDateString() : 'N/A'}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <div className="flex items-center justify-end space-x-2">
-                        <button className="text-primary-600 hover:text-primary-900">
-                          <EyeIcon className="h-4 w-4" />
-                        </button>
-                        <button className="text-gray-600 hover:text-gray-900">
-                          <PencilIcon className="h-4 w-4" />
-                        </button>
-                        <button className="text-red-600 hover:text-red-900">
-                          <TrashIcon className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -384,7 +669,11 @@ export default function CustomerManagement() {
       ) : (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filteredCustomers.map((customer) => (
-            <div key={customer.id} className="bg-white overflow-hidden shadow rounded-lg">
+            <div
+              key={customer.id}
+              className="bg-white overflow-hidden shadow rounded-lg cursor-pointer hover:shadow-md transition-shadow"
+              onClick={() => goToCustomerDetail(customer)}
+            >
               <div className="p-6">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
@@ -412,14 +701,6 @@ export default function CustomerManagement() {
                     <span className={clsx('inline-flex px-2 py-1 text-xs font-semibold rounded-full', statusColors[customer.status])}>
                       {customer.status.charAt(0).toUpperCase() + customer.status.slice(1)}
                     </span>
-                    <div className="flex items-center space-x-2">
-                      <button className="text-primary-600 hover:text-primary-900">
-                        <EyeIcon className="h-4 w-4" />
-                      </button>
-                      <button className="text-gray-600 hover:text-gray-900">
-                        <PencilIcon className="h-4 w-4" />
-                      </button>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -451,6 +732,7 @@ export default function CustomerManagement() {
           <p className="mt-1 text-sm text-gray-500">Get started by adding a new customer.</p>
         </div>
       )}
+
     </div>
     </Layout>
   );
