@@ -2,6 +2,8 @@
 
 import { useCart } from '@/app/contexts/CartContext'
 import { currencyFormatter } from './currency-formatter'
+import { generateQuotePDF } from '@/utils/quoteGenerator'
+import { Download } from 'lucide-react'
 
 interface OrderDetailsSidebarProps {
   fulfillmentType?: 'pickup' | 'delivery'
@@ -65,9 +67,30 @@ export default function OrderDetailsSidebar({ fulfillmentType = 'pickup', curren
     vatPercentage = (vatAmount / subtotal) * 100
   }
 
+  const handleDownloadQuote = () => {
+    if (!cart || cart.items.length === 0) {
+      return
+    }
+    generateQuotePDF(cart, fulfillmentType)
+  }
+
   return (
     <div className='rounded-lg border-t-4 border-[var(--shreeji-primary)] bg-white p-6 shadow-sm'>
-      <h2 className='mb-4 text-xl font-semibold text-gray-900'>Order Details</h2>
+      <div className='mb-4 flex items-center justify-between'>
+        <h2 className='text-xl font-semibold text-gray-900'>Order Details</h2>
+        <div className="relative group">
+          <button
+            onClick={handleDownloadQuote}
+            disabled={!cart || cart.items.length === 0}
+            className='flex items-center gap-2 rounded-lg bg-[whitesmoke] px-4 py-2 text-sm font-medium text-[var(--shreeji-primary)] transition-colors hover:bg-[#544829] hover:text-white focus:outline-none focus:ring-2 focus:ring-[var(--shreeji-primary)] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-[var(--shreeji-primary)]'
+          >
+            <Download className='h-4 w-4' />
+          </button>
+          <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+            Download Quote as PDF
+          </span>
+        </div>
+      </div>
 
       <div className='space-y-3 text-sm'>
         <div className='flex justify-between'>

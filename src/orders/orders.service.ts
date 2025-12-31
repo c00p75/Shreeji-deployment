@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { StrapiService } from '../strapi/strapi.service';
 import { StrapiEntity, StrapiSingleResponse } from '../common/types/strapi.types';
 import { CartItem } from '../cart/interfaces/cart.interface';
+import { CheckoutPickupDetails } from '../checkout/dto/checkout.dto';
 
 interface OrderAttributes {
   orderNumber: string;
@@ -89,6 +90,22 @@ export class OrdersService {
     await this.strapi.put(`/orders/${orderId}`, {
       data: {
         paymentDeadline: deadline.toISOString(),
+      },
+    });
+  }
+
+  async updateOrderWithPickupDetails(orderId: number, pickupDetails: CheckoutPickupDetails): Promise<void> {
+    await this.strapi.put(`/orders/${orderId}`, {
+      data: {
+        preferredPickupDate: pickupDetails.preferredPickupDate,
+        preferredPickupTime: pickupDetails.preferredPickupTime,
+        collectingPersonName: pickupDetails.collectingPersonName,
+        collectingPersonPhone: pickupDetails.collectingPersonPhone,
+        collectingPersonRelationship: pickupDetails.collectingPersonRelationship,
+        vehicleInfo: pickupDetails.vehicleInfo,
+        idType: pickupDetails.idType,
+        idNumber: pickupDetails.idNumber,
+        pickupSpecialInstructions: pickupDetails.specialInstructions,
       },
     });
   }

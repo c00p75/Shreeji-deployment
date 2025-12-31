@@ -349,6 +349,94 @@ export default function EditOrderModal({ isOpen, onClose, order, onSave }: EditO
                     </select>
                   </div>
 
+                  {/* Pickup Details Section */}
+                  {orderDetails && (
+                    (orderDetails.paymentMethod === 'cash_on_pickup' || orderDetails.payments?.[0]?.paymentMethod === 'cash_on_pickup') &&
+                    orderDetails.preferredPickupDate && (
+                      <div className="rounded-lg border-2 border-amber-200 bg-amber-50 p-6">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                          📦 Pickup Collection Details
+                        </h3>
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <p className="text-sm font-medium text-gray-700">Preferred Pickup Date</p>
+                              <p className="text-sm text-gray-900 font-semibold">
+                                {orderDetails.preferredPickupDate 
+                                  ? new Date(orderDetails.preferredPickupDate).toLocaleDateString('en-US', {
+                                      weekday: 'long',
+                                      year: 'numeric',
+                                      month: 'long',
+                                      day: 'numeric',
+                                    })
+                                  : 'N/A'}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium text-gray-700">Preferred Pickup Time</p>
+                              <p className="text-sm text-gray-900 font-semibold">
+                                {orderDetails.preferredPickupTime || 'N/A'}
+                              </p>
+                            </div>
+                          </div>
+
+                          {(orderDetails.collectingPersonName || orderDetails.collectingPersonPhone) && (
+                            <div className="border-t border-amber-200 pt-4">
+                              <p className="text-sm font-medium text-gray-700 mb-2">Person Collecting</p>
+                              <div className="space-y-1">
+                                {orderDetails.collectingPersonName && (
+                                  <p className="text-sm text-gray-900">
+                                    <span className="font-medium">Name:</span> {orderDetails.collectingPersonName}
+                                  </p>
+                                )}
+                                {orderDetails.collectingPersonPhone && (
+                                  <p className="text-sm text-gray-900">
+                                    <span className="font-medium">Phone:</span> {orderDetails.collectingPersonPhone}
+                                  </p>
+                                )}
+                                {orderDetails.collectingPersonRelationship && (
+                                  <p className="text-sm text-gray-900">
+                                    <span className="font-medium">Relationship:</span> {orderDetails.collectingPersonRelationship.replace('_', ' ')}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          )}
+
+                          <div className="border-t border-amber-200 pt-4">
+                            <p className="text-sm font-medium text-gray-700 mb-2">ID Verification</p>
+                            <div className="space-y-1">
+                              {orderDetails.idType && (
+                                <p className="text-sm text-gray-900">
+                                  <span className="font-medium">ID Type:</span> {orderDetails.idType.toUpperCase().replace('_', ' ')}
+                                </p>
+                              )}
+                              {orderDetails.idNumber && (
+                                <p className="text-sm text-gray-900">
+                                  <span className="font-medium">ID Number:</span> {orderDetails.idNumber}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+
+                          {orderDetails.vehicleInfo && (
+                            <div className="border-t border-amber-200 pt-4">
+                              <p className="text-sm font-medium text-gray-700 mb-1">Vehicle Information</p>
+                              <p className="text-sm text-gray-900">{orderDetails.vehicleInfo}</p>
+                            </div>
+                          )}
+
+                          {orderDetails.pickupSpecialInstructions && (
+                            <div className="border-t border-amber-200 pt-4">
+                              <p className="text-sm font-medium text-gray-700 mb-1">Special Instructions</p>
+                              <p className="text-sm text-gray-900 whitespace-pre-wrap">{orderDetails.pickupSpecialInstructions}</p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )
+                  )}
+
                   {/* Tracking Number */}
                   <div>
                     <label htmlFor="trackingNumber" className="block text-sm font-medium text-gray-700 mb-1">

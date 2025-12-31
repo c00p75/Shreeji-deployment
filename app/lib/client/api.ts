@@ -156,6 +156,18 @@ class ClientApiClient {
         orderItems: item.orderItems || item.order_items || [],
         shippingAddress: item.shippingAddress || item.shipping_address,
         billingAddress: item.billingAddress || item.billing_address,
+        // Add pickup details
+        preferredPickupDate: item.preferredPickupDate || item.preferred_pickup_date,
+        preferredPickupTime: item.preferredPickupTime || item.preferred_pickup_time,
+        collectingPersonName: item.collectingPersonName || item.collecting_person_name,
+        collectingPersonPhone: item.collectingPersonPhone || item.collecting_person_phone,
+        collectingPersonRelationship: item.collectingPersonRelationship || item.collecting_person_relationship,
+        vehicleInfo: item.vehicleInfo || item.vehicle_info,
+        idType: item.idType || item.id_type,
+        idNumber: item.idNumber || item.id_number,
+        pickupSpecialInstructions: item.pickupSpecialInstructions || item.pickup_special_instructions,
+        // Add payment method to identify cash on pickup orders
+        paymentMethod: item.payments?.[0]?.paymentMethod || item.payment_method || item.payments?.[0]?.payment_method,
       })),
       meta: response.meta || { pagination: { total: response.data?.length || 0, page: 1, pageSize: 10 } },
     };
@@ -193,6 +205,16 @@ class ClientApiClient {
         shippingAddress: response.shippingAddress || response.shipping_address || response.data?.shippingAddress,
         billingAddress: response.billingAddress || response.billing_address || response.data?.billingAddress,
         customer: response.customer || response.data?.customer,
+        // Add pickup details
+        preferredPickupDate: response.preferredPickupDate || response.preferred_pickup_date || response.data?.preferredPickupDate,
+        preferredPickupTime: response.preferredPickupTime || response.preferred_pickup_time || response.data?.preferredPickupTime,
+        collectingPersonName: response.collectingPersonName || response.collecting_person_name || response.data?.collectingPersonName,
+        collectingPersonPhone: response.collectingPersonPhone || response.collecting_person_phone || response.data?.collectingPersonPhone,
+        collectingPersonRelationship: response.collectingPersonRelationship || response.collecting_person_relationship || response.data?.collectingPersonRelationship,
+        vehicleInfo: response.vehicleInfo || response.vehicle_info || response.data?.vehicleInfo,
+        idType: response.idType || response.id_type || response.data?.idType,
+        idNumber: response.idNumber || response.id_number || response.data?.idNumber,
+        pickupSpecialInstructions: response.pickupSpecialInstructions || response.pickup_special_instructions || response.data?.pickupSpecialInstructions,
         // Add payment data mapping
         payments: (response.payments || response.data?.payments || []).map((payment: any) => ({
           id: payment.id,

@@ -71,6 +71,18 @@ export interface CheckoutMobileMoneyDetails {
   phoneNumber: string;
 }
 
+export interface CheckoutPickupDetails {
+  preferredPickupDate: string;
+  preferredPickupTime: string;
+  collectingPersonName?: string;
+  collectingPersonPhone?: string;
+  collectingPersonRelationship?: string;
+  vehicleInfo?: string;
+  idType: 'nrc' | 'passport' | 'drivers_license' | 'other';
+  idNumber: string;
+  specialInstructions?: string;
+}
+
 export interface CheckoutRequest {
   cartId: string;
   customer: CheckoutCustomerInput;
@@ -79,6 +91,7 @@ export interface CheckoutRequest {
   paymentMethod: string;
   cardDetails?: CheckoutCardDetails;
   mobileMoneyDetails?: CheckoutMobileMoneyDetails;
+  pickupDetails?: CheckoutPickupDetails;
   notes?: string;
 }
 

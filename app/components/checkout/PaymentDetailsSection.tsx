@@ -3,10 +3,11 @@
 import { CreditCard, X } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import React from 'react'
-import { useClientAuth } from '@/app/contexts/ClientAuthContext'
 import clientApi from '@/app/lib/client/api'
 
 import { CheckoutCardDetails, CheckoutMobileMoneyDetails, getBankDetails, getEnabledPaymentMethods, type BankDetails } from '@/app/lib/ecommerce/api'
+import CashOnPickupDetailsSection, { type CashOnPickupDetails } from './CashOnPickupDetailsSection'
+import { useClientAuth } from '@/app/contexts/ClientAuthContext'
 
 interface PaymentDetailsSectionProps {
   paymentMethod: string
@@ -15,6 +16,7 @@ interface PaymentDetailsSectionProps {
   onPaymentDetailsChange?: (details: {
     cardDetails?: CheckoutCardDetails
     mobileMoneyDetails?: CheckoutMobileMoneyDetails
+    pickupDetails?: CashOnPickupDetails
   }) => void
   isProcessing: boolean
 }
@@ -51,7 +53,7 @@ export default function PaymentDetailsSection({
   onPaymentDetailsChange,
   isProcessing,
 }: PaymentDetailsSectionProps) {
-  const { isAuthenticated } = useClientAuth()
+  const { isAuthenticated, user } = useClientAuth()
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null)
   const [savedCards, setSavedCards] = useState<any[]>([])
   const [loadingSavedCards, setLoadingSavedCards] = useState(false)
@@ -63,6 +65,7 @@ export default function PaymentDetailsSection({
   const [loadingBankDetails, setLoadingBankDetails] = useState(false)
   const [enabledMethods, setEnabledMethods] = useState<string[]>(['card', 'mobile_money', 'bank_transfer', 'cop'])
   const [loadingMethods, setLoadingMethods] = useState(true)
+  const [pickupDetails, setPickupDetails] = useState<CashOnPickupDetails | null>(null)
   const [newCardData, setNewCardData] = useState({
     number: '',
     expiryMonth: '',
@@ -141,10 +144,10 @@ export default function PaymentDetailsSection({
   }, [paymentMethod, bankDetails, loadingBankDetails])
 
   const allPaymentMethods = [
-    { value: 'card', label: 'Credit / Debit Card (Visa, MasterCard, AmEx, Diners)' },
-    { value: 'mobile_money', label: 'Mobile Money' },
-    { value: 'bank_transfer', label: 'Bank Transfer' },
     { value: 'cop', label: 'Cash on Pick Up' },
+    { value: 'mobile_money', label: 'Mobile Money' },
+    { value: 'card', label: 'Credit / Debit Card (Visa, MasterCard, AmEx, Diners)' },
+    { value: 'bank_transfer', label: 'Bank Transfer' },
   ]
 
   // Filter payment methods based on enabled methods
@@ -194,6 +197,14 @@ export default function PaymentDetailsSection({
       } else {
         onPaymentDetailsChange({})
       }
+    } else if (paymentMethod === 'cop') {
+      if (pickupDetails) {
+        onPaymentDetailsChange({
+          pickupDetails,
+        })
+      } else {
+        onPaymentDetailsChange({})
+      }
     } else {
       onPaymentDetailsChange({})
     }
@@ -203,7 +214,7 @@ export default function PaymentDetailsSection({
   useEffect(() => {
     updatePaymentDetails()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [paymentMethod, selectedCardId, showNewCardForm, newCardData, selectedCardType, mobileNumber])
+  }, [paymentMethod, selectedCardId, showNewCardForm, newCardData, selectedCardType, mobileNumber, pickupDetails])
 
   return (
     <div className='space-y-4 rounded-lg border-t-4 border-[var(--shreeji-primary)] bg-white p-6 shadow-sm'>
@@ -547,6 +558,16 @@ export default function PaymentDetailsSection({
         </div>
       )}
 
+      {paymentMethod === 'cop' && (
+        <CashOnPickupDetailsSection
+          onDetailsChange={(details) => {
+            setPickupDetails(details)
+          }}
+          customerName={user?.firstName && user?.lastName ? `${user.firstName} ${user.lastName}` : undefined}
+          customerPhone={user?.phone}
+        />
+      )}
+
       <button
         type='button'
         onClick={onPayment}
@@ -554,11 +575,12 @@ export default function PaymentDetailsSection({
           isProcessing ||
           (paymentMethod === 'card' && !selectedCardId && showNewCardForm && (!newCardData.number || !newCardData.expiryMonth || !newCardData.expiryYear || !newCardData.cvv || !newCardData.cardholderName)) ||
           (paymentMethod === 'card' && !selectedCardId && !showNewCardForm && savedCards.length > 0) ||
-          (paymentMethod === 'mobile_money' && (!mobileNumber || !validateMobileNumber(mobileNumber)))
+          (paymentMethod === 'mobile_money' && (!mobileNumber || !validateMobileNumber(mobileNumber))) ||
+          (paymentMethod === 'cop' && (!pickupDetails || !pickupDetails.preferredPickupDate || !pickupDetails.preferredPickupTime || !pickupDetails.idType || !pickupDetails.idNumber))
         }
         className='w-full rounded-lg bg-green-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50'
       >
-        {isProcessing ? 'Processing...' : 'Pay Now'}
+        {isProcessing ? 'Processing...' : paymentMethod === 'cop' ? 'Order Now' : 'Pay Now'}
       </button>
     </div>
   )

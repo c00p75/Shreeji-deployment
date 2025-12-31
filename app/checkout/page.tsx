@@ -18,6 +18,8 @@ import OrderDetailsSidebar from '@/app/components/checkout/OrderDetailsSidebar'
 import AddressModal from '@/app/components/checkout/AddressModal'
 import { ShoppingBag, Gift } from 'lucide-react'
 import clientApi from '@/app/lib/client/api'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 const CHECKOUT_STEPS = [
   { label: 'Review', number: 1 },
@@ -26,6 +28,7 @@ const CHECKOUT_STEPS = [
 ]
 
 export default function CheckoutPage() {
+  const router = useRouter()
   const { cart, loading, checkout, isCheckingOut, error: cartError } = useCart()
   const { user, isAuthenticated, loading: authLoading } = useClientAuth()
   const [currentStep, setCurrentStep] = useState(1)
@@ -40,6 +43,17 @@ export default function CheckoutPage() {
   const [paymentDetails, setPaymentDetails] = useState<{
     cardDetails?: { cardId?: string; number?: string; expiryMonth?: string; expiryYear?: string; cvv?: string; cardholderName?: string; saveCard?: boolean }
     mobileMoneyDetails?: { provider: 'mtn' | 'airtel' | 'zamtel' | 'orange'; phoneNumber: string }
+    pickupDetails?: {
+      preferredPickupDate: string
+      preferredPickupTime: string
+      collectingPersonName?: string
+      collectingPersonPhone?: string
+      collectingPersonRelationship?: string
+      vehicleInfo?: string
+      idType?: 'nrc' | 'passport' | 'drivers_license' | 'other'
+      idNumber?: string
+      specialInstructions?: string
+    }
   }>({})
   const [showRecoveryMessage, setShowRecoveryMessage] = useState(false)
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false)
@@ -274,6 +288,13 @@ export default function CheckoutPage() {
         return
       }
 
+      // Validate points redemption
+      if (pointsToRedeem > availablePoints) {
+        setPointsError(`You can only redeem up to ${availablePoints} points (ZMW ${(availablePoints / 100).toFixed(2)})`)
+        setFormError('Please correct the points redemption amount.')
+        return
+      }
+
       // Map frontend payment method to backend payment method
       let backendPaymentMethod = paymentMethod
       if (paymentMethod === 'card') {
@@ -322,6 +343,19 @@ export default function CheckoutPage() {
         }
       }
 
+      // Only include pickupDetails if payment method is cash_on_pickup and details exist
+      if (backendPaymentMethod === 'cash_on_pickup' && paymentDetails.pickupDetails) {
+        // Only include if it has required fields
+        if (
+          paymentDetails.pickupDetails.preferredPickupDate &&
+          paymentDetails.pickupDetails.preferredPickupTime &&
+          paymentDetails.pickupDetails.idType &&
+          paymentDetails.pickupDetails.idNumber
+        ) {
+          checkoutPayload.pickupDetails = paymentDetails.pickupDetails
+        }
+      }
+
       const response = await checkout(checkoutPayload)
 
       // Handle payment redirect (for DPO gateway)
@@ -348,13 +382,22 @@ export default function CheckoutPage() {
     }
   }
 
-  const canProceedToNext = () => {
+  const canProceedToNext = (): boolean => {
     switch (currentStep) {
       case 1:
         return true // Review always valid
       case 2:
         return fulfillmentType === 'pickup' || selectedAddressId !== null
       case 3:
+        if (paymentMethod === 'cop') {
+          // For cash on pickup, require pickup details
+          return !!(
+            paymentDetails.pickupDetails?.preferredPickupDate && 
+            paymentDetails.pickupDetails?.preferredPickupTime &&
+            paymentDetails.pickupDetails?.idType &&
+            paymentDetails.pickupDetails?.idNumber
+          )
+        }
         return paymentMethod !== ''
       default:
         return false
@@ -450,34 +493,6 @@ export default function CheckoutPage() {
             {/* Step 3: Payment */}
             {currentStep === 3 && (
               <div className='space-y-4'>
-                <div className='rounded-2xl border border-gray-200 bg-white p-4 shadow-sm'>
-                  <div className='flex items-center justify-between'>
-                    <div>
-                      <p className='text-sm font-medium text-gray-900'>Use loyalty points</p>
-                      <p className='text-xs text-gray-500'>Available: {availablePoints} points (ZMW {(availablePoints / 100).toFixed(2)})</p>
-                    </div>
-                    <Gift className='h-5 w-5 text-[var(--shreeji-primary)]' />
-                  </div>
-                  <div className='mt-3 grid grid-cols-1 gap-3 md:grid-cols-3'>
-                    <div className='md:col-span-2'>
-                      <label className='block text-xs font-medium text-gray-700'>Points to redeem</label>
-                      <input
-                        type='number'
-                        min={0}
-                        value={pointsToRedeem}
-                        onChange={(e) => setPointsToRedeem(Math.max(0, Number(e.target.value)))}
-                        className='mt-1 w-full rounded-lg border border-gray-300 px-3 py-2'
-                        disabled={loadingPoints}
-                      />
-                    </div>
-                    <div className='flex flex-col justify-end rounded-lg bg-gray-50 p-3 text-sm text-gray-700'>
-                      <span className='font-semibold'>Discount preview</span>
-                      <span>ZMW {(pointsToRedeem / 100).toFixed(2)}</span>
-                    </div>
-                  </div>
-                  {pointsError && <p className='mt-2 text-xs text-red-600'>{pointsError}</p>}
-                </div>
-
                 <PaymentDetailsSection
                   paymentMethod={paymentMethod}
                   onPaymentMethodChange={setPaymentMethod}
@@ -504,8 +519,85 @@ export default function CheckoutPage() {
             </div>
 
           {/* Right Column - Order Details Sidebar */}
-          <div className='order-first lg:order-last lg:sticky lg:top-20 lg:self-start'>
+          <div className='order-first lg:order-last lg:sticky lg:top-20 lg:self-start space-y-6'>
             <OrderDetailsSidebar fulfillmentType={fulfillmentType} currentStep={currentStep} />
+            
+            {/* Loyalty Points Section - Only show on Step 3 */}
+            {currentStep === 3 && (
+              <div className='rounded-2xl border border-gray-200 bg-white p-4 shadow-sm'>
+                <div className='flex items-center justify-between'>
+                  <div>
+                    <p className='text-sm font-medium text-gray-900'>Use loyalty points</p>
+                    <p className='text-xs text-gray-500'>Available: {availablePoints} points (ZMW {(availablePoints / 100).toFixed(2)})</p>
+                  </div>
+                  <Gift className='h-5 w-5 text-[var(--shreeji-primary)]' />
+                </div>
+                {isAuthenticated ? 
+                  (<div className='mt-3 grid grid-cols-1 gap-3'>
+                    <div>
+                      <label className='block text-xs font-medium text-gray-700'>Points to redeem</label>
+                      <input
+                        type='number'
+                        min={0}
+                        value={pointsToRedeem}
+                        onChange={(e) => {
+                          const value = Number(e.target.value)
+                          if (value < 0) {
+                            setPointsToRedeem(0)
+                            setPointsError(null)
+                          } else {
+                            setPointsToRedeem(value)
+                            if (value <= availablePoints) {
+                              setPointsError(null)
+                            }
+                          }
+                        }}
+                        className={`mt-1 w-full rounded-lg border px-3 py-2 ${
+                          pointsToRedeem > availablePoints
+                            ? 'border-red-500 text-red-600 focus:border-red-500 focus:ring-red-500'
+                            : 'border-gray-300 focus:border-amber-500 focus:ring-amber-500'
+                        }`}
+                        disabled={loadingPoints}
+                      />
+                      {pointsToRedeem > availablePoints && (
+                        <p className='mt-1 text-xs text-red-600'>
+                          You can only redeem up to {availablePoints} points (ZMW {(availablePoints / 100).toFixed(2)})
+                        </p>
+                      )}
+                      {pointsError && pointsToRedeem <= availablePoints && (
+                        <p className='mt-1 text-xs text-red-600'>{pointsError}</p>
+                      )}
+                    </div>
+                    <div className={`flex flex-col justify-end rounded-lg p-3 text-sm ${
+                      pointsToRedeem > availablePoints
+                        ? 'bg-red-50 text-red-700'
+                        : 'bg-gray-50 text-gray-700'
+                    }`}>
+                      <span className='font-semibold'>Discount preview</span>
+                      <span className={pointsToRedeem > availablePoints ? 'text-red-600' : ''}>
+                        ZMW {(pointsToRedeem / 100).toFixed(2)}
+                      </span>
+                    </div>
+                  </div>) : (
+                    <div className='mt-3 space-y-3'>
+                      <p className='text-sm font-medium text-gray-900'>You need to be logged in to use loyalty points</p>
+                      <button
+                        onClick={() => {
+                          // Store the return URL so we can redirect back after login
+                          if (typeof window !== 'undefined') {
+                            sessionStorage.setItem('returnUrl', '/checkout')
+                          }
+                          router.push('/portal/login')
+                        }}
+                        className='w-full px-4 py-2 bg-[var(--shreeji-primary)] text-white rounded-lg hover:bg-[#544829] transition-colors font-medium text-sm'
+                      >
+                        Sign In
+                      </button>
+                    </div>
+                  )
+                }
+              </div>
+            )}
           </div>
         </div>
       </div>

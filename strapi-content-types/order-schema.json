@@ -103,6 +103,34 @@
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::coupon.coupon"
+    },
+    "preferredPickupDate": {
+      "type": "date"
+    },
+    "preferredPickupTime": {
+      "type": "string"
+    },
+    "collectingPersonName": {
+      "type": "string"
+    },
+    "collectingPersonPhone": {
+      "type": "string"
+    },
+    "collectingPersonRelationship": {
+      "type": "string"
+    },
+    "vehicleInfo": {
+      "type": "text"
+    },
+    "idType": {
+      "type": "enumeration",
+      "enum": ["nrc", "passport", "drivers_license", "other"]
+    },
+    "idNumber": {
+      "type": "string"
+    },
+    "pickupSpecialInstructions": {
+      "type": "text"
     }
   }
 }

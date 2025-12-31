@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { CheckoutPickupDetails } from '../checkout/dto/checkout.dto';
 
 export interface BankTransferEmailData {
   customerName: string;
@@ -16,6 +17,22 @@ export interface BankTransferEmailData {
     iban?: string;
   };
   deadlineHours: number;
+}
+
+export interface CashOnPickupEmailData {
+  orderNumber: string;
+  orderId: number;
+  customerName: string;
+  customerEmail: string;
+  customerPhone?: string;
+  totalAmount: number;
+  currency: string;
+  pickupDetails: CheckoutPickupDetails;
+  orderItems: Array<{
+    productName: string;
+    quantity: number;
+    price: number;
+  }>;
 }
 
 @Injectable()
@@ -45,6 +62,191 @@ export class EmailService {
     //   subject: emailContent.subject,
     //   html: emailContent.html,
     // });
+  }
+
+  async sendCashOnPickupNotification(data: CashOnPickupEmailData): Promise<void> {
+    const teamEmail = this.configService.get<string>('SHREEJI_TEAM_EMAIL') || 'orders@shreeji.co.zm';
+
+    const emailContent = {
+      to: teamEmail,
+      cc: data.customerEmail,
+      subject: `🛒 New Cash on Pickup Order: ${data.orderNumber}`,
+      html: this.generateCashOnPickupEmailHtml(data),
+      text: this.generateCashOnPickupEmailText(data),
+    };
+
+    console.log('Cash on Pickup Notification Email:', JSON.stringify(emailContent, null, 2));
+
+    // TODO: Integrate with actual email service
+    // Example with Resend:
+    // await this.resend.emails.send({
+    //   from: 'orders@shreeji.co.zm',
+    //   to: teamEmail,
+    //   cc: data.customerEmail,
+    //   subject: emailContent.subject,
+    //   html: emailContent.html,
+    // });
+  }
+
+  private generateCashOnPickupEmailHtml(data: CashOnPickupEmailData): string {
+    const pickupDate = new Date(data.pickupDetails.preferredPickupDate).toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+
+    return `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 700px; margin: 0 auto; padding: 20px; }
+            .header { background-color: #807045; color: white; padding: 20px; text-align: center; }
+            .content { padding: 20px; background-color: #f9f9f9; }
+            .section { background-color: white; padding: 15px; margin: 15px 0; border-left: 4px solid #807045; }
+            .section h3 { margin-top: 0; color: #807045; }
+            .highlight { background-color: #fff3cd; padding: 15px; margin: 15px 0; border-radius: 5px; }
+            .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
+            table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+            table td { padding: 8px; border-bottom: 1px solid #eee; }
+            table td:first-child { font-weight: bold; width: 40%; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>🛒 New Cash on Pickup Order</h1>
+              <p>Order Number: ${data.orderNumber}</p>
+            </div>
+            <div class="content">
+              <div class="highlight">
+                <strong>⚠️ ACTION REQUIRED:</strong> Please prepare this order for pickup and notify the customer when ready.
+              </div>
+
+              <div class="section">
+                <h3>Customer Information</h3>
+                <table>
+                  <tr><td>Name:</td><td>${data.customerName}</td></tr>
+                  <tr><td>Email:</td><td>${data.customerEmail}</td></tr>
+                  ${data.customerPhone ? `<tr><td>Phone:</td><td>${data.customerPhone}</td></tr>` : ''}
+                  <tr><td>Order Total:</td><td><strong>${data.currency} ${data.totalAmount.toFixed(2)}</strong></td></tr>
+                </table>
+              </div>
+
+              <div class="section">
+                <h3>📅 Pickup Schedule</h3>
+                <table>
+                  <tr><td>Preferred Date:</td><td><strong>${pickupDate}</strong></td></tr>
+                  <tr><td>Preferred Time:</td><td><strong>${data.pickupDetails.preferredPickupTime}</strong></td></tr>
+                </table>
+              </div>
+
+              <div class="section">
+                <h3>👤 Collection Details</h3>
+                <table>
+                  ${data.pickupDetails.collectingPersonName ? `
+                    <tr><td>Collecting Person:</td><td><strong>${data.pickupDetails.collectingPersonName}</strong></td></tr>
+                    <tr><td>Phone:</td><td>${data.pickupDetails.collectingPersonPhone || 'N/A'}</td></tr>
+                    <tr><td>Relationship:</td><td>${data.pickupDetails.collectingPersonRelationship || 'N/A'}</td></tr>
+                  ` : `
+                    <tr><td>Collecting Person:</td><td><strong>${data.customerName}</strong> (Customer)</td></tr>
+                  `}
+                  <tr><td>ID Type:</td><td>${data.pickupDetails.idType.toUpperCase()}</td></tr>
+                  <tr><td>ID Number:</td><td><strong>${data.pickupDetails.idNumber}</strong></td></tr>
+                  ${data.pickupDetails.vehicleInfo ? `
+                    <tr><td>Vehicle Info:</td><td>${data.pickupDetails.vehicleInfo}</td></tr>
+                  ` : ''}
+                </table>
+              </div>
+
+              <div class="section">
+                <h3>📦 Order Items</h3>
+                <table>
+                  ${data.orderItems.map(item => `
+                    <tr>
+                      <td>${item.productName}</td>
+                      <td>Qty: ${item.quantity} × ${data.currency} ${item.price.toFixed(2)}</td>
+                    </tr>
+                  `).join('')}
+                </table>
+              </div>
+
+              ${data.pickupDetails.specialInstructions ? `
+                <div class="section">
+                  <h3>📝 Special Instructions</h3>
+                  <p>${data.pickupDetails.specialInstructions}</p>
+                </div>
+              ` : ''}
+
+              <div class="highlight">
+                <strong>✅ Preparation Checklist:</strong>
+                <ul>
+                  <li>Verify all items are in stock and ready</li>
+                  <li>Prepare order for pickup</li>
+                  <li>Notify customer when order is ready</li>
+                  <li>Have exact change ready (${data.currency} ${data.totalAmount.toFixed(2)})</li>
+                  <li>Verify ID upon collection</li>
+                </ul>
+              </div>
+            </div>
+            <div class="footer">
+              <p>Shreeji E-commerce System</p>
+            </div>
+          </div>
+        </body>
+      </html>
+    `;
+  }
+
+  private generateCashOnPickupEmailText(data: CashOnPickupEmailData): string {
+    const pickupDate = new Date(data.pickupDetails.preferredPickupDate).toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+
+    return `
+🛒 New Cash on Pickup Order: ${data.orderNumber}
+
+⚠️ ACTION REQUIRED: Please prepare this order for pickup and notify the customer when ready.
+
+CUSTOMER INFORMATION
+Name: ${data.customerName}
+Email: ${data.customerEmail}
+${data.customerPhone ? `Phone: ${data.customerPhone}\n` : ''}Order Total: ${data.currency} ${data.totalAmount.toFixed(2)}
+
+PICKUP SCHEDULE
+Preferred Date: ${pickupDate}
+Preferred Time: ${data.pickupDetails.preferredPickupTime}
+
+COLLECTION DETAILS
+${data.pickupDetails.collectingPersonName ? `
+Collecting Person: ${data.pickupDetails.collectingPersonName}
+Phone: ${data.pickupDetails.collectingPersonPhone || 'N/A'}
+Relationship: ${data.pickupDetails.collectingPersonRelationship || 'N/A'}
+` : `
+Collecting Person: ${data.customerName} (Customer)
+`}ID Type: ${data.pickupDetails.idType.toUpperCase()}
+ID Number: ${data.pickupDetails.idNumber}
+${data.pickupDetails.vehicleInfo ? `Vehicle Info: ${data.pickupDetails.vehicleInfo}\n` : ''}
+
+ORDER ITEMS
+${data.orderItems.map(item => `${item.productName} - Qty: ${item.quantity} × ${data.currency} ${item.price.toFixed(2)}`).join('\n')}
+
+${data.pickupDetails.specialInstructions ? `\nSPECIAL INSTRUCTIONS\n${data.pickupDetails.specialInstructions}\n` : ''}
+
+✅ PREPARATION CHECKLIST:
+- Verify all items are in stock and ready
+- Prepare order for pickup
+- Notify customer when order is ready
+- Have exact change ready (${data.currency} ${data.totalAmount.toFixed(2)})
+- Verify ID upon collection
+
+Shreeji E-commerce System
+    `.trim();
   }
 
   private generateBankTransferEmailHtml(data: BankTransferEmailData, deadline: Date): string {

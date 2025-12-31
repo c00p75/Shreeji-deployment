@@ -1236,7 +1236,10 @@ export default function InventoryManagement() {
                               brand: product.brand,
                               category: product.category,
                               price: variant.price || product.price,
-                              images: (variant.images || product.images).map(img => ({
+                              images: ((variant.images && Array.isArray(variant.images) && variant.images.length > 0) 
+                                ? variant.images 
+                                : product.images || []
+                              ).map(img => ({
                                 url: img.url,
                                 alt: img.alt || product.name,
                                 isMain: (img as any).isMain,

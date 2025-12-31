@@ -59,6 +59,31 @@ export class CheckoutService {
 
     await this.ordersService.addOrderItems(order.id, cart.items);
 
+    // For cash on pickup, update order with pickup details and send notification
+    if (payload.paymentMethod === 'cash_on_pickup' && payload.pickupDetails) {
+      await this.ordersService.updateOrderWithPickupDetails(order.id, payload.pickupDetails);
+
+      // Prepare order items for email
+      const orderItems = cart.items.map(item => ({
+        productName: item.productSnapshot.name,
+        quantity: item.quantity,
+        price: item.unitPrice,
+      }));
+
+      // Send email notification to team
+      await this.emailService.sendCashOnPickupNotification({
+        orderNumber,
+        orderId: order.id,
+        customerName: `${payload.customer.firstName} ${payload.customer.lastName}`,
+        customerEmail: payload.customer.email,
+        customerPhone: payload.customer.phone,
+        totalAmount: totals.totalAmount,
+        currency: totals.currency,
+        pickupDetails: payload.pickupDetails,
+        orderItems,
+      });
+    }
+
     const paymentResult = await this.paymentGateway.createIntent({
       amount: totals.totalAmount,
       currency: totals.currency,

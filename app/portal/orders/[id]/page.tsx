@@ -494,6 +494,98 @@ export default function OrderDetailsPage() {
               </div>
             )}
 
+            {/* Pickup Details Section */}
+            {order.preferredPickupDate && (
+              <div className="mb-6 border-t border-gray-200 pt-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                  <Package className="h-5 w-5" />
+                  Pickup Collection Details
+                </h2>
+                <div className="p-4 bg-amber-50 border-2 border-amber-200 rounded-lg space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm font-medium text-gray-700">Preferred Pickup Date</p>
+                      <p className="text-sm text-gray-900 font-semibold mt-1">
+                        {new Date(order.preferredPickupDate).toLocaleDateString('en-US', {
+                          weekday: 'long',
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                        })}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-700">Preferred Pickup Time</p>
+                      <p className="text-sm text-gray-900 font-semibold mt-1">
+                        {order.preferredPickupTime || 'N/A'}
+                      </p>
+                    </div>
+                  </div>
+
+                  {(order.collectingPersonName || order.collectingPersonPhone) && (
+                    <div className="border-t border-amber-200 pt-4">
+                      <p className="text-sm font-medium text-gray-700 mb-2">Person Collecting</p>
+                      <div className="space-y-1">
+                        {order.collectingPersonName && (
+                          <p className="text-sm text-gray-900">
+                            <span className="font-medium">Name:</span> {order.collectingPersonName}
+                          </p>
+                        )}
+                        {order.collectingPersonPhone && (
+                          <p className="text-sm text-gray-900">
+                            <span className="font-medium">Phone:</span> {order.collectingPersonPhone}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="border-t border-amber-200 pt-4">
+                    <p className="text-sm font-medium text-gray-700 mb-2">ID Verification Required</p>
+                    <div className="space-y-1">
+                      {order.idType && (
+                        <p className="text-sm text-gray-900">
+                          <span className="font-medium">ID Type:</span> {order.idType.toUpperCase().replace('_', ' ')}
+                        </p>
+                      )}
+                      {order.idNumber && (
+                        <p className="text-sm text-gray-900">
+                          <span className="font-medium">ID Number:</span> {order.idNumber}
+                        </p>
+                      )}
+                    </div>
+                    <p className="text-xs text-amber-700 mt-2">
+                      ⚠️ Please bring a valid ID matching the details above when collecting your order.
+                    </p>
+                  </div>
+
+                  {order.vehicleInfo && (
+                    <div className="border-t border-amber-200 pt-4">
+                      <p className="text-sm font-medium text-gray-700 mb-1">Vehicle Information</p>
+                      <p className="text-sm text-gray-900">{order.vehicleInfo}</p>
+                    </div>
+                  )}
+
+                  {order.pickupSpecialInstructions && (
+                    <div className="border-t border-amber-200 pt-4">
+                      <p className="text-sm font-medium text-gray-700 mb-1">Special Instructions</p>
+                      <p className="text-sm text-gray-900 whitespace-pre-wrap">{order.pickupSpecialInstructions}</p>
+                    </div>
+                  )}
+
+                  <div className="border-t border-amber-200 pt-4 bg-amber-100 p-3 rounded">
+                    <p className="text-sm font-semibold text-amber-900 mb-2">Important Reminders:</p>
+                    <ul className="list-disc list-inside space-y-1 text-xs text-amber-800">
+                      <li>Please bring a valid ID matching the details above</li>
+                      <li>Have the exact cash amount ready (we may not have change)</li>
+                      <li>Arrive during your selected time slot</li>
+                      <li>We'll notify you when your order is ready for pickup</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Order Summary */}
             <div className="border-t border-gray-200 pt-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
