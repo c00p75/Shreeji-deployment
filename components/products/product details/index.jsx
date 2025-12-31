@@ -178,16 +178,6 @@ const ProductDetails = ({product, previewMode = false}) => {
 
           {product['specs'] && (
             <div className='relative'>
-              <div className='fadeUp fadeUp1' />
-              <div className='fadeUp fadeUp2' />
-              <div className='fadeUp fadeUp3' />
-              <div className='fadeUp fadeUp4' />
-              <div className='fadeUp fadeUp5' />
-              <div className='fadeDown fadeDown1' />
-              <div className='fadeDown fadeDown2' />
-              <div className='fadeDown fadeDown3' />
-              <div className='fadeDown fadeDown4' />
-              <div className='fadeDown fadeDown5' />
               <ul className='scroll-container text-xl flex flex-col gap-2' style={{ minHeight: 'fit-content' }}>                          
                 {Object.entries(product.specs).map(([key, value]) => (
                   <li key={key}>

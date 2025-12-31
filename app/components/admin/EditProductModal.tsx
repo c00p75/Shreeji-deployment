@@ -724,6 +724,9 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
   // Track last toast to prevent duplicates
   const lastToastRef = useRef<{ id: string; message: string } | null>(null);
   
+  // Store original product data to detect unsaved changes
+  const originalProductRef = useRef<Product | null>(null);
+  
   // Helper function to show toast without duplicates
   const showToast = (type: 'success' | 'error', message: string, options?: { duration?: number }) => {
     // If the message matches the last toast, dismiss it first
@@ -780,6 +783,11 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
 
   useEffect(() => {
     if (product && isOpen) {
+      console.log('EditProductModal - Product received:', product);
+      console.log('EditProductModal - basePrice:', (product as any).basePrice);
+      console.log('EditProductModal - costPrice:', (product as any).costPrice);
+      console.log('EditProductModal - Full product keys:', Object.keys(product));
+      
       const processedImages = processProductImages(product);
 
       // Handle brand - if it's an object (relation), extract the ID
@@ -813,7 +821,9 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
       }
 
       // Calculate discount percent from existing prices
-      const sellingPrice = parseFloat(String(product.price || 0).replace(/[^0-9.]/g, ''));
+      // Check for both price and sellingPrice (API might use either)
+      const priceValue = (product as any).price ?? (product as any).sellingPrice ?? 0;
+      const sellingPrice = parseFloat(String(priceValue).replace(/[^0-9.]/g, ''));
       const discountPrice = product.discountedPrice ? parseFloat(String(product.discountedPrice).replace(/[^0-9.]/g, '')) : 0;
       const calculatedDiscountPercent = sellingPrice > 0 && discountPrice > 0 
         ? ((sellingPrice - discountPrice) / sellingPrice) * 100 
@@ -828,20 +838,44 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
         }
       }
 
-      setFormData({
-        ...product,
+      // Handle dimensions - check both cases
+      const dimensionsValue = (product as any).Dimensions ?? (product as any).dimensions ?? { length: 0, width: 0, height: 0, unit: 'cm' };
+
+      // Destructure to exclude sellingPrice if it exists (we'll use price instead)
+      const { sellingPrice: _, ...productWithoutSellingPrice } = product as any;
+      
+      const initialFormData = {
+        ...productWithoutSellingPrice,
+        // Map sellingPrice to price if needed
+        price: priceValue,
         brand: brandValue,
         category: categoryValue,
         subcategory: subcategoryValue,
         specs: product.specs || {},
-        Dimensions: product.Dimensions || { length: 0, width: 0, height: 0, unit: 'cm' },
-        SKU: product.SKU || `SKU-${Date.now()}`,
+        Dimensions: dimensionsValue,
+        SKU: (product as any).SKU ?? (product as any).sku ?? `SKU-${Date.now()}`,
         stockQuantity: product.stockQuantity || 0,
-        basePrice: (product as any).basePrice !== undefined && (product as any).basePrice !== null 
-          ? (product as any).basePrice 
-          : ((product as any).basePrice !== undefined && (product as any).basePrice !== null 
-            ? (product as any).basePrice 
-            : 0),
+        basePrice: (() => {
+          // Try multiple possible locations for basePrice
+          const basePriceValue = (product as any).basePrice ?? 
+                                (product as any).costPrice ?? 
+                                (product as any).data?.basePrice ?? 
+                                (product as any).data?.costPrice ??
+                                (product as any).attributes?.basePrice ??
+                                (product as any).attributes?.costPrice;
+          
+          // Convert to number, handling string values
+          if (basePriceValue !== undefined && basePriceValue !== null) {
+            const numValue = typeof basePriceValue === 'string' 
+              ? parseFloat(basePriceValue.replace(/[^0-9.]/g, '')) 
+              : Number(basePriceValue);
+            const result = isNaN(numValue) ? 0 : numValue;
+            console.log('EditProductModal - Extracted basePrice:', result, 'from value:', basePriceValue);
+            return result;
+          }
+          console.log('EditProductModal - No basePrice found, defaulting to 0');
+          return 0;
+        })(),
         images: processedImages,
         discountedPrice: product.discountedPrice !== undefined && product.discountedPrice !== null 
           ? String(product.discountedPrice) 
@@ -857,7 +891,11 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
         metaKeywords: (product as any).metaKeywords || '',
         ogImage: (product as any).ogImage || '',
         schemaMarkup: (product as any).schemaMarkup || undefined,
-      });
+      };
+
+      setFormData(initialFormData);
+      // Store original product data for comparison
+      originalProductRef.current = JSON.parse(JSON.stringify(initialFormData));
       setErrors({});
       // Find the main image index or default to 0
       const mainIndex = processedImages.findIndex(img => img.isMain) ?? 0;
@@ -2108,6 +2146,119 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
     }
   };
 
+  // Check if there are unsaved changes
+  const hasUnsavedChanges = (): boolean => {
+    if (!originalProductRef.current) {
+      return false;
+    }
+    
+    const original = originalProductRef.current;
+    const current = formData;
+    
+    // Deep comparison of key fields
+    const compareFields = [
+      'name', 'slug', 'category', 'subcategory', 'brand', 'price', 'discountedPrice',
+      'tagline', 'description', 'isActive', 'SKU', 'stockQuantity', 'minStockLevel',
+      'maxStockLevel', 'stockStatus', 'basePrice', 'taxRate', 'discountPercent',
+      'weight', 'color', 'condition', 'warrantyPeriod', 'metaTitle', 'metaDescription',
+      'metaKeywords', 'ogImage'
+    ];
+    
+    // Check simple fields
+    for (const field of compareFields) {
+      const originalValue = original[field as keyof Product];
+      const currentValue = current[field as keyof Product];
+      
+      // Normalize values for comparison (handle string/number mismatches)
+      let normalizedOriginal = originalValue;
+      let normalizedCurrent = currentValue;
+      
+      // For price and discountedPrice, normalize to string for comparison
+      if (field === 'price' || field === 'discountedPrice') {
+        normalizedOriginal = originalValue !== undefined && originalValue !== null ? String(originalValue) : '';
+        normalizedCurrent = currentValue !== undefined && currentValue !== null ? String(currentValue) : '';
+      }
+      
+      // For numeric fields, normalize to numbers for comparison (handle string numbers)
+      if (['basePrice', 'taxRate', 'discountPercent', 'stockQuantity', 'minStockLevel', 'maxStockLevel', 'weight'].includes(field)) {
+        const origNum = typeof normalizedOriginal === 'string' ? parseFloat(normalizedOriginal) : Number(normalizedOriginal || 0);
+        const currNum = typeof normalizedCurrent === 'string' ? parseFloat(normalizedCurrent) : Number(normalizedCurrent || 0);
+        normalizedOriginal = isNaN(origNum) ? 0 : origNum;
+        normalizedCurrent = isNaN(currNum) ? 0 : currNum;
+      }
+      
+      // For boolean fields, normalize to boolean
+      if (field === 'isActive') {
+        normalizedOriginal = Boolean(originalValue);
+        normalizedCurrent = Boolean(currentValue);
+      }
+      
+      // For string fields, normalize empty/null/undefined to empty string
+      if (['name', 'slug', 'tagline', 'description', 'SKU', 'stockStatus', 'color', 'condition', 'warrantyPeriod', 'metaTitle', 'metaDescription', 'metaKeywords', 'ogImage'].includes(field)) {
+        normalizedOriginal = originalValue !== undefined && originalValue !== null ? String(originalValue) : '';
+        normalizedCurrent = currentValue !== undefined && currentValue !== null ? String(currentValue) : '';
+      }
+      
+      // For category, subcategory, and brand, normalize to string for comparison
+      if (['category', 'subcategory', 'brand'].includes(field)) {
+        normalizedOriginal = originalValue !== undefined && originalValue !== null ? String(originalValue) : '';
+        normalizedCurrent = currentValue !== undefined && currentValue !== null ? String(currentValue) : '';
+      }
+      
+      const isDifferent = normalizedOriginal !== normalizedCurrent;
+      
+      if (isDifferent) {
+        return true;
+      }
+    }
+    
+    // Check Dimensions
+    if (JSON.stringify(original.Dimensions) !== JSON.stringify(current.Dimensions)) {
+      return true;
+    }
+    
+    // Check specs
+    if (JSON.stringify(original.specs) !== JSON.stringify(current.specs)) {
+      return true;
+    }
+    
+    // Check attributes
+    if (JSON.stringify(original.attributes) !== JSON.stringify(current.attributes)) {
+      return true;
+    }
+    
+    // Check images (compare URLs and isMain flags)
+    if (original.images.length !== current.images.length) {
+      return true;
+    }
+    for (let i = 0; i < original.images.length; i++) {
+      if (original.images[i].url !== current.images[i]?.url ||
+          original.images[i].isMain !== current.images[i]?.isMain) {
+        return true;
+      }
+    }
+    
+    // Check schemaMarkup
+    if (JSON.stringify(original.schemaMarkup) !== JSON.stringify(current.schemaMarkup)) {
+      return true;
+    }
+    
+    return false;
+  };
+
+  // Handle modal close with unsaved changes check
+  const handleClose = () => {
+    if (hasUnsavedChanges()) {
+      if (confirm('You have unsaved changes. Are you sure you want to close? All unsaved changes will be lost.')) {
+        originalProductRef.current = null;
+        onClose();
+      }
+    } else {
+      originalProductRef.current = null;
+      onClose();
+    }
+  };
+
   const handleDeleteProduct = async () => {
     if (!product?.id) {
       showToast('error', 'Product ID is missing. Cannot delete.');
@@ -2117,6 +2268,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
     try {
       setDeleting(true);
       await onDelete(product.id);
+      originalProductRef.current = null;
       onClose();
       showToast('success', 'Product deleted');
     } catch (error: any) {
@@ -2192,6 +2344,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
 
       await onSave(updatedProduct);
       showToast('success', 'Product saved successfully!');
+      originalProductRef.current = null;
       onClose();
     } catch (error: any) {
       console.error('Error saving product:', error);
@@ -2216,7 +2369,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
   if (!isOpen || !product) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-[0.93]" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-[0.93]" onClick={handleClose}>
       <div 
         className="bg-white rounded-xl shadow-2xl w-[95%] md:w-[85%] lg:w-[90%] h-[95%] md:h-[85%] flex flex-col md:flex-row relative overflow-hidden"
         onClick={(e) => e.stopPropagation()}
@@ -2224,7 +2377,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
         {/* Close button - visible on mobile and desktop */}
         <button
           type="button"
-          onClick={onClose}
+          onClick={handleClose}
           className="absolute top-3 right-3 z-10 p-2 rounded-full bg-[whitesmoke] text-black hover:bg-gray-200"
         >
           <XMarkIcon className="h-6 w-6" />
@@ -2237,11 +2390,11 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
             background: 'radial-gradient(#a78d55, #87703f, #87703f, #68542c)'
           }}
         >
-          <div className="space-y-6 w-full max-w-md">
+          <div className="space-y-6 w-full max-w-md h-full">
                   {/* Upload Img Card */}
-                  <div className="rounded-lg shadow-sm p-6">
+                  <div className="rounded-lg shadow-sm p-6 h-full">
                     {/* Main Product Image */}
-                    <div className="mb-4">
+                    <div className="mb-4 h-[80%] flex items-center justify-center">
                       {mainImageUrl ? (
                         <div className="relative w-full rounded-lg overflow-hidden group">
                           <img
@@ -2270,7 +2423,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
                     </div>
 
                     {/* Image Thumbnails */}
-                    <div className="grid grid-cols-4 gap-2">
+                    <div className="grid grid-cols-4 gap-2 h-[20%]">
                       {displayImages.map((image, index) => (
                         <div
                           key={index}
@@ -2699,7 +2852,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
                             <input
                               id="field-product-cost-price"
                               type="number"
-                              value={formData.basePrice || ''}
+                              value={formData.basePrice !== undefined && formData.basePrice !== null ? formData.basePrice : ''}
                               onChange={(e) => {
                                 const value = parseFloat(e.target.value) || 0;
                                 handleInputChange('basePrice', value);

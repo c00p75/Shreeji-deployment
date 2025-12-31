@@ -172,7 +172,7 @@ function RecommendationSection({ title, products }: RecommendationSectionProps) 
   return (
     <div className="relative">
         <div className="flex justify-between items-center mb-4 -mt-10">
-         <h3 className="text-5xl font-bold px-5 md:px-10 bg-gradient-to-r from-[#ffffff] via-[#ccbb9c] to-[#ffffff] text-transparent bg-clip-text shimmer-text">
+         <h3 className="text-5xl font-bold px-5 md:px-10 bg-gradient-to-r from-[#ffffff] via-[#d7cfc0] to-[#ffffff] text-transparent bg-clip-text shimmer-text">
            {title}
          </h3>
         <div className="flex gap-2 px-5 md:px-10">

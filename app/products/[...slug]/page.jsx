@@ -63,7 +63,7 @@ const ProductPage = async ({ params }) => {
   if (product && productDetails) {
     return (
       <>
-        <section className="products-main-section product-details-page relative z-[1] h-fit min-h-screen gap-5 pb-[2rem] pl-1 pr-1 text-white md:pr-8">
+        <section style={{ backgroundImage: `url(/backgrounds/product-details-bg.png)`, backgroundSize: 'cover', backgroundPosition: 'center' }} className="products-main-section product-details-page relative z-[1] h-fit min-h-screen gap-5 pl-1 pr-1 text-white md:pr-8 pb-[5rem]">
           <SideGrid />
           <section className="main-grid relative flex flex-[3] flex-col gap-5 overflow-visible">
             <Breadcrumbs breadcrumbs={[categoryName, subcategoryName, productName]} />
@@ -74,7 +74,7 @@ const ProductPage = async ({ params }) => {
           </section>
         </section>
         {productDetails?.id && (
-          <div className="w-full py-10 bg-[var(--shreeji-primary)]">
+          <div className="w-full pt-10 pb-[5rem] bg-[var(--shreeji-primary)]">
             <ProductRecommendationsWrapper productId={productDetails.id} />
           </div>
         )}

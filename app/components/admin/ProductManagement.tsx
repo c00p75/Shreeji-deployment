@@ -17,6 +17,7 @@ import EditProductModal from './EditProductModal'
 import AddProductModal from './AddProductModal'
 import toast from 'react-hot-toast'
 import { ProductGridSkeleton, TableSkeleton } from '@/app/components/ui/Skeletons'
+import { currencyFormatter } from '@/app/components/checkout/currency-formatter'
 
 interface Product {
   id: number
@@ -339,9 +340,106 @@ export default function ProductManagement() {
     ))
   }
 
-  const handleEditProduct = (product: Product) => {
-    setEditingProduct(product)
-    setShowEditModal(true)
+  const handleEditProduct = async (product: Product) => {
+    try {
+      // Fetch full product details to get all fields including basePrice, taxRate, etc.
+      const productId = product.documentId || product.id;
+      if (productId) {
+        const fullProductResponse = await api.getProduct(productId);
+        console.log('Full product data fetched:', fullProductResponse);
+        
+        // Handle NestJS response structure: { data: {...} } or direct object
+        const productData = fullProductResponse.data || fullProductResponse;
+        
+        // Process images
+        const images = processProductImages(productData);
+        
+        // Extract brand (handle both object and ID)
+        let brandValue: string | number = product.brand;
+        if (productData.brand) {
+          if (typeof productData.brand === 'object' && productData.brand !== null) {
+            brandValue = productData.brand.id || productData.brand.name || product.brand;
+          } else {
+            brandValue = productData.brand;
+          }
+        }
+        
+        // Extract category
+        let categoryValue: string | number = product.category;
+        if (productData.category) {
+          if (typeof productData.category === 'object' && productData.category !== null) {
+            categoryValue = productData.category.id || productData.category.name || product.category;
+          } else {
+            categoryValue = productData.category;
+          }
+        }
+        
+        // Extract subcategory
+        let subcategoryValue: string | number | null | undefined = product.subcategory;
+        if (productData.subcategory !== undefined) {
+          if (typeof productData.subcategory === 'object' && productData.subcategory !== null) {
+            subcategoryValue = productData.subcategory.id || productData.subcategory.name || product.subcategory;
+          } else {
+            subcategoryValue = productData.subcategory;
+          }
+        }
+        
+        // Build full product object with all fields
+        const fullProduct: any = {
+          id: product.id,
+          documentId: product.documentId || productId.toString(),
+          name: productData.name || product.name,
+          slug: productData.slug || product.slug,
+          category: categoryValue,
+          subcategory: subcategoryValue,
+          brand: brandValue,
+          price: productData.price || productData.sellingPrice || product.price,
+          discountedPrice: productData.discountedPrice !== undefined && productData.discountedPrice !== null 
+            ? String(productData.discountedPrice) 
+            : product.discountedPrice,
+          tagline: productData.tagline ?? product.tagline,
+          description: productData.description ?? product.description,
+          specs: productData.specs ?? product.specs,
+          isActive: productData.isActive ?? product.isActive,
+          images: images,
+          SKU: productData.SKU || productData.sku || product.SKU,
+          stockQuantity: productData.stockQuantity ?? product.stockQuantity,
+          minStockLevel: productData.minStockLevel ?? product.minStockLevel,
+          maxStockLevel: productData.maxStockLevel ?? product.maxStockLevel,
+          stockStatus: productData.stockStatus ?? product.stockStatus,
+          basePrice: productData.basePrice ?? productData.costPrice ?? product.basePrice,
+          taxRate: productData.taxRate ?? product.taxRate,
+          discountPercent: productData.discountPercent ?? product.discountPercent,
+          weight: productData.weight ?? product.weight,
+          Dimensions: productData.Dimensions || productData.dimensions || product.Dimensions,
+          // Include additional fields that EditProductModal expects
+          color: productData.color,
+          condition: productData.condition,
+          warrantyPeriod: productData.warrantyPeriod,
+          attributes: productData.attributes,
+          metaTitle: productData.metaTitle,
+          metaDescription: productData.metaDescription,
+          metaKeywords: productData.metaKeywords,
+          ogImage: productData.ogImage,
+          schemaMarkup: productData.schemaMarkup,
+        };
+        
+        console.log('Full product prepared for edit:', fullProduct);
+        setEditingProduct(fullProduct);
+        setShowEditModal(true);
+      } else {
+        // Fallback to using the product from list if no ID
+        console.warn('No product ID available, using partial product data');
+        setEditingProduct(product);
+        setShowEditModal(true);
+      }
+    } catch (error: any) {
+      console.error('Error fetching full product details:', error);
+      toast.error('Failed to load complete product details. Some fields may be missing.');
+      // Fallback to using the product from list
+      setEditingProduct(product);
+      setShowEditModal(true);
+    }
   }
 
   const handleSaveProduct = async (updatedProduct: Product) => {
@@ -805,9 +903,19 @@ function ProductCard({ product, onToggleActive, onEdit }: {
     ? product.images[0] 
     : { url: 'https://via.placeholder.com/300x200?text=No+Image', alt: product.name };
   
+  // Format prices
+  const price = typeof product.price === 'string' 
+    ? parseFloat(product.price.replace(/[^0-9.]/g, '')) || 0
+    : Number(product.price) || 0;
+  const discountedPrice = product.discountedPrice
+    ? (typeof product.discountedPrice === 'string'
+      ? parseFloat(product.discountedPrice.replace(/[^0-9.]/g, '')) || 0
+      : Number(product.discountedPrice) || 0)
+    : null;
+  
   return (
     <div
-      className="card overflow-hidden cursor-pointer"
+      className="card overflow-hidden cursor-pointer rounded-[0.5rem]"
       onClick={() => onEdit(product)}
       role="button"
       tabIndex={0}
@@ -839,9 +947,9 @@ function ProductCard({ product, onToggleActive, onEdit }: {
         <p className="text-sm text-gray-600 mb-2">{product.brand} • {product.category}</p>
         <div className="flex items-center justify-between mb-4">
           <div>
-            <span className="text-lg font-semibold text-gray-900">{product.price}</span>
-            {product.discountedPrice && (
-              <span className="ml-2 text-sm text-gray-500 line-through">{product.discountedPrice}</span>
+            <span className="text-lg font-semibold text-gray-900">{currencyFormatter(price)}</span>
+            {discountedPrice && discountedPrice > 0 && (
+              <span className="ml-2 text-sm text-gray-500 line-through">{currencyFormatter(discountedPrice)}</span>
             )}
           </div>
         </div>
@@ -875,6 +983,16 @@ function ProductTable({ products, onToggleActive, onEdit }: {
               const mainImage = product.images && product.images.length > 0 
                 ? product.images[0] 
                 : { url: 'https://via.placeholder.com/50x50?text=No+Image', alt: product.name };
+              
+              // Format prices
+              const price = typeof product.price === 'string' 
+                ? parseFloat(product.price.replace(/[^0-9.]/g, '')) || 0
+                : Number(product.price) || 0;
+              const discountedPrice = product.discountedPrice
+                ? (typeof product.discountedPrice === 'string'
+                  ? parseFloat(product.discountedPrice.replace(/[^0-9.]/g, '')) || 0
+                  : Number(product.discountedPrice) || 0)
+                : null;
               
               return (
                 <tr 
@@ -911,9 +1029,9 @@ function ProductTable({ products, onToggleActive, onEdit }: {
                 <td className="table-cell">{product.brand}</td>
                 <td className="table-cell">
                   <div>
-                    <p className="font-medium">{product.price}</p>
-                    {product.discountedPrice && (
-                      <p className="text-sm text-gray-500 line-through">{product.discountedPrice}</p>
+                    <p className="font-medium">{currencyFormatter(price)}</p>
+                    {discountedPrice && discountedPrice > 0 && (
+                      <p className="text-sm text-gray-500 line-through">{currencyFormatter(discountedPrice)}</p>
                     )}
                   </div>
                 </td>
