@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import clientApi from '@/app/lib/client/api'
 import toast from 'react-hot-toast'
+import { currencyFormatter } from '@/app/components/checkout/currency-formatter'
 
 interface ProductVariant {
   id: number

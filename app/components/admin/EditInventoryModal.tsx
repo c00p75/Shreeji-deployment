@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { XMarkIcon, ExclamationTriangleIcon, PlusIcon, MinusIcon } from '@heroicons/react/24/outline';
+import { useState, useEffect, useRef } from 'react';
+import { XMarkIcon, ExclamationTriangleIcon, PlusIcon, MinusIcon, PhotoIcon } from '@heroicons/react/24/outline';
 import api from '@/app/lib/admin/api';
 import toast from 'react-hot-toast';
 
@@ -54,6 +54,10 @@ export default function EditInventoryModal({
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+  const [mainImageIndex, setMainImageIndex] = useState<number>(0);
+  
+  // Store original form data to detect unsaved changes
+  const originalFormDataRef = useRef<typeof formData | null>(null);
 
   useEffect(() => {
     if (product && isOpen) {
@@ -81,6 +85,24 @@ export default function EditInventoryModal({
         adjustWarehouseId: defaultWarehouseId,
       });
       setErrors({});
+      
+      // Store original form data for unsaved changes detection
+      originalFormDataRef.current = JSON.parse(JSON.stringify({
+        stockQuantity: product.stockQuantity || 0,
+        minStockLevel: product.minStockLevel || 0,
+        maxStockLevel: product.maxStockLevel || 0,
+        stockStatus: product.stockStatus && product.stockStatus.trim() ? product.stockStatus : 'in-stock',
+        basePrice: product.basePrice || 0,
+        weight: product.weight || 0,
+      }));
+      
+      // Find the main image index or default to 0
+      if (product.images && product.images.length > 0) {
+        const mainIndex = product.images.findIndex(img => img.isMain) ?? 0;
+        setMainImageIndex(mainIndex >= 0 ? mainIndex : 0);
+      } else {
+        setMainImageIndex(0);
+      }
     }
   }, [product, isOpen, warehouseId, warehouses]);
 
@@ -139,6 +161,71 @@ export default function EditInventoryModal({
     return Object.keys(newErrors).length === 0;
   };
 
+  // Check if there are unsaved changes
+  const hasUnsavedChanges = (): boolean => {
+    if (!originalFormDataRef.current) {
+      return false;
+    }
+    
+    const original = originalFormDataRef.current;
+    const current = formData;
+    
+    // Fields to compare (only persistent fields, not adjustment fields)
+    const compareFields = [
+      'stockQuantity',
+      'minStockLevel',
+      'maxStockLevel',
+      'stockStatus',
+      'basePrice',
+      'weight'
+    ];
+    
+    // Check each field
+    for (const field of compareFields) {
+      const originalValue = original[field as keyof typeof original];
+      const currentValue = current[field as keyof typeof current];
+      
+      // Normalize values for comparison
+      let normalizedOriginal = originalValue;
+      let normalizedCurrent = currentValue;
+      
+      // For numeric fields, normalize to numbers
+      if (['stockQuantity', 'minStockLevel', 'maxStockLevel', 'basePrice', 'weight'].includes(field)) {
+        const origNum = typeof normalizedOriginal === 'string' ? parseFloat(normalizedOriginal) : Number(normalizedOriginal || 0);
+        const currNum = typeof normalizedCurrent === 'string' ? parseFloat(normalizedCurrent) : Number(normalizedCurrent || 0);
+        normalizedOriginal = isNaN(origNum) ? 0 : origNum;
+        normalizedCurrent = isNaN(currNum) ? 0 : currNum;
+      }
+      
+      // For string fields, normalize empty/null/undefined to empty string
+      if (field === 'stockStatus') {
+        normalizedOriginal = originalValue !== undefined && originalValue !== null ? String(originalValue) : '';
+        normalizedCurrent = currentValue !== undefined && currentValue !== null ? String(currentValue) : '';
+      }
+      
+      const isDifferent = normalizedOriginal !== normalizedCurrent;
+      
+      if (isDifferent) {
+        return true;
+      }
+    }
+    
+    return false;
+  };
+
+  // Handle modal close with unsaved changes check
+  const handleClose = () => {
+    if (hasUnsavedChanges()) {
+      if (confirm('You have unsaved changes. Are you sure you want to close? All unsaved changes will be lost.')) {
+        originalFormDataRef.current = null;
+        onClose();
+      }
+    } else {
+      originalFormDataRef.current = null;
+      onClose();
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -192,6 +279,8 @@ export default function EditInventoryModal({
         toast.success('Inventory updated successfully');
       }
 
+      // Clear ref after successful save
+      originalFormDataRef.current = null;
       onSave();
       onClose();
     } catch (error: any) {
@@ -205,42 +294,113 @@ export default function EditInventoryModal({
     }
   };
 
+  // Get the main image URL and display images
+  const mainImageUrl = product?.images?.[mainImageIndex]?.url || (product?.images && product.images.length > 0 ? product.images[0]?.url : null);
+  const displayImages = product?.images?.slice(0, 4) || []; // Show max 4 thumbnails
 
   if (!isOpen || !product) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
-      <div className="flex min-h-screen items-center justify-center p-4">
-        {/* Backdrop */}
-        <div
-          className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
-          onClick={onClose}
-        />
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-[0.93]" style={{ marginTop: '0' }} onClick={handleClose}>
+      <div 
+        className="bg-white rounded-xl shadow-2xl w-[95%] md:w-[85%] lg:w-[90%] h-[95%] md:h-[85%] flex flex-col md:flex-row relative overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Close button */}
+        <button
+          type="button"
+          onClick={handleClose}
+          className="absolute top-3 right-3 z-10 p-2 rounded-full bg-[whitesmoke] text-black hover:bg-gray-200"
+        >
+          <XMarkIcon className="h-6 w-6" />
+        </button>
 
-        {/* Modal */}
-        <div className="relative bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl border border-gray-100 w-full sm:max-w-7xl max-h-[90vh] overflow-y-auto">
-          {/* Header */}
-          <div className="flex items-start justify-between px-6 py-5 border-b border-gray-100">
-            <div>
-              <h3 className="text-xl font-semibold text-gray-900 tracking-tight">Adjust Inventory</h3>
-              <p className="mt-1 text-sm text-gray-500">
-                {product.name}{' '}
-                {product.SKU && (
-                  <span className="text-gray-400">· {product.SKU}</span>
+        {/* Left Column - Images with gradient background */}
+        <div 
+          className="flex-2 min-w-[42%] h-full px-8 md:px-16 flex items-center justify-center py-20 md:py-0 relative"
+          style={{
+            background: 'radial-gradient(#a78d55, #87703f, #87703f, #68542c)'
+          }}
+        >
+          <div className="space-y-6 w-full max-w-md h-full">
+            {/* Image Card */}
+            <div className="rounded-lg shadow-sm p-6 h-full">
+              {/* Main Product Image */}
+              <div className="mb-4 h-[80%] flex items-center justify-center">
+                {mainImageUrl ? (
+                  <div className="relative w-full rounded-lg overflow-hidden group">
+                    <img
+                      src={mainImageUrl}
+                      alt={product.images?.[mainImageIndex]?.alt || product.name || "Product image"}
+                      className="w-full h-full object-contain min-h-[15rem]"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src = 'https://via.placeholder.com/400x400?text=No+Image';
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <div className="w-full aspect-square bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center">
+                    <div className="text-center">
+                      <PhotoIcon className="mx-auto h-12 w-12 text-gray-400" />
+                      <p className="mt-2 text-sm text-gray-600">No image available</p>
+                    </div>
+                  </div>
                 )}
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={onClose}
-              className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-white transition"
-            >
-              <XMarkIcon className="h-4 w-4" />
-            </button>
-          </div>
+              </div>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="px-6 py-5">
+              {/* Image Thumbnails */}
+              <div className={`grid gap-2 h-[20%] ${
+                displayImages.length === 1 ? 'grid-cols-1' :
+                displayImages.length === 2 ? 'grid-cols-2' :
+                displayImages.length === 3 ? 'grid-cols-3' :
+                displayImages.length === 4 ? 'grid-cols-4' :
+                displayImages.length === 5 ? 'grid-cols-5' :
+                displayImages.length === 6 ? 'grid-cols-6' :
+                displayImages.length === 7 ? 'grid-cols-7' :
+                displayImages.length === 8 ? 'grid-cols-8' :
+                displayImages.length === 9 ? 'grid-cols-9' :
+                'grid-cols-10'
+
+              }`} style={{ gridTemplateColumns: `repeat(${displayImages.length}, 1fr)` }}>
+                {displayImages.map((image, index) => (
+                  <div
+                    key={index}
+                    onClick={() => setMainImageIndex(index)}
+                    className={`relative aspect-square rounded-lg overflow-hidden border-2 cursor-pointer transition-all ${
+                      index === mainImageIndex
+                        ? 'border-primary-500 ring-2 ring-primary-200'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    {image.url ? (
+                      <img
+                        src={image.url}
+                        alt={image.alt || `Thumbnail ${index + 1}`}
+                        className="w-full h-full object-contain"
+                        onError={(e) => {
+                          (e.currentTarget as HTMLImageElement).src = 'https://via.placeholder.com/100x100?text=Error';
+                        }}
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                        <PhotoIcon className="h-6 w-6 text-gray-400" />
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column - Form with scrolling */}
+        <div className="md:overflow-auto flex-1 p-8">
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <h2 className="text-3xl font-semibold text-center mb-6">
+              Adjust Inventory
+            </h2>
+            
             {errors.submit && (
               <div className="mb-4 rounded-md bg-red-50 p-4">
                 <div className="flex">
@@ -252,44 +412,43 @@ export default function EditInventoryModal({
               </div>
             )}
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Left Column - Product Image */}
-              <div className="lg:sticky lg:top-6 lg:self-start">
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                  {product.images && product.images.length > 0 ? (
-                    <div className="relative w-full bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
-                      <img
-                        src={product.images[0].url}
-                        alt={product.images[0].alt || product.name}
-                        className="w-full h-full object-contain"
-                        onError={(e) => {
-                          (e.currentTarget as HTMLImageElement).src =
-                            'https://via.placeholder.com/400x400?text=No+Image';
-                        }}
-                      />
-                    </div>
-                  ) : (
-                    <div className="w-full aspect-square bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center">
-                      <div className="text-center">
-                        <p className="text-sm text-gray-600">No image available</p>
-                      </div>
-                    </div>
+            <div className="space-y-6">
+              {/* Product Information Card */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h4 className="text-lg font-bold text-gray-900 mb-4">Product Information</h4>
+                <div className="space-y-2">
+                  <p className="text-sm text-gray-600">
+                    <span className="font-medium">Name:</span> {product.name}
+                  </p>
+                  {product.SKU && (
+                    <p className="text-sm text-gray-600">
+                      <span className="font-medium">SKU:</span> {product.SKU}
+                    </p>
+                  )}
+                  {product.brand && (
+                    <p className="text-sm text-gray-600">
+                      <span className="font-medium">Brand:</span> {product.brand}
+                    </p>
+                  )}
+                  {product.category && (
+                    <p className="text-sm text-gray-600">
+                      <span className="font-medium">Category:</span> {product.category}
+                    </p>
                   )}
                 </div>
               </div>
 
-              
-              {/* Stock Adjustment */}
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-4">
-                <div className="flex items-start justify-between">
+              {/* Stock Adjustment Card */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div className="flex items-start justify-between mb-4">
                   <div>
-                    <h3 className="text-base font-semibold text-gray-900">Stock Adjustment</h3>
-                    <p className="text-xs text-gray-500">Adjust quantity and record a reason.</p>
+                    <h4 className="text-lg font-bold text-gray-900">Stock Adjustment</h4>
+                    <p className="text-xs text-gray-500 mt-1">Adjust quantity and record a reason.</p>
                   </div>
                   {onTransfer && (
                     <button
                       type="button"
-                      className="text-sm text-purple-600 hover:text-purple-700"
+                      className="text-sm text-purple-600 hover:text-purple-700 font-medium"
                       onClick={() => onTransfer(product)}
                     >
                       Transfer Stock
@@ -298,7 +457,7 @@ export default function EditInventoryModal({
                 </div>
 
                 {/* Adjustment Type */}
-                <div>
+                <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Adjustment Type</label>
                   <div className="grid grid-cols-3 gap-2">
                     {(['INCREASE', 'DECREASE', 'SET'] as const).map((type) => (
@@ -319,7 +478,7 @@ export default function EditInventoryModal({
                 </div>
 
                 {/* Adjustment Quantity */}
-                <div>
+                <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Adjustment Quantity
                   </label>
@@ -338,51 +497,90 @@ export default function EditInventoryModal({
                         });
                       }
                     }}
-                    className="input-field"
+                    className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                   />
                   {errors.adjustQuantity && (
                     <p className="mt-1 text-sm text-red-600">{errors.adjustQuantity}</p>
                   )}
                 </div>
-                  
-                  {/* Right: Form fields */}
-              <div className="space-y-8">
-              {/* Stock Status - First Field */}
-              <div>
-                <span className="block text-sm font-medium text-gray-700 mb-1">
-                  Stock Status
-                </span>
-                <div className="inline-flex flex-wrap gap-2 rounded-full bg-gray-50 p-1">
-                  {[
-                    { value: 'in-stock', label: 'In Stock' },
-                    { value: 'low-stock', label: 'Low Stock' },
-                    { value: 'out-of-stock', label: 'Out of Stock' },
-                    { value: 'discontinued', label: 'Discontinued' },
-                  ].map((option) => {
-                    const isActive = formData.stockStatus === option.value;
-                    return (
-                      <button
-                        key={option.value}
-                        type="button"
-                        onClick={() => handleInputChange('stockStatus', option.value)}
-                        className={`relative px-4 py-1.5 text-sm font-medium rounded-full border transition-colors ${
-                          isActive
-                            ? 'bg-primary-600 text-white border-primary-600 shadow-sm'
-                            : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-100'
-                        }`}
-                      >
-                        {option.label}
-                      </button>
-                    );
-                  })}
+
+                {/* Warehouse Selection */}
+                {warehouses.length > 0 && (
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Warehouse
+                    </label>
+                    <select
+                      value={formData.adjustWarehouseId || ''}
+                      onChange={(e) =>
+                        handleInputChange('adjustWarehouseId', e.target.value ? parseInt(e.target.value, 10) : null)
+                      }
+                      className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    >
+                      <option value="">Select warehouse</option>
+                      {warehouses.map((wh) => (
+                        <option key={wh.id} value={wh.id}>
+                          {wh.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                {/* Notes */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                  <textarea
+                    className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
+                    rows={3}
+                    value={formData.adjustNotes}
+                    onChange={(e) => handleInputChange('adjustNotes', e.target.value)}
+                    placeholder="Optional notes for this adjustment"
+                  />
                 </div>
-                <p className="mt-1 text-xs text-gray-500">
-                  Status will auto-update based on stock quantity if not manually set
-                </p>
               </div>
 
-              {/* Stock levels */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Stock Status Card */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h4 className="text-lg font-bold text-gray-900 mb-4">Stock Status</h4>
+                <div>
+                  <span className="block text-sm font-medium text-gray-700 mb-2">
+                    Current Status
+                  </span>
+                  <div className="inline-flex flex-wrap gap-2 rounded-full bg-gray-50 p-1">
+                    {[
+                      { value: 'in-stock', label: 'In Stock' },
+                      { value: 'low-stock', label: 'Low Stock' },
+                      { value: 'out-of-stock', label: 'Out of Stock' },
+                      { value: 'discontinued', label: 'Discontinued' },
+                    ].map((option) => {
+                      const isActive = formData.stockStatus === option.value;
+                      return (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() => handleInputChange('stockStatus', option.value)}
+                          className={`relative px-4 py-1.5 text-sm font-medium rounded-full border transition-colors ${
+                            isActive
+                              ? 'bg-primary-600 text-white border-primary-600 shadow-sm'
+                              : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-100'
+                          }`}
+                        >
+                          {option.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <p className="mt-2 text-xs text-gray-500">
+                    Status will auto-update based on stock quantity if not manually set
+                  </p>
+                </div>
+              </div>
+
+              {/* Stock Levels Card */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h4 className="text-lg font-bold text-gray-900 mb-4">Stock Levels</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Stock Quantity */}
                 <div>
                 <label
@@ -515,10 +713,13 @@ export default function EditInventoryModal({
                   Maximum capacity for this product
                 </p>
               </div>
+                </div>
               </div>
 
-              {/* Cost & weight */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Cost & Weight Card */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h4 className="text-lg font-bold text-gray-900 mb-4">Cost & Weight</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Base Price */}
               <div>
                 <label
@@ -607,63 +808,29 @@ export default function EditInventoryModal({
                   <p className="mt-1 text-sm text-red-600">{errors.weight}</p>
                 )}
               </div>
-              </div>
-
-                {/* Warehouse Selection */}
-                {warehouses.length > 0 && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Warehouse
-                    </label>
-                    <select
-                      value={formData.adjustWarehouseId || ''}
-                      onChange={(e) =>
-                        handleInputChange('adjustWarehouseId', e.target.value ? parseInt(e.target.value, 10) : null)
-                      }
-                      className="input-field"
-                    >
-                      {warehouses.map((wh) => (
-                        <option key={wh.id} value={wh.id}>
-                          {wh.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-
-                {/* Notes */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
-                  <textarea
-                    className="input-field"
-                    rows={3}
-                    value={formData.adjustNotes}
-                    onChange={(e) => handleInputChange('adjustNotes', e.target.value)}
-                    placeholder="Optional notes for this adjustment"
-                  />
                 </div>
-
-              </div>
               </div>
             </div>
 
             {/* Footer */}
-            <div className="mt-8 flex items-center justify-end gap-3 border-t border-gray-100 pt-6 bg-white/60">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                disabled={loading}
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-4 py-2 text-sm font-medium text-white bg-primary-600 border border-transparent rounded-md shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50"
-                disabled={loading}
-              >
-                {loading ? 'Saving...' : 'Save Changes'}
-              </button>
+            <div className="sticky bottom-0 z-20 mt-6 flex justify-end">
+              <div className="flex flex-wrap items-center justify-end gap-3 rounded-2xl p-3">
+                <button
+                  type="button"
+                  onClick={handleClose}
+                  className="inline-flex items-center rounded-xl border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-200 focus:ring-offset-2 disabled:opacity-50"
+                  disabled={loading}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="inline-flex items-center rounded-xl bg-primary-600 px-6 py-3 text-sm font-semibold text-white shadow-md shadow-primary-500/40 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+                  disabled={loading}
+                >
+                  {loading ? 'Saving...' : 'Save Changes'}
+                </button>
+              </div>
             </div>
           </form>
         </div>

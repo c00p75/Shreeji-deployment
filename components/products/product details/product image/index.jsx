@@ -36,7 +36,18 @@ const ProductImage = ({images, name, product}) => {
           unoptimized={isExternalUrl(images[0])}
         />        
       </div>
-      <div className='flex gap-7 justify-center mt-3 relative z-[3]'>
+      <div className={`grid gap-2 mt-3 relative z-[3] justify-center ${
+        images.length === 1 ? 'grid-cols-1' :
+        images.length === 2 ? 'grid-cols-2' :
+        images.length === 3 ? 'grid-cols-3' :
+        images.length === 4 ? 'grid-cols-4' :
+        images.length === 5 ? 'grid-cols-5' :
+        images.length === 6 ? 'grid-cols-6' :
+        images.length === 7 ? 'grid-cols-7' :
+        images.length === 8 ? 'grid-cols-8' :
+        images.length === 9 ? 'grid-cols-9' :
+        'grid-cols-10'
+      }`} style={{ gridTemplateColumns: `repeat(${images.length}, 1fr)` }}>
         {images.map((img, index) => (
           <Image
             src={img}

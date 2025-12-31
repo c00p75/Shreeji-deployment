@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { 
   XMarkIcon,
@@ -2060,7 +2060,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
 
   // Get the main image URL for display
   const mainImageUrl = formData.images[mainImageIndex]?.url || (formData.images.length > 0 ? formData.images[0]?.url : null);
-  const displayImages = formData.images.slice(0, 4); // Show max 4 thumbnails
+  const displayImages = formData.images; // Show all thumbnails
 
   const validateForm = (): { isValid: boolean; firstErrorField: string | null; errorMessage: string } => {
     const newErrors: Record<string, string> = {};
@@ -2227,13 +2227,12 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
       return true;
     }
     
-    // Check images (compare URLs and isMain flags)
+    // Check images (compare URLs only, ignore isMain flag for thumbnail selection)
     if (original.images.length !== current.images.length) {
       return true;
     }
     for (let i = 0; i < original.images.length; i++) {
-      if (original.images[i].url !== current.images[i]?.url ||
-          original.images[i].isMain !== current.images[i]?.isMain) {
+      if (original.images[i].url !== current.images[i]?.url) {
         return true;
       }
     }
@@ -2366,6 +2365,20 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
     }
   };
 
+  // Memoized SEO change handler to prevent infinite loops
+  const handleSEOChange = useCallback((seoData: {
+    metaTitle?: string;
+    metaDescription?: string;
+    metaKeywords?: string;
+    ogImage?: string;
+    schemaMarkup?: Record<string, any>;
+  }) => {
+    setFormData((prev) => ({
+      ...prev,
+      ...seoData,
+    }));
+  }, []); // Empty dependency array since setFormData is stable
+
   if (!isOpen || !product) return null;
 
   return (
@@ -2423,46 +2436,64 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
                     </div>
 
                     {/* Image Thumbnails */}
-                    <div className="grid grid-cols-4 gap-2 h-[20%]">
-                      {displayImages.map((image, index) => (
-                        <div
-                          key={index}
-                          onClick={() => setMainImage(index)}
-                          className={`relative aspect-square rounded-lg overflow-hidden border-2 cursor-pointer transition-all ${
-                            index === mainImageIndex
-                              ? 'border-primary-500 ring-2 ring-primary-200'
-                              : 'border-gray-200 hover:border-gray-300'
-                          }`}
-                        >
-                          {image.url ? (
-                            <img
-                              src={image.url}
-                              alt={image.alt || `Thumbnail ${index + 1}`}
-                              className="w-full h-full object-contain"
-                            />
-                          ) : (
-                            <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                              <PhotoIcon className="h-6 w-6 text-gray-400" />
+                    {(() => {
+                      const showAddButton = displayImages.length < 10; // Show add button if less than 10 images
+                      const totalItems = displayImages.length + (showAddButton ? 1 : 0);
+                      
+                      return (
+                        <div className={`grid gap-2 h-[20%] ${
+                          totalItems === 1 ? 'grid-cols-1' :
+                          totalItems === 2 ? 'grid-cols-2' :
+                          totalItems === 3 ? 'grid-cols-3' :
+                          totalItems === 4 ? 'grid-cols-4' :
+                          totalItems === 5 ? 'grid-cols-5' :
+                          totalItems === 6 ? 'grid-cols-6' :
+                          totalItems === 7 ? 'grid-cols-7' :
+                          totalItems === 8 ? 'grid-cols-8' :
+                          totalItems === 9 ? 'grid-cols-9' :
+                          'grid-cols-10'
+                        }`} style={{ gridTemplateColumns: `repeat(${totalItems}, 1fr)` }}>
+                          {displayImages.map((image, index) => (
+                            <div
+                              key={index}
+                              onClick={() => setMainImage(index)}
+                              className={`relative aspect-square rounded-lg overflow-hidden border-2 cursor-pointer transition-all ${
+                                index === mainImageIndex
+                                  ? 'border-primary-500 ring-2 ring-primary-200'
+                                  : 'border-gray-200 hover:border-gray-300'
+                              }`}
+                            >
+                              {image.url ? (
+                                <img
+                                  src={image.url}
+                                  alt={image.alt || `Thumbnail ${index + 1}`}
+                                  className="w-full h-full object-contain"
+                                />
+                              ) : (
+                                <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                                  <PhotoIcon className="h-6 w-6 text-gray-400" />
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                          
+                          {/* Add More Image Button */}
+                          {showAddButton && (
+                            <div
+                              onClick={addImage}
+                              className="group relative aspect-square rounded-lg overflow-hidden border-2 border-dashed border-gray-300 cursor-pointer hover:border-primary-500 hover:bg-primary-50 transition-all flex items-center justify-center"
+                            >
+                              <PlusIcon className="h-6 w-6 text-primary-600" />
+                              {/* Tooltip */}
+                              <span className="pointer-events-none absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1.5 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50">
+                                Add image
+                                <span className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900"></span>
+                              </span>
                             </div>
                           )}
                         </div>
-                      ))}
-                      
-                      {/* Add More Image Button */}
-                      {displayImages.length < 4 && (
-                        <div
-                          onClick={addImage}
-                          className="group relative aspect-square rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-primary-500 hover:bg-primary-50 transition-colors"
-                        >
-                          <PlusIcon className="h-6 w-6 text-primary-600" />
-                          {/* Tooltip */}
-                          <span className="pointer-events-none absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1.5 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50">
-                            Add image
-                            <span className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900"></span>
-                          </span>
-                        </div>
-                      )}
-                    </div>
+                      );
+                    })()}
                   </div>
           </div>
         </div>
@@ -3318,12 +3349,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
                 productName={formData.name}
                 productDescription={formData.description}
                 productImages={formData.images}
-                onChange={(seoData) => {
-                  setFormData((prev) => ({
-                    ...prev,
-                    ...seoData,
-                  }))
-                }}
+                onChange={handleSEOChange}
               />
             </div>
 
@@ -3351,7 +3377,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
               </div>
             </div>
 
-            <div className="sticky bottom-4 z-20 mt-6 flex justify-end">
+            <div className="sticky bottom-0 z-20 mt-6 flex justify-end">
               <div className="flex flex-wrap items-center justify-end gap-3 rounded-2xl p-3">
                 <button
                   type="button"
@@ -4329,8 +4355,14 @@ function ProductPreviewOverlay({
   };
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 px-4 py-8 overflow-auto">
-      <div className="relative w-full max-w-7xl bg-white rounded-lg shadow-2xl max-h-[90vh] overflow-auto">
+    <div 
+      className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 px-4 py-8 overflow-auto"
+      onClick={onClose}
+    >
+      <div 
+        className="relative w-full max-w-7xl bg-white rounded-lg shadow-2xl max-h-[90vh] overflow-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="relative w-full max-w-7xl bg-white rounded-lg shadow-2xl max-h-[90vh] overflow-auto product-details-page">
         <button
           type="button"
