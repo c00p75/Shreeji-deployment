@@ -17,10 +17,13 @@ import PaymentDetailsSection from '@/app/components/checkout/PaymentDetailsSecti
 import OrderDetailsSidebar from '@/app/components/checkout/OrderDetailsSidebar'
 import AddressModal from '@/app/components/checkout/AddressModal'
 import OrderCompletionModal from '@/app/components/checkout/OrderCompletionModal'
+import GuestCustomerInfoModal from '@/app/components/checkout/GuestCustomerInfoModal'
 import { ShoppingBag, Gift } from 'lucide-react'
 import clientApi from '@/app/lib/client/api'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import toast from 'react-hot-toast'
+import { CheckoutCustomerInput, CheckoutAddressInput } from '@/app/lib/ecommerce/api'
 
 const CHECKOUT_STEPS = [
   { label: 'Review', number: 1 },
@@ -63,6 +66,9 @@ export default function CheckoutPage() {
   const [loadingPoints, setLoadingPoints] = useState(false)
   const [pointsError, setPointsError] = useState<string | null>(null)
   const [showOrderCompletionModal, setShowOrderCompletionModal] = useState(false)
+  const [showGuestCustomerModal, setShowGuestCustomerModal] = useState(false)
+  const [guestCustomerData, setGuestCustomerData] = useState<CheckoutCustomerInput | null>(null)
+  const [guestShippingAddress, setGuestShippingAddress] = useState<CheckoutAddressInput | null>(null)
 
   // Restore checkout progress on mount
   useEffect(() => {
@@ -98,6 +104,68 @@ export default function CheckoutPage() {
       sessionStorage.setItem('checkout_progress', JSON.stringify(checkoutState))
     }
   }, [currentStep, fulfillmentType, selectedAddressId, paymentMethod, success])
+
+  // Validate and redirect to step 1 if requirements not met
+  useEffect(() => {
+    // Don't validate during loading or if already on step 1 or if checkout is successful
+    if (loading || authLoading || currentStep === 1 || success) {
+      return
+    }
+
+    // Check if cart is null (doesn't exist)
+    if (!cart) {
+      setCurrentStep(1)
+      toast.error('Cart not found. Please add items to continue.')
+      return
+    }
+
+    // Check if cart is empty
+    if (cart.items.length === 0) {
+      setCurrentStep(1)
+      toast.error('Your cart is empty. Please add items to continue.')
+      return
+    }
+
+    // Check if cart has errors
+    if (cartError) {
+      setCurrentStep(1)
+      toast.error('There was an error with your cart. Please refresh and try again.')
+      return
+    }
+
+    // Check if cart items are valid (have required fields)
+    const hasInvalidItems = cart.items.some(item => 
+      !item.productSnapshot || 
+      item.subtotal == null || 
+      item.subtotal < 0 ||
+      item.quantity == null ||
+      item.quantity <= 0
+    )
+    if (hasInvalidItems) {
+      setCurrentStep(1)
+      toast.error('Your cart contains invalid items. Please refresh your cart.')
+      return
+    }
+
+    // Check if guest user hasn't provided customer information
+    if (!isAuthenticated) {
+      if (!guestCustomerData || !guestCustomerData.email || !guestCustomerData.firstName || !guestCustomerData.lastName) {
+        setCurrentStep(1)
+        // Optionally show the modal
+        setShowGuestCustomerModal(true)
+        return
+      }
+      
+      // Validate email format
+      const email = guestCustomerData.email?.trim() || ''
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailRegex.test(email) || guestCustomerData.firstName.trim().length < 2 || guestCustomerData.lastName.trim().length < 2) {
+        setCurrentStep(1)
+        setShowGuestCustomerModal(true)
+        return
+      }
+    }
+  }, [currentStep, cart, cartError, loading, authLoading, isAuthenticated, guestCustomerData, success])
 
   // Clear checkout progress on successful completion
   useEffect(() => {
@@ -185,13 +253,45 @@ export default function CheckoutPage() {
 
     // Validate current step before proceeding
     if (currentStep === 1) {
-      // Step 1: Review - proceed to fulfillment & address
+      // Step 1: Review - show guest customer info modal if not authenticated
+      if (!isAuthenticated) {
+        if (!guestCustomerData) {
+          // Show modal to collect guest information
+          setShowGuestCustomerModal(true)
+          return
+        }
+        
+        // Validate existing data
+        const email = guestCustomerData.email?.trim() || ''
+        const firstName = guestCustomerData.firstName?.trim() || ''
+        const lastName = guestCustomerData.lastName?.trim() || ''
+        
+        if (!email || !firstName || !lastName) {
+          setShowGuestCustomerModal(true)
+          return
+        }
+        
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!emailRegex.test(email) || firstName.length < 2 || lastName.length < 2) {
+          setShowGuestCustomerModal(true)
+          return
+        }
+      }
       setCurrentStep(2)
     } else if (currentStep === 2) {
       // Step 2: Fulfillment & Address - validate if delivery
-      if (fulfillmentType === 'delivery' && !selectedAddressId) {
-        setFormError('Please select a delivery address.')
-        return
+      if (fulfillmentType === 'delivery') {
+        if (isAuthenticated && !selectedAddressId) {
+          toast.error('Please select a delivery address.')
+          return
+        }
+        if (!isAuthenticated) {
+          if (!guestShippingAddress || !guestShippingAddress.addressLine1 || !guestShippingAddress.city || !guestShippingAddress.postalCode || !guestShippingAddress.country) {
+            toast.error('Please fill in all required address fields.')
+            return
+          }
+        }
       }
       setCurrentStep(3)
     } else if (currentStep === 3) {
@@ -212,12 +312,12 @@ export default function CheckoutPage() {
     setSuccess(null)
 
     if (!cart || cart.items.length === 0) {
-      setFormError('Your cart is empty.')
+      toast.error('Your cart is empty.')
       return
     }
 
     if (fulfillmentType === 'delivery' && !selectedAddressId) {
-      setFormError('Please select a delivery address.')
+      toast.error('Please select a delivery address.')
       return
     }
 
@@ -255,45 +355,36 @@ export default function CheckoutPage() {
           }
         }
       } else {
-        // Guest checkout - would need form data, for now using defaults
-        // TODO: Add guest checkout form
-        customerData = {
-          email: user?.email || 'guest@example.com',
-          firstName: user?.firstName || 'Guest',
-          lastName: user?.lastName || 'User',
-          phone: '',
+        // Guest checkout - use collected guest data
+        if (!guestCustomerData || !guestCustomerData.email || !guestCustomerData.firstName || !guestCustomerData.lastName) {
+          toast.error('Please fill in all required customer information.')
+          return
         }
+        customerData = guestCustomerData
 
-        if (fulfillmentType === 'delivery' && selectedAddressId) {
-          const selectedAddress = addresses.find(
-            (addr) => addr.id.toString() === selectedAddressId
-          )
-          if (selectedAddress) {
-            shippingAddressData = {
-              firstName: selectedAddress.firstName,
-              lastName: selectedAddress.lastName,
-              addressLine1: selectedAddress.addressLine1,
-              addressLine2: selectedAddress.addressLine2 || '',
-              city: selectedAddress.city,
-              state: selectedAddress.state || '',
-              postalCode: selectedAddress.postalCode,
-              country: selectedAddress.country,
-              phone: selectedAddress.phone || '',
-            }
+        if (fulfillmentType === 'delivery') {
+          if (!guestShippingAddress || !guestShippingAddress.addressLine1 || !guestShippingAddress.city || !guestShippingAddress.postalCode || !guestShippingAddress.country) {
+            toast.error('Please fill in all required address fields.')
+            return
           }
+          shippingAddressData = guestShippingAddress
         }
       }
 
       // If no address selected for delivery, show error
       if (fulfillmentType === 'delivery' && !shippingAddressData) {
-        setFormError('Please select a delivery address.')
+        if (isAuthenticated) {
+          toast.error('Please select a delivery address.')
+        } else {
+          toast.error('Please fill in all required address fields.')
+        }
         return
       }
 
       // Validate points redemption
       if (pointsToRedeem > availablePoints) {
         setPointsError(`You can only redeem up to ${availablePoints} points (ZMW ${(availablePoints / 100).toFixed(2)})`)
-        setFormError('Please correct the points redemption amount.')
+        toast.error('Please correct the points redemption amount.')
         return
       }
 
@@ -376,6 +467,12 @@ export default function CheckoutPage() {
 
       // Check authentication status and handle accordingly
       if (response.orderNumber && response.orderId) {
+        // Clear guest data after successful checkout
+        if (!isAuthenticated) {
+          setGuestCustomerData(null)
+          setGuestShippingAddress(null)
+        }
+        
         if (isAuthenticated) {
           // Redirect authenticated users to order detail page
           router.push(`/portal/orders/${response.orderId}`)
@@ -397,7 +494,9 @@ export default function CheckoutPage() {
         })
       }
     } catch (err) {
-      setFormError(err instanceof Error ? err.message : 'Checkout failed. Please try again.')
+      const errorMessage = err instanceof Error ? err.message : 'Checkout failed. Please try again.'
+      toast.error(errorMessage)
+      setFormError(errorMessage)
     }
   }
 
@@ -483,8 +582,7 @@ export default function CheckoutPage() {
           <div className='space-y-8'>
             {/* Step 1: Review Order */}
             {currentStep === 1 && (
-                <OrderSummarySection />
-              
+              <OrderSummarySection />
             )}
 
             {/* Step 2: Fulfillment & Address */}
@@ -502,6 +600,8 @@ export default function CheckoutPage() {
                     addresses={addresses}
                     loading={loadingAddresses}
                     isAuthenticated={isAuthenticated}
+                    guestAddressData={guestShippingAddress}
+                    onGuestAddressChange={setGuestShippingAddress}
                   />
                 ) : (
                   <PickupLocationSection />
@@ -641,6 +741,19 @@ export default function CheckoutPage() {
         onSuccess={handleAddressAdded}
       />
 
+      {/* Guest Customer Information Modal */}
+      <GuestCustomerInfoModal
+        isOpen={showGuestCustomerModal}
+        onClose={() => setShowGuestCustomerModal(false)}
+        onSuccess={(data) => {
+          setGuestCustomerData(data)
+          setShowGuestCustomerModal(false)
+          // Automatically proceed to next step after successful submission
+          setCurrentStep(2)
+        }}
+        initialData={guestCustomerData}
+      />
+
       {/* Order Completion Modal */}
       {success && (
         <OrderCompletionModal
@@ -653,6 +766,9 @@ export default function CheckoutPage() {
           orderId={success.orderId}
           paymentStatus={success.paymentStatus}
           paymentMethod={paymentMethod}
+          guestEmail={!isAuthenticated ? guestCustomerData?.email : undefined}
+          guestFirstName={!isAuthenticated ? guestCustomerData?.firstName : undefined}
+          guestLastName={!isAuthenticated ? guestCustomerData?.lastName : undefined}
         />
       )}
     </div>

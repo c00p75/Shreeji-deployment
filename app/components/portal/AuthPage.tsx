@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { 
@@ -20,42 +20,66 @@ interface AuthPageProps {
 }
 
 export default function AuthPage({ defaultMode = 'login' }: AuthPageProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [mode, setMode] = useState<AuthMode>(defaultMode);
   const [credentials, setCredentials] = useState({
     email: '',
     password: ''
   });
   const [formData, setFormData] = useState({
-    email: '',
+    email: searchParams?.get('email') || '',
     password: '',
     confirmPassword: '',
-    firstName: '',
-    lastName: '',
+    firstName: searchParams?.get('firstName') || '',
+    lastName: searchParams?.get('lastName') || '',
     phone: ''
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const router = useRouter();
   const { isAuthenticated, login, register } = useClientAuth();
+  
+  // Update form data when search params change (for guest checkout pre-fill)
+  useEffect(() => {
+    if (searchParams) {
+      const email = searchParams.get('email');
+      const firstName = searchParams.get('firstName');
+      const lastName = searchParams.get('lastName');
+      
+      if (email || firstName || lastName) {
+        setFormData(prev => ({
+          ...prev,
+          email: email || prev.email,
+          firstName: firstName || prev.firstName,
+          lastName: lastName || prev.lastName,
+        }));
+        // Switch to signup mode if guest data is provided
+        if (defaultMode === 'signup' || (email && !mode)) {
+          setMode('signup');
+        }
+      }
+    }
+  }, [searchParams, defaultMode, mode]);
 
   useEffect(() => {
     if (isAuthenticated) {
-      // Check if there's a return URL stored in sessionStorage
-      const returnUrl = typeof window !== 'undefined' 
+      // Check for return URL in query params first, then sessionStorage
+      const returnUrlParam = searchParams?.get('returnUrl');
+      const returnUrl = returnUrlParam || (typeof window !== 'undefined' 
         ? sessionStorage.getItem('returnUrl') 
-        : null;
+        : null);
       
       // Clear the return URL from sessionStorage
-      if (typeof window !== 'undefined' && returnUrl) {
+      if (typeof window !== 'undefined' && !returnUrlParam) {
         sessionStorage.removeItem('returnUrl');
       }
       
       // Redirect to return URL if it exists, otherwise go to dashboard
       router.replace(returnUrl || '/portal/dashboard');
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, router, searchParams]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

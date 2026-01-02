@@ -2,6 +2,8 @@
 
 import { Package, Pencil, Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import GuestAddressForm from './GuestAddressForm'
+import { CheckoutAddressInput } from '@/app/lib/ecommerce/api'
 
 interface Address {
   id: string | number
@@ -24,6 +26,8 @@ interface DeliveryAddressSectionProps {
   addresses?: Address[]
   loading?: boolean
   isAuthenticated?: boolean
+  guestAddressData?: CheckoutAddressInput | null
+  onGuestAddressChange?: (data: CheckoutAddressInput) => void
 }
 
 export default function DeliveryAddressSection({
@@ -33,6 +37,8 @@ export default function DeliveryAddressSection({
   addresses = [],
   loading = false,
   isAuthenticated = false,
+  guestAddressData = null,
+  onGuestAddressChange,
 }: DeliveryAddressSectionProps) {
   const router = useRouter()
 
@@ -73,30 +79,37 @@ export default function DeliveryAddressSection({
           <Package className='h-5 w-5 text-[#544829]' />
           <h2 className='text-xl font-semibold text-gray-900'>Delivery address</h2>
         </div>
-        <div className='rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-6 text-center'>
-          <p className='text-gray-600 mb-4'>
-            Please{' '}
+        {onGuestAddressChange ? (
+          <GuestAddressForm
+            addressData={guestAddressData}
+            onAddressDataChange={onGuestAddressChange}
+          />
+        ) : (
+          <div className='rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-6 text-center'>
+            <p className='text-gray-600 mb-4'>
+              Please{' '}
+              <button
+                onClick={() => {
+                  // Store the return URL so we can redirect back after login
+                  if (typeof window !== 'undefined') {
+                    sessionStorage.setItem('returnUrl', '/checkout')
+                  }
+                  router.push('/portal/login')
+                }}
+                className='text-[var(--shreeji-primary)] hover:underline font-medium'
+              >
+                log in
+              </button>{' '}
+              to use saved addresses or enter address manually
+            </p>
             <button
-              onClick={() => {
-                // Store the return URL so we can redirect back after login
-                if (typeof window !== 'undefined') {
-                  sessionStorage.setItem('returnUrl', '/checkout')
-                }
-                router.push('/portal/login')
-              }}
-              className='text-[var(--shreeji-primary)] hover:underline font-medium'
+              onClick={onAddAddress}
+              className='px-4 py-2 bg-[var(--shreeji-primary)] text-white rounded-md hover:bg-[var(--shreeji-secondary)] transition-colors'
             >
-              log in
-            </button>{' '}
-            to use saved addresses or enter address manually
-          </p>
-          <button
-            onClick={onAddAddress}
-            className='px-4 py-2 bg-[var(--shreeji-primary)] text-white rounded-md hover:bg-[var(--shreeji-secondary)] transition-colors'
-          >
-            Enter Address Manually
-          </button>
-        </div>
+              Enter Address Manually
+            </button>
+          </div>
+        )}
       </div>
     )
   }

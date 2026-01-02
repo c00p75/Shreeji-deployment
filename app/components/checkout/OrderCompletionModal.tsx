@@ -12,6 +12,9 @@ interface OrderCompletionModalProps {
   orderId: number
   paymentStatus: string
   paymentMethod?: string
+  guestEmail?: string
+  guestFirstName?: string
+  guestLastName?: string
 }
 
 export default function OrderCompletionModal({
@@ -21,6 +24,9 @@ export default function OrderCompletionModal({
   orderId,
   paymentStatus,
   paymentMethod,
+  guestEmail,
+  guestFirstName,
+  guestLastName,
 }: OrderCompletionModalProps) {
   const [bankDetails, setBankDetails] = useState<BankDetails | null>(null)
   const [loadingBankDetails, setLoadingBankDetails] = useState(false)
@@ -179,25 +185,37 @@ export default function OrderCompletionModal({
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-200">
-            <Link
-              href={`/portal/login?returnUrl=/portal/orders/${orderId}`}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-[var(--shreeji-primary)] text-white rounded-lg hover:opacity-90 transition font-medium"
-            >
-              <ExternalLink className="h-5 w-5" />
-              Login to View Order
-            </Link>
+            {guestEmail ? (
+              <>
+                <Link
+                  href={`/portal/register?email=${encodeURIComponent(guestEmail)}&firstName=${encodeURIComponent(guestFirstName || '')}&lastName=${encodeURIComponent(guestLastName || '')}&returnUrl=/portal/orders/${orderId}`}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-[var(--shreeji-primary)] text-white rounded-lg hover:opacity-90 transition font-medium"
+                >
+                  <ExternalLink className="h-5 w-5" />
+                  Create Account to Track Order
+                </Link>
+                <Link
+                  href={`/portal/login?returnUrl=/portal/orders/${orderId}`}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border border-[var(--shreeji-primary)] text-[var(--shreeji-primary)] rounded-lg hover:bg-[var(--shreeji-primary)] hover:text-white transition font-medium"
+                >
+                  Already have an account? Login
+                </Link>
+              </>
+            ) : (
+              <Link
+                href={`/portal/login?returnUrl=/portal/orders/${orderId}`}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-[var(--shreeji-primary)] text-white rounded-lg hover:opacity-90 transition font-medium"
+              >
+                <ExternalLink className="h-5 w-5" />
+                Login to View Order
+              </Link>
+            )}
             <Link
               href="/"
               className="flex-1 flex items-center justify-center px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium"
             >
               Continue Shopping
             </Link>
-            <button
-              onClick={onClose}
-              className="px-4 py-3 text-gray-600 hover:text-gray-800 transition font-medium"
-            >
-              Close
-            </button>
           </div>
 
           {/* Info Message */}

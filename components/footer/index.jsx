@@ -65,7 +65,7 @@ const Footer = () => {
           Designed & created by <Link href="https://www.balloinnovations.com/" className="font-semibold hover:underline">Ballo Innovations</Link>
         </p>
         <p>
-          ©2025 Shreeji Investments Limited. All Rights Reserved
+          ©2026 Shreeji Investments Limited. All Rights Reserved
         </p>
       </div>
     </section>

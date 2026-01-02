@@ -237,7 +237,16 @@ export default function OrderSummarySection() {
         })}
       </div>
 
-    
+      {/* Add More Products Button */}
+      <div className='mt-6 pt-6 border-t border-gray-200 flex justify-end'>
+        <Link
+          href='/products'
+          className='text-sm flex w-fit items-center justify-center gap-2 rounded-lg border-2 border-[var(--shreeji-primary)] bg-white px-2 py-1 text-[var(--shreeji-primary)] transition hover:bg-[var(--shreeji-primary)] hover:text-white font-medium'
+        >
+          <Plus className='h-5 w-5' />
+          Add More Products
+        </Link>
+      </div>
     </div>
   )
 }
