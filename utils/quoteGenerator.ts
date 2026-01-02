@@ -22,7 +22,7 @@ export function generateQuotePDF(cart: Cart, fulfillmentType: 'pickup' | 'delive
   const discountAmount = originalTotal - discountedTotal
   const subtotal = cart.subtotal || discountedTotal
   const vatAmount = cart.taxTotal || 0
-  const totalAmount = cart.total
+  const totalAmount = cart.total || subtotal
 
   // Calculate VAT percentage
   const taxRates = cart.items
@@ -194,10 +194,13 @@ export function generateQuotePDF(cart: Cart, fulfillmentType: 'pickup' | 'delive
     </head>
     <body>
       <div class="header">
-        <h1>QUOTE</h1>
-        <p><strong>Shreeji Technologies</strong></p>
-        <p>Date: ${quoteDate}</p>
-        <p>Quote Number: Q-${Date.now().toString().slice(-8)}</p>
+        <div style="display: flex; justify-content: center; align-items: center;">
+          <img src="/logos/Shreeji Logos 1b.png" alt="Shreeji" style="width: 50%; height: auto; margin-bottom: 10px;" />
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: end; justify-content: center;">
+          <p>Date: ${quoteDate}</p>
+          <p>Quote Number: Q-${Date.now().toString().slice(-8)}</p>
+        </div>
       </div>
 
       <div class="quote-info">
@@ -281,7 +284,7 @@ export function generateQuotePDF(cart: Cart, fulfillmentType: 'pickup' | 'delive
       <div class="footer">
         <p>For inquiries, contact us at:</p>
         <p><strong>Phone:</strong> +260 77 116 1111 | <strong>Email:</strong> sales@shreeji.co.zm</p>
-        <p style="margin-top: 10px;">Thank you for your interest in Shreeji Technologies!</p>
+        <p style="margin-top: 10px;">Thank you for your interest in Shreeji Investments Limited</p>
       </div>
     </body>
     </html>

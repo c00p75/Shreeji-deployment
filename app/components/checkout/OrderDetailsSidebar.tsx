@@ -43,29 +43,7 @@ export default function OrderDetailsSidebar({ fulfillmentType = 'pickup', curren
   const discountAmount = originalTotal - discountedTotal
   const deliveryCharges = 0 // Free delivery
   const subtotal = cart.subtotal || discountedTotal
-  const vatAmount = cart.taxTotal || 0
-  const totalAmount = cart.total
-
-  // Calculate VAT percentage
-  // First, try to get taxRate from cart items (if all items have the same rate)
-  const taxRates = cart.items
-    .map(item => item.taxRate || item.productSnapshot.taxRate)
-    .filter((rate): rate is number => rate !== null && rate !== undefined)
-  
-  let vatPercentage: number | null = null
-  if (taxRates.length > 0) {
-    // Check if all items have the same tax rate
-    const uniqueRates = [...new Set(taxRates)]
-    if (uniqueRates.length === 1) {
-      vatPercentage = uniqueRates[0]
-    } else {
-      // If different rates, calculate from totals
-      vatPercentage = subtotal > 0 ? (vatAmount / subtotal) * 100 : null
-    }
-  } else if (subtotal > 0 && vatAmount > 0) {
-    // Fallback: calculate from totals
-    vatPercentage = (vatAmount / subtotal) * 100
-  }
+  const totalAmount = cart.total || subtotal
 
   const handleDownloadQuote = () => {
     if (!cart || cart.items.length === 0) {
@@ -98,29 +76,17 @@ export default function OrderDetailsSidebar({ fulfillmentType = 'pickup', curren
           <span className='font-medium text-gray-900'>{currencyFormatter(subtotal, cart.currency)}</span>
         </div>
 
-        {discountAmount > 0 && (
-          <div className='flex justify-between'>
-            <span className='text-gray-600'>Discount</span>
-            <span className='font-medium text-green-600'>-{currencyFormatter(discountAmount, cart.currency)}</span>
-          </div>
-        )}
+        <div className='flex justify-between'>
+          <span className='text-gray-600'>Discount</span>
+          <span className={`font-medium ${discountAmount > 0 ? 'text-green-600' : 'text-gray-600'}`}>
+            {discountAmount > 0 ? '-' : ''}{currencyFormatter(discountAmount, cart.currency)}
+          </span>
+        </div>
 
         {currentStep >= 2 && fulfillmentType === 'delivery' && (
           <div className='flex justify-between'>
             <span className='text-gray-600'>Delivery charges</span>
             <span className='font-medium text-green-600'>Free</span>
-          </div>
-        )}
-
-        {vatAmount > 0 && (
-          <div className='flex justify-between'>
-            <span className='text-gray-600'>
-              Value Added Tax (VAT)
-              {vatPercentage !== null && (
-                <span className='ml-1 text-xs text-gray-500'>({vatPercentage.toFixed(1)}%)</span>
-              )}
-            </span>
-            <span className='font-medium text-gray-900'>{currencyFormatter(vatAmount, cart.currency)}</span>
           </div>
         )}
       </div>

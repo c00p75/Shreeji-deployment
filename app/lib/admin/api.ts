@@ -38,6 +38,27 @@ class ApiClient {
     });
 
     if (!response.ok) {
+      // Handle 401 Unauthorized - session expired
+      if (response.status === 401) {
+        // Clear authentication
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('admin_jwt');
+          
+          // Store current URL to redirect back after login
+          const currentPath = window.location.pathname;
+          if (!currentPath.includes('/admin/login')) {
+            sessionStorage.setItem('adminReturnUrl', currentPath);
+          }
+          
+          // Redirect to admin login
+          window.location.href = '/admin/login';
+        }
+        
+        const error: any = new Error('Session expired. Please log in again.');
+        error.status = response.status;
+        throw error;
+      }
+      
       const errorText = await response.text();
       let errorMessage = `API request failed: ${response.status} ${response.statusText}`;
 

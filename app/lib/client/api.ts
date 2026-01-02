@@ -32,6 +32,26 @@ class ClientApiClient {
     });
 
     if (!response.ok) {
+      // Handle 401 Unauthorized - session expired
+      if (response.status === 401) {
+        // Clear authentication
+        clientAuth.logout();
+        
+        // Redirect to login page
+        if (typeof window !== 'undefined') {
+          // Store current URL to redirect back after login
+          const currentPath = window.location.pathname;
+          if (!currentPath.includes('/portal/login')) {
+            sessionStorage.setItem('returnUrl', currentPath);
+          }
+          
+          // Redirect to login
+          window.location.href = '/portal/login';
+        }
+        
+        throw new Error('Session expired. Please log in again.');
+      }
+      
       const errorText = await response.text();
       let errorMessage = `API request failed: ${response.status} ${response.statusText}`;
 

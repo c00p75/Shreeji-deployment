@@ -16,6 +16,7 @@ import OrderSummarySection from '@/app/components/checkout/OrderSummarySection'
 import PaymentDetailsSection from '@/app/components/checkout/PaymentDetailsSection'
 import OrderDetailsSidebar from '@/app/components/checkout/OrderDetailsSidebar'
 import AddressModal from '@/app/components/checkout/AddressModal'
+import OrderCompletionModal from '@/app/components/checkout/OrderCompletionModal'
 import { ShoppingBag, Gift } from 'lucide-react'
 import clientApi from '@/app/lib/client/api'
 import Link from 'next/link'
@@ -61,6 +62,7 @@ export default function CheckoutPage() {
   const [pointsToRedeem, setPointsToRedeem] = useState<number>(0)
   const [loadingPoints, setLoadingPoints] = useState(false)
   const [pointsError, setPointsError] = useState<string | null>(null)
+  const [showOrderCompletionModal, setShowOrderCompletionModal] = useState(false)
 
   // Restore checkout progress on mount
   useEffect(() => {
@@ -372,11 +374,28 @@ export default function CheckoutPage() {
         return
       }
 
-      setSuccess({
-        orderNumber: response.orderNumber,
-        orderId: response.orderId,
-        paymentStatus: response.paymentStatus,
-      })
+      // Check authentication status and handle accordingly
+      if (response.orderNumber && response.orderId) {
+        if (isAuthenticated) {
+          // Redirect authenticated users to order detail page
+          router.push(`/portal/orders/${response.orderId}`)
+        } else {
+          // Show modal for non-authenticated users
+          setSuccess({
+            orderNumber: response.orderNumber,
+            orderId: response.orderId,
+            paymentStatus: response.paymentStatus,
+          })
+          setShowOrderCompletionModal(true)
+        }
+      } else {
+        // Fallback to original behavior if no order info
+        setSuccess({
+          orderNumber: response.orderNumber,
+          orderId: response.orderId,
+          paymentStatus: response.paymentStatus,
+        })
+      }
     } catch (err) {
       setFormError(err instanceof Error ? err.message : 'Checkout failed. Please try again.')
     }
@@ -449,7 +468,7 @@ export default function CheckoutPage() {
         <CheckoutAlerts
           cartError={cartError}
           formError={formError}
-          success={success}
+          success={isAuthenticated ? success : null}
           paymentMethod={paymentMethod}
           onRetry={() => {
             setFormError(null)
@@ -621,6 +640,21 @@ export default function CheckoutPage() {
         onClose={() => setIsAddressModalOpen(false)}
         onSuccess={handleAddressAdded}
       />
+
+      {/* Order Completion Modal */}
+      {success && (
+        <OrderCompletionModal
+          isOpen={showOrderCompletionModal}
+          onClose={() => {
+            setShowOrderCompletionModal(false)
+            setSuccess(null)
+          }}
+          orderNumber={success.orderNumber}
+          orderId={success.orderId}
+          paymentStatus={success.paymentStatus}
+          paymentMethod={paymentMethod}
+        />
+      )}
     </div>
   )
 }
