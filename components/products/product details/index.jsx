@@ -136,7 +136,7 @@ const ProductDetails = ({product, previewMode = false}) => {
         </div>
       )}
       
-      <div className={`flex justify-center items-start flex-col md:flex-row ${ product['special feature'] ? 'mt-14' : ''}`}>
+      <div className={`flex justify-center items-start flex-col md:flex-row ${ product['special feature'] ? 'mt-12' : ''}`}>
         <div className='flex-1 mt-10 sticky top-[250px]'>
           {product['images'] && (
             <ProductImage images={product['images']} name={product.name} product={product} />
@@ -150,7 +150,7 @@ const ProductDetails = ({product, previewMode = false}) => {
                 {product?.['discounted price'] ? (
                   <div className='flex flex-col gap-2'>
                     <div className='flex items-center gap-3 flex-wrap'>
-                      <span className='price-zigzag-pattern text-3xl font-bold text-white'>
+                      <span className='text-3xl font-bold text-white bg-[var(--shreeji-primary)] w-fit px-5 py-2 rounded-lg'>
                         {formatPrice(product['discounted price'])}
                       </span>
                       {product.price && (
@@ -162,7 +162,7 @@ const ProductDetails = ({product, previewMode = false}) => {
                   </div>
                 ) : (
                   product.price && (
-                    <div className='price-zigzag-pattern text-3xl font-bold text-white'>
+                    <div className='text-3xl font-bold text-white bg-[var(--shreeji-primary)] w-fit px-5 py-2 rounded-lg'>
                       {formatPrice(product.price)}
                     </div>
                   )

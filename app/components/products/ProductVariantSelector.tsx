@@ -108,7 +108,10 @@ export default function ProductVariantSelector({
   }
 
   const displayPrice = selectedVariant?.price ?? productPrice
-  const displayDiscountedPrice = selectedVariant?.discountedPrice ?? productDiscountedPrice
+  // Only use discountedPrice if it's a valid positive number
+  const displayDiscountedPrice = (selectedVariant?.discountedPrice && selectedVariant.discountedPrice > 0)
+    ? selectedVariant.discountedPrice
+    : ((productDiscountedPrice && productDiscountedPrice > 0) ? productDiscountedPrice : undefined)
 
   return (
     <div className="space-y-4">

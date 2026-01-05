@@ -17,6 +17,7 @@ interface ProductRecommendation {
   subcategory?: string | { id: number; name: string; urlPath?: string }
   subcategoryId?: number
   images?: Array<string | { url: string; alt?: string; isMain?: boolean }>
+  price?: number
   sellingPrice?: number
   discountedPrice?: number
 }
@@ -213,9 +214,22 @@ function ProductCard({ product }: { product: ProductRecommendation }) {
   const [addingToCart, setAddingToCart] = useState(false)
   const { addItem } = useCart()
   
-  const imageUrl = product.images?.[0]?.url || '/products/placeholder.png'
-  const price = product.discountedPrice ?? product.sellingPrice
-  const original = product.discountedPrice ? product.sellingPrice : undefined
+  // Handle both string and object image formats
+  const firstImage = product.images?.[0]
+  const imageUrl = typeof firstImage === 'string' 
+    ? firstImage 
+    : firstImage?.url || '/products/placeholder.png'
+  
+  // Only use discountedPrice if it's a valid positive number
+  // Otherwise fall back to sellingPrice or price
+  const price = (product.discountedPrice && product.discountedPrice > 0)
+    ? product.discountedPrice
+    : (product.sellingPrice ?? product.price)
+  
+  // Original price should only show if there's a valid discounted price
+  const original = (product.discountedPrice && product.discountedPrice > 0)
+    ? (product.sellingPrice ?? product.price)
+    : undefined
 
   // Extract subcategory name - handle both object and string formats
   const getSubcategoryName = (): string | null => {

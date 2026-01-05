@@ -36,8 +36,9 @@ export default function ModernProductShowcase({
       : product.price
     : "Contact for price";
 
+  // Only show promo label if discountedPrice is a valid positive number and different from price
   const promoLabel =
-    product.discountedPrice && product.discountedPrice !== product.price
+    (product.discountedPrice && product.discountedPrice > 0 && product.discountedPrice !== product.price)
       ? product.discountedPrice
       : null;
 

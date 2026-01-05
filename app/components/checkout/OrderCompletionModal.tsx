@@ -211,7 +211,7 @@ export default function OrderCompletionModal({
               </Link>
             )}
             <Link
-              href="/"
+              href="/products"
               className="flex-1 flex items-center justify-center px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium"
             >
               Continue Shopping

@@ -36,7 +36,8 @@ const ProductImage = ({images, name, product}) => {
           unoptimized={isExternalUrl(images[0])}
         />        
       </div>
-      <div className={`grid gap-2 mt-3 relative z-[3] justify-center ${
+      <div className='flex justify-center'>
+      <div className={`grid gap-2 mt-3 relative z-[3] justify-center w-fit ${
         images.length === 1 ? 'grid-cols-1' :
         images.length === 2 ? 'grid-cols-2' :
         images.length === 3 ? 'grid-cols-3' :
@@ -55,12 +56,14 @@ const ProductImage = ({images, name, product}) => {
             alt={name || 'Product image'}            
             width={80}
             height={80}
-            className={`w-20 h-20 z-[1] relative mt-4 cursor-pointer transition-all duration-100 object-contain ${img == activeImage && 'active-image-select'}`}
+            className={`w-20 h-20 z-[1] mx-3 relative mt-4 cursor-pointer transition-all duration-100 object-contain ${img == activeImage && 'active-image-select'}`}
             onClick={() => setActiveImage(img)}
             unoptimized={isExternalUrl(img)}
           />
         ))}
       </div>
+        </div>
+      
     </div>
   )
 }

@@ -47,13 +47,17 @@ export class CartService {
       existingItem.quantity += payload.quantity;
       existingItem.subtotal = existingItem.quantity * existingItem.unitPrice;
     } else {
+      // Only use discountedPrice if it's a valid positive number, otherwise use regular price
+      const unitPrice = (product.discountedPrice && product.discountedPrice > 0)
+        ? product.discountedPrice
+        : product.price;
       const cartItem: CartItem = {
         id: uuid(),
         productId: product.id,
         quantity: payload.quantity,
-        unitPrice: product.discountedPrice ?? product.price,
+        unitPrice,
         taxRate: product.taxRate ?? undefined,
-        subtotal: (product.discountedPrice ?? product.price) * payload.quantity,
+        subtotal: unitPrice * payload.quantity,
         productSnapshot: {
           id: product.id,
           name: product.name,

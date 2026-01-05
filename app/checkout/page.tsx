@@ -308,6 +308,29 @@ export default function CheckoutPage() {
   }
 
   const handlePayment = async () => {
+    // Log current cart entity/items when pay/order now button is clicked
+    console.log('=== PAY/ORDER NOW BUTTON CLICKED - CART DATA ===')
+    console.log('Full Cart Entity:', JSON.stringify(cart, null, 2))
+    console.log('Cart Items:', JSON.stringify(cart?.items || [], null, 2))
+    console.log('Cart Summary:', {
+      cartId: cart?.id,
+      itemCount: cart?.items?.length || 0,
+      subtotal: cart?.subtotal,
+      taxTotal: cart?.taxTotal,
+      total: cart?.total,
+      currency: cart?.currency,
+    })
+    console.log('Cart Items Details:', cart?.items?.map(item => ({
+      id: item.id,
+      productId: item.productId,
+      quantity: item.quantity,
+      unitPrice: item.unitPrice,
+      subtotal: item.subtotal,
+      taxRate: item.taxRate,
+      productSnapshot: item.productSnapshot,
+    })))
+    console.log('================================================')
+
     setFormError(null)
     setSuccess(null)
 

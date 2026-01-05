@@ -156,7 +156,7 @@ export default function AuthPage({ defaultMode = 'login' }: AuthPageProps) {
             playsInline
             src="/videos/black-bg.mp4"
           />
-          <div className="w-full text-xl px-10 pt-8 z-[1] flex-center justify-center bg-[rgba(0,0,0,0.85)]">
+          <Link href="/products" className="w-full text-xl px-10 pt-8 z-[1] flex-center justify-center bg-[rgba(0,0,0,0.85)]">
             <Image
               src={logo2}
               alt="Logo"
@@ -179,7 +179,7 @@ export default function AuthPage({ defaultMode = 'login' }: AuthPageProps) {
                 <div>Tested</div>
               </div>
             </div>
-          </div>
+          </Link>
         </div>        
 
         {/* Right Side - Form */}
@@ -217,10 +217,10 @@ export default function AuthPage({ defaultMode = 'login' }: AuthPageProps) {
           </div>
 
           {/* Heading */}
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-            {mode === 'login' ? 'Welcome back' : 'Create Account'} 👋
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2 text-center">
+            {mode === 'login' ? 'Welcome back' : 'Create Account'} 
           </h1>
-          <p className="text-gray-600 mb-8">
+          <p className="text-gray-600 mb-8 text-center">
             {mode === 'login' 
               ? 'Sign in to access your account' 
               : 'Sign up to access your client portal'}

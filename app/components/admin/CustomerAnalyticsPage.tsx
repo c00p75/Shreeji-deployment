@@ -214,7 +214,7 @@ export default function CustomerAnalyticsPage({ customerId }: CustomerAnalyticsP
                             {order.status || order.orderStatus || 'Unknown'}
                           </td>
                           <td className="px-3 py-2 text-gray-900">
-                            {currencyFormatter(Number(order.totalAmount || 0))}
+                            {currencyFormatter(Number(order.totalAmount || order.total_amount || 0))}
                           </td>
                         </tr>
                       ))}

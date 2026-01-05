@@ -152,7 +152,7 @@ export default function AdminReports() {
                 lastOrder: order.createdAt
               }
             }
-            customerLTV[customerId].totalSpent += order.totalAmount || 0
+            customerLTV[customerId].totalSpent += order.totalAmount || order.total_amount || 0
             customerLTV[customerId].orderCount += 1
             if (new Date(order.createdAt) < new Date(customerLTV[customerId].firstOrder)) {
               customerLTV[customerId].firstOrder = order.createdAt
@@ -204,7 +204,7 @@ export default function AdminReports() {
             }
             couponUsage[code].usage += 1
             couponUsage[code].discountAmount += order.discountAmount || 0
-            couponUsage[code].revenue += order.totalAmount || 0
+            couponUsage[code].revenue += order.totalAmount || order.total_amount || 0
           }
         })
         

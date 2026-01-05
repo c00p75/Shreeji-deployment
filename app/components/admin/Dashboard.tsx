@@ -94,7 +94,7 @@ export default function Dashboard() {
             ? `${order.customer.firstName} ${order.customer.lastName}`
             : 'Unknown Customer',
           date: new Date(order.createdAt).toLocaleDateString(),
-          amount: currencyFormatter(Number(order.totalAmount || 0)),
+          amount: currencyFormatter(Number(order.totalAmount || order.total_amount || 0)),
           status: order.orderStatus || 'pending',
           paymentStatus: order.paymentStatus || 'pending'
         })) || []

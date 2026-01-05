@@ -350,15 +350,25 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           billingAddress: input.billingAddress ?? input.shippingAddress,
         })
 
-        // Clear cart storage (user-specific or guest)
-        if (typeof window !== 'undefined') {
-          const storageKey = isAuthenticated && user?.id 
-            ? `${USER_CART_STORAGE_KEY}_${user.id}` 
-            : CART_STORAGE_KEY
-          localStorage.removeItem(storageKey)
+        // Only clear cart if payment is successful or pending (not failed)
+        const paymentStatus = result.paymentStatus?.toLowerCase()
+        const shouldClearCart = 
+          paymentStatus === 'approved' || 
+          paymentStatus === 'completed' || 
+          paymentStatus === 'pending'
+
+        if (shouldClearCart) {
+          // Clear cart storage (user-specific or guest)
+          if (typeof window !== 'undefined') {
+            const storageKey = isAuthenticated && user?.id 
+              ? `${USER_CART_STORAGE_KEY}_${user.id}` 
+              : CART_STORAGE_KEY
+            localStorage.removeItem(storageKey)
+          }
+          setCart(null)
+          await ensureCartExists()
         }
-        setCart(null)
-        await ensureCartExists()
+
         return result
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Checkout failed'
@@ -368,7 +378,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         setIsCheckingOut(false)
       }
     },
-    [ensureCartExists],
+    [ensureCartExists, isAuthenticated, user?.id],
   )
 
   const value = useMemo(

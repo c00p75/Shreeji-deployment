@@ -10,6 +10,8 @@ import adminAuth from '@/app/lib/admin/auth';
 import { clearProductsCache } from '@/app/lib/client/products';
 import clientApi from '@/app/lib/client/api';
 import { useClientAuth } from '@/app/contexts/ClientAuthContext';
+import { processProductImages } from '@/app/lib/admin/image-mapping';
+import toast from 'react-hot-toast';
 
 interface ProductDetailsWithEditProps {
   product: any;
@@ -28,6 +30,8 @@ export default function ProductDetailsWithEdit({
   const [saving, setSaving] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
+  const [editingProduct, setEditingProduct] = useState<any>(null);
+  const [loadingProduct, setLoadingProduct] = useState(false);
 
   // Check admin authentication status
   useEffect(() => {
@@ -131,8 +135,8 @@ export default function ProductDetailsWithEdit({
       // Clear product cache so next fetch shows fresh data
       clearProductsCache();
 
-      // Close modal first
-      setShowEditModal(false);
+      // Close modal and clear editing product
+      handleCloseEditModal();
       
       // Refresh the page to show updated product data
       router.refresh();
@@ -162,10 +166,113 @@ export default function ProductDetailsWithEdit({
 
   const handleCloseEditModal = () => {
     setShowEditModal(false);
+    setEditingProduct(null);
   };
 
-  const handleOpenEditModal = () => {
+  const handleOpenEditModal = async () => {
+    try {
+      setLoadingProduct(true);
+      
+      // Fetch full product details to get all fields including basePrice, taxRate, etc.
+      const productId = product.documentId || product.id;
+      if (productId) {
+        const fullProductResponse = await api.getProduct(productId);
+        console.log('Full product data fetched:', fullProductResponse);
+        
+        // Handle NestJS response structure: { data: {...} } or direct object
+        const productData = fullProductResponse.data || fullProductResponse;
+        
+        // Process images
+        const images = processProductImages(productData);
+        
+        // Extract brand (handle both object and ID)
+        let brandValue: string | number = product.brand;
+        if (productData.brand) {
+          if (typeof productData.brand === 'object' && productData.brand !== null) {
+            brandValue = productData.brand.id || productData.brand.name || product.brand;
+          } else {
+            brandValue = productData.brand;
+          }
+        }
+        
+        // Extract category
+        let categoryValue: string | number = product.category;
+        if (productData.category) {
+          if (typeof productData.category === 'object' && productData.category !== null) {
+            categoryValue = productData.category.id || productData.category.name || product.category;
+          } else {
+            categoryValue = productData.category;
+          }
+        }
+        
+        // Extract subcategory
+        let subcategoryValue: string | number | null | undefined = product.subcategory;
+        if (productData.subcategory !== undefined) {
+          if (typeof productData.subcategory === 'object' && productData.subcategory !== null) {
+            subcategoryValue = productData.subcategory.id || productData.subcategory.name || product.subcategory;
+          } else {
+            subcategoryValue = productData.subcategory;
+          }
+        }
+        
+        // Build full product object with all fields
+        const fullProduct: any = {
+          id: product.id,
+          documentId: product.documentId || productId.toString(),
+          name: productData.name || product.name,
+          slug: productData.slug || product.slug,
+          category: categoryValue,
+          subcategory: subcategoryValue,
+          brand: brandValue,
+          price: productData.price || productData.sellingPrice || product.price,
+          discountedPrice: productData.discountedPrice !== undefined && productData.discountedPrice !== null 
+            ? String(productData.discountedPrice) 
+            : product.discountedPrice,
+          tagline: productData.tagline ?? product.tagline,
+          description: productData.description ?? product.description,
+          specs: productData.specs ?? product.specs,
+          isActive: productData.isActive ?? product.isActive,
+          images: images,
+          SKU: productData.SKU || productData.sku || product.SKU,
+          stockQuantity: productData.stockQuantity ?? product.stockQuantity,
+          minStockLevel: productData.minStockLevel ?? product.minStockLevel,
+          maxStockLevel: productData.maxStockLevel ?? product.maxStockLevel,
+          stockStatus: productData.stockStatus ?? product.stockStatus,
+          basePrice: productData.basePrice ?? productData.costPrice ?? product.basePrice,
+          taxRate: productData.taxRate ?? product.taxRate,
+          discountPercent: productData.discountPercent ?? product.discountPercent,
+          weight: productData.weight ?? product.weight,
+          Dimensions: productData.Dimensions || productData.dimensions || product.Dimensions,
+          // Include additional fields that EditProductModal expects
+          color: productData.color,
+          condition: productData.condition,
+          warrantyPeriod: productData.warrantyPeriod,
+          attributes: productData.attributes,
+          metaTitle: productData.metaTitle,
+          metaDescription: productData.metaDescription,
+          metaKeywords: productData.metaKeywords,
+          ogImage: productData.ogImage,
+          schemaMarkup: productData.schemaMarkup,
+        };
+        
+        console.log('Full product prepared for edit:', fullProduct);
+        setEditingProduct(fullProduct);
+        setShowEditModal(true);
+      } else {
+        // Fallback to using the product from props if no ID
+        console.warn('No product ID available, using partial product data');
+        setEditingProduct(product);
+        setShowEditModal(true);
+      }
+    } catch (error: any) {
+      console.error('Error fetching full product details:', error);
+      toast.error('Failed to load complete product details. Some fields may be missing.');
+      // Fallback to using the product from props
+      setEditingProduct(product);
     setShowEditModal(true);
+    } finally {
+      setLoadingProduct(false);
+    }
   };
 
   // Show product showcase immediately, edit button will appear when auth is confirmed
@@ -176,11 +283,14 @@ export default function ProductDetailsWithEdit({
       {isAuthenticated && (
         <button
           onClick={handleOpenEditModal}
-          className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-2xl bg-primary-600 px-5 py-3 text-white shadow-lg transition-all hover:bg-primary-700 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 md:bottom-8 md:right-8"
+          disabled={loadingProduct}
+          className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-2xl bg-primary-600 px-5 py-3 text-white shadow-lg transition-all hover:bg-primary-700 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed md:bottom-8 md:right-8"
           title="Edit Product"
         >
           <PencilIcon className="h-5 w-5" />
-          <span className="hidden sm:inline">Edit Product</span>
+          <span className="hidden sm:inline">
+            {loadingProduct ? 'Loading...' : 'Edit Product'}
+          </span>
         </button>
       )}
 
@@ -188,11 +298,11 @@ export default function ProductDetailsWithEdit({
       <ProductDetails product={product} />
 
       {/* Edit Modal */}
-      {showEditModal && (
+      {showEditModal && editingProduct && (
         <EditProductModal
           isOpen={showEditModal}
           onClose={handleCloseEditModal}
-          product={product}
+          product={editingProduct}
           onSave={handleSaveProduct}
         />
       )}

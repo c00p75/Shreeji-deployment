@@ -43,7 +43,7 @@ const Categories = () => {
 
   return (
     <div className={`bg-[var(--shreeji-primary)] flex flex-col px-5 py-7 ${openCategory ? 'h-auto' : 'h-full'}`}>
-      <ul>
+      <ul className="min-h-[80vh]">
         {categories.map(({ category, subcategories }, index) => (
           <li
             key={index}
@@ -53,7 +53,7 @@ const Categories = () => {
               className="flex gap-5 items-center"
               
             >
-              <CircleDot color="#ffffff" strokeWidth={3} size={20} />
+              <CircleDot color="#ffffff" strokeWidth={3} size={20} style={{ width: '2rem' }} />
               
               <Link href={`/products/${encodeURIComponent(category)}`} className="font-medium text-white cursor-pointer">{category}</Link>
               
@@ -61,10 +61,10 @@ const Categories = () => {
             </div>
 
             {openCategory === category && (
-              <ul className="ml-8 mt-3 text-gray-300 flex flex-col gap-5">
+              <ul className="ml-4 mt-3 text-gray-300 flex flex-col gap-5">
                 {subcategories.map((sub, subIndex) => (
                   <li key={subIndex} className="text-base flex gap-4">
-                    <CircleDot color="#ffffff" strokeWidth={3} size={20} />
+                    <CircleDot color="#ffffff" strokeWidth={3} size={20} style={{ width: '2rem' }} />
                     <Link href={`/products/${encodeURIComponent(category)}/${encodeURIComponent(sub)}`} className="font-medium text-white cursor-pointer">{sub}</Link>
                   </li>
                 ))}

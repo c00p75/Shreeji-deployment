@@ -106,7 +106,10 @@ const getImageUrl = (product: RecentlyViewedItem['product']) => {
 
 function RecentlyViewedCard({ item }: { item: RecentlyViewedItem }) {
   const imageUrl = getImageUrl(item.product)
-  const price = item.product.discountedPrice ?? item.product.price
+  // Only use discountedPrice if it's a valid positive number
+  const price = (item.product.discountedPrice && item.product.discountedPrice > 0)
+    ? item.product.discountedPrice
+    : item.product.price
   const currency = item.product.currency || 'ZMW'
 
   const href = item.product.slug

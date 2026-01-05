@@ -69,10 +69,23 @@ export default function OrderManagement() {
         populate: ['customer', 'orderItems', 'shippingAddress']
       });
       
+      // Debug: Log first order to check data structure
+      if (response.data && response.data.length > 0) {
+        console.log('Sample order data:', response.data[0]);
+        console.log('totalAmount:', response.data[0]?.totalAmount);
+        console.log('total_amount:', response.data[0]?.total_amount);
+      }
+      
       // Transform API response to match component format
       const transformedOrders = (response.data || []).map((order: any) => {
         const customer = order.customer || {};
         const shippingAddress = order.shippingAddress || {};
+        
+        // Handle totalAmount - check both camelCase and snake_case, convert to number
+        const totalAmount = order.totalAmount ?? order.total_amount ?? null;
+        const total = totalAmount !== null && totalAmount !== undefined && totalAmount !== '' 
+          ? Number(totalAmount) 
+          : 0;
         
         return {
           id: order.orderNumber || `#${order.id}`,
@@ -83,7 +96,7 @@ export default function OrderManagement() {
             : customer.email || 'Unknown Customer',
           email: customer.email || '',
           phone: customer.phone || shippingAddress.phone || '',
-          total: order.totalAmount || 0,
+          total: total,
           status: order.status || order.orderStatus || 'pending',
           paymentStatus: order.paymentStatus || 'pending',
           trackingNumber: order.trackingNumber || '',
@@ -130,6 +143,12 @@ export default function OrderManagement() {
         const customer = order.customer || {};
         const shippingAddress = order.shippingAddress || {};
         
+        // Handle totalAmount - check both camelCase and snake_case, convert to number
+        const totalAmount = order.totalAmount ?? order.total_amount ?? null;
+        const total = totalAmount !== null && totalAmount !== undefined && totalAmount !== '' 
+          ? Number(totalAmount) 
+          : 0;
+        
         return {
           id: order.orderNumber || `#${order.id}`,
           orderId: order.id,
@@ -139,7 +158,7 @@ export default function OrderManagement() {
             : customer.email || 'Unknown Customer',
           email: customer.email || '',
           phone: customer.phone || shippingAddress.phone || '',
-          total: order.totalAmount || 0,
+          total: total,
           status: order.status || order.orderStatus || 'pending',
           paymentStatus: order.paymentStatus || 'pending',
           trackingNumber: order.trackingNumber || '',

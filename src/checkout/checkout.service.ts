@@ -140,7 +140,10 @@ export class CheckoutService {
       });
     }
 
-    this.cartService.clearCart(payload.cartId);
+    // Only clear cart if payment is successful or pending (not failed)
+    if (paymentResult.status === 'approved' || paymentResult.status === 'pending') {
+      this.cartService.clearCart(payload.cartId);
+    }
 
     return {
       orderNumber,
