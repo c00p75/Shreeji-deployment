@@ -63,7 +63,6 @@ class ClientApiClient {
           errorMessage = errorText;
         }
       }
-
       throw new Error(errorMessage);
     }
 
@@ -74,6 +73,7 @@ class ClientApiClient {
   async getProducts(params?: {
     pagination?: { page: number; pageSize: number };
     filters?: Record<string, any>;
+    search?: string;
   }) {
     const searchParams = new URLSearchParams();
 
@@ -82,10 +82,23 @@ class ClientApiClient {
       searchParams.append('pageSize', params.pagination.pageSize.toString());
     }
 
+    if (params?.search) {
+      searchParams.append('search', params.search);
+    }
+
     if (params?.filters) {
       Object.entries(params.filters).forEach(([key, value]) => {
         if (value !== undefined && value !== null && value !== '') {
-          searchParams.append(key, value.toString());
+          // For boolean values, convert to string
+          // For numbers, ensure they're properly formatted
+          if (typeof value === 'boolean') {
+            searchParams.append(key, value ? 'true' : 'false');
+          } else if (typeof value === 'number') {
+            // Ensure numbers are properly formatted (handle 0 case)
+            searchParams.append(key, value.toString());
+          } else {
+            searchParams.append(key, value.toString());
+          }
         }
       });
     }
@@ -584,7 +597,7 @@ class ClientApiClient {
       throw new Error('User not authenticated');
     }
 
-    const response = await this.request<any[]>('/wishlist');
+    const response = await this.request<any>('/wishlist');
     const items = Array.isArray(response) ? response : (response.data || []);
     
     return {
@@ -644,7 +657,7 @@ class ClientApiClient {
       throw new Error('User not authenticated');
     }
 
-    const response = await this.request<any[]>('/recently-viewed');
+    const response = await this.request<any>('/recently-viewed');
     const items = Array.isArray(response) ? response : (response.data || []);
     
     return {
@@ -712,7 +725,7 @@ class ClientApiClient {
 
   // Reviews API
   async getProductReviews(productId: number) {
-    const response = await this.request<any[]>(`/reviews/product/${productId}`);
+    const response = await this.request<any>(`/reviews/product/${productId}`);
     const reviews = Array.isArray(response) ? response : (response.data || []);
     
     return {
@@ -786,7 +799,7 @@ class ClientApiClient {
       throw new Error('User not authenticated');
     }
 
-    const response = await this.request<any[]>('/reviews/me');
+    const response = await this.request<any>('/reviews/me');
     const reviews = Array.isArray(response) ? response : (response.data || []);
     
     return {
@@ -857,7 +870,7 @@ class ClientApiClient {
       throw new Error('User not authenticated');
     }
 
-    const response = await this.request<any[]>('/auth/sessions');
+    const response = await this.request<any>('/auth/sessions');
     const sessions = Array.isArray(response) ? response : (response.data || []);
     
     return {
@@ -906,7 +919,7 @@ class ClientApiClient {
       throw new Error('User not authenticated');
     }
 
-    const response = await this.request<any[]>('/auth/login-history');
+    const response = await this.request<any>('/auth/login-history');
     const history = Array.isArray(response) ? response : (response.data || []);
     
     return {
@@ -940,7 +953,7 @@ class ClientApiClient {
     const queryString = searchParams.toString();
     const endpoint = `/account-activity${queryString ? `?${queryString}` : ''}`;
     
-    const response = await this.request<any[]>(endpoint);
+    const response = await this.request<any>(endpoint);
     const activities = Array.isArray(response) ? response : (response.data || []);
     
     return {
@@ -973,7 +986,7 @@ class ClientApiClient {
     const queryString = searchParams.toString();
     const endpoint = `/communication-history${queryString ? `?${queryString}` : ''}`;
     
-    const response = await this.request<any[]>(endpoint);
+    const response = await this.request<any>(endpoint);
     const communications = Array.isArray(response) ? response : (response.data || []);
     
     return {
@@ -1122,7 +1135,7 @@ class ClientApiClient {
 
   // Product Variants API
   async getProductVariants(productId: number) {
-    const response = await this.request<any[]>(`/products/${productId}/variants`);
+    const response = await this.request<any>(`/products/${productId}/variants`);
     return {
       data: Array.isArray(response) ? response : (response.data || []),
     };
@@ -1139,7 +1152,7 @@ class ClientApiClient {
       throw new Error('User not authenticated');
     }
 
-    const response = await this.request<any[]>(`/customers/${user.id}/cards`);
+    const response = await this.request<any>(`/customers/${user.id}/cards`);
     const cards = Array.isArray(response) ? response : (response.data || []);
     
     return {

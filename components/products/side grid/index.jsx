@@ -1,6 +1,5 @@
 import React from 'react'
 import Categories from './categories'
-import HotDeals from './hot deals'
 
 const SideGrid = () => {
   return (

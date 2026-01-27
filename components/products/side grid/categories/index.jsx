@@ -4,6 +4,7 @@ import { ChevronDown, CircleDot } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { getAllProductsList } from "@/app/lib/client/products";
 import Link from "next/link";
+import SearchInput from "../SearchInput";
 
 const Categories = () => {
   const [categories, setCategories] = useState([]); // Use an array instead of an object
@@ -43,7 +44,8 @@ const Categories = () => {
 
   return (
     <div className={`bg-[var(--shreeji-primary)] flex flex-col px-5 py-7 ${openCategory ? 'h-auto' : 'h-full'}`}>
-      <ul className="min-h-[80vh]">
+      <SearchInput />
+      <ul className="min-h-[70vh]">
         {categories.map(({ category, subcategories }, index) => (
           <li
             key={index}

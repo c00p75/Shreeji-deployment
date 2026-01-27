@@ -290,6 +290,154 @@ export async function filterProducts(
   }
 }
 
+// Search products by query string
+export async function searchProducts(
+  searchQuery: string,
+  page: number = 1,
+  pageSize: number = 12,
+  filters?: {
+    category?: string;
+    subcategory?: string;
+    brandId?: number;
+    minPrice?: number;
+    maxPrice?: number;
+    inStockOnly?: boolean;
+  }
+): Promise<{ data: any[]; meta: any }> {
+  try {
+    if (!searchQuery || typeof searchQuery !== 'string' || searchQuery.trim().length === 0) {
+      return { data: [], meta: { pagination: { page, pageSize, pageCount: 0, total: 0 } } };
+    }
+
+    // Build filters object for API
+    const apiFilters: Record<string, any> = {};
+    if (filters?.category) {
+      apiFilters.category = filters.category;
+    }
+    if (filters?.subcategory) {
+      apiFilters.subcategory = filters.subcategory;
+    }
+    if (filters?.brandId) {
+      apiFilters.brandId = filters.brandId;
+    }
+    if (filters?.minPrice !== undefined && filters.minPrice !== null) {
+      apiFilters.minPrice = filters.minPrice;
+    }
+    if (filters?.maxPrice !== undefined && filters.maxPrice !== null) {
+      apiFilters.maxPrice = filters.maxPrice;
+    }
+    if (filters?.inStockOnly) {
+      apiFilters.inStockOnly = filters.inStockOnly;
+    }
+
+    const response = await clientApi.getProducts({
+      search: searchQuery.trim(),
+      pagination: { page, pageSize },
+      filters: Object.keys(apiFilters).length > 0 ? apiFilters : undefined,
+    });
+
+    // Transform the products using existing transform function
+    const transformedProducts = transformProducts(response.data || []);
+
+    return {
+      data: transformedProducts,
+      meta: response.meta || {
+        pagination: {
+          page,
+          pageSize,
+          pageCount: 0,
+          total: 0,
+        },
+      },
+    };
+  } catch (error) {
+    console.error('Error searching products:', error);
+    return { data: [], meta: { pagination: { page, pageSize, pageCount: 0, total: 0 } } };
+  }
+}
+
+// Helper functions to extract available filter options from products
+export function getAvailableCategories(products: any[]): string[] {
+  const categories = new Set<string>();
+  products.forEach((product) => {
+    if (product.category && typeof product.category === 'string') {
+      categories.add(product.category.trim());
+    }
+  });
+  return Array.from(categories).sort();
+}
+
+export function getAvailableSubcategories(
+  products: any[],
+  category?: string
+): string[] {
+  const subcategories = new Set<string>();
+  products.forEach((product) => {
+    if (category && product.category !== category) {
+      return; // Skip if category filter is applied and doesn't match
+    }
+    if (product.subcategory) {
+      const subcategoryName =
+        typeof product.subcategory === 'object' && product.subcategory.name
+          ? product.subcategory.name
+          : String(product.subcategory);
+      if (subcategoryName && subcategoryName.trim()) {
+        subcategories.add(subcategoryName.trim());
+      }
+    }
+  });
+  return Array.from(subcategories).sort();
+}
+
+export function getAvailableBrands(products: any[]): Array<{ id: number; name: string }> {
+  const brandsMap = new Map<number, string>();
+  products.forEach((product) => {
+    if (product.brand) {
+      const brandId =
+        typeof product.brand === 'object' && product.brand.id
+          ? product.brand.id
+          : null;
+      const brandName =
+        typeof product.brand === 'object' && product.brand.name
+          ? product.brand.name
+          : typeof product.brand === 'string'
+          ? product.brand
+          : null;
+
+      if (brandId && brandName) {
+        brandsMap.set(brandId, brandName);
+      }
+    }
+  });
+  return Array.from(brandsMap.entries())
+    .map(([id, name]) => ({ id, name }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+}
+
+export function getPriceRange(products: any[]): { min: number; max: number } {
+  if (products.length === 0) {
+    return { min: 0, max: 0 };
+  }
+
+  let min = Infinity;
+  let max = -Infinity;
+
+  products.forEach((product) => {
+    const price = product.price || product['discounted price'] || 0;
+    const numericPrice = typeof price === 'string' ? parseFloat(price.replace(/[^0-9.]/g, '')) : Number(price);
+    
+    if (!isNaN(numericPrice) && numericPrice > 0) {
+      min = Math.min(min, numericPrice);
+      max = Math.max(max, numericPrice);
+    }
+  });
+
+  return {
+    min: min === Infinity ? 0 : min,
+    max: max === -Infinity ? 0 : max,
+  };
+}
+
 // Replace getProductByName() from productsData.js
 export async function getProductByName(name: string): Promise<any | null> {
   try {
