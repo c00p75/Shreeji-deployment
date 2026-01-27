@@ -93,13 +93,40 @@ export default function OrderSummarySection() {
 
       <div className='space-y-4'>
         {cart.items.map((item) => {
+          // Check if this is a variant first (needed for pricing logic)
+          const productSnapshot = item.productSnapshot as any
+          const variantId = (item as any).variantId || productSnapshot?.variantId
+          const variantAttributes = productSnapshot?.variantAttributes || productSnapshot?.attributes || {}
+          const isVariant = !!variantId || Object.keys(variantAttributes).length > 0
+          
+          // Use unitPrice from the cart item (which contains variant price if it's a variant)
+          const unitPrice = item.unitPrice
           const originalPrice = item.productSnapshot.price
-          // Treat 0, null, or undefined as "no discount" - use original price
-          const discountedPrice = (item.productSnapshot.discountedPrice && item.productSnapshot.discountedPrice > 0) 
-            ? item.productSnapshot.discountedPrice 
-            : originalPrice
-          const discount = originalPrice - discountedPrice
-          const discountPercent = discount > 0 ? Math.round((discount / originalPrice) * 100) : 0
+          
+          // Discount logic:
+          // - For variants: unitPrice is already the correct price to display
+          //   Don't show discount based on original product price
+          // - For non-variants: Show discount if productSnapshot has discountedPrice
+          let displayPrice = unitPrice || originalPrice
+          let discountedPrice = displayPrice
+          let discount = 0
+          let discountPercent = 0
+          
+          if (isVariant) {
+            // For variants, unitPrice is already the correct price to display
+            // Don't show discount based on original product price
+            displayPrice = unitPrice
+            discountedPrice = displayPrice
+          } else {
+            // For non-variants, check if there's a product discount
+            discountedPrice = (item.productSnapshot.discountedPrice && item.productSnapshot.discountedPrice > 0) 
+              ? item.productSnapshot.discountedPrice 
+              : displayPrice
+            discount = originalPrice - discountedPrice
+            discountPercent = discount > 0 ? Math.round((discount / originalPrice) * 100) : 0
+            // Update displayPrice to show discounted price if available
+            displayPrice = discountedPrice
+          }
 
           // Get the main image or first available image
           // Try image mapping utility first for accurate filenames, then fallback to backend images
@@ -140,14 +167,25 @@ export default function OrderSummarySection() {
           if (imageUrl) {
             imageUrl = processImageUrl(imageUrl)
           }
+          
+          // Format variant attributes as text (similar to inventory page)
+          const variantAttributesText = Object.entries(variantAttributes)
+            .map(([key, value]) => `${key}: ${value}`)
+            .join(', ') || null
 
-          // Extract product variant/subtitle (using SKU or brand if available)
-          const productSubtitle = item.productSnapshot.sku || 'Shreeji'
+          // Extract product variant/subtitle (using variant attributes if available, otherwise SKU)
+          const productSubtitle = variantAttributesText 
+            ? variantAttributesText 
+            : (item.productSnapshot.sku || 'Shreeji')
 
           return (
             <div 
               key={item.id} 
-              className='flex items-center gap-4 bg-white px-4 py-5'
+              className={`flex items-center gap-4 px-4 py-5 ${
+                isVariant 
+                  ? 'bg-gray-50 pl-12 border-l-4 border-gray-300' 
+                  : 'bg-white'
+              }`}
             >
               {/* Product Image - Small thumbnail */}
               <div className='relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100'>
@@ -175,15 +213,19 @@ export default function OrderSummarySection() {
               {/* Product Information - Left Side */}
               <div className='flex-1 min-w-0'>
                 <h3 className='font-bold text-gray-900 text-base leading-tight'>{item.productSnapshot.name}</h3>
+                {isVariant && (
+                  <p className='text-xs text-gray-400 mt-0.5 font-medium'>Variant</p>
+                )}
                 <p className='text-sm text-gray-500 mt-0.5'>{productSubtitle}</p>
                   </div>
                   
               {/* Unit Price - Middle */}
               <div className='text-center min-w-[100px]'>
                 <p className='text-sm font-semibold text-gray-900'>
-                  {currencyFormatter(discountedPrice, cart.currency)}
+                  {currencyFormatter(displayPrice, cart.currency)}
                 </p>
-                {discount > 0 && discountedPrice < originalPrice && (
+                {/* Only show strikethrough price for non-variants with discount */}
+                {!isVariant && discount > 0 && discountedPrice < originalPrice && (
                   <p className='text-xs text-gray-500 line-through mt-0.5'>
                     {currencyFormatter(originalPrice, cart.currency)}
                   </p>
@@ -218,7 +260,7 @@ export default function OrderSummarySection() {
                 {/* Price - Bold */}
                 <div className='text-right'>
                   <p className='font-bold text-gray-900 text-base'>
-                    {currencyFormatter(discountedPrice * item.quantity, cart.currency)}
+                    {currencyFormatter(displayPrice * item.quantity, cart.currency)}
                   </p>
                 </div>
 

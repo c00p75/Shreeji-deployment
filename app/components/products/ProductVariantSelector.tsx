@@ -22,6 +22,7 @@ interface ProductVariantSelectorProps {
   productPrice: number
   productDiscountedPrice?: number
   onVariantSelect?: (variant: ProductVariant | null) => void
+  hidePriceDisplay?: boolean
 }
 
 export default function ProductVariantSelector({
@@ -29,6 +30,7 @@ export default function ProductVariantSelector({
   productPrice,
   productDiscountedPrice,
   onVariantSelect,
+  hidePriceDisplay = false,
 }: ProductVariantSelectorProps) {
   const [variants, setVariants] = useState<ProductVariant[]>([])
   const [loading, setLoading] = useState(true)
@@ -93,10 +95,19 @@ export default function ProductVariantSelector({
   }
 
   const handleAttributeChange = (key: string, value: string) => {
-    setSelectedAttributes((prev) => ({
-      ...prev,
-      [key]: value,
-    }))
+    setSelectedAttributes((prev) => {
+      // If clicking the same value, deselect it (toggle off)
+      if (prev[key] === value) {
+        const newAttrs = { ...prev }
+        delete newAttrs[key]
+        return newAttrs
+      }
+      // Otherwise, set the new value (toggle on)
+      return {
+        ...prev,
+        [key]: value,
+      }
+    })
   }
 
   if (loading) {
@@ -120,11 +131,11 @@ export default function ProductVariantSelector({
         if (availableValues.length === 0) return null
 
         return (
-          <div key={attributeKey}>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              {attributeKey}
+          <div key={attributeKey} className="mt-4">
+            <label className="block text-lg font-semibold text-[#544829] mb-3 capitalize">
+              {attributeKey.replace(/-/g, ' ')}
             </label>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-3">
               {availableValues.map((value) => {
                 const isSelected = selectedAttributes[attributeKey] === value
                 const variant = variants.find(
@@ -142,10 +153,10 @@ export default function ProductVariantSelector({
                     type="button"
                     onClick={() => handleAttributeChange(attributeKey, value)}
                     disabled={isOutOfStock}
-                    className={`px-4 py-2 rounded-lg border-2 transition-all ${
+                    className={`px-5 py-2.5 rounded-lg border-2 transition-all font-medium ${
                       isSelected
-                        ? 'border-[var(--shreeji-primary)] bg-[var(--shreeji-primary)] text-white'
-                        : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
+                        ? 'border-[var(--shreeji-primary)] bg-[var(--shreeji-primary)] text-white shadow-md'
+                        : 'border-gray-300 bg-white text-gray-700 hover:border-[var(--shreeji-primary)] hover:bg-gray-50'
                     } ${
                       isOutOfStock
                         ? 'opacity-50 cursor-not-allowed line-through'
@@ -163,7 +174,7 @@ export default function ProductVariantSelector({
       })}
 
       {selectedVariant && (
-        <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+        <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
           <p className="text-sm text-green-800">
             <strong>Selected:</strong> {selectedVariant.sku}
             {selectedVariant.stockQuantity > 0 && (
@@ -173,25 +184,27 @@ export default function ProductVariantSelector({
         </div>
       )}
 
-      {/* Price Display */}
-      <div className="mt-4">
-        <div className="flex items-center space-x-3">
-          {displayDiscountedPrice && displayDiscountedPrice < displayPrice ? (
-            <>
+      {/* Price Display - Only show if hidePriceDisplay is false */}
+      {!hidePriceDisplay && (
+        <div className="mt-4">
+          <div className="flex items-center space-x-3">
+            {displayDiscountedPrice && displayDiscountedPrice < displayPrice ? (
+              <>
+                <span className="text-2xl font-bold text-[var(--shreeji-primary)]">
+                  {currencyFormatter(Number(displayDiscountedPrice || 0))}
+                </span>
+                <span className="text-lg text-gray-500 line-through">
+                  {currencyFormatter(Number(displayPrice || 0))}
+                </span>
+              </>
+            ) : (
               <span className="text-2xl font-bold text-[var(--shreeji-primary)]">
-                {currencyFormatter(Number(displayDiscountedPrice || 0))}
-              </span>
-              <span className="text-lg text-gray-500 line-through">
                 {currencyFormatter(Number(displayPrice || 0))}
               </span>
-            </>
-          ) : (
-            <span className="text-2xl font-bold text-[var(--shreeji-primary)]">
-              {currencyFormatter(Number(displayPrice || 0))}
-            </span>
-          )}
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }

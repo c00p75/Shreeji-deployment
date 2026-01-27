@@ -304,6 +304,7 @@ export default function ProductDetailsWithEdit({
           onClose={handleCloseEditModal}
           product={editingProduct}
           onSave={handleSaveProduct}
+          onDelete={async () => {}}
         />
       )}
     </div>

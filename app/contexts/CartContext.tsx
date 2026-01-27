@@ -45,7 +45,7 @@ interface CartContextValue {
   updating: boolean
   error: string | null
   isCheckingOut: boolean
-  addItem: (productId: number | string, quantity?: number) => Promise<void>
+  addItem: (productId: number | string, quantity?: number, variantId?: number) => Promise<void>
   updateItem: (itemId: string, quantity: number) => Promise<void>
   removeItem: (itemId: string) => Promise<void>
   clearCart: () => Promise<void>
@@ -183,12 +183,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [refreshCart, cart?.id, isAuthenticated, user?.id])
 
   const addItem = useCallback(
-    async (productId: number | string, quantity = 1) => {
+    async (productId: number | string, quantity = 1, variantId?: number) => {
       setUpdating(true)
       setError(null)
       try {
         const cartId = await ensureCartExists()
-        const updated = await addCartItem(cartId, productId, quantity)
+        const updated = await addCartItem(cartId, productId, quantity, variantId)
         setCart(updated)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Unable to add item')

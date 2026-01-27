@@ -15,11 +15,13 @@ export interface CartItemSnapshot {
   taxRate?: number | null;
   isDigital: boolean;
   images?: ProductImage[];
+  variantAttributes?: Record<string, string>;
 }
 
 export interface CartItem {
   id: string;
   productId: number;
+  variantId?: number;
   quantity: number;
   unitPrice: number;
   subtotal: number;
@@ -175,10 +177,15 @@ export async function getCart(cartId: string): Promise<Cart> {
   return request<Cart>(`/cart/${cartId}`);
 }
 
-export async function addCartItem(cartId: string, productId: number | string, quantity: number): Promise<Cart> {
+export async function addCartItem(
+  cartId: string, 
+  productId: number | string, 
+  quantity: number,
+  variantId?: number
+): Promise<Cart> {
   return request<Cart>(`/cart/${cartId}/items`, {
     method: 'POST',
-    body: JSON.stringify({ productId, quantity }),
+    body: JSON.stringify({ productId, quantity, variantId }),
   });
 }
 

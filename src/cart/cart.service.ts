@@ -1,4 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
+import { firstValueFrom } from 'rxjs';
 import { v4 as uuid } from 'uuid';
 import { CatalogService } from '../catalog/catalog.service';
 import { AddCartItemDto } from './dto/add-cart-item.dto';
@@ -9,7 +12,15 @@ import { Cart, CartItem } from './interfaces/cart.interface';
 export class CartService {
   private readonly carts = new Map<string, Cart>();
 
-  constructor(private readonly catalogService: CatalogService) {}
+  private readonly apiUrl: string;
+
+  constructor(
+    private readonly catalogService: CatalogService,
+    private readonly httpService: HttpService,
+    private readonly configService: ConfigService,
+  ) {
+    this.apiUrl = this.configService.get<string>('ECOM_API_URL') || 'http://localhost:4000';
+  }
 
   async createCart(currency = 'USD'): Promise<Cart> {
     const id = uuid();
@@ -38,22 +49,57 @@ export class CartService {
     const cart = this.getCart(cartId);
     const product = await this.catalogService.getProductById(payload.productId);
 
-    if (product.stockQuantity < payload.quantity) {
+    // If variantId is provided, fetch variant details
+    let variant = null;
+    let variantPrice = product.price;
+    let variantAttributes: Record<string, string> = {};
+    let variantSku = product.sku;
+    
+    if (payload.variantId) {
+      try {
+        // Fetch variant from API
+        const variantResponse = await firstValueFrom(
+          this.httpService.get(`${this.apiUrl}/products/${payload.productId}/variants/${payload.variantId}`)
+        );
+        variant = variantResponse.data?.data || variantResponse.data;
+        
+        if (variant) {
+          variantPrice = (variant.discountedPrice && variant.discountedPrice > 0)
+            ? variant.discountedPrice
+            : (variant.price || product.price);
+          variantAttributes = variant.attributes || variant.specs || {};
+          variantSku = variant.sku || product.sku;
+        }
+      } catch (error) {
+        console.error('Failed to fetch variant:', error);
+        // Continue with product price if variant fetch fails
+      }
+    }
+
+    // Check stock - use variant stock if variant exists
+    const stockQuantity = variant?.stockQuantity ?? product.stockQuantity;
+    if (stockQuantity < payload.quantity) {
       throw new BadRequestException('Insufficient stock');
     }
 
-    const existingItem = cart.items.find((item) => item.productId === product.id);
+    // Find existing item - check both productId AND variantId
+    // Variants should be separate cart items
+    const existingItem = cart.items.find((item) => 
+      item.productId === product.id && 
+      (item.variantId === payload.variantId || (!item.variantId && !payload.variantId))
+    );
+
     if (existingItem) {
       existingItem.quantity += payload.quantity;
       existingItem.subtotal = existingItem.quantity * existingItem.unitPrice;
     } else {
-      // Only use discountedPrice if it's a valid positive number, otherwise use regular price
-      const unitPrice = (product.discountedPrice && product.discountedPrice > 0)
-        ? product.discountedPrice
-        : product.price;
+      // Use variant price if variant exists, otherwise use product price
+      const unitPrice = variantPrice;
+      
       const cartItem: CartItem = {
         id: uuid(),
         productId: product.id,
+        variantId: payload.variantId,
         quantity: payload.quantity,
         unitPrice,
         taxRate: product.taxRate ?? undefined,
@@ -61,12 +107,13 @@ export class CartService {
         productSnapshot: {
           id: product.id,
           name: product.name,
-          sku: product.sku,
+          sku: variantSku,
           slug: product.slug,
           price: product.price,
-          discountedPrice: product.discountedPrice,
+          discountedPrice: variant?.discountedPrice || product.discountedPrice,
           taxRate: product.taxRate,
           isDigital: product.isDigital,
+          variantAttributes: Object.keys(variantAttributes).length > 0 ? variantAttributes : undefined,
         },
       };
       cart.items.push(cartItem);

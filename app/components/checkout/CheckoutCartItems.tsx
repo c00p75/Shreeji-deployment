@@ -34,10 +34,25 @@ export default function CheckoutCartItems() {
         const mainImage = productImages.find((img) => img.isMain) || productImages[0]
         const imageUrl = mainImage?.url
 
+        // Check if this is a variant (check for variantId or variantAttributes in productSnapshot)
+        const productSnapshot = item.productSnapshot as any
+        const variantId = (item as any).variantId || productSnapshot?.variantId
+        const variantAttributes = productSnapshot?.variantAttributes || productSnapshot?.attributes || {}
+        const isVariant = !!variantId || Object.keys(variantAttributes).length > 0
+        
+        // Format variant attributes as text (similar to inventory page)
+        const variantAttributesText = Object.entries(variantAttributes)
+          .map(([key, value]) => `${key}: ${value}`)
+          .join(', ') || null
+
         return (
           <div
             key={item.id}
-            className='flex flex-col gap-4 rounded-xl border border-gray-200 p-4 sm:flex-row sm:items-center sm:justify-between'
+            className={`flex flex-col gap-4 rounded-xl border p-4 sm:flex-row sm:items-center sm:justify-between ${
+              isVariant 
+                ? 'bg-gray-50 border-l-4 border-l-gray-300 pl-8 border-gray-200' 
+                : 'border-gray-200'
+            }`}
           >
             <div className='flex flex-1 items-center gap-4'>
               {imageUrl && (
@@ -54,7 +69,12 @@ export default function CheckoutCartItems() {
               )}
               <div className='flex-1'>
                 <p className='text-lg font-semibold text-gray-900'>{item.productSnapshot.name}</p>
-                <p className='text-sm text-gray-500'>SKU: {item.productSnapshot.sku}</p>
+                {isVariant && (
+                  <p className='text-xs text-gray-400 font-medium'>Variant</p>
+                )}
+                <p className='text-sm text-gray-500'>
+                  {variantAttributesText || `SKU: ${item.productSnapshot.sku}`}
+                </p>
               </div>
             </div>
           <div className='flex items-center gap-3'>

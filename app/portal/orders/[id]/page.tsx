@@ -267,12 +267,29 @@ export default function OrderDetailsPage() {
                     
                     const unitPrice = item.unitPrice || item.price || 0
                     const totalPrice = (item.quantity || 1) * unitPrice
-                    const productSubtitle = product.sku || 'Shreeji'
+                    
+                    // Check if this is a variant (check for variantId or variantAttributes)
+                    const variantId = item.variantId || product.variantId
+                    const variantAttributes = product.variantAttributes || product.attributes || item.variantAttributes || {}
+                    const isVariant = !!variantId || Object.keys(variantAttributes).length > 0
+                    
+                    // Format variant attributes as text (similar to inventory page)
+                    const variantAttributesText = Object.entries(variantAttributes)
+                      .map(([key, value]) => `${key}: ${value}`)
+                      .join(', ') || null
+                    
+                    const productSubtitle = variantAttributesText 
+                      ? variantAttributesText 
+                      : (product.sku || 'Shreeji')
                     
                     return (
                       <div 
                         key={index} 
-                        className="flex items-center gap-4 bg-white px-4 py-5"
+                        className={`flex items-center gap-4 px-4 py-5 ${
+                          isVariant 
+                            ? 'bg-gray-50 pl-12 border-l-4 border-gray-300' 
+                            : 'bg-white'
+                        }`}
                       >
                         {/* Product Image - Small thumbnail */}
                         <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100">
@@ -301,6 +318,9 @@ export default function OrderDetailsPage() {
                           <h3 className="font-bold text-gray-900 text-base leading-tight">
                             {product.name || 'Product'}
                           </h3>
+                          {isVariant && (
+                            <p className="text-xs text-gray-400 mt-0.5 font-medium">Variant</p>
+                          )}
                           <p className="text-sm text-gray-500 mt-0.5">
                             {productSubtitle}
                           </p>
