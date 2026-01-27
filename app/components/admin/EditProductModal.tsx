@@ -56,7 +56,7 @@ interface Product {
   color?: string;
   condition?: string;
   warrantyPeriod?: string;
-  attributes?: Record<string, { value: string; type: 'text' | 'dropdown'; options?: string[] }>;
+  attributes?: Record<string, { value: string; type: 'text' | 'dropdown'; options?: string[]; hidden?: boolean }>;
   metaTitle?: string;
   metaDescription?: string;
   metaKeywords?: string;
@@ -3069,215 +3069,8 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
                   </div>
                 </div>
 
-                  {/* Attributes Card */}
-                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mt-6">
-                    <h4 className="text-lg font-bold text-gray-900 mb-6">Attributes</h4>
-                    
-                    <div className="space-y-4">
-                      {/* Weight */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Weight (kg)</label>
-                        <input
-                          type="number"
-                          value={formData.weight || ''}
-                          onChange={(e) => handleInputChange('weight', parseFloat(e.target.value) || 0)}
-                          className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                          placeholder="0"
-                          min="0"
-                          step="0.1"
-                        />
-                      </div>
-
-                      {/* Dimensions */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Dimensions</label>
-                        <div className="grid grid-cols-4 gap-3">
-                          <div>
-                            <label className="block text-xs text-gray-600 mb-1">Length</label>
-                            <input
-                              type="number"
-                              value={formData.Dimensions?.length || ''}
-                              onChange={(e) => handleDimensionsChange('length', parseFloat(e.target.value) || 0)}
-                              className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                              placeholder="0"
-                              min="0"
-                              step="0.1"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-xs text-gray-600 mb-1">Width</label>
-                            <input
-                              type="number"
-                              value={formData.Dimensions?.width || ''}
-                              onChange={(e) => handleDimensionsChange('width', parseFloat(e.target.value) || 0)}
-                              className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                              placeholder="0"
-                              min="0"
-                              step="0.1"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-xs text-gray-600 mb-1">Height</label>
-                            <input
-                              type="number"
-                              value={formData.Dimensions?.height || ''}
-                              onChange={(e) => handleDimensionsChange('height', parseFloat(e.target.value) || 0)}
-                              className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                              placeholder="0"
-                              min="0"
-                              step="0.1"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-xs text-gray-600 mb-1">Unit</label>
-                            <select
-                              value={formData.Dimensions?.unit || 'cm'}
-                              onChange={(e) => handleDimensionsChange('unit', e.target.value)}
-                              className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 4 5%22><path fill=%22%23666%22 d=%22M2 0L0 2h4zm0 5L0 3h4z%22/></svg>')] bg-no-repeat bg-right bg-[length:12px] pr-10"
-                            >
-                              <option value="cm">cm</option>
-                              <option value="m">m</option>
-                              <option value="in">in</option>
-                              <option value="ft">ft</option>
-                            </select>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Color */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Color</label>
-                        <input
-                          type="text"
-                          value={formData.color || ''}
-                          onChange={(e) => handleInputChange('color', e.target.value)}
-                          className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                          placeholder="e.g., Red, Blue, Black"
-                        />
-                      </div>
-
-                      {/* Condition */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Condition</label>
-                        <select
-                          value={formData.condition || ''}
-                          onChange={(e) => handleInputChange('condition', e.target.value)}
-                          className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 4 5%22><path fill=%22%23666%22 d=%22M2 0L0 2h4zm0 5L0 3h4z%22/></svg>')] bg-no-repeat bg-right bg-[length:12px] pr-10"
-                        >
-                          <option value="">Select Condition</option>
-                          <option value="New">New</option>
-                          <option value="Refurbished">Refurbished</option>
-                          <option value="Used">Used</option>
-                          <option value="Open Box">Open Box</option>
-                        </select>
-                      </div>
-
-                      {/* Warranty Period */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Warranty Period</label>
-                        <input
-                          type="text"
-                          value={formData.warrantyPeriod || ''}
-                          onChange={(e) => handleInputChange('warrantyPeriod', e.target.value)}
-                          className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                          placeholder="e.g., 1 Year, 2 Years, Lifetime"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Custom Attributes Section */}
-                    <div className="mt-6 pt-6 border-t border-gray-300">
-                      <div className="flex items-center justify-between mb-4">
-                        <h5 className="text-md font-semibold text-gray-900">Custom Attributes</h5>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const newKey = `attr_${Date.now()}`;
-                            setFormData(prev => ({
-                              ...prev,
-                              attributes: {
-                                ...prev.attributes,
-                                [newKey]: { value: '', type: 'text', options: [] }
-                              }
-                            }));
-                          }}
-                          className="flex items-center text-sm text-primary-600 hover:text-primary-500"
-                        >
-                          <PlusIcon className="h-4 w-4 mr-1" />
-                          Add Custom Attribute
-                        </button>
-                      </div>
-                      
-                      {/* Show hidden attributes toggle */}
-                      <div className="flex items-center justify-between mb-2">
-                        <label className="flex items-center text-sm text-gray-700">
-                          <input
-                            type="checkbox"
-                            checked={showHiddenAttributes}
-                            onChange={(e) => setShowHiddenAttributes(e.target.checked)}
-                            className="mr-2 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-                          />
-                          Show hidden attributes
-                        </label>
-                      </div>
-                      
-                      <div className="space-y-3">
-                        {Object.entries(formData.attributes || {})
-                          .filter(([key, attr]) => showHiddenAttributes || !attr.hidden)
-                          .map(([key, attributeData], index) => {
-                            return (
-                              <AttributeInput
-                                key={`attr-${index}-${key}`}
-                                attributeKey={key}
-                                attributeData={attributeData}
-                                availableAttributeNames={availableAttributeNames}
-                                onKeyChange={(oldKey, newKey) => {
-                                  const newAttributes = { ...formData.attributes };
-                                  if (newKey && newKey.trim() !== '') {
-                                    const value = newAttributes[oldKey];
-                                    delete newAttributes[oldKey];
-                                    newAttributes[newKey.trim()] = value;
-                                  } else {
-                                    delete newAttributes[oldKey];
-                                  }
-                                  setFormData(prev => ({ ...prev, attributes: newAttributes }));
-                                }}
-                                onValueChange={(attrKey, newValue) => {
-                                  handleAttributesChange(attrKey, newValue);
-                                }}
-                                onTypeChange={(attrKey, newType) => {
-                                  handleAttributeTypeChange(attrKey, newType);
-                                }}
-                                onOptionsChange={(attrKey, newOptions) => {
-                                  handleAttributeOptionsChange(attrKey, newOptions);
-                                }}
-                                onHiddenChange={(attrKey, hidden) => {
-                                  handleAttributeHiddenChange(attrKey, hidden);
-                                }}
-                                onRemove={(attrKey) => {
-                                  const newAttributes = { ...formData.attributes };
-                                  delete newAttributes[attrKey];
-                                  setFormData(prev => ({ ...prev, attributes: newAttributes }));
-                                }}
-                              />
-                            );
-                          })}
-                        {(!formData.attributes || Object.keys(formData.attributes).filter((k) => !formData.attributes[k].hidden).length === 0) && !showHiddenAttributes && (
-                          <p className="text-sm text-gray-500 text-center py-4">
-                            No custom attributes added yet. Click "Add Custom Attribute" to create one.
-                          </p>
-                        )}
-                        {showHiddenAttributes && (!formData.attributes || Object.keys(formData.attributes).length === 0) && (
-                          <p className="text-sm text-gray-500 text-center py-4">
-                            No custom attributes added yet. Click "Add Custom Attribute" to create one.
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
                   {/* Specifications Card */}
-                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mt-6">
                     <h4 className="text-lg font-bold text-gray-900 mb-6">Specifications</h4>
                     
                     <div className="space-y-2">
@@ -3335,6 +3128,213 @@ export default function EditProductModal({ isOpen, onClose, product, onSave, onD
                 />
               </div>
             )}
+
+            {/* Attributes Card */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mt-6">
+              <h4 className="text-lg font-bold text-gray-900 mb-6">Attributes</h4>
+              
+              <div className="space-y-4">
+                {/* Weight */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Weight (kg)</label>
+                  <input
+                    type="number"
+                    value={formData.weight || ''}
+                    onChange={(e) => handleInputChange('weight', parseFloat(e.target.value) || 0)}
+                    className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    placeholder="0"
+                    min="0"
+                    step="0.1"
+                  />
+                </div>
+
+                {/* Dimensions */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Dimensions</label>
+                  <div className="grid grid-cols-4 gap-3">
+                    <div>
+                      <label className="block text-xs text-gray-600 mb-1">Length</label>
+                      <input
+                        type="number"
+                        value={formData.Dimensions?.length || ''}
+                        onChange={(e) => handleDimensionsChange('length', parseFloat(e.target.value) || 0)}
+                        className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                        placeholder="0"
+                        min="0"
+                        step="0.1"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-600 mb-1">Width</label>
+                      <input
+                        type="number"
+                        value={formData.Dimensions?.width || ''}
+                        onChange={(e) => handleDimensionsChange('width', parseFloat(e.target.value) || 0)}
+                        className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                        placeholder="0"
+                        min="0"
+                        step="0.1"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-600 mb-1">Height</label>
+                      <input
+                        type="number"
+                        value={formData.Dimensions?.height || ''}
+                        onChange={(e) => handleDimensionsChange('height', parseFloat(e.target.value) || 0)}
+                        className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                        placeholder="0"
+                        min="0"
+                        step="0.1"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-600 mb-1">Unit</label>
+                      <select
+                        value={formData.Dimensions?.unit || 'cm'}
+                        onChange={(e) => handleDimensionsChange('unit', e.target.value)}
+                        className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 4 5%22><path fill=%22%23666%22 d=%22M2 0L0 2h4zm0 5L0 3h4z%22/></svg>')] bg-no-repeat bg-right bg-[length:12px] pr-10"
+                      >
+                        <option value="cm">cm</option>
+                        <option value="m">m</option>
+                        <option value="in">in</option>
+                        <option value="ft">ft</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Color */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Color</label>
+                  <input
+                    type="text"
+                    value={formData.color || ''}
+                    onChange={(e) => handleInputChange('color', e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    placeholder="e.g., Red, Blue, Black"
+                  />
+                </div>
+
+                {/* Condition */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Condition</label>
+                  <select
+                    value={formData.condition || ''}
+                    onChange={(e) => handleInputChange('condition', e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 4 5%22><path fill=%22%23666%22 d=%22M2 0L0 2h4zm0 5L0 3h4z%22/></svg>')] bg-no-repeat bg-right bg-[length:12px] pr-10"
+                  >
+                    <option value="">Select Condition</option>
+                    <option value="New">New</option>
+                    <option value="Refurbished">Refurbished</option>
+                    <option value="Used">Used</option>
+                    <option value="Open Box">Open Box</option>
+                  </select>
+                </div>
+
+                {/* Warranty Period */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Warranty Period</label>
+                  <input
+                    type="text"
+                    value={formData.warrantyPeriod || ''}
+                    onChange={(e) => handleInputChange('warrantyPeriod', e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    placeholder="e.g., 1 Year, 2 Years, Lifetime"
+                  />
+                </div>
+              </div>
+
+              {/* Custom Attributes Section */}
+              <div className="mt-6 pt-6 border-t border-gray-300">
+                <div className="flex items-center justify-between mb-4">
+                  <h5 className="text-md font-semibold text-gray-900">Custom Attributes</h5>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newKey = `attr_${Date.now()}`;
+                      setFormData(prev => ({
+                        ...prev,
+                        attributes: {
+                          ...prev.attributes,
+                          [newKey]: { value: '', type: 'text', options: [] }
+                        }
+                      }));
+                    }}
+                    className="flex items-center text-sm text-primary-600 hover:text-primary-500"
+                  >
+                    <PlusIcon className="h-4 w-4 mr-1" />
+                    Add Custom Attribute
+                  </button>
+                </div>
+                
+                {/* Show hidden attributes toggle */}
+                <div className="flex items-center justify-between mb-2">
+                  <label className="flex items-center text-sm text-gray-700">
+                    <input
+                      type="checkbox"
+                      checked={showHiddenAttributes}
+                      onChange={(e) => setShowHiddenAttributes(e.target.checked)}
+                      className="mr-2 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                    />
+                    Show hidden attributes
+                  </label>
+                </div>
+                
+                <div className="space-y-3">
+                  {Object.entries(formData.attributes || {})
+                    .filter(([key, attr]) => showHiddenAttributes || !attr.hidden)
+                    .map(([key, attributeData], index) => {
+                      return (
+                        <AttributeInput
+                          key={`attr-${index}-${key}`}
+                          attributeKey={key}
+                          attributeData={attributeData}
+                          availableAttributeNames={availableAttributeNames}
+                          onKeyChange={(oldKey, newKey) => {
+                            const newAttributes = { ...formData.attributes };
+                            if (newKey && newKey.trim() !== '') {
+                              const value = newAttributes[oldKey];
+                              delete newAttributes[oldKey];
+                              newAttributes[newKey.trim()] = value;
+                            } else {
+                              delete newAttributes[oldKey];
+                            }
+                            setFormData(prev => ({ ...prev, attributes: newAttributes }));
+                          }}
+                          onValueChange={(attrKey, newValue) => {
+                            handleAttributesChange(attrKey, newValue);
+                          }}
+                          onTypeChange={(attrKey, newType) => {
+                            handleAttributeTypeChange(attrKey, newType);
+                          }}
+                          onOptionsChange={(attrKey, newOptions) => {
+                            handleAttributeOptionsChange(attrKey, newOptions);
+                          }}
+                          onHiddenChange={(attrKey, hidden) => {
+                            handleAttributeHiddenChange(attrKey, hidden);
+                          }}
+                          onRemove={(attrKey) => {
+                            const newAttributes = { ...formData.attributes };
+                            delete newAttributes[attrKey];
+                            setFormData(prev => ({ ...prev, attributes: newAttributes }));
+                          }}
+                        />
+                      );
+                    })}
+                  {(!formData.attributes || Object.keys(formData.attributes).filter((k) => !formData.attributes[k].hidden).length === 0) && !showHiddenAttributes && (
+                    <p className="text-sm text-gray-500 text-center py-4">
+                      No custom attributes added yet. Click "Add Custom Attribute" to create one.
+                    </p>
+                  )}
+                  {showHiddenAttributes && (!formData.attributes || Object.keys(formData.attributes).length === 0) && (
+                    <p className="text-sm text-gray-500 text-center py-4">
+                      No custom attributes added yet. Click "Add Custom Attribute" to create one.
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
 
             {/* SEO Section */}
             <div className="mt-6 border-t border-gray-200 pt-6">

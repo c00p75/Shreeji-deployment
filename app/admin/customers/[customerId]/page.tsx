@@ -1,16 +1,16 @@
-'use client'
-
 import ProtectedRoute from '@/app/components/admin/ProtectedRoute'
 import CustomerAnalyticsPage from '@/app/components/admin/CustomerAnalyticsPage'
 
-interface CustomerDetailPageProps {
-  params: { customerId: string }
-}
+export default async function AdminCustomerDetailPage({
+  params,
+}: {
+  params: Promise<{ customerId: string }>
+}) {
+  const { customerId } = await params
 
-export default function AdminCustomerDetailPage({ params }: CustomerDetailPageProps) {
   return (
     <ProtectedRoute>
-      <CustomerAnalyticsPage customerId={params.customerId} />
+      <CustomerAnalyticsPage customerId={customerId} />
     </ProtectedRoute>
   )
 }

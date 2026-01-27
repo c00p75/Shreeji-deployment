@@ -60,8 +60,8 @@ export default function StockAdjustmentModal({
 
   const fetchWarehouses = async () => {
     try {
-      const response = await api.getWarehouses({ isActive: true });
-      setWarehouses(response.data || []);
+      const response: any = await api.getWarehouses({ isActive: true });
+      setWarehouses(response?.data || []);
     } catch (error) {
       console.error('Error fetching warehouses:', error);
     }

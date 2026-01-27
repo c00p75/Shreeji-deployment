@@ -20,7 +20,8 @@ import {
   DocumentTextIcon,
   TagIcon,
   PhotoIcon,
-  GiftIcon
+  GiftIcon,
+  MagnifyingGlassIcon
 } from '@heroicons/react/24/outline'
 import { LayoutDashboard } from 'lucide-react'
 import NotificationBell from '../notifications/NotificationBell'
@@ -41,6 +42,7 @@ const navigation = [
   { name: 'Coupons', href: '/admin/coupons', icon: TagIcon, current: false },
   { name: 'Loyalty Program', href: '/admin/loyalty', icon: GiftIcon, current: false },
   { name: 'Reports', href: '/admin/reports', icon: DocumentTextIcon, current: false },
+  { name: 'Search Logs', href: '/admin/search-logs', icon: MagnifyingGlassIcon, current: false },
   { name: 'Content', href: '/admin/content', icon: PhotoIcon, current: false },
   { name: 'Users', href: '/admin/users', icon: UsersIcon, current: false },
   { name: 'Settings', href: '/admin/settings', icon: CogIcon, current: false },

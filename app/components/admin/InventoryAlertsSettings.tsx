@@ -30,8 +30,8 @@ export default function InventoryAlertsSettings() {
   const fetchSettings = async () => {
     try {
       setLoading(true);
-      const response = await api.getAlertSettings();
-      setSettings(response.data || settings);
+      const response: any = await api.getAlertSettings();
+      setSettings(response?.data || settings);
     } catch (error: any) {
       console.error('Error fetching alert settings:', error);
       toast.error('Failed to load alert settings');

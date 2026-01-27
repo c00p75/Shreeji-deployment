@@ -830,7 +830,7 @@ class ApiClient {
     });
   }
 
-  async updateCoupon(id: string, data: any) {
+  async updateCoupon(id: string | number, data: any) {
     return this.request<{ data: any }>(`/admin/coupons/${id}`, {
       method: 'PUT',
       body: JSON.stringify(data),
@@ -1170,6 +1170,66 @@ class ApiClient {
     return this.request(`/admin/users/${id}`, {
       method: 'DELETE',
     });
+  }
+
+  // Search Logs API
+  async getSearchLogs(params?: {
+    page?: number;
+    pageSize?: number;
+    query?: string;
+    startDate?: string;
+    endDate?: string;
+  }) {
+    const searchParams = new URLSearchParams();
+
+    if (params?.page) {
+      searchParams.append('page', params.page.toString());
+    }
+    if (params?.pageSize) {
+      searchParams.append('pageSize', params.pageSize.toString());
+    }
+    if (params?.query) {
+      searchParams.append('query', params.query);
+    }
+    if (params?.startDate) {
+      searchParams.append('startDate', params.startDate);
+    }
+    if (params?.endDate) {
+      searchParams.append('endDate', params.endDate);
+    }
+
+    const queryString = searchParams.toString();
+    return this.request<{ data: any[]; meta: any }>(
+      `/admin/search-logs${queryString ? `?${queryString}` : ''}`
+    );
+  }
+
+  async getPopularSearches(limit?: number) {
+    const searchParams = new URLSearchParams();
+    if (limit) {
+      searchParams.append('limit', limit.toString());
+    }
+    const queryString = searchParams.toString();
+    return this.request<any[]>(
+      `/admin/search-logs/popular${queryString ? `?${queryString}` : ''}`
+    );
+  }
+
+  async getSearchStats(startDate?: string, endDate?: string) {
+    const searchParams = new URLSearchParams();
+    if (startDate) {
+      searchParams.append('startDate', startDate);
+    }
+    if (endDate) {
+      searchParams.append('endDate', endDate);
+    }
+    const queryString = searchParams.toString();
+    return this.request<{
+      totalSearches: number;
+      uniqueQueries: number;
+      zeroResultSearches: number;
+      avgResultCount: number;
+    }>(`/admin/search-logs/stats${queryString ? `?${queryString}` : ''}`);
   }
 }
 

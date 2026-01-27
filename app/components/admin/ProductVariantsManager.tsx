@@ -20,7 +20,11 @@ interface ProductVariant {
   id: number
   sku: string
   specs: Record<string, string>
+  attributes?: Record<string, any>
   price?: number
+  basePrice?: number
+  taxRate?: number
+  discountPercent?: number
   discountedPrice?: number
   stockQuantity: number
   stockStatus: string
@@ -34,15 +38,166 @@ interface ProductVariantsManagerProps {
   productName: string
 }
 
+// Helper function to find matching variant attribute key (case-insensitive)
+const findMatchingVariantKey = (specKey: string, variantAttributeKeys: string[]) => {
+  return variantAttributeKeys.find(
+    (variantKey) => variantKey.toLowerCase() === specKey.toLowerCase()
+  )
+}
+
+// Helper function to generate all variant combinations
+const generateVariantCombinations = (productSpecs: Record<string, string[]>) => {
+  const specKeys = Object.keys(productSpecs)
+  if (specKeys.length === 0) return []
+
+  const combinations: Record<string, string>[] = []
+  
+  const generate = (current: Record<string, string>, index: number) => {
+    if (index === specKeys.length) {
+      combinations.push({ ...current })
+      return
+    }
+    
+    const specKey = specKeys[index]
+    const values = productSpecs[specKey]
+    
+    values.forEach(value => {
+      generate({ ...current, [specKey]: value }, index + 1)
+    })
+  }
+  
+  generate({}, 0)
+  return combinations
+}
+
 export default function ProductVariantsManager({ productId, productName }: ProductVariantsManagerProps) {
   const [variants, setVariants] = useState<ProductVariant[]>([])
   const [loading, setLoading] = useState(true)
   const [isCreating, setIsCreating] = useState(false)
-  const [editingVariant, setEditingVariant] = useState<ProductVariant | null>(null)
+  const [editingVariantId, setEditingVariantId] = useState<number | null>(null)
+  const [bulkEditing, setBulkEditing] = useState(false)
+  const [selectedVariants, setSelectedVariants] = useState<number[]>([])
+  const [bulkPrice, setBulkPrice] = useState('')
+  const [bulkDiscount, setBulkDiscount] = useState('')
+  const [product, setProduct] = useState<any>(null)
+  const [missingCombinations, setMissingCombinations] = useState<any[]>([])
+  const [coverageStats, setCoverageStats] = useState({
+    totalPossible: 0,
+    existing: 0,
+    missing: 0,
+    percentage: 0
+  })
 
   useEffect(() => {
     loadVariants()
+    loadProduct()
   }, [productId])
+
+  // Calculate missing combinations
+  useEffect(() => {
+    const calculateMissingCombinations = () => {
+      if (!product?.specs || variants.length === 0) {
+        setMissingCombinations([])
+        setCoverageStats({
+          totalPossible: 0,
+          existing: 0,
+          missing: 0,
+          percentage: 0
+        })
+        return
+      }
+
+      // Get product default values (for reference, but not included in combinations)
+      const productDefaults: Record<string, string> = {}
+      Object.entries(product.specs).forEach(([key, value]) => {
+        if (value && typeof value === 'string') {
+          productDefaults[key] = value
+        }
+      })
+
+      // Get variant attribute keys (specs that have variants)
+      const variantAttributeKeys = Array.from(
+        new Set(variants.flatMap((v) => Object.keys(v.attributes || v.specs || {})))
+      )
+
+      // Get variant values ONLY (not product defaults)
+      // Only include specs that have at least 2 different variant values
+      const variantSpecValues: Record<string, Set<string>> = {}
+      
+      variants.forEach(variant => {
+        Object.entries(variant.attributes || variant.specs || {}).forEach(([key, value]) => {
+          const matchingKey = findMatchingVariantKey(key, variantAttributeKeys)
+          if (matchingKey) {
+            if (!variantSpecValues[key]) {
+              variantSpecValues[key] = new Set()
+            }
+            variantSpecValues[key].add(String(value))
+          }
+        })
+      })
+
+      // Filter to only specs that have at least 2 variant values
+      // (If a spec only has 1 variant value, no combinations needed)
+      const relevantSpecs: Record<string, string[]> = {}
+      Object.entries(variantSpecValues).forEach(([key, values]) => {
+        // Only include if there are at least 2 different variant values
+        if (values.size >= 2) {
+          relevantSpecs[key] = Array.from(values)
+        }
+      })
+
+      if (Object.keys(relevantSpecs).length === 0) {
+        setMissingCombinations([])
+        setCoverageStats({
+          totalPossible: 0,
+          existing: 0,
+          missing: 0,
+          percentage: 100
+        })
+        return
+      }
+
+      // Generate all possible combinations (only using variant values)
+      const allCombinations = generateVariantCombinations(relevantSpecs)
+
+      // Find missing combinations
+      // A combination is missing if no variant matches ALL its spec values
+      const missing = allCombinations.filter(combination => {
+        return !variants.some(variant => {
+          const variantAttrs = variant.attributes || variant.specs || {}
+          return Object.keys(combination).every(key => {
+            const matchingKey = findMatchingVariantKey(key, Object.keys(variantAttrs))
+            return matchingKey && variantAttrs[matchingKey] === combination[key]
+          })
+        })
+      })
+
+      setMissingCombinations(missing)
+      
+      // Calculate coverage
+      const total = allCombinations.length
+      const existing = total - missing.length
+      const percentage = total > 0 ? Math.round((existing / total) * 100) : 100
+      
+      setCoverageStats({
+        totalPossible: total,
+        existing,
+        missing: missing.length,
+        percentage
+      })
+    }
+
+    calculateMissingCombinations()
+  }, [variants, product])
+
+  const loadProduct = async () => {
+    try {
+      const response = await api.getProduct(productId)
+      setProduct(response.data)
+    } catch (error) {
+      console.error('Failed to load product:', error)
+    }
+  }
 
   const loadVariants = async () => {
     try {
@@ -78,7 +233,7 @@ export default function ProductVariantsManager({ productId, productName }: Produ
     try {
       await api.updateProductVariant(productId, variantId, variantData)
       toast.success('Variant updated successfully')
-      setEditingVariant(null)
+      // Don't set editingVariantId here - let the form handle it
       loadVariants()
     } catch (error: any) {
       toast.error(error.message || 'Failed to update variant')
@@ -100,24 +255,385 @@ export default function ProductVariantsManager({ productId, productName }: Produ
     }
   }
 
+  const handleGenerateAllCombinations = async () => {
+    if (!product?.specs) {
+      toast.error('Product must have specs defined first')
+      return
+    }
+
+    // Extract all possible values for each spec from existing variants
+    const specValues: Record<string, Set<string>> = {}
+    
+    variants.forEach(variant => {
+      Object.entries(variant.attributes || variant.specs || {}).forEach(([key, value]) => {
+        if (!specValues[key]) {
+          specValues[key] = new Set()
+        }
+        specValues[key].add(String(value))
+      })
+    })
+
+    // Also include product spec values
+    if (product.specs) {
+      Object.entries(product.specs).forEach(([key, value]) => {
+        if (!specValues[key]) {
+          specValues[key] = new Set()
+        }
+        if (value && typeof value === 'string') {
+          specValues[key].add(value)
+        }
+      })
+    }
+
+    // Convert to arrays
+    const productSpecs: Record<string, string[]> = {}
+    Object.entries(specValues).forEach(([key, values]) => {
+      productSpecs[key] = Array.from(values)
+    })
+
+    if (Object.keys(productSpecs).length === 0) {
+      toast.error('No spec values found. Create at least one variant with attributes first.')
+      return
+    }
+
+    const combinations = generateVariantCombinations(productSpecs)
+    
+    if (combinations.length === 0) {
+      toast.error('No combinations to generate.')
+      return
+    }
+
+    if (!confirm(`This will create ${combinations.length} variant combinations. Continue?`)) {
+      return
+    }
+
+    try {
+      let created = 0
+      let skipped = 0
+      
+      for (const combination of combinations) {
+        // Check if variant already exists
+        const exists = variants.some(v => {
+          return Object.keys(combination).every(key => {
+            const variantAttrs = v.attributes || v.specs || {}
+            const matchingKey = findMatchingVariantKey(key, Object.keys(variantAttrs))
+            if (!matchingKey) return false
+            return variantAttrs[matchingKey] === combination[key]
+          })
+        })
+
+        if (!exists) {
+          try {
+            // Generate SKU
+            const sku = await generateUniqueVariantSKU(
+              productName,
+              combination,
+              async (sku) => {
+                const allVariants = await api.getProductVariants(productId)
+                return (allVariants.data || []).some((v: any) => v.sku === sku)
+              }
+            )
+
+            await api.createProductVariant(productId, {
+              sku,
+              attributes: combination,
+              price: product.price, // Use base price, admin can edit later
+              stockQuantity: 0,
+              minStockLevel: 1,
+              isActive: true,
+            })
+            created++
+          } catch (error: any) {
+            console.error('Failed to create variant:', error)
+            skipped++
+          }
+        } else {
+          skipped++
+        }
+      }
+      
+      toast.success(`Created ${created} variants. ${skipped} already existed or failed.`)
+      loadVariants()
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to generate variants')
+    }
+  }
+
+  const handleBulkPriceUpdate = async () => {
+    if (selectedVariants.length === 0) {
+      toast.error('Please select variants to update')
+      return
+    }
+
+    if (!bulkPrice && !bulkDiscount) {
+      toast.error('Please enter at least a price or discount')
+      return
+    }
+
+    try {
+      for (const variantId of selectedVariants) {
+        const updateData: any = {}
+        if (bulkPrice) {
+          updateData.price = parseFloat(bulkPrice)
+        }
+        if (bulkDiscount) {
+          updateData.discountedPrice = parseFloat(bulkDiscount)
+        }
+        
+        await api.updateProductVariant(productId, variantId, updateData)
+      }
+      
+      toast.success(`Updated ${selectedVariants.length} variants`)
+      setBulkEditing(false)
+      setSelectedVariants([])
+      setBulkPrice('')
+      setBulkDiscount('')
+      loadVariants()
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to update variants')
+    }
+  }
+
+  const toggleVariantSelection = (variantId: number) => {
+    setSelectedVariants(prev => 
+      prev.includes(variantId)
+        ? prev.filter(id => id !== variantId)
+        : [...prev, variantId]
+    )
+  }
+
   if (loading) {
     return <div className="p-4 text-center text-gray-500">Loading variants...</div>
   }
 
+  const handleCreateMissingCombinations = async () => {
+    if (missingCombinations.length === 0) return
+
+    if (!confirm(`Create ${missingCombinations.length} missing variants?`)) return
+    
+    try {
+      let created = 0
+      let failed = 0
+      
+      for (const combination of missingCombinations) {
+        try {
+          const sku = await generateUniqueVariantSKU(
+            productName,
+            combination,
+            async (sku) => {
+              const allVariants = await api.getProductVariants(productId)
+              return (allVariants.data || []).some((v: any) => v.sku === sku)
+            }
+          )
+          
+          await api.createProductVariant(productId, {
+            sku,
+            attributes: combination,
+            price: product.price,
+            stockQuantity: 0,
+            minStockLevel: 1,
+            isActive: true,
+          })
+          created++
+        } catch (error) {
+          console.error('Failed to create variant:', error)
+          failed++
+        }
+      }
+      
+      toast.success(`Created ${created} missing variants${failed > 0 ? `. ${failed} failed.` : ''}`)
+      loadVariants()
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to create variants')
+    }
+  }
+
   return (
     <div className="space-y-4">
+      {/* Coverage Indicator */}
+      {product?.specs && coverageStats.totalPossible > 0 && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <h4 className="text-sm font-semibold text-blue-900">
+              Variant Coverage
+            </h4>
+            <span className={`text-lg font-bold ${
+              coverageStats.percentage >= 80 ? 'text-green-600' :
+              coverageStats.percentage >= 50 ? 'text-yellow-600' :
+              'text-red-600'
+            }`}>
+              {coverageStats.percentage}%
+            </span>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+            <div
+              className={`h-2 rounded-full transition-all ${
+                coverageStats.percentage >= 80 ? 'bg-green-500' :
+                coverageStats.percentage >= 50 ? 'bg-yellow-500' :
+                'bg-red-500'
+              }`}
+              style={{ width: `${coverageStats.percentage}%` }}
+            />
+          </div>
+          <p className="text-xs text-blue-700">
+            {coverageStats.existing} of {coverageStats.totalPossible} combinations have pricing
+            {coverageStats.missing > 0 && (
+              <span className="font-semibold"> • {coverageStats.missing} missing</span>
+            )}
+          </p>
+        </div>
+      )}
+
+      {/* Missing Combinations Alert */}
+      {missingCombinations.length > 0 && (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <h4 className="text-sm font-semibold text-yellow-900 mb-2">
+                ⚠️ Missing Combinations ({missingCombinations.length})
+              </h4>
+              <p className="text-xs text-yellow-700 mb-3">
+                These combinations don't have pricing yet. Customers may encounter errors when selecting them.
+              </p>
+              <div className="max-h-40 overflow-y-auto space-y-1">
+                {missingCombinations.slice(0, 10).map((combination, index) => (
+                  <div key={index} className="text-xs text-yellow-800 bg-yellow-100 px-2 py-1 rounded">
+                    {Object.entries(combination as Record<string, any>).map(([key, value]) => (
+                      <span key={key} className="mr-2">
+                        <strong>{key}:</strong> {String(value)}
+                      </span>
+                    ))}
+                  </div>
+                ))}
+                {missingCombinations.length > 10 && (
+                  <p className="text-xs text-yellow-600 mt-1">
+                    ...and {missingCombinations.length - 10} more
+                  </p>
+                )}
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={handleCreateMissingCombinations}
+              className="ml-4 px-3 py-2 bg-yellow-600 text-white text-sm rounded-md hover:bg-yellow-700 whitespace-nowrap"
+            >
+              Create All Missing
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-gray-900">Product Variants</h3>
-        {!isCreating && !editingVariant && (
-          <button
-            onClick={() => setIsCreating(true)}
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[var(--shreeji-primary)] hover:opacity-90"
-          >
-            <PlusIcon className="h-5 w-5 mr-2" />
-            Add Variant
-          </button>
+        {!isCreating && !editingVariantId && !bulkEditing && (
+          <div className="flex items-center space-x-2">
+            {variants.length > 0 && (
+              <>
+                <button
+                  type="button"
+                  onClick={handleGenerateAllCombinations}
+                  className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                  title="Generate all possible variant combinations"
+                >
+                  Generate All Combinations
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setBulkEditing(true)}
+                  className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                  title="Bulk edit prices"
+                >
+                  Bulk Edit Prices
+                </button>
+              </>
+            )}
+            <button
+              type="button"
+              onClick={() => setIsCreating(true)}
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[var(--shreeji-primary)] hover:opacity-90"
+            >
+              <PlusIcon className="h-5 w-5 mr-2" />
+              Add Variant
+            </button>
+          </div>
         )}
       </div>
+
+      {bulkEditing && (
+        <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+          <div className="flex items-center justify-between mb-4">
+            <h4 className="text-md font-semibold text-gray-900">Bulk Price Editor</h4>
+            <button
+              type="button"
+              onClick={() => {
+                setBulkEditing(false)
+                setSelectedVariants([])
+                setBulkPrice('')
+                setBulkDiscount('')
+              }}
+              className="text-gray-500 hover:text-gray-700"
+            >
+              <XMarkIcon className="h-5 w-5" />
+            </button>
+          </div>
+          <div className="space-y-3">
+            <div className="text-sm text-gray-600 mb-2">
+              {selectedVariants.length} variant(s) selected
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Price
+                </label>
+                <input
+                  type="number"
+                  value={bulkPrice}
+                  onChange={(e) => setBulkPrice(e.target.value)}
+                  placeholder="Enter price"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Discounted Price
+                </label>
+                <input
+                  type="number"
+                  value={bulkDiscount}
+                  onChange={(e) => setBulkDiscount(e.target.value)}
+                  placeholder="Enter discounted price"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                />
+              </div>
+            </div>
+            <div className="flex items-center space-x-2">
+              <button
+                type="button"
+                onClick={handleBulkPriceUpdate}
+                className="px-4 py-2 bg-[var(--shreeji-primary)] text-white rounded-md hover:opacity-90"
+              >
+                Update Selected Variants
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedVariants(variants.map(v => v.id))
+                }}
+                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"
+              >
+                Select All
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedVariants([])}
+                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"
+              >
+                Deselect All
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {isCreating && (
         <VariantForm
@@ -128,80 +644,124 @@ export default function ProductVariantsManager({ productId, productName }: Produ
         />
       )}
 
-      {editingVariant && (
-        <VariantForm
-          productId={productId}
-          productName={productName}
-          variant={editingVariant}
-          onSave={(data) => handleUpdateVariant(editingVariant.id, data)}
-          onCancel={() => setEditingVariant(null)}
-        />
-      )}
-
-      {variants.length === 0 && !isCreating && !editingVariant ? (
+      {variants.length === 0 && !isCreating ? (
         <div className="text-center py-8 text-gray-500">
           <p>No variants yet. Click "Add Variant" to create one.</p>
         </div>
       ) : (
         <div className="space-y-3">
-          {variants.map((variant) => (
-            <div
-              key={variant.id}
-              className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors"
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center space-x-3 mb-2">
-                    <span className="font-semibold text-gray-900">{variant.sku}</span>
-                    {!variant.isActive && (
-                      <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">Inactive</span>
-                    )}
-                    <span className={`text-xs px-2 py-1 rounded ${
-                      variant.stockStatus === 'in-stock' ? 'bg-green-100 text-green-800' :
-                      variant.stockStatus === 'low-stock' ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-red-100 text-red-800'
-                    }`}>
-                      {variant.stockStatus}
-                    </span>
+          {variants.map((variant) => {
+            const isEditing = editingVariantId === variant.id
+            
+            return (
+              <div
+                key={variant.id}
+                className={`border rounded-lg transition-colors ${
+                  bulkEditing && selectedVariants.includes(variant.id)
+                    ? 'border-[var(--shreeji-primary)] bg-blue-50'
+                    : 'border-gray-200 hover:bg-gray-50'
+                }`}
+              >
+                {bulkEditing && (
+                  <div className="p-4 pb-2">
+                    <input
+                      type="checkbox"
+                      checked={selectedVariants.includes(variant.id)}
+                      onChange={() => toggleVariantSelection(variant.id)}
+                      className="h-4 w-4 text-[var(--shreeji-primary)] focus:ring-[var(--shreeji-primary)] border-gray-300 rounded"
+                    />
                   </div>
-                  <div className="space-y-1 text-sm text-gray-600">
-                    {Object.entries(variant.specs).map(([key, value]) => (
-                      <div key={key}>
-                        <span className="font-medium">{key}:</span> {value}
-                      </div>
-                    ))}
-                    <div className="flex items-center space-x-4 mt-2">
-                      {variant.price && (
-                        <span>Price: K{variant.price.toLocaleString()}</span>
-                      )}
-                      {variant.discountedPrice && (
-                        <span className="text-green-600">
-                          Discounted: K{variant.discountedPrice.toLocaleString()}
+                )}
+                
+                {/* Variant Summary - Always Visible */}
+                <div className={`p-4 ${isEditing ? 'pb-2' : ''}`}>
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-3 mb-2">
+                        <span className="font-semibold text-gray-900">{variant.sku}</span>
+                        {!variant.isActive && (
+                          <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">Inactive</span>
+                        )}
+                        <span className={`text-xs px-2 py-1 rounded ${
+                          variant.stockStatus === 'in-stock' ? 'bg-green-100 text-green-800' :
+                          variant.stockStatus === 'low-stock' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-red-100 text-red-800'
+                        }`}>
+                          {variant.stockStatus}
                         </span>
+                      </div>
+                      <div className="space-y-1 text-sm text-gray-600">
+                        {Object.entries(variant.specs).map(([key, value]) => (
+                          <div key={key}>
+                            <span className="font-medium">{key}:</span> {value}
+                          </div>
+                        ))}
+                        <div className="flex items-center space-x-4 mt-2">
+                          {variant.price && (
+                            <span>Price: K{variant.price.toLocaleString()}</span>
+                          )}
+                          {variant.discountedPrice && (
+                            <span className="text-green-600">
+                              Discounted: K{variant.discountedPrice.toLocaleString()}
+                            </span>
+                          )}
+                          <span>Stock: {variant.stockQuantity}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2 ml-4">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingVariantId(isEditing ? null : variant.id);
+                        }}
+                        className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                        title={isEditing ? "Cancel edit" : "Edit variant"}
+                      >
+                        {isEditing ? (
+                          <XMarkIcon className="h-5 w-5" />
+                        ) : (
+                          <PencilIcon className="h-5 w-5" />
+                        )}
+                      </button>
+                      {!isEditing && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteVariant(variant.id);
+                          }}
+                          className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                          title="Delete variant"
+                        >
+                          <TrashIcon className="h-5 w-5" />
+                        </button>
                       )}
-                      <span>Stock: {variant.stockQuantity}</span>
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center space-x-2 ml-4">
-                  <button
-                    onClick={() => setEditingVariant(variant)}
-                    className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
-                    title="Edit variant"
-                  >
-                    <PencilIcon className="h-5 w-5" />
-                  </button>
-                  <button
-                    onClick={() => handleDeleteVariant(variant.id)}
-                    className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
-                    title="Delete variant"
-                  >
-                    <TrashIcon className="h-5 w-5" />
-                  </button>
-                </div>
+
+                {/* Edit Form Accordion */}
+                {isEditing && (
+                  <div className="border-t border-gray-200 bg-gray-50">
+                    <div className="p-4">
+                      <VariantForm
+                        productId={productId}
+                        productName={productName}
+                        variant={variant}
+                        onSave={async (data) => {
+                          await handleUpdateVariant(variant.id, data)
+                          setEditingVariantId(null)
+                        }}
+                        onCancel={() => setEditingVariantId(null)}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
     </div>
@@ -435,9 +995,21 @@ interface VariantFormProps {
 }
 
 function VariantForm({ productId, productName, variant, onSave, onCancel }: VariantFormProps) {
+  // Calculate basePrice from price if variant exists and has price
+  const calculateBasePrice = (price: number | string | undefined, taxRate: number | undefined) => {
+    if (!price) return '';
+    const priceNum = typeof price === 'string' ? parseFloat(price) : price;
+    if (!priceNum || isNaN(priceNum)) return '';
+    const tax = taxRate || 16;
+    return (priceNum / (1 + tax / 100)).toFixed(2);
+  };
+
   const [formData, setFormData] = useState({
     sku: variant?.sku || '',
     specs: variant?.specs || {},
+    basePrice: variant?.basePrice || (variant?.price ? calculateBasePrice(variant.price, variant.taxRate) : ''),
+    taxRate: variant?.taxRate || 16, // Default VAT 16%
+    discountPercent: variant?.discountPercent || 0,
     price: variant?.price || '',
     discountedPrice: variant?.discountedPrice || '',
     stockQuantity: variant?.stockQuantity || 0,
@@ -446,6 +1018,76 @@ function VariantForm({ productId, productName, variant, onSave, onCancel }: Vari
   })
   const [saving, setSaving] = useState(false)
   const [availableSpecNames, setAvailableSpecNames] = useState<string[]>([])
+
+  // Pre-populate form with product specs and pricing when creating new variant
+  useEffect(() => {
+    const fetchProductSpecs = async () => {
+      if (variant) return // Don't pre-populate if editing existing variant
+      
+      try {
+        const productResponse = await api.getProduct(productId)
+        const product = productResponse.data
+        
+        if (product) {
+          // Pre-populate pricing from product
+          const productBasePrice = product.basePrice || 0;
+          const productTaxRate = product.taxRate || 16;
+          const productDiscountPercent = product.discountPercent || 0;
+          
+          // Calculate selling price from base price + VAT
+          const calculatedSellingPrice = productBasePrice * (1 + productTaxRate / 100);
+          
+          // Calculate discounted price from selling price - discount %
+          const calculatedDiscountedPrice = calculatedSellingPrice * (1 - productDiscountPercent / 100);
+          
+          setFormData(prev => ({
+            ...prev,
+            basePrice: productBasePrice || prev.basePrice,
+            taxRate: productTaxRate || prev.taxRate,
+            discountPercent: productDiscountPercent || prev.discountPercent,
+            price: product.price || calculatedSellingPrice || prev.price,
+            discountedPrice: product.discountedPrice || (calculatedDiscountedPrice > 0 ? calculatedDiscountedPrice : calculatedSellingPrice) || prev.discountedPrice,
+          }));
+        }
+        
+        // Pre-populate specs
+        if (product?.specs && Object.keys(product.specs).length > 0) {
+          // Pre-populate form with product specs and their values
+          const initialSpecs: Record<string, string> = {}
+          Object.entries(product.specs).forEach(([key, value]) => {
+            // Convert value to string, handling different types
+            if (value !== null && value !== undefined) {
+              if (typeof value === 'string') {
+                initialSpecs[key] = value
+              } else if (typeof value === 'number') {
+                initialSpecs[key] = String(value)
+              } else if (Array.isArray(value)) {
+                initialSpecs[key] = value.join(', ')
+              } else if (typeof value === 'object') {
+                // For nested objects, convert to JSON string or join values
+                initialSpecs[key] = JSON.stringify(value)
+              } else {
+                initialSpecs[key] = String(value)
+              }
+            } else {
+              initialSpecs[key] = ''
+            }
+          })
+          
+          if (Object.keys(formData.specs).length === 0) {
+            setFormData(prev => ({
+              ...prev,
+              specs: initialSpecs
+            }))
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch product specs:', error)
+      }
+    }
+    
+    fetchProductSpecs()
+  }, [productId, variant])
 
   // Fetch all specification names from products for dropdown
   useEffect(() => {
@@ -511,6 +1153,9 @@ function VariantForm({ productId, productName, variant, onSave, onCancel }: Vari
       const submitData = {
         sku: formData.sku.trim(),
         attributes: formData.specs, // Map specs to attributes for backend API
+        basePrice: formData.basePrice ? parseFloat(formData.basePrice.toString()) : undefined,
+        taxRate: formData.taxRate ? parseFloat(formData.taxRate.toString()) : undefined,
+        discountPercent: formData.discountPercent ? parseFloat(formData.discountPercent.toString()) : undefined,
         price: formData.price ? parseFloat(formData.price.toString()) : undefined,
         discountedPrice: formData.discountedPrice ? parseFloat(formData.discountedPrice.toString()) : undefined,
         stockQuantity: parseInt(formData.stockQuantity.toString()) || 0,
@@ -686,29 +1331,133 @@ function VariantForm({ productId, productName, variant, onSave, onCancel }: Vari
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-          <label htmlFor="variant-price" className="block text-sm font-medium text-gray-700 mb-1">Price</label>
-            <input
-              type="number"
-              step="0.01"
-              id="variant-price"
-              value={formData.price}
-              onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
-            />
-          </div>
-          <div>
-          <label htmlFor="variant-discounted-price" className="block text-sm font-medium text-gray-700 mb-1">Discounted Price</label>
-            <input
-              type="number"
-              step="0.01"
-              id="variant-discounted-price"
-              value={formData.discountedPrice}
-              onChange={(e) => setFormData({ ...formData, discountedPrice: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
-            />
-          </div>
+        <div className="space-y-5 border-t border-gray-200 pt-4">
+          <h4 className="text-lg font-bold text-gray-900 mb-4">Pricing And Stock</h4>
+          
+          {(() => {
+            // Computed values
+            const basePrice = parseFloat(formData.basePrice?.toString() || '0') || 0;
+            const vatPercent = parseFloat(formData.taxRate?.toString() || '16') || 16;
+            const sellingPrice = basePrice * (1 + vatPercent / 100);
+            const discountPercent = parseFloat(formData.discountPercent?.toString() || '0') || 0;
+            const discountPrice = sellingPrice * (1 - discountPercent / 100);
+
+            return (
+              <div className="space-y-5">
+                {/* Base Price */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Base Price *</label>
+                  <input
+                    type="number"
+                    value={formData.basePrice || ''}
+                    onChange={(e) => {
+                      const value = parseFloat(e.target.value) || 0;
+                      const taxRateValue = parseFloat(formData.taxRate?.toString() || '16') || 16;
+                      const newSellingPrice = value * (1 + taxRateValue / 100);
+                      const discountPercentValue = parseFloat(formData.discountPercent?.toString() || '0') || 0;
+                      const newDiscountPrice = discountPercentValue > 0 
+                        ? newSellingPrice * (1 - discountPercentValue / 100)
+                        : newSellingPrice;
+                      
+                      setFormData(prev => ({
+                        ...prev,
+                        basePrice: value,
+                        price: newSellingPrice.toFixed(2),
+                        discountedPrice: newDiscountPrice.toFixed(2),
+                      }));
+                    }}
+                    className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    placeholder="0.00"
+                    min="0"
+                    step="0.01"
+                  />
+                </div>
+
+                {/* VAT */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Value Added Tax (VAT) (%)</label>
+                  <input
+                    type="number"
+                    value={formData.taxRate || 16}
+                    onChange={(e) => {
+                      const value = parseFloat(e.target.value) || 16;
+                      const basePriceValue = parseFloat(formData.basePrice?.toString() || '0') || 0;
+                      const newSellingPrice = basePriceValue * (1 + value / 100);
+                      const discountPercentValue = parseFloat(formData.discountPercent?.toString() || '0') || 0;
+                      const newDiscountPrice = discountPercentValue > 0
+                        ? newSellingPrice * (1 - discountPercentValue / 100)
+                        : newSellingPrice;
+                      
+                      setFormData(prev => ({
+                        ...prev,
+                        taxRate: value,
+                        price: newSellingPrice.toFixed(2),
+                        discountedPrice: newDiscountPrice.toFixed(2),
+                      }));
+                    }}
+                    className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    placeholder="16"
+                    min="0"
+                    max="100"
+                    step="0.01"
+                  />
+                </div>
+
+                {/* Selling Price (computed) */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Selling Price</label>
+                  <input
+                    type="text"
+                    value={sellingPrice.toFixed(2)}
+                    readOnly
+                    className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-100 text-gray-600 focus:outline-none cursor-not-allowed"
+                    placeholder="Calculated automatically"
+                  />
+                  <p className="mt-1 text-xs text-gray-500">Calculated from Base Price + VAT</p>
+                </div>
+
+                {/* Discount Percent */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Discount Percent (%)</label>
+                  <input
+                    type="number"
+                    value={formData.discountPercent || ''}
+                    onChange={(e) => {
+                      const value = parseFloat(e.target.value) || 0;
+                      const basePriceValue = parseFloat(formData.basePrice?.toString() || '0') || 0;
+                      const vatPercentValue = parseFloat(formData.taxRate?.toString() || '16') || 16;
+                      const currentSellingPrice = basePriceValue * (1 + vatPercentValue / 100);
+                      const newDiscountPrice = currentSellingPrice * (1 - value / 100);
+                      
+                      setFormData(prev => ({
+                        ...prev,
+                        discountPercent: value,
+                        discountedPrice: newDiscountPrice.toFixed(2),
+                      }));
+                    }}
+                    className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    placeholder="0"
+                    min="0"
+                    max="100"
+                    step="0.01"
+                  />
+                </div>
+
+                {/* Discount Price (computed) */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Discounted Price</label>
+                  <input
+                    type="text"
+                    value={discountPrice > 0 ? discountPrice.toFixed(2) : '0.00'}
+                    readOnly
+                    className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-100 text-gray-600 focus:outline-none cursor-not-allowed"
+                    placeholder="Calculated automatically"
+                  />
+                  <p className="mt-1 text-xs text-gray-500">Calculated from Selling Price - Discount %</p>
+                </div>
+              </div>
+            );
+          })()}
         </div>
 
         <div className="grid grid-cols-2 gap-4">

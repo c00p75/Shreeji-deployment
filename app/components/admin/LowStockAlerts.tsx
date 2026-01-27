@@ -37,8 +37,8 @@ export default function LowStockAlerts() {
 
   const fetchWarehouses = async () => {
     try {
-      const response = await api.getWarehouses({ isActive: true });
-      setWarehouses(response.data || []);
+      const response: any = await api.getWarehouses({ isActive: true });
+      setWarehouses(response?.data || []);
     } catch (error) {
       console.error('Error fetching warehouses:', error);
     }
@@ -47,11 +47,11 @@ export default function LowStockAlerts() {
   const fetchLowStockItems = async () => {
     try {
       setLoading(true);
-      const response = await api.getLowStockProducts(
+      const response: any = await api.getLowStockProducts(
         selectedWarehouse || undefined,
         threshold,
       );
-      setLowStockItems(response.data || []);
+      setLowStockItems(response?.data || []);
     } catch (error: any) {
       console.error('Error fetching low stock items:', error);
       toast.error('Failed to load low stock alerts');

@@ -221,8 +221,8 @@ export default function AdminReports() {
       } else if (reportType === 'inventory') {
         // Link to inventory reports - fetch key metrics
         try {
-          const stockReport = await api.getStockLevelReport()
-          setInventoryData(stockReport.data || [])
+          const stockReport: any = await api.getStockLevelReport()
+          setInventoryData(stockReport?.data || [])
         } catch (error) {
           console.error('Error fetching inventory data:', error)
           setInventoryData([])

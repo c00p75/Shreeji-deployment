@@ -63,11 +63,11 @@ export default function ContentManagement() {
     try {
       setLoading(true)
       // Fetch from settings API
-      const [bannersData, promosData, faqsData] = await Promise.all([
+      const [bannersData, promosData, faqsData] = (await Promise.all([
         api.getSettingsByCategory('content_banners').catch(() => ({ data: [] })),
         api.getSettingsByCategory('content_promos').catch(() => ({ data: [] })),
         api.getSettingsByCategory('content_faq').catch(() => ({ data: [] }))
-      ])
+      ])) as any[]
 
       setBanners(Array.isArray(bannersData?.data) ? bannersData.data : bannersData?.banners || [])
       setPromos(Array.isArray(promosData?.data) ? promosData.data : promosData?.promos || [])
@@ -122,7 +122,7 @@ export default function ContentManagement() {
   }
 
   const moveItem = async (index: number, direction: 'up' | 'down', type: 'banner' | 'faq') => {
-    const items = type === 'banner' ? [...banners] : [...faqs]
+    const items = (type === 'banner' ? [...banners] : [...faqs]) as any[]
     const newIndex = direction === 'up' ? index - 1 : index + 1
     
     if (newIndex < 0 || newIndex >= items.length) return

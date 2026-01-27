@@ -52,8 +52,8 @@ export default function InventoryMovementHistory() {
 
   const fetchWarehouses = async () => {
     try {
-      const response = await api.getWarehouses();
-      setWarehouses(response.data || []);
+      const response: any = await api.getWarehouses();
+      setWarehouses(response?.data || []);
     } catch (error) {
       console.error('Error fetching warehouses:', error);
     }
@@ -62,14 +62,14 @@ export default function InventoryMovementHistory() {
   const fetchMovements = async () => {
     try {
       setLoading(true);
-      const response = await api.getInventoryMovements({
+      const response: any = await api.getInventoryMovements({
         warehouseId: filters.warehouseId ? parseInt(filters.warehouseId, 10) : undefined,
         movementType: filters.movementType || undefined,
         dateFrom: filters.dateFrom || undefined,
         dateTo: filters.dateTo || undefined,
         limit: 100,
       });
-      setMovements(response.data || []);
+      setMovements(response?.data || []);
     } catch (error: any) {
       console.error('Error fetching movements:', error);
       toast.error('Failed to load movement history');

@@ -2,8 +2,45 @@
 
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
+import { Package, Truck, CreditCard, FileText } from 'lucide-react';
 import api from '@/app/lib/admin/api';
 import toast from 'react-hot-toast';
+
+// Status color helper functions (matching customer order page)
+const getStatusColor = (status: string) => {
+  switch (status?.toLowerCase()) {
+    case 'delivered':
+      return 'bg-green-100 text-green-800';
+    case 'shipped':
+      return 'bg-blue-100 text-blue-800';
+    case 'processing':
+      return 'bg-yellow-100 text-yellow-800';
+    case 'confirmed':
+      return 'bg-indigo-100 text-indigo-800';
+    case 'cancelled':
+      return 'bg-red-100 text-red-800';
+    case 'refunded':
+      return 'bg-orange-100 text-orange-800';
+    default:
+      return 'bg-gray-100 text-gray-800';
+  }
+};
+
+const getPaymentStatusColor = (status: string) => {
+  switch (status?.toLowerCase()) {
+    case 'paid':
+      return 'bg-green-100 text-green-800';
+    case 'failed':
+      return 'bg-red-100 text-red-800';
+    case 'refunded':
+    case 'partially-refunded':
+      return 'bg-orange-100 text-orange-800';
+    case 'partially-paid':
+      return 'bg-blue-100 text-blue-800';
+    default:
+      return 'bg-yellow-100 text-yellow-800';
+  }
+};
 
 interface Order {
   id: number;
@@ -279,89 +316,121 @@ export default function EditOrderModal({ isOpen, onClose, order, onSave }: EditO
           onClick={handleClose}
         />
 
-        {/* Modal panel */}
-        <div className="inline-block align-bottom bg-white max-h-[90vh] overflow-y-auto rounded-2xl text-left overflow-visible shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-3xl sm:w-full">
+        {/* Modal panel - styled like customer order page */}
+        <div className="inline-block align-bottom bg-white max-h-[90vh] overflow-y-auto rounded-lg text-left shadow-[0_0_20px_0_rgba(0,0,0,0.1)] transform transition-all sm:my-8 sm:align-middle sm:max-w-3xl sm:w-full">
           <form onSubmit={handleSubmit} className="relative">
-            {/* Header */}
-            <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4 border-b border-gray-200">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg leading-6 font-medium text-gray-900">
-                  Edit Order {order?.orderNumber || `#${order?.id}`}
-                </h3>
-                <button
-                  type="button"
-                  onClick={handleClose}
-                  disabled={loading}
-                  className="text-gray-400 hover:text-gray-500 focus:outline-none disabled:opacity-50"
-                >
-                  <XMarkIcon className="h-6 w-6" />
-                </button>
+            {/* Header - styled like customer order page */}
+            <div className="px-6 py-4 border-b border-gray-200">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h1 className="text-2xl font-bold text-gray-900">
+                    Edit Order #{order?.orderNumber || order?.id}
+                  </h1>
+                  {orderDetails?.createdAt && (
+                    <p className="text-sm text-gray-500 mt-1">
+                      Placed on {new Date(orderDetails.createdAt).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      })}
+                    </p>
+                  )}
+                </div>
+                <div className="flex items-center gap-3">
+                  {(orderDetails?.orderStatus || orderDetails?.status) && (
+                    <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${getStatusColor(orderDetails?.orderStatus || orderDetails?.status)}`}>
+                      {orderDetails?.orderStatus || orderDetails?.status || 'pending'}
+                    </span>
+                  )}
+                  {orderDetails?.paymentStatus && (
+                    <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${getPaymentStatusColor(orderDetails?.paymentStatus)}`}>
+                      {orderDetails?.paymentStatus}
+                    </span>
+                  )}
+                  <button
+                    type="button"
+                    onClick={handleClose}
+                    disabled={loading}
+                    className="text-gray-400 hover:text-gray-500 focus:outline-none disabled:opacity-50"
+                  >
+                    <XMarkIcon className="h-6 w-6" />
+                  </button>
+                </div>
               </div>
             </div>
 
             {/* Body */}
-            <div className="bg-white px-4 pt-5 sm:p-6">
+            <div className="p-6">
               {loading && !orderDetails ? (
                 <div className="flex items-center justify-center py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
                 </div>
               ) : (
                 <div className="space-y-6">
-                  {/* Order Status */}
-                  <div>
-                    <label htmlFor="orderStatus" className="block text-sm font-medium text-gray-700 mb-1">
-                      Order Status
-                    </label>
-                    <select
-                      id="orderStatus"
-                      name="orderStatus"
-                      value={formData.orderStatus}
-                      onChange={handleChange}
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                    >
-                      <option value="">Select Status</option>
-                      {ORDER_STATUSES.map((status) => (
-                        <option key={status.value} value={status.value}>
-                          {status.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* Payment Status */}
-                  <div>
-                    <label htmlFor="paymentStatus" className="block text-sm font-medium text-gray-700 mb-1">
-                      Payment Status
-                    </label>
-                    <select
-                      id="paymentStatus"
-                      name="paymentStatus"
-                      value={formData.paymentStatus}
-                      onChange={handleChange}
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                    >
-                      <option value="">Select Payment Status</option>
-                      {PAYMENT_STATUSES.map((status) => (
-                        <option key={status.value} value={status.value}>
-                          {status.label}
-                        </option>
-                      ))}
-                    </select>
+                  {/* Order & Payment Status Section */}
+                  <div className="mb-6">
+                    <div className="flex items-center gap-3 mb-4">
+                      <Package className="h-5 w-5 text-[var(--shreeji-primary)]" />
+                      <h2 className="text-xl font-semibold text-gray-900">Order Status</h2>
+                    </div>
+                    <div className="p-4 bg-[#f5f1e8] rounded-lg">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label htmlFor="orderStatus" className="block text-sm font-medium text-gray-700 mb-1">
+                            Order Status
+                          </label>
+                          <select
+                            id="orderStatus"
+                            name="orderStatus"
+                            value={formData.orderStatus}
+                            onChange={handleChange}
+                            className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm bg-white"
+                          >
+                            <option value="">Select Status</option>
+                            {ORDER_STATUSES.map((status) => (
+                              <option key={status.value} value={status.value}>
+                                {status.label}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div>
+                          <label htmlFor="paymentStatus" className="block text-sm font-medium text-gray-700 mb-1">
+                            Payment Status
+                          </label>
+                          <select
+                            id="paymentStatus"
+                            name="paymentStatus"
+                            value={formData.paymentStatus}
+                            onChange={handleChange}
+                            className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm bg-white"
+                          >
+                            <option value="">Select Payment Status</option>
+                            {PAYMENT_STATUSES.map((status) => (
+                              <option key={status.value} value={status.value}>
+                                {status.label}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
                   {/* Pickup Details Section */}
                   {orderDetails && (
                     (orderDetails.paymentMethod === 'cash_on_pickup' || orderDetails.payments?.[0]?.paymentMethod === 'cash_on_pickup') &&
                     orderDetails.preferredPickupDate && (
-                      <div className="rounded-lg border-2 border-amber-200 bg-amber-50 p-6">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                          📦 Pickup Collection Details
-                        </h3>
-                        <div className="space-y-4">
+                      <div className="mb-6 border-t border-gray-200 pt-6">
+                        <div className="flex items-center gap-3 mb-4">
+                          <Package className="h-5 w-5 text-[var(--shreeji-primary)]" />
+                          <h2 className="text-xl font-semibold text-gray-900">Pickup Collection Details</h2>
+                        </div>
+                        <div className="p-4 bg-amber-50 border-2 border-amber-200 rounded-lg space-y-4">
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                               <p className="text-sm font-medium text-gray-700">Preferred Pickup Date</p>
-                              <p className="text-sm text-gray-900 font-semibold">
+                              <p className="text-sm text-gray-900 font-semibold mt-1">
                                 {orderDetails.preferredPickupDate 
                                   ? new Date(orderDetails.preferredPickupDate).toLocaleDateString('en-US', {
                                       weekday: 'long',
@@ -374,7 +443,7 @@ export default function EditOrderModal({ isOpen, onClose, order, onSave }: EditO
                             </div>
                             <div>
                               <p className="text-sm font-medium text-gray-700">Preferred Pickup Time</p>
-                              <p className="text-sm text-gray-900 font-semibold">
+                              <p className="text-sm text-gray-900 font-semibold mt-1">
                                 {orderDetails.preferredPickupTime || 'N/A'}
                               </p>
                             </div>
@@ -404,7 +473,7 @@ export default function EditOrderModal({ isOpen, onClose, order, onSave }: EditO
                           )}
 
                           <div className="border-t border-amber-200 pt-4">
-                            <p className="text-sm font-medium text-gray-700 mb-2">ID Verification</p>
+                            <p className="text-sm font-medium text-gray-700 mb-2">ID Verification Required</p>
                             <div className="space-y-1">
                               {orderDetails.idType && (
                                 <p className="text-sm text-gray-900">
@@ -417,6 +486,9 @@ export default function EditOrderModal({ isOpen, onClose, order, onSave }: EditO
                                 </p>
                               )}
                             </div>
+                            <p className="text-xs text-amber-700 mt-2">
+                              ⚠️ Verify ID matches details above before releasing order.
+                            </p>
                           </div>
 
                           {orderDetails.vehicleInfo && (
@@ -437,106 +509,124 @@ export default function EditOrderModal({ isOpen, onClose, order, onSave }: EditO
                     )
                   )}
 
-                  {/* Tracking Number */}
-                  <div>
-                    <label htmlFor="trackingNumber" className="block text-sm font-medium text-gray-700 mb-1">
-                      Tracking Number
-                    </label>
-                    <input
-                      type="text"
-                      id="trackingNumber"
-                      name="trackingNumber"
-                      value={formData.trackingNumber}
-                      onChange={handleChange}
-                      maxLength={100}
-                      placeholder="Enter tracking number"
-                      className={`block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm ${
-                        errors.trackingNumber ? 'border-red-300' : 'border-gray-300'
-                      }`}
-                    />
-                    {errors.trackingNumber && (
-                      <p className="mt-1 text-sm text-red-600">{errors.trackingNumber}</p>
-                    )}
-                    <p className="mt-1 text-xs text-gray-500">
-                      Adding a tracking number will automatically set the order status to "Shipped" and set the shipped date.
-                    </p>
+                  {/* Shipping & Tracking Section */}
+                  <div className="mb-6 border-t border-gray-200 pt-6">
+                    <div className="flex items-center gap-3 mb-4">
+                      <Truck className="h-5 w-5 text-[var(--shreeji-primary)]" />
+                      <h2 className="text-xl font-semibold text-gray-900">Shipping & Tracking</h2>
+                    </div>
+                    <div className="p-4 bg-[#f5f1e8] rounded-lg space-y-4">
+                      {/* Tracking Number */}
+                      <div>
+                        <label htmlFor="trackingNumber" className="block text-sm font-medium text-gray-700 mb-1">
+                          Tracking Number
+                        </label>
+                        <input
+                          type="text"
+                          id="trackingNumber"
+                          name="trackingNumber"
+                          value={formData.trackingNumber}
+                          onChange={handleChange}
+                          maxLength={100}
+                          placeholder="Enter tracking number"
+                          className={`block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm bg-white ${
+                            errors.trackingNumber ? 'border-red-300' : 'border-gray-300'
+                          }`}
+                        />
+                        {errors.trackingNumber && (
+                          <p className="mt-1 text-sm text-red-600">{errors.trackingNumber}</p>
+                        )}
+                        <p className="mt-1 text-xs text-gray-500">
+                          Adding a tracking number will automatically set the order status to "Shipped" and set the shipped date.
+                        </p>
+                      </div>
+
+                      {/* Date Fields Grid */}
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 border-t border-gray-200 pt-4">
+                        <div>
+                          <label htmlFor="estimatedDelivery" className="block text-sm font-medium text-gray-700 mb-1">
+                            Estimated Delivery
+                          </label>
+                          <input
+                            type="date"
+                            id="estimatedDelivery"
+                            name="estimatedDelivery"
+                            value={formData.estimatedDelivery}
+                            onChange={handleChange}
+                            className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm bg-white"
+                          />
+                        </div>
+                        <div>
+                          <label htmlFor="shippedAt" className="block text-sm font-medium text-gray-700 mb-1">
+                            Shipped Date
+                          </label>
+                          <input
+                            type="date"
+                            id="shippedAt"
+                            name="shippedAt"
+                            value={formData.shippedAt}
+                            onChange={handleChange}
+                            className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm bg-white"
+                          />
+                        </div>
+                        <div>
+                          <label htmlFor="deliveredAt" className="block text-sm font-medium text-gray-700 mb-1">
+                            Delivered Date
+                          </label>
+                          <input
+                            type="date"
+                            id="deliveredAt"
+                            name="deliveredAt"
+                            value={formData.deliveredAt}
+                            onChange={handleChange}
+                            className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm bg-white"
+                          />
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
-                  {/* Estimated Delivery */}
-                  <div>
-                    <label htmlFor="estimatedDelivery" className="block text-sm font-medium text-gray-700 mb-1">
-                      Estimated Delivery Date
-                    </label>
-                    <input
-                      type="date"
-                      id="estimatedDelivery"
-                      name="estimatedDelivery"
-                      value={formData.estimatedDelivery}
-                      onChange={handleChange}
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                    />
-                  </div>
+                  {/* Notes Section */}
+                  <div className="border-t border-gray-200 pt-6">
+                    <div className="flex items-center gap-3 mb-4">
+                      <FileText className="h-5 w-5 text-[var(--shreeji-primary)]" />
+                      <h2 className="text-xl font-semibold text-gray-900">Notes</h2>
+                    </div>
+                    <div className="space-y-4">
+                      {/* Customer Notes */}
+                      <div className="p-4 bg-blue-50 rounded-lg">
+                        <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-1">
+                          Customer Notes
+                        </label>
+                        <textarea
+                          id="notes"
+                          name="notes"
+                          value={formData.notes}
+                          onChange={handleChange}
+                          rows={3}
+                          placeholder="Notes visible to customer"
+                          className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm bg-white"
+                        />
+                        <p className="mt-1 text-xs text-blue-600">These notes will be visible to the customer.</p>
+                      </div>
 
-                  {/* Shipped At */}
-                  <div>
-                    <label htmlFor="shippedAt" className="block text-sm font-medium text-gray-700 mb-1">
-                      Shipped Date
-                    </label>
-                    <input
-                      type="date"
-                      id="shippedAt"
-                      name="shippedAt"
-                      value={formData.shippedAt}
-                      onChange={handleChange}
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                    />
-                  </div>
-
-                  {/* Delivered At */}
-                  <div>
-                    <label htmlFor="deliveredAt" className="block text-sm font-medium text-gray-700 mb-1">
-                      Delivered Date
-                    </label>
-                    <input
-                      type="date"
-                      id="deliveredAt"
-                      name="deliveredAt"
-                      value={formData.deliveredAt}
-                      onChange={handleChange}
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                    />
-                  </div>
-
-                  {/* Notes */}
-                  <div>
-                    <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-1">
-                      Customer Notes
-                    </label>
-                    <textarea
-                      id="notes"
-                      name="notes"
-                      value={formData.notes}
-                      onChange={handleChange}
-                      rows={3}
-                      placeholder="Notes visible to customer"
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                    />
-                  </div>
-
-                  {/* Internal Notes */}
-                  <div>
-                    <label htmlFor="internalNotes" className="block text-sm font-medium text-gray-700 mb-1">
-                      Internal Notes
-                    </label>
-                    <textarea
-                      id="internalNotes"
-                      name="internalNotes"
-                      value={formData.internalNotes}
-                      onChange={handleChange}
-                      rows={3}
-                      placeholder="Internal notes (not visible to customer)"
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                    />
+                      {/* Internal Notes */}
+                      <div className="p-4 bg-[#f5f1e8] rounded-lg">
+                        <label htmlFor="internalNotes" className="block text-sm font-medium text-gray-700 mb-1">
+                          Internal Notes
+                        </label>
+                        <textarea
+                          id="internalNotes"
+                          name="internalNotes"
+                          value={formData.internalNotes}
+                          onChange={handleChange}
+                          rows={3}
+                          placeholder="Internal notes (not visible to customer)"
+                          className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm bg-white"
+                        />
+                        <p className="mt-1 text-xs text-gray-500">Internal use only - not visible to customer.</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}

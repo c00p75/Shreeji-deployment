@@ -42,8 +42,8 @@ export default function ReorderPointsManagement() {
 
   const fetchWarehouses = async () => {
     try {
-      const response = await api.getWarehouses({ isActive: true });
-      setWarehouses(response.data || []);
+      const response: any = await api.getWarehouses({ isActive: true });
+      setWarehouses(response?.data || []);
     } catch (error) {
       console.error('Error fetching warehouses:', error);
     }
@@ -52,8 +52,8 @@ export default function ReorderPointsManagement() {
   const fetchReorderPoints = async () => {
     try {
       setLoading(true);
-      const response = await api.getReorderPoints(selectedWarehouse || undefined);
-      setReorderPoints(response.data || []);
+      const response: any = await api.getReorderPoints(selectedWarehouse || undefined);
+      setReorderPoints(response?.data || []);
     } catch (error: any) {
       console.error('Error fetching reorder points:', error);
       toast.error('Failed to load reorder points');

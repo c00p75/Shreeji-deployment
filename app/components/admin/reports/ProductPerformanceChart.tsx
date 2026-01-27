@@ -44,7 +44,6 @@ export default function ProductPerformanceChart({
           dataKey="name" 
           tick={{ fontSize: 12 }}
           width={150}
-          angle={0}
         />
         <Tooltip 
           formatter={(value: number) => 

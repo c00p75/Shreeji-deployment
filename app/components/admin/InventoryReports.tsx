@@ -44,8 +44,8 @@ export default function InventoryReports() {
 
   const fetchWarehouses = async () => {
     try {
-      const response = await api.getWarehouses({ isActive: true });
-      setWarehouses(response.data || []);
+      const response: any = await api.getWarehouses({ isActive: true });
+      setWarehouses(response?.data || []);
     } catch (error) {
       console.error('Error fetching warehouses:', error);
     }
@@ -54,7 +54,7 @@ export default function InventoryReports() {
   const fetchReport = async () => {
     try {
       setLoading(true);
-      let response;
+      let response: any;
 
       switch (reportType) {
         case 'stock-levels':
@@ -80,7 +80,7 @@ export default function InventoryReports() {
           return;
       }
 
-      setReportData(response.data || []);
+      setReportData(response?.data || []);
     } catch (error: any) {
       console.error('Error fetching report:', error);
       toast.error('Failed to load report');
