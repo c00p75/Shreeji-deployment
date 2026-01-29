@@ -26,11 +26,14 @@ nav {
     gap: 1rem;
     padding: 2rem 1.75rem;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
-    width: 90vw;
-    max-width: 90vw;
+    width: fit-content;
+    min-width: max-content;
+    max-width: 100%;
     // margin-top: 1.25rem;  
-    margin-left: 5vw;
+    margin-left: 0;
     color: var(--shreeji-primary);
+    // Prevent overflow
+    overflow-x: auto;
 
     a {
       cursor: pointer !important;

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import {allProducts} from "@/data/productsData";
+import { useState, useEffect, useRef } from "react";
+import { getAllProductsList } from "@/app/lib/client/products";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -30,6 +30,11 @@ const Navbar = () => {
   const [isProductMenuOpen, setIsProductMenuOpen] = useState(false);
   const [isMobileProductsOpen, setIsMobileProductsOpen] = useState(false);
   const [isMobileServicesOpen, setIsMobileServicesOpen] = useState(false);
+  
+  const productMenuRef = useRef(null);
+  const serviceMenuRef = useRef(null);
+  const [productMenuStyle, setProductMenuStyle] = useState({});
+  const [serviceMenuStyle, setServiceMenuStyle] = useState({});
 
   const links = {
     services: [
@@ -137,22 +142,48 @@ const Navbar = () => {
   
 
   useEffect(() => {
-    // Group categories with their subcategories
-    const categoryMap = allProducts.reduce((acc, product) => {
-      if (!acc[product.category]) {
-        acc[product.category] = new Set();
+    // Fetch categories from database instead of static data
+    const fetchCategories = async () => {
+      try {
+        const allProducts = await getAllProductsList();
+        
+        // Group categories with their subcategories
+        const categoryMap = allProducts.reduce((acc, product) => {
+          // Only process products with valid categories
+          if (!product.category || typeof product.category !== 'string' || !product.category.trim()) {
+            return acc;
+          }
+          
+          const category = product.category.trim();
+          if (!acc[category]) {
+            acc[category] = new Set();
+          }
+          
+          // Only add valid subcategories
+          if (product.subcategory && typeof product.subcategory === 'string' && product.subcategory.trim()) {
+            acc[category].add(product.subcategory.trim());
+          }
+          
+          return acc;
+        }, {});
+
+        // Convert sets to arrays and filter out any empty categories
+        const structuredCategories = Object.entries(categoryMap)
+          .filter(([category]) => category && category.trim()) // Ensure category is valid
+          .map(([category, subcategories]) => ({
+            category,
+            subcategories: [...subcategories].sort(), // Sort subcategories alphabetically
+          }))
+          .sort((a, b) => a.category.localeCompare(b.category)); // Sort categories alphabetically
+
+        setProductCategories(structuredCategories);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+        setProductCategories([]);
       }
-      acc[product.category].add(product.subcategory);
-      return acc;
-    }, {});
+    };
 
-    // Convert sets to arrays
-    const structuredCategories = Object.entries(categoryMap).map(([category, subcategories]) => ({
-      category,
-      subcategories: [...subcategories],
-    }));
-
-    setProductCategories(structuredCategories);
+    fetchCategories();
   }, []);
 
   useEffect(() => {
@@ -161,6 +192,65 @@ const Navbar = () => {
       setIsMobileServicesOpen(false);
     }
   }, [isMobileMenuOpen]);
+
+  // Dynamic positioning for dropdowns to prevent overflow
+  useEffect(() => {
+    const calculatePosition = (ref, setStyle) => {
+      if (!ref.current) return;
+      
+      const dropdown = ref.current;
+      const parentLi = dropdown.closest('li');
+      if (!parentLi) return;
+      
+      const parentRect = parentLi.getBoundingClientRect();
+      const dropdownWidth = dropdown.scrollWidth;
+      const viewportWidth = window.innerWidth;
+      const minPadding = 16;
+      
+      // Start with left: 0 (aligned to parent's left edge)
+      let leftValue = 0;
+      let rightValue = 'auto';
+      
+      // Check if dropdown would overflow on the right
+      if (parentRect.left + dropdownWidth > viewportWidth - minPadding) {
+        // Calculate how much we need to shift left
+        const overflow = (parentRect.left + dropdownWidth) - (viewportWidth - minPadding);
+        leftValue = -overflow;
+        
+        // Ensure we don't go negative beyond parent's left edge
+        if (leftValue < -parentRect.left + minPadding) {
+          // If we can't fit, align to right edge of parent instead
+          rightValue = 0;
+          leftValue = 'auto';
+        }
+      }
+      
+      setStyle({ 
+        left: leftValue === 'auto' ? 'auto' : `${leftValue}px`,
+        right: rightValue
+      });
+    };
+
+    const updatePositions = () => {
+      if (isProductMenuOpen && productMenuRef.current) {
+        calculatePosition(productMenuRef, setProductMenuStyle);
+      }
+      if (isServiceMenuOpen && serviceMenuRef.current) {
+        calculatePosition(serviceMenuRef, setServiceMenuStyle);
+      }
+    };
+
+    // Initial calculation
+    if (isProductMenuOpen || isServiceMenuOpen) {
+      setTimeout(updatePositions, 10);
+    }
+
+    // Recalculate on window resize
+    window.addEventListener('resize', updatePositions);
+    return () => {
+      window.removeEventListener('resize', updatePositions);
+    };
+  }, [isProductMenuOpen, isServiceMenuOpen, productCategories]);
 
   return (
     <header id="website-navigation">
@@ -178,7 +268,7 @@ const Navbar = () => {
             {/* Mege Menus Start */}
 
             {/* Desktop Mega Menu Trigger */}   
-            <li className="group flex gap-1">
+            <li className="group flex gap-1 relative">
               <Link href="/products" className={`${pathname === "/products" ? "active-link" : ""}`} onMouseEnter={() => setIsProductMenuOpen(true)} onMouseLeave={() => setIsProductMenuOpen(false)}>
                 Products
               </Link>
@@ -188,8 +278,18 @@ const Navbar = () => {
 
               {/* Mega Menu */}
               {isProductMenuOpen && (
-                <div className=" pt-5 absolute left-0 top-10" onMouseEnter={() => setIsProductMenuOpen(true)} onMouseLeave={() => setIsProductMenuOpen(false)}>
-                  <div className="mega-menu">
+                <div 
+                  ref={productMenuRef}
+                  className="pt-5 absolute top-full"
+                  style={{
+                    left: productMenuStyle.left !== undefined ? productMenuStyle.left : 0,
+                    right: productMenuStyle.right !== undefined ? productMenuStyle.right : 'auto',
+                    maxWidth: 'calc(100vw - 2rem)'
+                  }}
+                  onMouseEnter={() => setIsProductMenuOpen(true)} 
+                  onMouseLeave={() => setIsProductMenuOpen(false)}
+                >
+                  <div className="mega-menu max-w-full">
                     {productCategories && productCategories.map(({ category, subcategories }, index) => (
                       <div key={`category-${index}-${category}`}>                        
                         <Link href={`/products/${encodeURIComponent(category)}`} className="font-medium cursor-pointer relative">
@@ -225,7 +325,7 @@ const Navbar = () => {
               )}
             </li>
 
-            <li className="group flex items-center">
+            <li className="group flex items-center relative">
               <Link
                 href="/services"
                 className={` ${
@@ -247,7 +347,13 @@ const Navbar = () => {
               {/* Mega Menu */}
               {isServiceMenuOpen && (
                 <div
-                  className="mega-menu-container pt-5 absolute left-0 top-10"
+                  ref={serviceMenuRef}
+                  className="mega-menu-container pt-5 absolute top-full"
+                  style={{
+                    left: serviceMenuStyle.left !== undefined ? serviceMenuStyle.left : 0,
+                    right: serviceMenuStyle.right !== undefined ? serviceMenuStyle.right : 'auto',
+                    maxWidth: 'calc(100vw - 2rem)'
+                  }}
                   onMouseEnter={() => setIsServiceMenuOpen(true)} onMouseLeave={() => setIsServiceMenuOpen(false)}
                 >                  
                   <div className="mega-menu">
